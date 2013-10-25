@@ -14,6 +14,8 @@ The name Qactus sprung into existence when the two authors were discussing the n
 (will it just provide status?) which through Sivan's IRC winter typing turned out as "staqtus" which sounded like 
 Qactus to Javier.
 
+This project has been recently migrated from Nokia Projects and refactored. Of course, there's still work to do :)
+
 Installation
 ------------
 ```
