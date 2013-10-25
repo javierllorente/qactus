@@ -14,8 +14,8 @@
    <string>Qactus</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>obs.png</normaloff>obs.png</iconset>
+   <iconset resource="application.qrc">
+    <normaloff>:/obs.png</normaloff>:/obs.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -208,8 +208,8 @@
   </widget>
   <action name="actionAbout">
    <property name="icon">
-    <iconset>
-     <normaloff>icons/help-about.png</normaloff>icons/help-about.png</iconset>
+    <iconset resource="application.qrc">
+     <normaloff>:/icons/help-about.png</normaloff>:/icons/help-about.png</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -222,8 +222,8 @@
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset>
-     <normaloff>icons/application-exit.png</normaloff>icons/application-exit.png</iconset>
+    <iconset resource="application.qrc">
+     <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
    </property>
    <property name="text">
     <string>Quit</string>
@@ -237,8 +237,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>icons/configure.png</normaloff>icons/configure.png</iconset>
+    <iconset resource="application.qrc">
+     <normaloff>:/icons/configure.png</normaloff>:/icons/configure.png</iconset>
    </property>
    <property name="text">
     <string>Configure Qactus</string>
@@ -246,14 +246,16 @@
   </action>
   <action name="actionLogin">
    <property name="icon">
-    <iconset>
-     <normaloff>icons/dialog-password.png</normaloff>icons/dialog-password.png</iconset>
+    <iconset resource="application.qrc">
+     <normaloff>:/icons/dialog-password.png</normaloff>:/icons/dialog-password.png</iconset>
    </property>
    <property name="text">
     <string>Login</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="application.qrc"/>
+ </resources>
  <connections/>
 </ui>
