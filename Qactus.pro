@@ -27,3 +27,4 @@ FORMS += mainwindow.ui \
 OTHER_FILES += README.md \
     LICENSE \
     license_template.txt
+RESOURCES = application.qrc

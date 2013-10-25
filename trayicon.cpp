@@ -33,7 +33,7 @@ void TrayIcon::createTrayIcon()
 {
     trayIcon = new QSystemTrayIcon();
     trayIconMenu = new QMenu();
-    trayIcon->setIcon(QIcon("obs.png"));
+    trayIcon->setIcon(QIcon(":/obs.png"));
     trayIcon->setToolTip("Qactus");
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->show();
@@ -41,7 +41,7 @@ void TrayIcon::createTrayIcon()
 
 void TrayIcon::change()
 {
-    trayIcon->setIcon(QIcon("obs_change.png"));
+    trayIcon->setIcon(QIcon(":/obs_change.png"));
     trayIconChanged = true;
 }
 
@@ -52,5 +52,5 @@ bool TrayIcon::hasChangedIcon()
 
 void TrayIcon::setTrayIcon(const QString& iconName)
 {
-    trayIcon->setIcon(QIcon(iconName));
+    trayIcon->setIcon(QIcon(":/" + iconName));
 }

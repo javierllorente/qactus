@@ -91,19 +91,19 @@ void MainWindow::enableButtons(bool isAuthenticated)
 void MainWindow::createToolbar()
 {
     action_Add = new QAction(tr("&Add"), this);
-    action_Add->setIcon(QIcon("icons/list-add.png"));
+    action_Add->setIcon(QIcon(":/icons/list-add.png"));
     action_Add->setStatusTip(tr("Add a new row"));
     ui->toolBar->addAction(action_Add);
     connect(action_Add, SIGNAL(triggered()), this, SLOT(addRow()));
 
     action_Remove = new QAction(tr("&Remove"), this);
-    action_Remove->setIcon(QIcon("icons/list-remove.png"));
+    action_Remove->setIcon(QIcon(":/icons/list-remove.png"));
     action_Remove->setStatusTip(tr("Remove selected row"));
     ui->toolBar->addAction(action_Remove);
     connect(action_Remove, SIGNAL(triggered()), this, SLOT(removeRow()));
 
     action_Refresh = new QAction(tr("&Refresh"), this);
-    action_Refresh->setIcon(QIcon("icons/view-refresh.png"));
+    action_Refresh->setIcon(QIcon(":/icons/view-refresh.png"));
     action_Refresh->setStatusTip(tr("Refresh view"));
     action_Refresh->setEnabled(false);
     ui->toolBar->addAction(action_Refresh);
@@ -112,7 +112,7 @@ void MainWindow::createToolbar()
     ui->toolBar->addSeparator();
 
     action_Timer = new QAction(tr("&Timer"), this);
-    action_Timer->setIcon(QIcon("icons/chronometer.png"));
+    action_Timer->setIcon(QIcon(":/icons/chronometer.png"));
     action_Timer->setStatusTip(tr("Timer"));
     action_Timer->setEnabled(false);
     ui->toolBar->addAction(action_Timer);
@@ -461,7 +461,7 @@ void MainWindow::createActions()
     connect(ui->action_aboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
 //    action_Configure = new QAction(tr("&Configure"), trayIcon);
-//    action_Configure->setIcon(QIcon("icons/configure.png"));
+//    action_Configure->setIcon(QIcon(":/icons/configure.png"));
 //    connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
 //    trayIcon->trayIconMenu->addAction(action_Configure);
 
@@ -472,7 +472,7 @@ void MainWindow::createActions()
     trayIcon->trayIconMenu->addAction(action_Restore);
 
     action_Quit = new QAction(tr("&Quit"), trayIcon);
-    action_Quit->setIcon(QIcon("icons/application-exit.png"));
+    action_Quit->setIcon(QIcon(":/icons/application-exit.png"));
     connect(action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     trayIcon->trayIconMenu->addAction(action_Quit);
 }
