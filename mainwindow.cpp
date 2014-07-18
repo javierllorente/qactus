@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2013 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2014 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -201,7 +201,7 @@ void MainWindow::createTableRequests()
 {
     ui->tableRequests->setColumnCount(7);
 
-    ui->tableRequests->setColumnWidth(0, 90); // Date
+    ui->tableRequests->setColumnWidth(0, 140); // Date
     ui->tableRequests->setColumnWidth(1, 60); // SR ID
     ui->tableRequests->setColumnWidth(2, 160); // Source project
     ui->tableRequests->setColumnWidth(3, 160); // Target project
@@ -287,7 +287,7 @@ void MainWindow::paintStatus(const QString& status)
         newItem->setForeground(Qt::darkRed);
     }
 //    Set the status cell to non-editable
-    newItem->setFlags(Qt::ItemIsEditable);
+    newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 }
 
 void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
@@ -320,46 +320,46 @@ void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
         reqDataItem->setText(obsRequests.at(i)->getDate());
         qDebug() << "Request Date: " << obsRequests.at(i)->getDate();
         ui->tableRequests->setItem(i, 0, reqDataItem);
-        reqDataItem->setFlags(Qt::ItemIsEditable);
+        reqDataItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         reqDataItem->setForeground(Qt::black);
 
         reqIDItem = new QTableWidgetItem();
         reqIDItem->setText(obsRequests.at(i)->getId());
         qDebug() << "Request ID: " << obsRequests.at(i)->getId();
         ui->tableRequests->setItem(i, 1, reqIDItem);
-        reqIDItem->setFlags(Qt::ItemIsEditable);
+        reqIDItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         reqIDItem->setForeground(Qt::black);
 
         reqSourceProjectItem = new QTableWidgetItem();
         reqSourceProjectItem->setText(obsRequests.at(i)->getSource());
         qDebug() << "Request Source: " << obsRequests.at(i)->getSource();
         ui->tableRequests->setItem(i, 2, reqSourceProjectItem);
-        reqSourceProjectItem->setFlags(Qt::ItemIsEditable);
+        reqSourceProjectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         reqSourceProjectItem->setForeground(Qt::black);
 
         reqTargetProjectItem = new QTableWidgetItem();
         reqTargetProjectItem->setText(obsRequests.at(i)->getTarget());
         qDebug() << "Request Target: " << obsRequests.at(i)->getTarget();
         ui->tableRequests->setItem(i, 3, reqTargetProjectItem);
-        reqTargetProjectItem->setFlags(Qt::ItemIsEditable);
+        reqTargetProjectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         reqTargetProjectItem->setForeground(Qt::black);
 
         requesterItem = new QTableWidgetItem();
         requesterItem->setText(obsRequests.at(i)->getRequester());
         ui->tableRequests->setItem(i, 4, requesterItem);
-        requesterItem->setFlags(Qt::ItemIsEditable);
+        requesterItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         requesterItem->setForeground(Qt::black);
 
         reqTypeItem = new QTableWidgetItem();
         reqTypeItem->setText(obsRequests.at(i)->getActionType());
         ui->tableRequests->setItem(i, 5, reqTypeItem);
-        reqTypeItem->setFlags(Qt::ItemIsEditable);
+        reqTypeItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         reqTypeItem->setForeground(Qt::black);
 
         reqStateItem = new QTableWidgetItem();
         reqStateItem->setText(obsRequests.at(i)->getState());
         ui->tableRequests->setItem(i, 6, reqStateItem);
-        reqStateItem->setFlags(Qt::ItemIsEditable);
+        reqStateItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         reqStateItem->setForeground(Qt::black);
     }
 }
