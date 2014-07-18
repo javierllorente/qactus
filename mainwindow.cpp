@@ -579,9 +579,11 @@ void MainWindow::readSettingsTimer()
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("Timer");
     if (settings.value("Active").toBool()) {
+        qDebug () << "Timer Active=true";
         configureDialog->setCheckedTimerCheckbox(true);
         configureDialog->startTimer(settings.value("value").toInt()*60000);
     } else {
+        qDebug () << "Timer Active=false";
         configureDialog->setTimerValue(settings.value("value").toInt());
     }
     settings.endGroup();

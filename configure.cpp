@@ -86,7 +86,7 @@ int Configure::getTimerValue()
 void Configure::setTimerValue(const int& value)
 {
     ui->spinBox->setValue(value);
-    qDebug() << "Timer set to" << ui->spinBox->value() << "minutes";
+    qDebug() << "Timer value:" << ui->spinBox->value() << "minutes";
 }
 
 void Configure::setCheckedTimerCheckbox(bool check)
