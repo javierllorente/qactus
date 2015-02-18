@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2014 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2015 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 #include "obsxmlreader.h"
 #include "configure.h"
 #include "login.h"
+#include "roweditor.h"
 
 #include "obsaccess.h"
 #include "obspackage.h"
@@ -36,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    obsaccess = new OBSaccess();
+    obsaccess = OBSaccess::getInstance();
     obsPackage = new OBSpackage();
 
     createToolbar();
@@ -94,7 +95,7 @@ void MainWindow::createToolbar()
     action_Add->setIcon(QIcon(":/icons/list-add.png"));
     action_Add->setStatusTip(tr("Add a new row"));
     ui->toolBar->addAction(action_Add);
-    connect(action_Add, SIGNAL(triggered()), this, SLOT(addRow()));
+    connect(action_Add, SIGNAL(triggered()), this, SLOT(launchRowEditor()));
 
     action_Remove = new QAction(tr("&Remove"), this);
     action_Remove->setIcon(QIcon(":/icons/list-remove.png"));
@@ -123,11 +124,38 @@ void MainWindow::createToolbar()
 void MainWindow::addRow()
 {
 //    Append a row
-    int row=ui->table->rowCount();
+    int row = ui->table->rowCount();
     ui->table->insertRow(row);
 //    Append an empty statusList
     statusList.insert(row,"");
     qDebug() << "Row appended at: " << row;
+}
+
+void MainWindow::launchRowEditor()
+{
+    RowEditor *rowEditor = new RowEditor(this);
+    if (rowEditor->exec()) {
+        qDebug() << "RowEditor launched";
+        addRow();
+        int row = ui->table->rowCount()-1;
+
+        QTableWidgetItem *projectItem = new QTableWidgetItem();
+        projectItem->setText(rowEditor->getProject());
+        ui->table->setItem(row, 0, projectItem);
+
+        QTableWidgetItem *packageItem= new QTableWidgetItem();
+        packageItem->setText(rowEditor->getPackage());
+        ui->table->setItem(row, 1, packageItem);
+
+        QTableWidgetItem *repositoryItem = new QTableWidgetItem();
+        repositoryItem->setText(rowEditor->getRepository());
+        ui->table->setItem(row, 2, repositoryItem);
+
+        QTableWidgetItem *archItem = new QTableWidgetItem();
+        archItem->setText(rowEditor->getArch());
+        ui->table->setItem(row, 3, archItem);
+    }
+    delete rowEditor;
 }
 
 void MainWindow::removeRow()
@@ -181,7 +209,6 @@ void MainWindow::refreshView()
     obsaccess->makeRequest();
     obsRequests = obsaccess->getRequests();
     insertRequests(obsRequests);
-
 }
 
 void MainWindow::createTable()
@@ -436,11 +463,12 @@ void MainWindow::about()
                        + tr("Version: ") + appVersion() +
                        tr("<div align=\"left\">"
                           "<p>"
-                          "<b>Authors:</b> <br>"
+                          "<b>Author:</b> <br>"
                           "Javier Llorente<br>"
-                          "javier@opensuse.org<br><br>"
+                          "<a href='mailto:javier@opensuse.org'>javier@opensuse.org</a><br><br>"
+                          "<b>Contributors:</b> <br>"
                           "Sivan Greenberg<br>"
-                          "sivan@omniqueue.com<br><br>"
+                          "<a href='sivan@omniqueue.com'>sivan@omniqueue.com</a><br><br>"
                           "<b>Artwork:</b> <br>"
                           "Icons by the Oxygen Team<br>"
                           "<a href=\"http://www.oxygen-icons.org/\">http://www.oxygen-icons.org/</a><br><br>"
@@ -449,7 +477,7 @@ void MainWindow::about()
                           "</p>"
                           "<p>"
                           "<b>License:</b> <br>"
-                          "<nobr>This program is under GNU General Public License v3</nobr>"
+                          "<nobr>This program is under the GPLv3</nobr>"
                           "</p>"
                           "</div>")
                        );
@@ -609,5 +637,5 @@ void MainWindow::on_tabWidget_currentChanged(const int& index)
 QString MainWindow::appVersion()
 {
 //    Returns Qactus version
-    return "0.2.1";
+    return "0.2.2";
 }

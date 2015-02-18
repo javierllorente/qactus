@@ -1,8 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2014 Javier Llorente <javier@opensuse.org>
- *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
+ *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -41,13 +40,14 @@ class OBSaccess : public QObject
      Q_OBJECT
 
 public:
-    OBSaccess();
+    static OBSaccess* getInstance();
     void setUrl(QUrl url);
     void makeRequest();
     QString getUsername();
     OBSpackage* getPackage();
     QList<OBSrequest*> getRequests();
     int getRequestNumber();
+    QStringList getProjectList();
 
 signals:
     void isAuthenticated(bool authenticated);
@@ -59,18 +59,23 @@ public slots:
     void onSslErrors(QNetworkReply* reply, const QList<QSslError> &list);
 
 private:
-// we need to instantiate QNAM only once, as it should be used as
-// as singelton or a utility instead of recreating it for each
-// request.
+/*
+ * We need to instantiate QNAM only once, as it should be used as
+ * as singleton or a utility instead of recreating it for each
+ * request. This class (OBSaccess) uses the singleton pattern to
+ * achieve this.
+ *
+ */
     QNetworkAccessManager* manager;
     void createManager();
+    OBSaccess();
+    static OBSaccess* instance;
     QUrl url;
     QString curUsername;
     QString curPassword;
     QString data;
     bool authenticated;
     OBSxmlReader *xmlReader;
-    OBSpackage *obsPackage;
     QList<OBSrequest*> obsRequests;
 
 };

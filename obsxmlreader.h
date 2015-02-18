@@ -1,8 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2014 Javier Llorente <javier@opensuse.org>
- *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
+ *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +23,10 @@
 
 #include <QXmlStreamReader>
 #include <QDebug>
+#include <QStringList>
+#include <QFile>
+#include <QDir>
+#include <QDesktopServices>
 #include "obspackage.h"
 #include "obsrequest.h"
 
@@ -31,17 +34,25 @@ class OBSxmlReader : public QXmlStreamReader
 {
 public:
     OBSxmlReader();
-    void parse(const QString &data);
-    void parseRequests(const QString& data);
+    void addData(const QString &data);
+
     OBSpackage* getPackage();
     QList<OBSrequest*> getRequests();
     int getRequestNumber();
+    QStringList getProjectList();
+    void readFile(const QString &fileName);
 
 private:
+    void parse(const QString &data);
+    void parseRequests(const QString& data);
+    void parseProjects(const QString& data);
     OBSpackage *obsPackage;
     QList<OBSrequest*> obsRequests;
     OBSrequest *obsRequest;
     QString requestNumber;
+    QStringList projectList;
+    void stringToFile(const QString &data);
+
 };
 
 #endif // OBSXMLREADER_H

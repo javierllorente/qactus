@@ -12,7 +12,8 @@ SOURCES += main.cpp \
     obspackage.cpp \
     obsaccess.cpp \
     obsxmlreader.cpp \
-    obsrequest.cpp
+    obsrequest.cpp \
+    roweditor.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -20,10 +21,12 @@ HEADERS += mainwindow.h \
     obspackage.h \
     obsaccess.h \
     obsxmlreader.h \
-    obsrequest.h
+    obsrequest.h \
+    roweditor.h
 FORMS += mainwindow.ui \
     configure.ui \
-    login.ui
+    login.ui \
+    roweditor.ui
 OTHER_FILES += README.md \
     LICENSE \
     license_template.txt

@@ -1,8 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2014 Javier Llorente <javier@opensuse.org>
- *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
+ *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,12 +20,13 @@
 
 #include "obsaccess.h"
 
+OBSaccess* OBSaccess::instance = NULL;
+
 OBSaccess::OBSaccess()
 {
     authenticated = false;
     manager = NULL;
     xmlReader = new OBSxmlReader();
-    obsPackage = new OBSpackage();
 }
 
 void OBSaccess::createManager()
@@ -36,6 +36,14 @@ void OBSaccess::createManager()
     SLOT(provideAuthentication(QNetworkReply*,QAuthenticator*)));
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
     connect(manager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> &)), this, SLOT(onSslErrors(QNetworkReply*, const QList<QSslError> &)));
+}
+
+OBSaccess* OBSaccess::getInstance()
+{
+    if (!instance) {
+        instance = new OBSaccess();
+    }
+    return instance;
 }
 
 void OBSaccess::setCredentials(const QString& username, const QString& password)
@@ -61,7 +69,7 @@ void OBSaccess::makeRequest()
     QNetworkRequest request;
     request.setUrl(url);
 //    request.setRawHeader("User-Agent",version);
-    request.setRawHeader("User-Agent","Qactus 0.1.3");
+    request.setRawHeader("User-Agent","Qactus 0.2.2");
     manager->get(request);
 
 //    Don't make a new request until we get a reply
@@ -138,27 +146,19 @@ void OBSaccess::replyFinished(QNetworkReply *reply)
         emit isAuthenticated(authenticated);
         qDebug() << "Request succeeded!";
 
-        if (data.contains("status")) {
-            xmlReader->parse(data);
-            obsPackage = xmlReader->getPackage();
-            qDebug() << "obsaccess data.contains pkg: " +  obsPackage->getName();
+        xmlReader->addData(data);
 
-        } else if (data.contains("action")) {
-            xmlReader->parseRequests(data);
-            obsRequests = xmlReader->getRequests();
-        }
     }
 }
 
 OBSpackage* OBSaccess::getPackage()
 {
-    qDebug() << "obsaccess::getpackage: " + obsPackage->getName();
-    return obsPackage;
+    return xmlReader->getPackage();
 }
 
 QList<OBSrequest*> OBSaccess::getRequests()
 {
-    return obsRequests;
+    return xmlReader->getRequests();
 }
 
 int OBSaccess::getRequestNumber()
@@ -166,8 +166,12 @@ int OBSaccess::getRequestNumber()
     return xmlReader->getRequestNumber();
 }
 
+QStringList OBSaccess::getProjectList()
+{
+    return xmlReader->getProjectList();
+}
 
-void OBSaccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
+void OBSaccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &list)
 {
     QString errorString;
     QString message;

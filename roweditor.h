@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,33 +18,44 @@
  *
  */
 
-#ifndef LOGIN_H
-#define LOGIN_H
+#ifndef ROWEDITOR_H
+#define ROWEDITOR_H
 
 #include <QDialog>
-#include <QLineEdit>
-#include <QPushButton>
+#include <QCompleter>
+#include <QStringListModel>
+#include <QDate>
+#include <QSettings>
+#include "obsaccess.h"
+#include "obsxmlreader.h"
 
 namespace Ui {
-    class Login;
+class RowEditor;
 }
 
-class Login : public QDialog
+class RowEditor : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Login(QWidget *parent = 0);
-    ~Login();
-
-    QString getUsername();
-    void setUsername(const QString&);
-    QString getPassword();
+    explicit RowEditor(QWidget *parent = 0);
+    ~RowEditor();
+    QString getProject();
+    QString getPackage();
+    QString getRepository();
+    QString getArch();
 
 private:
-    Ui::Login *ui;
+    Ui::RowEditor *ui;
+    QString readSettings();
+    void writeSettings();
+    QStringList stringList;
+    QCompleter *completer;
+    void initAutocomplete(const QStringList &stringList);
+    OBSxmlReader *xmlReader;
 
+private slots:
+    void refreshAutocomplete(const QString &);
 };
 
-
-#endif // LOGIN_H
+#endif // ROWEDITOR_H

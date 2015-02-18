@@ -1,8 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2014 Javier Llorente <javier@opensuse.org>
- *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
+ *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +22,29 @@
 
 OBSxmlReader::OBSxmlReader()
 {
+
+}
+
+void OBSxmlReader::addData(const QString& data)
+{
+    qDebug() << "OBSxmlReader addData()";
+    QXmlStreamReader xml(data);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        if (xml.name()=="status" && xml.isStartElement()) {
+            qDebug() << "OBSxmlReader: status tag found";
+            parse(data);
+            obsPackage = getPackage();
+        } else if (xml.name()=="collection" && xml.isStartElement()) {
+            qDebug() << "OBSxmlReader: collection tag found";
+            parseRequests(data);
+            obsRequests = getRequests();
+        } else if (xml.name()=="directory" && xml.isStartElement()) {
+            qDebug() << "OBSxmlReader: directory tag found";
+            parseProjects(data);
+        }
+    }
 }
 
 void OBSxmlReader::parse(const QString& data)
@@ -163,6 +185,90 @@ void OBSxmlReader::parseRequests(const QString& data)
     }
 }
 
+void OBSxmlReader::parseProjects(const QString& data)
+{
+    QXmlStreamReader xml(data);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+
+        xml.readNext();
+
+        if (xml.name()=="entry") {
+            if (xml.isStartElement()) {
+                QXmlStreamAttributes attrib = xml.attributes();
+
+                if (attrib.value("code").toString() == "unregistered_ichain_user") {
+                    qDebug() << "Unregistered username!";
+                } else {
+//                    qDebug() << "Project name: " << attrib.value("name").toString();
+                    projectList.append(attrib.value("name").toString());
+                }
+            }
+        } // end entry
+
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+    }
+    stringToFile(data);
+}
+
+void OBSxmlReader::stringToFile(const QString &data)
+{
+    QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QDir dir(dataDir);
+
+    if (!dir.exists()) {
+        dir.mkpath(dataDir);
+    }
+
+    QFile projectListFile("projects.xml");
+    QDir::setCurrent(dataDir);
+
+    projectListFile.open(QIODevice::WriteOnly);
+    QTextStream stream(&projectListFile);
+    stream << data;
+    projectListFile.close();
+}
+
+void OBSxmlReader::readFile(const QString &fileName)
+{
+    QFile file(fileName);
+    QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QDir::setCurrent(dataDir);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Error: Cannot read file " << dataDir << fileName << "(" << file.errorString() << ")";
+    }
+    qDebug() << "OBSxmlReader readFile()";
+    QXmlStreamReader xml;
+    xml.setDevice(&file);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+
+        xml.readNext();
+
+        if (xml.name()=="entry") {
+            if (xml.isStartElement()) {
+                QXmlStreamAttributes attrib = xml.attributes();
+
+                if (attrib.value("code").toString() == "unregistered_ichain_user") {
+                    qDebug() << "Unregistered username!";
+                } else {
+//                    qDebug() << "Project name: " << attrib.value("name").toString();
+                    projectList.append(attrib.value("name").toString());
+                }
+            }
+        } // end entry
+
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+    }
+
+}
+
 QList<OBSrequest*> OBSxmlReader::getRequests()
 {
     return obsRequests;
@@ -171,4 +277,9 @@ QList<OBSrequest*> OBSxmlReader::getRequests()
 int OBSxmlReader::getRequestNumber()
 {
     return requestNumber.toInt();
+}
+
+QStringList OBSxmlReader::getProjectList()
+{
+    return projectList;
 }
