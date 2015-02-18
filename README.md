@@ -14,7 +14,7 @@ The name Qactus sprung into existence when the two authors were discussing the n
 (will it just provide status?) which through Sivan's IRC winter typing turned out as "staqtus" which sounded like 
 Qactus to Javier.
 
-This project has been recently migrated from Nokia Projects and refactored. Of course, there's still work to do :)
+This project was originally hosted on Nokia Developer Projects until 2013, when the service was discontinued.
 
 Installation
 ------------
@@ -28,7 +28,7 @@ License
 -------
 This application is licensed under the GPL. See LICENSE for more details.
 
-The icons come from the Oxygen Project (http://www.oxygen-icons.org/).
+The icons come from the Oxygen Project (http://www.oxygen-icons.org/), with the exception of the tray icon which comes from the Open Build Service (http://openbuildservice.org/).
 
 
 
