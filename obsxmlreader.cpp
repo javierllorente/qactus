@@ -239,6 +239,7 @@ void OBSxmlReader::readFile(const QString &fileName)
     QDir::setCurrent(dataDir);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Error: Cannot read file " << dataDir << fileName << "(" << file.errorString() << ")";
+        return;
     }
     qDebug() << "OBSxmlReader readFile()";
     QXmlStreamReader xml;
