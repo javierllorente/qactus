@@ -457,10 +457,10 @@ void MainWindow::on_actionAbout_triggered(bool)
 
 void MainWindow::about()
 {
-    QMessageBox::about(this,tr("About Qactus"),
-                       tr("<h2 align=\"left\">Qactus</h2>")
+    QMessageBox::about(this,tr("About ") + QCoreApplication::applicationName(),
+                       tr("<h2 align=\"left\"> ") +  QCoreApplication::applicationName() + ("</h2>")
                        + "A Qt-based OBS notifier<br>"
-                       + tr("Version: ") + appVersion() +
+                       + tr("Version: ") + QCoreApplication::applicationVersion() +
                        tr("<div align=\"left\">"
                           "<p>"
                           "<b>Author:</b> <br>"
@@ -632,10 +632,4 @@ void MainWindow::on_tabWidget_currentChanged(const int& index)
     // Disable add and remove for the request tab
     action_Add->setEnabled(!index);
     action_Remove->setEnabled(!index);
-}
-
-QString MainWindow::appVersion()
-{
-//    Returns Qactus version
-    return "0.2.2";
 }

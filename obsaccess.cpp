@@ -63,13 +63,12 @@ QString OBSaccess::getUsername()
 
 void OBSaccess::makeRequest()
 {
-
-//    QByteArray version(appVersion().toAscii());
-
     QNetworkRequest request;
     request.setUrl(url);
-//    request.setRawHeader("User-Agent",version);
-    request.setRawHeader("User-Agent","Qactus 0.2.2");
+    const QString userAgent = QCoreApplication::applicationName() + " " +
+            QCoreApplication::applicationVersion();
+    qDebug() << "User-Agent:" << userAgent;
+    request.setRawHeader("User-Agent", userAgent.toAscii());
     manager->get(request);
 
 //    Don't make a new request until we get a reply

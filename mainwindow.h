@@ -41,6 +41,7 @@
 #include <QAction>
 #include <QTimer>
 #include <QSslError>
+#include <QCoreApplication>
 #include "trayicon.h"
 
 namespace Ui {
@@ -96,8 +97,6 @@ private:
     void writeSettings();
     void readSettings();
     void readSettingsTimer();
-
-    QString appVersion();
 
     QString packageErrors;
 
