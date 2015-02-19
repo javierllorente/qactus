@@ -2,7 +2,7 @@
 # Project created by QtCreator 2010-12-22T04:00:42
 # -------------------------------------------------
 QT += network
-TARGET = Qactus
+TARGET = qactus
 TEMPLATE = app
 SOURCES += main.cpp \
     mainwindow.cpp \
