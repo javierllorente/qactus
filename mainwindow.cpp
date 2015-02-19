@@ -422,7 +422,7 @@ void MainWindow::lineEdit_Password_returnPressed()
 
 void MainWindow::on_actionQuit_triggered(bool)
 {
-    close();
+    qApp->quit();
 }
 
 void MainWindow::on_actionAbout_triggered(bool)
@@ -632,4 +632,10 @@ void MainWindow::on_tabWidget_currentChanged(const int& index)
     // Disable add and remove for the request tab
     action_Add->setEnabled(!index);
     action_Remove->setEnabled(!index);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    event->ignore();
+    toggleVisibility();
 }

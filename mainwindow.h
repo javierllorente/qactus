@@ -105,6 +105,7 @@ private:
     QString breakLine(QString&, const int&);
     void checkStatus(const QString&, const int&);
     void paintStatus(const QString&);
+    void closeEvent(QCloseEvent*);
 
     QTableWidgetItem *newItem;
     QTableWidgetItem *reqDataItem;
