@@ -42,6 +42,7 @@ class OBSaccess : public QObject
 
 public:
     static OBSaccess* getInstance();
+    bool isAuthenticated();
     void setUrl(QUrl url);
     void makeRequest();
     QString getUsername();

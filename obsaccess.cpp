@@ -115,10 +115,10 @@ void OBSaccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator
     }
 }
 
-//bool OBSaccess::isAuthenticated()
-//{
-//    return authenticated;
-//}
+bool OBSaccess::isAuthenticated()
+{
+    return authenticated;
+}
 
 void OBSaccess::replyFinished(QNetworkReply *reply)
 {

@@ -54,6 +54,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obsaccess, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
 
     readSettings();
+
+    // Show login dialog on startup if user isn't logged in
+    if(!obsaccess->isAuthenticated()) {
+        // Centre login dialog
+        loginDialog->move(this->geometry().center().x()-loginDialog->geometry().center().x(),
+                          this->geometry().center().y()-loginDialog->geometry().center().y());
+        loginDialog->show();
+    }
 }
 
 MainWindow::~MainWindow()
