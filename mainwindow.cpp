@@ -465,29 +465,29 @@ void MainWindow::on_actionAbout_triggered(bool)
 
 void MainWindow::about()
 {
-    QMessageBox::about(this,tr("About ") + QCoreApplication::applicationName(),
-                       tr("<h2 align=\"left\"> ") +  QCoreApplication::applicationName() + ("</h2>")
-                       + "A Qt-based OBS notifier<br>"
-                       + tr("Version: ") + QCoreApplication::applicationVersion() +
-                       tr("<div align=\"left\">"
-                          "<p>"
-                          "<b>Author:</b> <br>"
+    QMessageBox::about(this,tr("About") + " " + QCoreApplication::applicationName(),
+                       "<h2 align=\"left\">" + QCoreApplication::applicationName() + "</h2>" +
+                       tr("A Qt-based OBS notifier") + "<br>" +
+                       tr("Version:") + " " + QCoreApplication::applicationVersion() +
+                       "<div align=\"left\">" +
+                          "<p>" +
+                          "<b>" + tr("Author:") + "</b><br>"
                           "Javier Llorente<br>"
                           "<a href='mailto:javier@opensuse.org'>javier@opensuse.org</a><br><br>"
-                          "<b>Contributors:</b> <br>"
+                          "<b>" + tr("Contributors:") + "</b> <br>"
                           "Sivan Greenberg<br>"
                           "<a href='sivan@omniqueue.com'>sivan@omniqueue.com</a><br><br>"
-                          "<b>Artwork:</b> <br>"
-                          "Icons by the Oxygen Team<br>"
-                          "<a href=\"http://www.oxygen-icons.org/\">http://www.oxygen-icons.org/</a><br><br>"
-                          "Tray icon by the Open Build Service<br>"
+                          "<b>" + tr("Artwork:") + "</b> <br>" +
+                          tr("Icons by the Oxygen Team") + "<br>"
+                          "<a href=\"http://www.oxygen-icons.org/\">http://www.oxygen-icons.org/</a><br><br>" +
+                          tr("Tray icon by the Open Build Service") + "<br>"
                           "<a href=\"http://openbuildservice.org/\">http://openbuildservice.org/</a>"
                           "</p>"
-                          "<p>"
-                          "<b>License:</b> <br>"
-                          "<nobr>This program is under the GPLv3</nobr>"
+                          "<p>" +
+                          "<b>" + tr("License:") + "</b> <br>"
+                          "<nobr>" + tr("This program is under the GPLv3") + "</nobr>"
                           "</p>"
-                          "</div>")
+                          "</div>"
                        );
 }
 
