@@ -124,8 +124,9 @@ private:
 private slots:
     void enableButtons(bool);
     void getDescription(QTableWidgetItem*);
-    void launchRowEditor();
     void addRow();
+    void editRow(QTableWidgetItem*);
+    void insertRow();
     void removeRow();
     void refreshView();
     void lineEdit_Password_returnPressed();

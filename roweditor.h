@@ -44,6 +44,10 @@ public:
     QString getPackage();
     QString getRepository();
     QString getArch();
+    void setProject(const QString &);
+    void setPackage(const QString &);
+    void setRepository(const QString &);
+    void setArch(const QString &);
 
 private:
     Ui::RowEditor *ui;

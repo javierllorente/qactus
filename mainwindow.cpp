@@ -103,7 +103,7 @@ void MainWindow::createToolbar()
     action_Add->setIcon(QIcon(":/icons/list-add.png"));
     action_Add->setStatusTip(tr("Add a new row"));
     ui->toolBar->addAction(action_Add);
-    connect(action_Add, SIGNAL(triggered()), this, SLOT(launchRowEditor()));
+    connect(action_Add, SIGNAL(triggered()), this, SLOT(addRow()));
 
     action_Remove = new QAction(tr("&Remove"), this);
     action_Remove->setIcon(QIcon(":/icons/list-remove.png"));
@@ -129,7 +129,7 @@ void MainWindow::createToolbar()
 
 }
 
-void MainWindow::addRow()
+void MainWindow::insertRow()
 {
 //    Append a row
     int row = ui->table->rowCount();
@@ -139,29 +139,72 @@ void MainWindow::addRow()
     qDebug() << "Row appended at: " << row;
 }
 
-void MainWindow::launchRowEditor()
+void MainWindow::addRow()
 {
+    qDebug() << "Launching RowEditor...";
     RowEditor *rowEditor = new RowEditor(this);
+
     if (rowEditor->exec()) {
-        qDebug() << "RowEditor launched";
-        addRow();
+        insertRow();
         int row = ui->table->rowCount()-1;
 
         QTableWidgetItem *projectItem = new QTableWidgetItem();
         projectItem->setText(rowEditor->getProject());
         ui->table->setItem(row, 0, projectItem);
+        projectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
         QTableWidgetItem *packageItem= new QTableWidgetItem();
         packageItem->setText(rowEditor->getPackage());
         ui->table->setItem(row, 1, packageItem);
+        packageItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
         QTableWidgetItem *repositoryItem = new QTableWidgetItem();
         repositoryItem->setText(rowEditor->getRepository());
         ui->table->setItem(row, 2, repositoryItem);
+        repositoryItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
         QTableWidgetItem *archItem = new QTableWidgetItem();
         archItem->setText(rowEditor->getArch());
         ui->table->setItem(row, 3, archItem);
+        archItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+    }
+    delete rowEditor;
+}
+
+void MainWindow::editRow(QTableWidgetItem* item)
+{
+    qDebug() << "Launching RowEditor in edit mode...";
+    RowEditor *rowEditor = new RowEditor(this);
+    int row = item->row();
+    rowEditor->setProject(ui->table->item(row,0)->text());
+    rowEditor->setPackage(ui->table->item(row,1)->text());
+    rowEditor->setRepository(ui->table->item(row,2)->text());
+    rowEditor->setArch(ui->table->item(row,3)->text());
+    rowEditor->show();
+
+    if (rowEditor->exec()) {
+        QTableWidgetItem *projectItem = new QTableWidgetItem();
+        projectItem->setText(rowEditor->getProject());
+        ui->table->setItem(row, 0, projectItem);
+        projectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+        QTableWidgetItem *packageItem= new QTableWidgetItem();
+        packageItem->setText(rowEditor->getPackage());
+        ui->table->setItem(row, 1, packageItem);
+        packageItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+        QTableWidgetItem *repositoryItem = new QTableWidgetItem();
+        repositoryItem->setText(rowEditor->getRepository());
+        ui->table->setItem(row, 2, repositoryItem);
+        repositoryItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+        QTableWidgetItem *archItem = new QTableWidgetItem();
+        archItem->setText(rowEditor->getArch());
+        ui->table->setItem(row, 3, archItem);
+        archItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+        statusList[row].clear();
+        qDebug() << "statusList editRow:" << statusList.at(row);
     }
     delete rowEditor;
 }
@@ -228,6 +271,8 @@ void MainWindow::createTable()
     ui->table->setColumnWidth(3, 75); // Arch
     ui->table->setColumnWidth(4, 140); // Status
 
+    connect(ui->table, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editRow(QTableWidgetItem*)));
+
 //    connect(ui->table,SIGNAL(cellChanged(int,int)), this, SLOT(on_cellChanged()));
 
 }
@@ -287,11 +332,11 @@ QString MainWindow::breakLine(QString& details, const int& maxSize)
 void MainWindow::checkStatus(const QString& status, const int& row)
 {
 //    If the statusList is not empty and the status is different from last time, change the icon
-    if (statusList.at(row)!="" && status!=statusList.at(row)) {
-        qDebug() << "Status changed!" << status << statusList.at(row) << " row: " << row;
+    if ((statusList.at(row) != "") && (status != statusList.at(row))) {
+        qDebug() << "MainWindow::checkStatus(): Status changed!" << status << statusList.at(row) << " row: " << row;
         trayIcon->change();
     }
-    qDebug() << "Status change?" << status << statusList.at(row) << " row: " << row;
+    qDebug() << "MainWindow::checkStatus(): Status changed?" << status << statusList.at(row) << " row: " << row;
     qDebug() << "statusList Size: " << statusList.size();
 
 //    Insert the last status into statusList
@@ -589,23 +634,33 @@ void MainWindow::readSettings()
     for (int i=0; i<size; ++i)
         {
             settings.setArrayIndex(i);
-            addRow();
+            insertRow();
 
-            QTableWidgetItem *project = new QTableWidgetItem;
-            project->setText(settings.value("Project").toString());
-            ui->table->setItem(i, 0, project);
+            QTableWidgetItem *projectItem = new QTableWidgetItem();
+            projectItem->setText(settings.value("Project").toString());
+            ui->table->setItem(i, 0, projectItem);
+            projectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-            QTableWidgetItem *package = new QTableWidgetItem;
-            package->setText(settings.value("Package").toString());
-            ui->table->setItem(i, 1, package);
+            QTableWidgetItem *packageItem = new QTableWidgetItem();
+            packageItem->setText(settings.value("Package").toString());
+            ui->table->setItem(i, 1, packageItem);
+            packageItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-            QTableWidgetItem *repository = new QTableWidgetItem;
-            repository->setText(settings.value("Repository").toString());
-            ui->table->setItem(i, 2, repository);
+            QTableWidgetItem *repositoryItem = new QTableWidgetItem();
+            repositoryItem->setText(settings.value("Repository").toString());
+            ui->table->setItem(i, 2, repositoryItem);
+            repositoryItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-            QTableWidgetItem *arch = new QTableWidgetItem;
-            arch->setText(settings.value("Arch").toString());
-            ui->table->setItem(i, 3, arch);
+            QTableWidgetItem *archItem = new QTableWidgetItem();
+            archItem->setText(settings.value("Arch").toString());
+            ui->table->setItem(i, 3, archItem);
+            archItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+            QTableWidgetItem *statusItem = new QTableWidgetItem();
+            statusItem->setText("");
+            ui->table->setItem(i, 4, statusItem);
+            statusItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
         }
         settings.endArray();
 }

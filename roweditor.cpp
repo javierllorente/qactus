@@ -100,6 +100,26 @@ QString RowEditor::getArch()
     return ui->lineEditArch->text();
 }
 
+void RowEditor::setProject(const QString &project)
+{
+    ui->lineEditProject->setText(project);
+}
+
+void RowEditor::setPackage(const QString &package)
+{
+    ui->lineEditPackage->setText(package);
+}
+
+void RowEditor::setRepository(const QString &repository)
+{
+    ui->lineEditRepository->setText(repository);
+}
+
+void RowEditor::setArch(const QString &arch)
+{
+    ui->lineEditArch->setText(arch);
+}
+
 void RowEditor::initAutocomplete(const QStringList &stringList)
 {
     QStringListModel *model = new QStringListModel(stringList);
