@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Qactus
+GenericName=OBS notifier
+Comment=A Qt-based notifier application
+Icon=qactus
+Exec=qactus
+Categories=Utility;
