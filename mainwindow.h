@@ -106,6 +106,7 @@ private:
     void checkStatus(const QString&, const int&);
     void paintStatus(const QString&);
     void closeEvent(QCloseEvent*);
+    bool event(QEvent *event);
 
     QTableWidgetItem *newItem;
     QTableWidgetItem *reqDataItem;

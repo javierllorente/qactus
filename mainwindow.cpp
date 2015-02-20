@@ -702,3 +702,18 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->ignore();
     toggleVisibility();
 }
+
+bool MainWindow::event(QEvent *event)
+{
+    switch(event->type()) {
+    case QEvent::WindowActivate:
+        qDebug() << "Window activated";
+        if (trayIcon->hasChangedIcon()) {
+            trayIcon->setTrayIcon("obs.png");
+        }
+        break;
+    default:
+        break;
+    }
+    return QMainWindow::event(event);
+}
