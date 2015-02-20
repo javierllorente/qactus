@@ -54,12 +54,13 @@ private:
     QString readSettings();
     void writeSettings();
     QStringList stringList;
-    QCompleter *completer;
-    void initAutocomplete(const QStringList &stringList);
+    QCompleter *projectCompleter;
+    void initProjectAutocompleter(const QStringList &stringList);
     OBSxmlReader *xmlReader;
 
 private slots:
-    void refreshAutocomplete(const QString &);
+    void refreshProjectAutocompleter(const QString &);
+    void autocompletedProjectName_clicked(const QString &);
 };
 
 #endif // ROWEDITOR_H

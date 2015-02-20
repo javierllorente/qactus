@@ -55,7 +55,7 @@ RowEditor::RowEditor(QWidget *parent) :
         stringList = xmlReader->getProjectList();
     }
 
-    initAutocomplete(stringList);
+    initProjectAutocompleter(stringList);
 }
 
 RowEditor::~RowEditor()
@@ -120,19 +120,26 @@ void RowEditor::setArch(const QString &arch)
     ui->lineEditArch->setText(arch);
 }
 
-void RowEditor::initAutocomplete(const QStringList &stringList)
+void RowEditor::initProjectAutocompleter(const QStringList &stringList)
 {
     QStringListModel *model = new QStringListModel(stringList);
-    completer = new QCompleter(model, this);
+    projectCompleter = new QCompleter(model, this);
 
-    ui->lineEditProject->setCompleter(completer);
+    ui->lineEditProject->setCompleter(projectCompleter);
 
     connect(ui->lineEditProject, SIGNAL(textEdited(const QString&)),
-            this, SLOT(refreshAutocomplete(const QString&)));
+            this, SLOT(refreshProjectAutocompleter(const QString&)));
+    connect(projectCompleter, SIGNAL(activated(const QString&)),
+            this, SLOT(autocompletedProjectName_clicked(const QString&)));
 }
 
-void RowEditor::refreshAutocomplete(const QString&)
+void RowEditor::refreshProjectAutocompleter(const QString&)
 {
-    QStringListModel *model = (QStringListModel*)(completer->model());
+    QStringListModel *model = (QStringListModel*)(projectCompleter->model());
     model->setStringList(stringList);
+}
+
+void RowEditor::autocompletedProjectName_clicked(const QString&)
+{
+    ui->lineEditPackage->setFocus();
 }
