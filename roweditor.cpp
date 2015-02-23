@@ -41,10 +41,12 @@ RowEditor::RowEditor(QWidget *parent) :
     if (!QFile::exists(fileName) ||
             lastUpdateStr.isEmpty() ||
             lastUpdateDate.daysTo(QDate::currentDate()) == -7) {
-        qDebug() << "Downloading project list...";
         OBSaccess *obsAccess = OBSaccess::getInstance();
-        stringList = obsAccess->getProjectList();
-        setLastUpdateDate(QDate::currentDate().toString());
+        if (obsAccess->isAuthenticated()) {
+            qDebug() << "Downloading project list...";
+            stringList = obsAccess->getProjectList();
+            setLastUpdateDate(QDate::currentDate().toString());
+        }
     } else {
         qDebug() << "Reading project list...";
         xmlReader = new OBSxmlReader();
