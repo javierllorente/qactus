@@ -51,8 +51,8 @@ public:
 
 private:
     Ui::RowEditor *ui;
-    QString readSettings();
-    void writeSettings();
+    QString getLastUpdateDate();
+    void setLastUpdateDate(const QString &date);
     QStringList stringList;
     QCompleter *projectCompleter;
     void initProjectAutocompleter(const QStringList &stringList);

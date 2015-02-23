@@ -27,7 +27,7 @@ RowEditor::RowEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QString lastUpdateStr = readSettings();
+    QString lastUpdateStr = getLastUpdateDate();
     QDate lastUpdateDate = QDate::fromString(lastUpdateStr);
     QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
     QDir::setCurrent(dataDir);
@@ -47,7 +47,7 @@ RowEditor::RowEditor(QWidget *parent) :
         obsAccess->setUrl(url);
         obsAccess->makeRequest();
         stringList = obsAccess->getProjectList();
-        writeSettings();
+        setLastUpdateDate(QDate::currentDate().toString());
     } else {
         qDebug() << "Reading project list...";
         xmlReader = new OBSxmlReader();
@@ -63,20 +63,20 @@ RowEditor::~RowEditor()
     delete ui;
 }
 
-QString RowEditor::readSettings()
+QString RowEditor::getLastUpdateDate()
 {
     QSettings settings("Qactus","Qactus");
-    settings.beginGroup("ProjectList");
-    QString lastUpdateItem = settings.value("lastupdate").toString();
+    settings.beginGroup("LastUpdate");
+    QString lastUpdateItem = settings.value("ProjectList").toString();
     settings.endGroup();
     return lastUpdateItem;
 }
 
-void RowEditor::writeSettings()
+void RowEditor::setLastUpdateDate(const QString &date)
 {
     QSettings settings("Qactus","Qactus");
-    settings.beginGroup("ProjectList");
-    settings.setValue("lastupdate",  QDate::currentDate().toString());
+    settings.beginGroup("LastUpdate");
+    settings.setValue("ProjectList", date);
     settings.endGroup();
 }
 
