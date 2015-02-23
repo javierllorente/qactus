@@ -71,7 +71,7 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    OBSaccess *obsaccess;
+    OBSaccess *obsAccess;
     OBSpackage *obsPackage;
     QList<OBSrequest*> obsRequests;
 

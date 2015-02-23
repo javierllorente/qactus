@@ -37,8 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    obsaccess = OBSaccess::getInstance();
-    obsaccess->setApiUrl("https://api.opensuse.org");
+    obsAccess = OBSaccess::getInstance();
+    obsAccess->setApiUrl("https://api.opensuse.org");
     obsPackage = new OBSpackage();
 
     createToolbar();
@@ -52,12 +52,12 @@ MainWindow::MainWindow(QWidget *parent) :
     configureDialog = new Configure(this);
     ui->actionConfigure_Qactus->setEnabled(false);
 
-    connect(obsaccess, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
+    connect(obsAccess, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
 
     readSettings();
 
     // Show login dialog on startup if user isn't logged in
-    if(!obsaccess->isAuthenticated()) {
+    if(!obsAccess->isAuthenticated()) {
         // Centre login dialog
         loginDialog->move(this->geometry().center().x()-loginDialog->geometry().center().x(),
                           this->geometry().center().y()-loginDialog->geometry().center().y());
@@ -246,9 +246,9 @@ void MainWindow::refreshView()
                 tableStringList.append(QString(ui->table->item(r,2)->text()));
                 tableStringList.append(QString(ui->table->item(r,3)->text()));
                 tableStringList.append(QString(ui->table->item(r,1)->text()));
-                obsaccess->getBuildStatus(tableStringList);
+                obsAccess->getBuildStatus(tableStringList);
 
-                obsPackage = obsaccess->getPackage();
+                obsPackage = obsAccess->getPackage();
                 insertData(obsPackage, r);
             }
         }
@@ -259,7 +259,7 @@ void MainWindow::refreshView()
     }
 
     // Get SRs
-    obsRequests = obsaccess->getRequests();
+    obsRequests = obsAccess->getRequests();
     insertRequests(obsRequests);
 }
 
@@ -377,7 +377,7 @@ void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
 //    If we already have inserted submit requests,
 //    we remove them and insert the latest ones
     int rows = ui->tableRequests->rowCount();
-    int requests = obsaccess->getRequestNumber();
+    int requests = obsAccess->getRequestNumber();
     qDebug () << "Rows:" << rows;
     qDebug() << "Requests:" << requests;
 
@@ -388,7 +388,7 @@ void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
         }
     }
 
-    qDebug() << "RequestNumber: " << obsaccess->getRequestNumber();
+    qDebug() << "RequestNumber: " << obsAccess->getRequestNumber();
     qDebug() << "requests: " << requests;
     qDebug() << "obsRequests size: " << obsRequests.size();
 
@@ -455,15 +455,14 @@ void MainWindow::getDescription(QTableWidgetItem* item)
 
 void MainWindow::pushButton_Login_clicked()
 {
-    obsaccess->setCredentials(loginDialog->getUsername(), loginDialog->getPassword());
+    obsAccess->setCredentials(loginDialog->getUsername(), loginDialog->getPassword());
 
 //    Display a warning if the username/password is empty.
     if (loginDialog->getUsername().isEmpty() || loginDialog->getPassword().isEmpty()) {
         QMessageBox::warning(this,tr("Error"), tr("Empty username/password"), QMessageBox::Ok );
     } else {
         loginDialog->close();
-
-        obsaccess->login();
+        obsAccess->login();
     }
 }
 
@@ -593,7 +592,7 @@ void MainWindow::writeSettings()
     settings.endGroup();
 
     settings.beginGroup("Auth");
-    settings.setValue("Username", obsaccess->getUsername());
+    settings.setValue("Username", obsAccess->getUsername());
     settings.endGroup();
 
     settings.beginGroup("Timer");
