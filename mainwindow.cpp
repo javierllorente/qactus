@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     obsaccess = OBSaccess::getInstance();
+    obsaccess->setApiUrl("https://api.opensuse.org");
     obsPackage = new OBSpackage();
 
     createToolbar();
@@ -240,10 +241,13 @@ void MainWindow::refreshView()
             } else {
                 qDebug() << "Refreshing view...";
 
-//                URL format: https://api.opensuse.org/build/KDE:Release:45/openSUSE_11.3/x86_64/ktorrent/_status
-                QUrl url = "https://api.opensuse.org/build/" + QString(ui->table->item(r,0)->text()) + "/" + QString(ui->table->item(r,2)->text()) + "/" + QString(ui->table->item(r,3)->text()) + "/" + QString(ui->table->item(r,1)->text()) + "/_status";
-                obsaccess->setUrl(url);
-                obsaccess->makeRequest();
+                QStringList tableStringList;
+                tableStringList.append(QString(ui->table->item(r,0)->text()));
+                tableStringList.append(QString(ui->table->item(r,2)->text()));
+                tableStringList.append(QString(ui->table->item(r,3)->text()));
+                tableStringList.append(QString(ui->table->item(r,1)->text()));
+                obsaccess->getBuildStatus(tableStringList);
+
                 obsPackage = obsaccess->getPackage();
                 insertData(obsPackage, r);
             }
@@ -255,9 +259,6 @@ void MainWindow::refreshView()
     }
 
     // Get SRs
-    QUrl url = "https://api.opensuse.org/request?view=collection&states=new&roles=maintainer&user=" + obsaccess->getUsername();
-    obsaccess->setUrl(url);
-    obsaccess->makeRequest();
     obsRequests = obsaccess->getRequests();
     insertRequests(obsRequests);
 }
@@ -462,9 +463,7 @@ void MainWindow::pushButton_Login_clicked()
     } else {
         loginDialog->close();
 
-        QUrl url("https://api.opensuse.org");
-        obsaccess->setUrl(url);
-        obsaccess->makeRequest();
+        obsaccess->login();
     }
 }
 

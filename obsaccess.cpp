@@ -61,10 +61,10 @@ QString OBSaccess::getUsername()
     return curUsername;
 }
 
-void OBSaccess::makeRequest()
+void OBSaccess::request(const QString &urlStr)
 {
     QNetworkRequest request;
-    request.setUrl(url);
+    request.setUrl(QUrl(urlStr));
     const QString userAgent = QCoreApplication::applicationName() + " " +
             QCoreApplication::applicationVersion();
     qDebug() << "User-Agent:" << userAgent;
@@ -77,11 +77,10 @@ void OBSaccess::makeRequest()
     loop->exec();
 }
 
-void OBSaccess::setUrl(QUrl url)
+void OBSaccess::setApiUrl(const QString &apiUrl)
 {
-    this->url = url;
+    this->apiUrl = apiUrl;
 }
-
 
 void OBSaccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
 {
@@ -150,6 +149,21 @@ void OBSaccess::replyFinished(QNetworkReply *reply)
     }
 }
 
+void OBSaccess::login()
+{
+    request(apiUrl + "/");
+}
+
+void OBSaccess::getBuildStatus(const QStringList &stringList)
+{
+//    URL format: https://api.opensuse.org/build/KDE:Extra/openSUSE_13.2/x86_64/qrae/_status
+    request(apiUrl + "/build/"
+                 + stringList[0] + "/"
+            + stringList[1] + "/"
+            + stringList[2] + "/"
+            + stringList[3] + "/_status");
+}
+
 OBSpackage* OBSaccess::getPackage()
 {
     return xmlReader->getPackage();
@@ -157,6 +171,7 @@ OBSpackage* OBSaccess::getPackage()
 
 QList<OBSrequest*> OBSaccess::getRequests()
 {
+    request(apiUrl + "/request?view=collection&states=new&roles=maintainer&user=" + getUsername());
     return xmlReader->getRequests();
 }
 
@@ -167,6 +182,7 @@ int OBSaccess::getRequestNumber()
 
 QStringList OBSaccess::getProjectList()
 {
+    request(apiUrl + "/source");
     return xmlReader->getProjectList();
 }
 

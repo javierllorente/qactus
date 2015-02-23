@@ -43,9 +43,6 @@ RowEditor::RowEditor(QWidget *parent) :
             lastUpdateDate.daysTo(QDate::currentDate()) == -7) {
         qDebug() << "Downloading project list...";
         OBSaccess *obsAccess = OBSaccess::getInstance();
-        QUrl url("https://api.opensuse.org/source");
-        obsAccess->setUrl(url);
-        obsAccess->makeRequest();
         stringList = obsAccess->getProjectList();
         setLastUpdateDate(QDate::currentDate().toString());
     } else {

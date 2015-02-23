@@ -43,8 +43,9 @@ class OBSaccess : public QObject
 public:
     static OBSaccess* getInstance();
     bool isAuthenticated();
-    void setUrl(QUrl url);
-    void makeRequest();
+    void setApiUrl(const QString &apiUrl);
+    void login();
+    void getBuildStatus(const QStringList &list);
     QString getUsername();
     OBSpackage* getPackage();
     QList<OBSrequest*> getRequests();
@@ -72,7 +73,8 @@ private:
     void createManager();
     OBSaccess();
     static OBSaccess* instance;
-    QUrl url;
+    QString apiUrl;
+    void request(const QString &urlStr);
     QString curUsername;
     QString curPassword;
     QString data;
