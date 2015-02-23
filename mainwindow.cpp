@@ -246,9 +246,7 @@ void MainWindow::refreshView()
                 tableStringList.append(QString(ui->table->item(r,2)->text()));
                 tableStringList.append(QString(ui->table->item(r,3)->text()));
                 tableStringList.append(QString(ui->table->item(r,1)->text()));
-                obsAccess->getBuildStatus(tableStringList);
-
-                obsPackage = obsAccess->getPackage();
+                obsPackage = obsAccess->getBuildStatus(tableStringList);
                 insertData(obsPackage, r);
             }
         }

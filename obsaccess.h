@@ -45,9 +45,8 @@ public:
     bool isAuthenticated();
     void setApiUrl(const QString &apiUrl);
     void login();
-    void getBuildStatus(const QStringList &list);
+    OBSpackage* getBuildStatus(const QStringList &list);
     QString getUsername();
-    OBSpackage* getPackage();
     QList<OBSrequest*> getRequests();
     int getRequestNumber();
     QStringList getProjectList();

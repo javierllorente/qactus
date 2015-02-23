@@ -154,7 +154,7 @@ void OBSaccess::login()
     request(apiUrl + "/");
 }
 
-void OBSaccess::getBuildStatus(const QStringList &stringList)
+OBSpackage* OBSaccess::getBuildStatus(const QStringList &stringList)
 {
 //    URL format: https://api.opensuse.org/build/KDE:Extra/openSUSE_13.2/x86_64/qrae/_status
     request(apiUrl + "/build/"
@@ -162,10 +162,6 @@ void OBSaccess::getBuildStatus(const QStringList &stringList)
             + stringList[1] + "/"
             + stringList[2] + "/"
             + stringList[3] + "/_status");
-}
-
-OBSpackage* OBSaccess::getPackage()
-{
     return xmlReader->getPackage();
 }
 
