@@ -100,7 +100,7 @@ private:
 
     QString packageErrors;
 
-    void insertData(OBSpackage*, const int&);
+    void insertBuildStatus(OBSpackage*, const int&);
     void insertRequests(QList<OBSrequest*>);
     QString breakLine(QString&, const int&);
     void checkStatus(const QString&, const int&);

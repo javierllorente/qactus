@@ -247,7 +247,7 @@ void MainWindow::refreshView()
                 tableStringList.append(QString(ui->table->item(r,3)->text()));
                 tableStringList.append(QString(ui->table->item(r,1)->text()));
                 obsPackage = obsAccess->getBuildStatus(tableStringList);
-                insertData(obsPackage, r);
+                insertBuildStatus(obsPackage, r);
             }
         }
 
@@ -292,7 +292,7 @@ void MainWindow::createTableRequests()
 
 }
 
-void MainWindow::insertData(OBSpackage* obsPackage, const int& row)
+void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)
 {
     QString details = obsPackage->getDetails();
     QString status = obsPackage->getStatus();
