@@ -92,7 +92,7 @@ void MainWindow::enableButtons(bool isAuthenticated)
     if (isAuthenticated) {
         qDebug() << "User is authenticated";
         readSettingsTimer();
-        statusBar()->showMessage(tr("Ready"), 0);
+        statusBar()->showMessage(tr("Online"), 0);
     } else {
         loginDialog->show();
     }
@@ -249,6 +249,7 @@ void MainWindow::refreshView()
             tableStringList.append(QString(ui->table->item(r,3)->text()));
             tableStringList.append(QString(ui->table->item(r,1)->text()));
 //            Get build status
+            statusBar()->showMessage(tr("Getting build statuses..."), 5000);
             obsPackage = obsAccess->getBuildStatus(tableStringList);
             insertBuildStatus(obsPackage, r);
         }
@@ -260,8 +261,10 @@ void MainWindow::refreshView()
     }
 
 //    Get SRs
+    statusBar()->showMessage(tr("Getting requests..."), 5000);
     obsRequests = obsAccess->getRequests();
     insertRequests(obsRequests);
+    statusBar()->showMessage(tr("Done"), 0);
 }
 
 void MainWindow::createTable()
@@ -374,7 +377,6 @@ void MainWindow::paintStatus(const QString& status)
 
 void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
 {
-
 //    If we already have inserted submit requests,
 //    we remove them and insert the latest ones
     int rows = ui->treeRequests->topLevelItemCount();
