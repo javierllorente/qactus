@@ -233,30 +233,33 @@ void MainWindow::removeRow()
 
 void MainWindow::refreshView()
 {
-    int rows=ui->table->rowCount();
+    qDebug() << "Refreshing view...";
+    int rows = ui->table->rowCount();
 
     for (int r=0; r<rows; r++) {
-            if (!ui->table->item(r,0)||!ui->table->item(r,1)||!ui->table->item(r,2)||!ui->table->item(r,3)) {
-//                Ignore rows with empty fields (and process rows with data)
-            } else {
-                qDebug() << "Refreshing view...";
-
-                QStringList tableStringList;
-                tableStringList.append(QString(ui->table->item(r,0)->text()));
-                tableStringList.append(QString(ui->table->item(r,2)->text()));
-                tableStringList.append(QString(ui->table->item(r,3)->text()));
-                tableStringList.append(QString(ui->table->item(r,1)->text()));
-                obsPackage = obsAccess->getBuildStatus(tableStringList);
-                insertBuildStatus(obsPackage, r);
-            }
+//        Ignore rows with empty cells and process rows with data
+        if (ui->table->item(r,0)->text().isEmpty() ||
+                ui->table->item(r,1)->text().isEmpty() ||
+                ui->table->item(r,2)->text().isEmpty() ||
+                ui->table->item(r,3)->text().isEmpty()) {
+        } else {
+            QStringList tableStringList;
+            tableStringList.append(QString(ui->table->item(r,0)->text()));
+            tableStringList.append(QString(ui->table->item(r,2)->text()));
+            tableStringList.append(QString(ui->table->item(r,3)->text()));
+            tableStringList.append(QString(ui->table->item(r,1)->text()));
+//            Get build status
+            obsPackage = obsAccess->getBuildStatus(tableStringList);
+            insertBuildStatus(obsPackage, r);
         }
+    }
 
     if (packageErrors.size()>1) {
         QMessageBox::critical(this,tr("Error"), packageErrors, QMessageBox::Ok );
         packageErrors.clear();
     }
 
-    // Get SRs
+//    Get SRs
     obsRequests = obsAccess->getRequests();
     insertRequests(obsRequests);
 }
