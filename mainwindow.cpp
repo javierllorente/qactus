@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     trayIcon = new TrayIcon(this);
     createActions();
     createTable();
-    createTableRequests();
+    createTreeRequests();
     createStatusBar();
 
     loginDialog = new Login(this);
@@ -279,19 +279,19 @@ void MainWindow::createTable()
 
 }
 
-void MainWindow::createTableRequests()
+void MainWindow::createTreeRequests()
 {
-    ui->tableRequests->setColumnCount(7);
+    ui->treeRequests->setColumnCount(7);
 
-    ui->tableRequests->setColumnWidth(0, 140); // Date
-    ui->tableRequests->setColumnWidth(1, 60); // SR ID
-    ui->tableRequests->setColumnWidth(2, 160); // Source project
-    ui->tableRequests->setColumnWidth(3, 160); // Target project
-    ui->tableRequests->setColumnWidth(4, 90); // Requester
-    ui->tableRequests->setColumnWidth(5, 60); // Type
-    ui->tableRequests->setColumnWidth(6, 60); // State
+    ui->treeRequests->setColumnWidth(0, 140); // Date
+    ui->treeRequests->setColumnWidth(1, 60); // SR ID
+    ui->treeRequests->setColumnWidth(2, 160); // Source project
+    ui->treeRequests->setColumnWidth(3, 160); // Target project
+    ui->treeRequests->setColumnWidth(4, 90); // Requester
+    ui->treeRequests->setColumnWidth(5, 60); // Type
+    ui->treeRequests->setColumnWidth(6, 60); // State
 
-    connect(ui->tableRequests, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(getDescription(QTableWidgetItem*)));
+    connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getDescription(QTreeWidgetItem*, int)));
 
 }
 
@@ -377,16 +377,12 @@ void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
 
 //    If we already have inserted submit requests,
 //    we remove them and insert the latest ones
-    int rows = ui->tableRequests->rowCount();
+    int rows = ui->treeRequests->topLevelItemCount();
     int requests = obsAccess->getRequestNumber();
-    qDebug () << "Rows:" << rows;
-    qDebug() << "Requests:" << requests;
+    qDebug() << "InsertRequests() " << "Rows:" << rows << "Requests:" << requests;
 
     if (rows>0) {
-        for (int i=requests-1; i!=-1; i--) {
-            qDebug () << "Removing row at:" << i;
-            ui->tableRequests->removeRow(i);
-        }
+        ui->treeRequests->clear();
     }
 
     qDebug() << "RequestNumber: " << obsAccess->getRequestNumber();
@@ -394,64 +390,24 @@ void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
     qDebug() << "obsRequests size: " << obsRequests.size();
 
     for (int i=0; i<obsRequests.size(); i++) {
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeRequests);
+        item->setText(0, obsRequests.at(i)->getDate());
+        item->setText(1, obsRequests.at(i)->getId());
+        item->setText(2, obsRequests.at(i)->getSource());
+        item->setText(3, obsRequests.at(i)->getTarget());
+        item->setText(4, obsRequests.at(i)->getRequester());
+        item->setText(5, obsRequests.at(i)->getActionType());
+        item->setText(6, obsRequests.at(i)->getState());
 
-        qDebug() << "Insert row";
-        ui->tableRequests->insertRow(i);
-
-        reqDataItem = new QTableWidgetItem();
-        reqDataItem->setText(obsRequests.at(i)->getDate());
-        qDebug() << "Request Date: " << obsRequests.at(i)->getDate();
-        ui->tableRequests->setItem(i, 0, reqDataItem);
-        reqDataItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        reqDataItem->setForeground(Qt::black);
-
-        reqIDItem = new QTableWidgetItem();
-        reqIDItem->setText(obsRequests.at(i)->getId());
-        qDebug() << "Request ID: " << obsRequests.at(i)->getId();
-        ui->tableRequests->setItem(i, 1, reqIDItem);
-        reqIDItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        reqIDItem->setForeground(Qt::black);
-
-        reqSourceProjectItem = new QTableWidgetItem();
-        reqSourceProjectItem->setText(obsRequests.at(i)->getSource());
-        qDebug() << "Request Source: " << obsRequests.at(i)->getSource();
-        ui->tableRequests->setItem(i, 2, reqSourceProjectItem);
-        reqSourceProjectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        reqSourceProjectItem->setForeground(Qt::black);
-
-        reqTargetProjectItem = new QTableWidgetItem();
-        reqTargetProjectItem->setText(obsRequests.at(i)->getTarget());
-        qDebug() << "Request Target: " << obsRequests.at(i)->getTarget();
-        ui->tableRequests->setItem(i, 3, reqTargetProjectItem);
-        reqTargetProjectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        reqTargetProjectItem->setForeground(Qt::black);
-
-        requesterItem = new QTableWidgetItem();
-        requesterItem->setText(obsRequests.at(i)->getRequester());
-        ui->tableRequests->setItem(i, 4, requesterItem);
-        requesterItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        requesterItem->setForeground(Qt::black);
-
-        reqTypeItem = new QTableWidgetItem();
-        reqTypeItem->setText(obsRequests.at(i)->getActionType());
-        ui->tableRequests->setItem(i, 5, reqTypeItem);
-        reqTypeItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        reqTypeItem->setForeground(Qt::black);
-
-        reqStateItem = new QTableWidgetItem();
-        reqStateItem->setText(obsRequests.at(i)->getState());
-        ui->tableRequests->setItem(i, 6, reqStateItem);
-        reqStateItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        reqStateItem->setForeground(Qt::black);
+        ui->treeRequests->insertTopLevelItem(i, item);
     }
 }
 
-void MainWindow::getDescription(QTableWidgetItem* item)
+void MainWindow::getDescription(QTreeWidgetItem* item, int)
 {
-//    qDebug() << "getDescription. row:" + QString::number(column) + " " + QString::number(row);
-    qDebug() << "getDescription. row:" + QString::number(item->row());
-    qDebug() << "Description: " + obsRequests.at(item->row())->getDescription();
-    ui->textBrowser->setText(obsRequests.at(item->row())->getDescription());
+    qDebug() << "getDescription() " << "Row: " + QString::number(ui->treeRequests->indexOfTopLevelItem(item));
+    qDebug() << "Description: " + obsRequests.at(ui->treeRequests->indexOfTopLevelItem(item))->getDescription();
+    ui->textBrowser->setText(obsRequests.at(ui->treeRequests->indexOfTopLevelItem(item))->getDescription());
 }
 
 void MainWindow::pushButton_Login_clicked()

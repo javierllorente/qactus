@@ -91,7 +91,7 @@ private:
 //    QAction *action_Configure;
 
     void createTable();
-    void createTableRequests();
+    void createTreeRequests();
 
     void createStatusBar();
     void writeSettings();
@@ -109,13 +109,6 @@ private:
     bool event(QEvent *event);
 
     QTableWidgetItem *newItem;
-    QTableWidgetItem *reqDataItem;
-    QTableWidgetItem *reqIDItem;
-    QTableWidgetItem *reqSourceProjectItem;
-    QTableWidgetItem *reqTargetProjectItem;
-    QTableWidgetItem *requesterItem;
-    QTableWidgetItem *reqTypeItem;
-    QTableWidgetItem *reqStateItem;
 
     QList<QString> statusList;
 
@@ -124,7 +117,7 @@ private:
 
 private slots:
     void enableButtons(bool);
-    void getDescription(QTableWidgetItem*);
+    void getDescription(QTreeWidgetItem*, int);
     void addRow();
     void editRow(QTableWidgetItem*);
     void insertRow();
