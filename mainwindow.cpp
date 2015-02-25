@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createToolbar();
     trayIcon = new TrayIcon(this);
     createActions();
-    createTable();
+    createTreePackages();
     createTreeRequests();
     createStatusBar();
 
@@ -130,124 +130,91 @@ void MainWindow::createToolbar()
 
 }
 
-void MainWindow::insertRow()
-{
-//    Append a row
-    int row = ui->table->rowCount();
-    ui->table->insertRow(row);
-//    Append an empty statusList
-    statusList.insert(row,"");
-    qDebug() << "Row appended at: " << row;
-}
-
 void MainWindow::addRow()
 {
     qDebug() << "Launching RowEditor...";
     RowEditor *rowEditor = new RowEditor(this);
 
     if (rowEditor->exec()) {
-        insertRow();
-        int row = ui->table->rowCount()-1;
-
-        QTableWidgetItem *projectItem = new QTableWidgetItem();
-        projectItem->setText(rowEditor->getProject());
-        ui->table->setItem(row, 0, projectItem);
-        projectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-        QTableWidgetItem *packageItem= new QTableWidgetItem();
-        packageItem->setText(rowEditor->getPackage());
-        ui->table->setItem(row, 1, packageItem);
-        packageItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-        QTableWidgetItem *repositoryItem = new QTableWidgetItem();
-        repositoryItem->setText(rowEditor->getRepository());
-        ui->table->setItem(row, 2, repositoryItem);
-        repositoryItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-        QTableWidgetItem *archItem = new QTableWidgetItem();
-        archItem->setText(rowEditor->getArch());
-        ui->table->setItem(row, 3, archItem);
-        archItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);;
+        int index = ui->treePackages->topLevelItemCount()-1;
+        item->setText(0, rowEditor->getProject());
+        item->setText(1, rowEditor->getPackage());
+        item->setText(2, rowEditor->getRepository());
+        item->setText(3, rowEditor->getArch());
+        ui->treePackages->addTopLevelItem(item);
+        statusList.insert(index,"");
+        qDebug() << "addRow() build" << item->text(1) << "added at" << index;
     }
     delete rowEditor;
 }
 
-void MainWindow::editRow(QTableWidgetItem* item)
+void MainWindow::editRow(QTreeWidgetItem* item, int)
 {
     qDebug() << "Launching RowEditor in edit mode...";
     RowEditor *rowEditor = new RowEditor(this);
-    int row = item->row();
-    rowEditor->setProject(ui->table->item(row,0)->text());
-    rowEditor->setPackage(ui->table->item(row,1)->text());
-    rowEditor->setRepository(ui->table->item(row,2)->text());
-    rowEditor->setArch(ui->table->item(row,3)->text());
+    rowEditor->setProject(item->text(0));
+    rowEditor->setPackage(item->text(1));
+    rowEditor->setRepository(item->text(2));
+    rowEditor->setArch(item->text(3));
     rowEditor->show();
 
     if (rowEditor->exec()) {
-        QTableWidgetItem *projectItem = new QTableWidgetItem();
-        projectItem->setText(rowEditor->getProject());
-        ui->table->setItem(row, 0, projectItem);
-        projectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        int index = ui->treePackages->indexOfTopLevelItem(item);
+        item->setText(0, rowEditor->getProject());
+        item->setText(1, rowEditor->getPackage());
+        item->setText(2, rowEditor->getRepository());
+        item->setText(3, rowEditor->getArch());
+        item->setText(4, "");
+        ui->treePackages->insertTopLevelItem(index, item);
 
-        QTableWidgetItem *packageItem= new QTableWidgetItem();
-        packageItem->setText(rowEditor->getPackage());
-        ui->table->setItem(row, 1, packageItem);
-        packageItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        statusList[index].clear();
+        qDebug() << "editRow() build edited at" << index;
+        qDebug() << "editRow() statusList at" << index << statusList.at(index) << "(it should be empty)";
 
-        QTableWidgetItem *repositoryItem = new QTableWidgetItem();
-        repositoryItem->setText(rowEditor->getRepository());
-        ui->table->setItem(row, 2, repositoryItem);
-        repositoryItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-        QTableWidgetItem *archItem = new QTableWidgetItem();
-        archItem->setText(rowEditor->getArch());
-        ui->table->setItem(row, 3, archItem);
-        archItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-        statusList[row].clear();
-        qDebug() << "statusList editRow:" << statusList.at(row);
     }
     delete rowEditor;
 }
 
 void MainWindow::removeRow()
 {
-//    Check if the table is not empty
-    if (ui->table->rowCount()!=0) {
+//    Check if the tree is not empty to avoid "deleting nothing"
+    if (ui->treePackages->topLevelItemCount()!=0) {
 //    Remove selected row
-    int row = ui->table->currentRow();
+    QTreeWidgetItem *item = ui->treePackages->currentItem();
+    int index = ui->treePackages->indexOfTopLevelItem(item);
 
 //    Remove statusList for selected row
 //    -1 means that there is no row selected
-        if (row!=-1) {
-            ui->table->removeRow(row);
-            statusList.removeAt(row);
-            qDebug() << "Row removed: " << row;
+        if (index!=-1) {
+            ui->treePackages->takeTopLevelItem(index);
+            statusList.removeAt(index);
+            qDebug() << "removeRow() Row removed: " << index << "statusList size:" << statusList.size();
         } else {
             qDebug () << "No row selected";
         }
     } else {
-//        If the table is empty, do nothing
+//        If the tree is empty, do nothing
     }    
 }
 
 void MainWindow::refreshView()
 {
     qDebug() << "Refreshing view...";
-    int rows = ui->table->rowCount();
+    int rows = ui->treePackages->topLevelItemCount();
 
     for (int r=0; r<rows; r++) {
 //        Ignore rows with empty cells and process rows with data
-        if (ui->table->item(r,0)->text().isEmpty() ||
-                ui->table->item(r,1)->text().isEmpty() ||
-                ui->table->item(r,2)->text().isEmpty() ||
-                ui->table->item(r,3)->text().isEmpty()) {
+        if (ui->treePackages->topLevelItem(r)->text(0).isEmpty() ||
+                ui->treePackages->topLevelItem(r)->text(1).isEmpty() ||
+                ui->treePackages->topLevelItem(r)->text(2).isEmpty() ||
+                ui->treePackages->topLevelItem(r)->text(3).isEmpty()) {
         } else {
             QStringList tableStringList;
-            tableStringList.append(QString(ui->table->item(r,0)->text()));
-            tableStringList.append(QString(ui->table->item(r,2)->text()));
-            tableStringList.append(QString(ui->table->item(r,3)->text()));
-            tableStringList.append(QString(ui->table->item(r,1)->text()));
+            tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(0)));
+            tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(2)));
+            tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(3)));
+            tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(1)));
 //            Get build status
             statusBar()->showMessage(tr("Getting build statuses..."), 5000);
             obsPackage = obsAccess->getBuildStatus(tableStringList);
@@ -267,25 +234,21 @@ void MainWindow::refreshView()
     statusBar()->showMessage(tr("Done"), 0);
 }
 
-void MainWindow::createTable()
+void MainWindow::createTreePackages()
 {
-    ui->table->setColumnCount(5);
-    ui->table->setColumnWidth(0, 150); // Project
-    ui->table->setColumnWidth(1, 150); // Package
-    ui->table->setColumnWidth(2, 115); // Repository
-    ui->table->setColumnWidth(3, 75); // Arch
-    ui->table->setColumnWidth(4, 140); // Status
+    ui->treePackages->setColumnCount(5);
+    ui->treePackages->setColumnWidth(0, 150); // Project
+    ui->treePackages->setColumnWidth(1, 150); // Package
+    ui->treePackages->setColumnWidth(2, 115); // Repository
+    ui->treePackages->setColumnWidth(3, 75); // Arch
+    ui->treePackages->setColumnWidth(4, 140); // Status
 
-    connect(ui->table, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editRow(QTableWidgetItem*)));
-
-//    connect(ui->table,SIGNAL(cellChanged(int,int)), this, SLOT(on_cellChanged()));
-
+    connect(ui->treePackages, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(editRow(QTreeWidgetItem*, int)));
 }
 
 void MainWindow::createTreeRequests()
 {
     ui->treeRequests->setColumnCount(7);
-
     ui->treeRequests->setColumnWidth(0, 140); // Date
     ui->treeRequests->setColumnWidth(1, 60); // SR ID
     ui->treeRequests->setColumnWidth(2, 160); // Source project
@@ -295,29 +258,26 @@ void MainWindow::createTreeRequests()
     ui->treeRequests->setColumnWidth(6, 60); // State
 
     connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getDescription(QTreeWidgetItem*, int)));
-
 }
 
 void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)
 {
     QString details = obsPackage->getDetails();
     QString status = obsPackage->getStatus();
-    newItem = new QTableWidgetItem();
-    newItem->setText(status);
 
 //    If the line is too long (>250), break it
     details = breakLine(details, 250);
-
     qDebug() << "String size: " << details.size();
 
-    newItem->setToolTip(details);
-    ui->table->setItem(row, 4, newItem);
+    QTreeWidgetItem *item = ui->treePackages->topLevelItem(row);
+    item->setText(4, status);
+    item->setToolTip(4, details);
+    item->setForeground(4, getStatusColor(status));
+
     qDebug() << "Status " << status << "inserted in" << row;
-    qDebug() << "Rows: " << ui->table->rowCount();
+    qDebug() << "Rows: " << ui->treePackages->topLevelItemCount();
 
     checkStatus(status, row);
-    paintStatus(status);
-
 }
 
 QString MainWindow::breakLine(QString& details, const int& maxSize)
@@ -338,41 +298,47 @@ void MainWindow::checkStatus(const QString& status, const int& row)
 {
 //    If the statusList is not empty and the status is different from last time, change the icon
     if ((statusList.at(row) != "") && (status != statusList.at(row))) {
-        qDebug() << "MainWindow::checkStatus(): Status changed!" << status << statusList.at(row) << " row: " << row;
+        qDebug() << "MainWindow::checkStatus(): Status changed!"
+                 << "Package:" << ui->treePackages->topLevelItem(row)->text(1)
+                 << "Status:" << status << statusList.at(row) << " row: " << row;
         trayIcon->change();
     }
-    qDebug() << "MainWindow::checkStatus(): Status changed?" << status << statusList.at(row) << " row: " << row;
+    qDebug() << "MainWindow::checkStatus(): Status changed?"
+             << status << statusList.at(row) << " row: " << row;
     qDebug() << "statusList Size: " << statusList.size();
 
 //    Insert the last status into statusList
     statusList[row] = status;
 }
 
-void MainWindow::paintStatus(const QString& status)
+QColor MainWindow::getStatusColor(const QString& status)
 {
 //    Change the status' colour according to the status itself
+    QColor color;
+    color = Qt::black;
+
     if(status=="succeeded")
     {
-        newItem->setForeground(Qt::darkGreen);
+        color = Qt::darkGreen;
     }
     else if(status=="blocked")
     {
-        newItem->setForeground(Qt::gray);
+        color = Qt::gray;
     }
     else if(status=="scheduled"||status=="building")
     {
-        newItem->setForeground(Qt::darkBlue);
+        color = Qt::darkBlue;
     }
     else if(status=="failed")
     {
-        newItem->setForeground(Qt::red);
+        color = Qt::red;
     }
     else if(status=="unresolvable")
     {
-        newItem->setForeground(Qt::darkRed);
+        color = Qt::darkRed;
     }
-//    Set the status cell to non-editable
-    newItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+    return color;
 }
 
 void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
@@ -439,31 +405,6 @@ void MainWindow::on_actionAbout_triggered(bool)
 {
     about();
 }
-
-//void MainWindow::on_cellChanged()
-//{
-//    Not working properly
-//    if(ui->table->currentColumn()==3)
-//    {
-//        if (!ui->table->item(r,0)||!ui->table->item(r,1)||!ui->table->item(r,2)||!ui->table->item(r,3))
-//        {
-////                Ignore rows with empty fields
-////                (and process rows with data)
-//        }
-//        else
-//        {
-//            qDebug() << "Refreshing view...";
-//
-//            r=ui->table->currentRow();
-//
-////                URL format: https://api.opensuse.org/build/KDE:Release:45/openSUSE_11.3/x86_64/ktorrent/_status
-//            QUrl url = "https://api.opensuse.org/build/" + QString(ui->table->item(r,0)->text()) + "/" + QString(ui->table->item(r,2)->text()) + "/" + QString(ui->table->item(r,3)->text()) + "/" + QString(ui->table->item(r,1)->text()) + "/_status";
-//
-//            makeRequest(url);
-//        }
-//    }
-//}
-
 
 void MainWindow::about()
 {
@@ -559,18 +500,22 @@ void MainWindow::writeSettings()
     settings.setValue("Value", configureDialog->getTimerValue());
     settings.endGroup();
 
-    int rows=ui->table->rowCount();
+    int rows = ui->treePackages->topLevelItemCount();
     settings.beginWriteArray("Packages");
+    settings.remove("");
     for (int i=0; i<rows; ++i)
     {
         settings.setArrayIndex(i);
-//        Save settings only if all the cells in a row r have text
-        if(ui->table->item(i,0)&&ui->table->item(i,1)&&ui->table->item(i,2)&&ui->table->item(i,3))
+//        Save settings only if all the items in a row have text
+        if (!ui->treePackages->topLevelItem(i)->text(0).isEmpty() &&
+                !ui->treePackages->topLevelItem(i)->text(1).isEmpty() &&
+                !ui->treePackages->topLevelItem(i)->text(2).isEmpty() &&
+                !ui->treePackages->topLevelItem(i)->text(3).isEmpty())
         {
-            settings.setValue("Project",ui->table->item(i, 0)->text());
-            settings.setValue("Package",ui->table->item(i, 1)->text());
-            settings.setValue("Repository",ui->table->item(i, 2)->text());
-            settings.setValue("Arch",ui->table->item(i, 3)->text());
+            settings.setValue("Project",ui->treePackages->topLevelItem(i)->text(0));
+            settings.setValue("Package",ui->treePackages->topLevelItem(i)->text(1));
+            settings.setValue("Repository",ui->treePackages->topLevelItem(i)->text(2));
+            settings.setValue("Arch",ui->treePackages->topLevelItem(i)->text(3));
         }
     }
     settings.endArray();
@@ -591,33 +536,13 @@ void MainWindow::readSettings()
     for (int i=0; i<size; ++i)
         {
             settings.setArrayIndex(i);
-            insertRow();
-
-            QTableWidgetItem *projectItem = new QTableWidgetItem();
-            projectItem->setText(settings.value("Project").toString());
-            ui->table->setItem(i, 0, projectItem);
-            projectItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-            QTableWidgetItem *packageItem = new QTableWidgetItem();
-            packageItem->setText(settings.value("Package").toString());
-            ui->table->setItem(i, 1, packageItem);
-            packageItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-            QTableWidgetItem *repositoryItem = new QTableWidgetItem();
-            repositoryItem->setText(settings.value("Repository").toString());
-            ui->table->setItem(i, 2, repositoryItem);
-            repositoryItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-            QTableWidgetItem *archItem = new QTableWidgetItem();
-            archItem->setText(settings.value("Arch").toString());
-            ui->table->setItem(i, 3, archItem);
-            archItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-            QTableWidgetItem *statusItem = new QTableWidgetItem();
-            statusItem->setText("");
-            ui->table->setItem(i, 4, statusItem);
-            statusItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
+            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
+            item->setText(0, settings.value("Project").toString());
+            item->setText(1, settings.value("Package").toString());
+            item->setText(2, settings.value("Repository").toString());
+            item->setText(3, settings.value("Arch").toString());
+            ui->treePackages->insertTopLevelItem(i, item);
+            statusList.insert(i,"");
         }
         settings.endArray();
 }
@@ -627,11 +552,11 @@ void MainWindow::readSettingsTimer()
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("Timer");
     if (settings.value("Active").toBool()) {
-        qDebug () << "Timer Active=true";
+        qDebug () << "Timer Active = true";
         configureDialog->setCheckedTimerCheckbox(true);
         configureDialog->startTimer(settings.value("value").toInt()*60000);
     } else {
-        qDebug () << "Timer Active=false";
+        qDebug () << "Timer Active = false";
         configureDialog->setTimerValue(settings.value("value").toInt());
     }
     settings.endGroup();

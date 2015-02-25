@@ -90,7 +90,7 @@ private:
     QAction *action_Restore;
 //    QAction *action_Configure;
 
-    void createTable();
+    void createTreePackages();
     void createTreeRequests();
 
     void createStatusBar();
@@ -104,11 +104,9 @@ private:
     void insertRequests(QList<OBSrequest*>);
     QString breakLine(QString&, const int&);
     void checkStatus(const QString&, const int&);
-    void paintStatus(const QString&);
+    QColor getStatusColor(const QString&);
     void closeEvent(QCloseEvent*);
     bool event(QEvent *event);
-
-    QTableWidgetItem *newItem;
 
     QList<QString> statusList;
 
@@ -119,15 +117,13 @@ private slots:
     void enableButtons(bool);
     void getDescription(QTreeWidgetItem*, int);
     void addRow();
-    void editRow(QTableWidgetItem*);
-    void insertRow();
+    void editRow(QTreeWidgetItem*, int);
     void removeRow();
     void refreshView();
     void lineEdit_Password_returnPressed();
     void pushButton_Login_clicked();
     void on_actionAbout_triggered(bool);
     void on_actionQuit_triggered(bool);
-//    void on_cellChanged();
     void trayIconClicked(QSystemTrayIcon::ActivationReason);
     void toggleVisibility();
     void about();
