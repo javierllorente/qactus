@@ -90,7 +90,7 @@ void OBSaccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator
 
     if (reply->error()!=QNetworkReply::NoError)
     {
-            qDebug() << "Request failed! " << reply->errorString();
+            qDebug() << "Request failed!" << reply->errorString();
 //            statusBar()->showMessage(tr("Connection failed"), 0);
     }
     else
@@ -127,13 +127,18 @@ void OBSaccess::replyFinished(QNetworkReply *reply)
       // See http://doc.qt.nokia.com/latest/qnetworkreply.html for more info
 
     data = (QString) reply->readAll();
-    qDebug () << "reply" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug() << "networkreply: " << data;
-    qDebug() << "url: " << reply->url();
+    qDebug() << "URL:" << reply->url();
+    int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << "HTTP status code:" << httpStatusCode;
+//    qDebug() << "Network Reply: " << data;
 
-    if (reply->error() != QNetworkReply::NoError) {
+    if (httpStatusCode==404 && isAuthenticated()) {
+        xmlReader->addData(data);
+    } else if (reply->error() != QNetworkReply::NoError) {
         authenticated = false;
         emit isAuthenticated(authenticated);
+        qDebug() << "Request failed!";
+
 //        packageErrors += reply->errorString() + "\n\n";
 //        qDebug() << "Request failed, " << packageErrors;
 ////        QMessageBox::critical(this,tr("Error"), tr("An error has occured:\n") + reply->errorString(), QMessageBox::Ok );
@@ -143,9 +148,7 @@ void OBSaccess::replyFinished(QNetworkReply *reply)
         authenticated = true;
         emit isAuthenticated(authenticated);
         qDebug() << "Request succeeded!";
-
         xmlReader->addData(data);
-
     }
 }
 
