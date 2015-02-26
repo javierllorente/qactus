@@ -385,6 +385,9 @@ void MainWindow::pushButton_Login_clicked()
         QMessageBox::warning(this,tr("Error"), tr("Empty username/password"), QMessageBox::Ok );
     } else {
         loginDialog->close();
+        QProgressDialog progress(tr("Logging in..."), 0, 0, 0, this);
+        progress.setWindowModality(Qt::WindowModal);
+        progress.show();
         obsAccess->login();
     }
 }
