@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2014 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,6 +44,9 @@ QString Login::getUsername()
 void Login::setUsername(const QString& username)
 {
     ui->lineEdit_Username->setText(username);
+    if (!username.isEmpty()) {
+        ui->lineEdit_Password->setFocus();
+    }
 }
 
 QString Login::getPassword()
