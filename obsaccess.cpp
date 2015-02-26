@@ -185,6 +185,12 @@ QStringList OBSaccess::getProjectList()
     return xmlReader->getProjectList();
 }
 
+QStringList OBSaccess::getPackageListForProject(const QString &projectName)
+{
+    request(apiUrl + "/source/" + projectName);
+    return xmlReader->getProjectList();
+}
+
 void OBSaccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &list)
 {
     QString errorString;

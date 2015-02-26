@@ -50,6 +50,7 @@ public:
     QList<OBSrequest*> getRequests();
     int getRequestNumber();
     QStringList getProjectList();
+    QStringList getPackageListForProject(const QString &projectName);
 
 signals:
     void isAuthenticated(bool authenticated);
