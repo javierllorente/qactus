@@ -276,7 +276,14 @@ void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)
     qDebug() << "Build status" << status << "inserted in" << row
              << "(Total rows:" << ui->treePackages->topLevelItemCount() << ")";
 
-    checkStatus(oldStatus, newStatus);
+//    If the old status is not empty and it is different from latest one,
+//    change the tray icon
+    if ((oldStatus != "") && (oldStatus != newStatus)) {
+        qDebug() << "Build status has changed!";
+        trayIcon->change();
+        toggleItemFont(item);
+    }
+    qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
 }
 
 QString MainWindow::breakLine(QString& details, const int& maxSize)
@@ -291,17 +298,6 @@ QString MainWindow::breakLine(QString& details, const int& maxSize)
         }
     }
     return details;
-}
-
-void MainWindow::checkStatus(const QString& oldStatus, const QString& newStatus)
-{
-//    If the old status is not empty and it is different from latest one,
-//    change the tray icon
-    if ((oldStatus != "") && (oldStatus != newStatus)) {
-        qDebug() << "Build status has changed!";
-        trayIcon->change();
-    }
-    qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
 }
 
 QColor MainWindow::getStatusColor(const QString& status)
@@ -332,6 +328,15 @@ QColor MainWindow::getStatusColor(const QString& status)
     }
 
     return color;
+}
+
+void MainWindow::toggleItemFont(QTreeWidgetItem *item)
+{
+    QFont font = item->font(0);
+    font.setBold(!font.bold());
+    for (int i=0; i<5; i++) {
+        item->setFont(i, font);
+    }
 }
 
 void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
@@ -584,6 +589,9 @@ bool MainWindow::event(QEvent *event)
         qDebug() << "Window activated";
         if (trayIcon->hasChangedIcon()) {
             trayIcon->setTrayIcon("obs.png");
+            for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
+                toggleItemFont(ui->treePackages->topLevelItem(i));
+            }
         }
         break;
     default:
