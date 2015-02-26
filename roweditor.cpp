@@ -54,7 +54,7 @@ RowEditor::RowEditor(QWidget *parent) :
         qDebug() << "Reading project list...";
         xmlReader = new OBSxmlReader();
         xmlReader->readFile(fileName);
-        stringList = xmlReader->getProjectList();
+        stringList = xmlReader->getList();
     }
 
     initProjectAutocompleter(stringList);

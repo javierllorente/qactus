@@ -39,7 +39,7 @@ public:
     OBSpackage* getPackage();
     QList<OBSrequest*> getRequests();
     int getRequestNumber();
-    QStringList getProjectList();
+    QStringList getList();
     void readFile(const QString &fileName);
 
 private:

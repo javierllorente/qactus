@@ -280,7 +280,7 @@ int OBSxmlReader::getRequestNumber()
     return requestNumber.toInt();
 }
 
-QStringList OBSxmlReader::getProjectList()
+QStringList OBSxmlReader::getList()
 {
     return projectList;
 }

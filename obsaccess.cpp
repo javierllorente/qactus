@@ -182,13 +182,13 @@ int OBSaccess::getRequestNumber()
 QStringList OBSaccess::getProjectList()
 {
     request(apiUrl + "/source");
-    return xmlReader->getProjectList();
+    return xmlReader->getList();
 }
 
 QStringList OBSaccess::getPackageListForProject(const QString &projectName)
 {
     request(apiUrl + "/source/" + projectName);
-    return xmlReader->getProjectList();
+    return xmlReader->getList();
 }
 
 void OBSaccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &list)
