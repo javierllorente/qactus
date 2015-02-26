@@ -26,6 +26,7 @@
 #include <QStringListModel>
 #include <QDate>
 #include <QSettings>
+#include <QProgressDialog>
 #include "obsaccess.h"
 #include "obsxmlreader.h"
 

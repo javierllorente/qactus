@@ -44,6 +44,9 @@ RowEditor::RowEditor(QWidget *parent) :
         OBSaccess *obsAccess = OBSaccess::getInstance();
         if (obsAccess->isAuthenticated()) {
             qDebug() << "Downloading project list...";
+            QProgressDialog progress(tr("Downloading project list..."), 0, 0, 0, this);
+            progress.setWindowModality(Qt::WindowModal);
+            progress.show();
             stringList = obsAccess->getProjectList();
             setLastUpdateDate(QDate::currentDate().toString());
         }
