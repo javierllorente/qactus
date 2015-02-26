@@ -590,7 +590,9 @@ bool MainWindow::event(QEvent *event)
         if (trayIcon->hasChangedIcon()) {
             trayIcon->setTrayIcon("obs.png");
             for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
-                toggleItemFont(ui->treePackages->topLevelItem(i));
+                if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
+                    toggleItemFont(ui->treePackages->topLevelItem(i));
+                }
             }
         }
         break;
