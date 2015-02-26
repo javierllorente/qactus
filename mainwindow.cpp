@@ -271,7 +271,7 @@ void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)
     item->setText(4, status);
     QString newStatus = item->text(4);
     item->setToolTip(4, details);
-    item->setForeground(4, getStatusColor(status));
+    item->setForeground(4, getColorForStatus(status));
 
     qDebug() << "Build status" << status << "inserted in" << row
              << "(Total rows:" << ui->treePackages->topLevelItemCount() << ")";
@@ -300,7 +300,7 @@ QString MainWindow::breakLine(QString& details, const int& maxSize)
     return details;
 }
 
-QColor MainWindow::getStatusColor(const QString& status)
+QColor MainWindow::getColorForStatus(const QString& status)
 {
 //    Change the status' colour according to the status itself
     QColor color;
@@ -325,6 +325,10 @@ QColor MainWindow::getStatusColor(const QString& status)
     else if(status=="unresolvable")
     {
         color = Qt::darkRed;
+    }
+    else if(status.contains("unknown"))
+    {
+        color = Qt::red;
     }
 
     return color;

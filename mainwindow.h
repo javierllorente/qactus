@@ -103,7 +103,7 @@ private:
     void insertBuildStatus(OBSpackage*, const int&);
     void insertRequests(QList<OBSrequest*>);
     QString breakLine(QString&, const int&);
-    QColor getStatusColor(const QString&);
+    QColor getColorForStatus(const QString&);
     void toggleItemFont(QTreeWidgetItem*);
     void closeEvent(QCloseEvent*);
     bool event(QEvent *event);
