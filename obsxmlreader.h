@@ -50,7 +50,7 @@ private:
     QList<OBSrequest*> obsRequests;
     OBSrequest *obsRequest;
     QString requestNumber;
-    QStringList projectList;
+    QStringList list;
     void stringToFile(const QString &data);
 
 };

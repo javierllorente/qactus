@@ -201,7 +201,7 @@ void OBSxmlReader::parseProjects(const QString& data)
                     qDebug() << "Unregistered username!";
                 } else {
 //                    qDebug() << "Project name: " << attrib.value("name").toString();
-                    projectList.append(attrib.value("name").toString());
+                    list.append(attrib.value("name").toString());
                 }
             }
         } // end entry
@@ -257,7 +257,7 @@ void OBSxmlReader::readFile(const QString &fileName)
                     qDebug() << "Unregistered username!";
                 } else {
 //                    qDebug() << "Project name: " << attrib.value("name").toString();
-                    projectList.append(attrib.value("name").toString());
+                    list.append(attrib.value("name").toString());
                 }
             }
         } // end entry
@@ -282,5 +282,5 @@ int OBSxmlReader::getRequestNumber()
 
 QStringList OBSxmlReader::getList()
 {
-    return projectList;
+    return list;
 }
