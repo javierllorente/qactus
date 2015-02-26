@@ -47,17 +47,17 @@ RowEditor::RowEditor(QWidget *parent) :
             QProgressDialog progress(tr("Downloading project list..."), 0, 0, 0, this);
             progress.setWindowModality(Qt::WindowModal);
             progress.show();
-            stringList = obsAccess->getProjectList();
+            projectList = obsAccess->getProjectList();
             setLastUpdateDate(QDate::currentDate().toString());
         }
     } else {
         qDebug() << "Reading project list...";
         xmlReader = new OBSxmlReader();
         xmlReader->readFile(fileName);
-        stringList = xmlReader->getList();
+        projectList = xmlReader->getList();
     }
 
-    initProjectAutocompleter(stringList);
+    initProjectAutocompleter(projectList);
 }
 
 RowEditor::~RowEditor()
@@ -138,7 +138,7 @@ void RowEditor::initProjectAutocompleter(const QStringList &stringList)
 void RowEditor::refreshProjectAutocompleter(const QString&)
 {
     QStringListModel *model = (QStringListModel*)(projectCompleter->model());
-    model->setStringList(stringList);
+    model->setStringList(projectList);
 }
 
 void RowEditor::autocompletedProjectName_clicked(const QString&)

@@ -54,7 +54,7 @@ private:
     Ui::RowEditor *ui;
     QString getLastUpdateDate();
     void setLastUpdateDate(const QString &date);
-    QStringList stringList;
+    QStringList projectList;
     QCompleter *projectCompleter;
     void initProjectAutocompleter(const QStringList &stringList);
     OBSxmlReader *xmlReader;
