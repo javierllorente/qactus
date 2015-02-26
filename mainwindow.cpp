@@ -136,15 +136,14 @@ void MainWindow::addRow()
     RowEditor *rowEditor = new RowEditor(this);
 
     if (rowEditor->exec()) {
-        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);;
-        int index = ui->treePackages->topLevelItemCount()-1;
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
         item->setText(0, rowEditor->getProject());
         item->setText(1, rowEditor->getPackage());
         item->setText(2, rowEditor->getRepository());
         item->setText(3, rowEditor->getArch());
         ui->treePackages->addTopLevelItem(item);
-        statusList.insert(index,"");
-        qDebug() << "addRow() build" << item->text(1) << "added at" << index;
+        int index = ui->treePackages->indexOfTopLevelItem(item);
+        qDebug() << "Build" << item->text(1) << "added at" << index;
     }
     delete rowEditor;
 }
@@ -167,11 +166,8 @@ void MainWindow::editRow(QTreeWidgetItem* item, int)
         item->setText(3, rowEditor->getArch());
         item->setText(4, "");
         ui->treePackages->insertTopLevelItem(index, item);
-
-        statusList[index].clear();
-        qDebug() << "editRow() build edited at" << index;
-        qDebug() << "editRow() statusList at" << index << statusList.at(index) << "(it should be empty)";
-
+        qDebug() << "Build edited:" << index;
+        qDebug() << "Status at" << index << item->text(4) << "(it should be empty)";
     }
     delete rowEditor;
 }
@@ -188,8 +184,7 @@ void MainWindow::removeRow()
 //    -1 means that there is no row selected
         if (index!=-1) {
             ui->treePackages->takeTopLevelItem(index);
-            statusList.removeAt(index);
-            qDebug() << "removeRow() Row removed: " << index << "statusList size:" << statusList.size();
+            qDebug() << "Row removed:" << index;
         } else {
             qDebug () << "No row selected";
         }
@@ -267,25 +262,29 @@ void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)
 
 //    If the line is too long (>250), break it
     details = breakLine(details, 250);
-    qDebug() << "String size: " << details.size();
+    if (details.size()>0) {
+        qDebug() << "Details string size: " << details.size();
+    }
 
     QTreeWidgetItem *item = ui->treePackages->topLevelItem(row);
+    QString oldStatus = item->text(4);
     item->setText(4, status);
+    QString newStatus = item->text(4);
     item->setToolTip(4, details);
     item->setForeground(4, getStatusColor(status));
 
-    qDebug() << "Status " << status << "inserted in" << row;
-    qDebug() << "Rows: " << ui->treePackages->topLevelItemCount();
+    qDebug() << "Build status" << status << "inserted in" << row
+             << "(Total rows:" << ui->treePackages->topLevelItemCount() << ")";
 
-    checkStatus(status, row);
+    checkStatus(oldStatus, newStatus);
 }
 
 QString MainWindow::breakLine(QString& details, const int& maxSize)
 {
-    int i=maxSize;
+    int i = maxSize;
     if (details.size()>i) {
         for (; i<details.size(); i++) {
-            if (details[i]==QChar(',')||details[i]==QChar('-')||details[i]==QChar(' ')) {
+            if (details[i]==QChar(',') || details[i]==QChar('-') || details[i]==QChar(' ')) {
                 details.insert(++i,QString("<br>"));
                 break;
             }
@@ -294,21 +293,15 @@ QString MainWindow::breakLine(QString& details, const int& maxSize)
     return details;
 }
 
-void MainWindow::checkStatus(const QString& status, const int& row)
+void MainWindow::checkStatus(const QString& oldStatus, const QString& newStatus)
 {
-//    If the statusList is not empty and the status is different from last time, change the icon
-    if ((statusList.at(row) != "") && (status != statusList.at(row))) {
-        qDebug() << "MainWindow::checkStatus(): Status changed!"
-                 << "Package:" << ui->treePackages->topLevelItem(row)->text(1)
-                 << "Status:" << status << statusList.at(row) << " row: " << row;
+//    If the old status is not empty and it is different from latest one,
+//    change the tray icon
+    if ((oldStatus != "") && (oldStatus != newStatus)) {
+        qDebug() << "Build status has changed!";
         trayIcon->change();
     }
-    qDebug() << "MainWindow::checkStatus(): Status changed?"
-             << status << statusList.at(row) << " row: " << row;
-    qDebug() << "statusList Size: " << statusList.size();
-
-//    Insert the last status into statusList
-    statusList[row] = status;
+    qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
 }
 
 QColor MainWindow::getStatusColor(const QString& status)
@@ -542,7 +535,6 @@ void MainWindow::readSettings()
             item->setText(2, settings.value("Repository").toString());
             item->setText(3, settings.value("Arch").toString());
             ui->treePackages->insertTopLevelItem(i, item);
-            statusList.insert(i,"");
         }
         settings.endArray();
 }
