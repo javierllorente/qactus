@@ -62,6 +62,8 @@ private:
     QCompleter *packageCompleter;
     QStringList repositoryList;
     QCompleter *repositoryCompleter;
+    QStringList archList;
+    QCompleter *archCompleter;
     OBSxmlReader *xmlReader;
 
 private slots:
@@ -70,7 +72,8 @@ private slots:
     void refreshPackageAutocompleter(const QString&);
     void autocompletedPackageName_clicked(const QString&);
     void refreshRepositoryAutocompleter(const QString&);
-    void autocompletedRepositoryName_clicked(const QString&);
+    void autocompletedRepositoryName_clicked(const QString&repository);
+    void refreshArchAutocompleter(const QString&);
 };
 
 #endif // ROWEDITOR_H

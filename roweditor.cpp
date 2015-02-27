@@ -200,7 +200,23 @@ void RowEditor::refreshRepositoryAutocompleter(const QString&)
     model->setStringList(repositoryList);
 }
 
-void RowEditor::autocompletedRepositoryName_clicked(const QString&)
+void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
 {
     ui->lineEditArch->setFocus();
+
+    xmlReader->getArchsForRepository(repository);
+    archList = xmlReader->getList();
+    QStringListModel *model = new QStringListModel(archList);
+    archCompleter = new QCompleter(model, this);
+
+    ui->lineEditArch->setCompleter(archCompleter);
+
+    connect(ui->lineEditArch, SIGNAL(textEdited(const QString&)),
+            this, SLOT(refreshArchAutocompleter(const QString&)));
+}
+
+void RowEditor::refreshArchAutocompleter(const QString&)
+{
+    QStringListModel *model = (QStringListModel*)(archCompleter->model());
+    model->setStringList(archList);
 }

@@ -201,7 +201,7 @@ void OBSxmlReader::parseRequests(const QString &data)
 
 void OBSxmlReader::parseList(QXmlStreamReader &xml)
 {
-    qDebug() << "Parsing XML...";
+    qDebug() << "OBSxmlReader parseList()";
     while (!xml.atEnd() && !xml.hasError()) {
 
         xml.readNext();
@@ -226,19 +226,11 @@ void OBSxmlReader::parseList(QXmlStreamReader &xml)
                 if (attrib.value("code").toString() == "unregistered_ichain_user") {
                     qDebug() << "Unregistered username!";
                 } else {
-                    qDebug() << "Repository: " << attrib.value("name").toString();
+//                    qDebug() << "Repository: " << attrib.value("name").toString();
                     list.append(attrib.value("name").toString());
                 }
             }
         } // end repository
-
-        if (xml.name()=="arch") {
-            xml.readNext();
-            qDebug() << "Arch:" << xml.text().toString();
-//            list.append(xml.text().toString());
-            xml.readNextStartElement();
-
-        } // end arch
 
     } // end while
 
@@ -265,20 +257,64 @@ void OBSxmlReader::stringToFile(const QString &data)
     file.close();
 }
 
-void OBSxmlReader::readFile()
+QFile* OBSxmlReader::openFile()
 {
-    qDebug() << "OBSxmlReader readFile()";
+    qDebug() << "OBSxmlReader openFile()";
     list.clear();
-    QFile file(fileName);
+    QFile* file = new QFile(fileName);
     QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
     QDir::setCurrent(dataDir);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Error: Cannot read file " << dataDir << fileName << "(" << file.errorString() << ")";
-        return;
+    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Error: Cannot read file " << dataDir << fileName << "(" << file->errorString() << ")";
     }
+    return file;
+}
+
+void OBSxmlReader::readFile()
+{
     QXmlStreamReader xml;
-    xml.setDevice(&file);
+    xml.setDevice(openFile());
     parseList(xml);
+}
+
+void OBSxmlReader::getArchsForRepository(const QString &repository)
+{
+    qDebug() << "OBSxmlReader getArchsForRepository()";
+    list.clear();
+    QXmlStreamReader xml;
+    xml.setDevice(openFile());
+    bool repositoryFound = false;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+
+        xml.readNext();
+
+        if (xml.name()=="repository") {
+            if (xml.isStartElement()) {
+                QXmlStreamAttributes attrib = xml.attributes();
+
+                if (attrib.value("name")==repository) {
+//                    qDebug() << "Repository: " << attrib.value("name").toString();
+                    repositoryFound = true;
+                } else {
+                    repositoryFound = false;
+                }
+            }
+        } // end repository
+
+        if (xml.name()=="arch" && repositoryFound) {
+            xml.readNext();
+//            qDebug() << "Arch:" << xml.text().toString();
+            list.append(xml.text().toString());
+            xml.readNextStartElement();
+
+        } // end arch
+
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+    }
 }
 
 QList<OBSrequest*> OBSxmlReader::getRequests()
