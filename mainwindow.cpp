@@ -424,7 +424,7 @@ void MainWindow::about()
                           "<a href='mailto:javier@opensuse.org'>javier@opensuse.org</a><br><br>"
                           "<b>" + tr("Contributors:") + "</b> <br>"
                           "Sivan Greenberg<br>"
-                          "<a href='sivan@omniqueue.com'>sivan@omniqueue.com</a><br><br>"
+                          "<a href='mailto:sivan@omniqueue.com'>sivan@omniqueue.com</a><br><br>"
                           "<b>" + tr("Artwork:") + "</b> <br>" +
                           tr("Icons by the Oxygen Team") + "<br>"
                           "<a href=\"http://www.oxygen-icons.org/\">http://www.oxygen-icons.org/</a><br><br>" +
