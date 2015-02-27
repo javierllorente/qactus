@@ -33,16 +33,19 @@
 class OBSxmlReader : public QXmlStreamReader
 {
 public:
-    OBSxmlReader();
+    static OBSxmlReader* getInstance();
     void addData(const QString &data);
 
     OBSpackage* getPackage();
     QList<OBSrequest*> getRequests();
     int getRequestNumber();
     QStringList getList();
-    void readFile(const QString &fileName);
+    void readFile();
+    void setFileName(const QString &fileName);
 
 private:
+    static OBSxmlReader* instance;
+    OBSxmlReader();
     void parse(const QString &data);
     void parseRequests(const QString& data);
     void parseProjects(const QString& data);
@@ -52,7 +55,7 @@ private:
     QString requestNumber;
     QStringList list;
     void stringToFile(const QString &data);
-
+    QString fileName;
 };
 
 #endif // OBSXMLREADER_H

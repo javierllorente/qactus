@@ -20,9 +20,19 @@
 
 #include "obsxmlreader.h"
 
+OBSxmlReader* OBSxmlReader::instance = NULL;
+
 OBSxmlReader::OBSxmlReader()
 {
 
+}
+
+OBSxmlReader* OBSxmlReader::getInstance()
+{
+    if (!instance) {
+        instance = new OBSxmlReader();
+    }
+    return instance;
 }
 
 void OBSxmlReader::addData(const QString& data)
@@ -223,17 +233,18 @@ void OBSxmlReader::stringToFile(const QString &data)
         dir.mkpath(dataDir);
     }
 
-    QFile projectListFile("projects.xml");
+    QFile file(fileName);
     QDir::setCurrent(dataDir);
 
-    projectListFile.open(QIODevice::WriteOnly);
-    QTextStream stream(&projectListFile);
+    file.open(QIODevice::WriteOnly);
+    QTextStream stream(&file);
     stream << data;
-    projectListFile.close();
+    file.close();
 }
 
-void OBSxmlReader::readFile(const QString &fileName)
+void OBSxmlReader::readFile()
 {
+    list.clear();
     QFile file(fileName);
     QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
     QDir::setCurrent(dataDir);
@@ -283,4 +294,9 @@ int OBSxmlReader::getRequestNumber()
 QStringList OBSxmlReader::getList()
 {
     return list;
+}
+
+void OBSxmlReader::setFileName(const QString &fileName)
+{
+    this->fileName = fileName;
 }
