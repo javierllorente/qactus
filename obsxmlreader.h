@@ -48,7 +48,7 @@ private:
     OBSxmlReader();
     void parsePackage(const QString &data);
     void parseRequests(const QString &data);
-    void parseList(const QString &data);
+    void parseList(QXmlStreamReader &xml);
     OBSpackage *obsPackage;
     QList<OBSrequest*> obsRequests;
     OBSrequest *obsRequest;

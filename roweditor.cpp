@@ -128,11 +128,11 @@ QStringList RowEditor::getListFor(const QString &name)
             }
             setLastUpdateDate(QDate::currentDate().toString());
         }
-    } else {
-        qDebug() << "Reading" << name;
-        xmlReader->readFile();
-        stringList = xmlReader->getList();
     }
+    qDebug() << "Reading" << name;
+    xmlReader->readFile();
+    stringList = xmlReader->getList();
+
     return stringList;
 }
 

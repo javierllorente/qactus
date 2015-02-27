@@ -53,10 +53,10 @@ void OBSxmlReader::addData(const QString& data)
             obsRequests = getRequests();
         } else if (xml.name()=="directory" && xml.isStartElement()) {
             qDebug() << "OBSxmlReader: directory tag found";
-            parseList(data);
+            stringToFile(data);
         } else if (xml.name()=="project" && xml.isStartElement()) {
             qDebug() << "OBSxmlReader: project tag found";
-            parseList(data);
+            stringToFile(data);
         }
     }
 }
@@ -199,10 +199,9 @@ void OBSxmlReader::parseRequests(const QString &data)
     }
 }
 
-void OBSxmlReader::parseList(const QString &data)
+void OBSxmlReader::parseList(QXmlStreamReader &xml)
 {
-    QXmlStreamReader xml(data);
-
+    qDebug() << "Parsing XML...";
     while (!xml.atEnd() && !xml.hasError()) {
 
         xml.readNext();
@@ -214,7 +213,7 @@ void OBSxmlReader::parseList(const QString &data)
                 if (attrib.value("code").toString() == "unregistered_ichain_user") {
                     qDebug() << "Unregistered username!";
                 } else {
-//                    qDebug() << "Project name: " << attrib.value("name").toString();
+//                    qDebug() << "Name: " << attrib.value("name").toString();
                     list.append(attrib.value("name").toString());
                 }
             }
@@ -227,18 +226,25 @@ void OBSxmlReader::parseList(const QString &data)
                 if (attrib.value("code").toString() == "unregistered_ichain_user") {
                     qDebug() << "Unregistered username!";
                 } else {
-//                    qDebug() << "Name: " << attrib.value("name").toString();
+                    qDebug() << "Repository: " << attrib.value("name").toString();
                     list.append(attrib.value("name").toString());
                 }
             }
         } // end repository
+
+        if (xml.name()=="arch") {
+            xml.readNext();
+            qDebug() << "Arch:" << xml.text().toString();
+//            list.append(xml.text().toString());
+            xml.readNextStartElement();
+
+        } // end arch
 
     } // end while
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
     }
-    stringToFile(data);
 }
 
 void OBSxmlReader::stringToFile(const QString &data)
@@ -261,6 +267,7 @@ void OBSxmlReader::stringToFile(const QString &data)
 
 void OBSxmlReader::readFile()
 {
+    qDebug() << "OBSxmlReader readFile()";
     list.clear();
     QFile file(fileName);
     QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
@@ -269,46 +276,9 @@ void OBSxmlReader::readFile()
         qDebug() << "Error: Cannot read file " << dataDir << fileName << "(" << file.errorString() << ")";
         return;
     }
-    qDebug() << "OBSxmlReader readFile()";
     QXmlStreamReader xml;
     xml.setDevice(&file);
-
-    while (!xml.atEnd() && !xml.hasError()) {
-
-        xml.readNext();
-
-        if (xml.name()=="entry") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-
-                if (attrib.value("code").toString() == "unregistered_ichain_user") {
-                    qDebug() << "Unregistered username!";
-                } else {
-//                    qDebug() << "Name: " << attrib.value("name").toString();
-                    list.append(attrib.value("name").toString());
-                }
-            }
-        } // end entry
-
-        if (xml.name()=="repository") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-
-                if (attrib.value("code").toString() == "unregistered_ichain_user") {
-                    qDebug() << "Unregistered username!";
-                } else {
-//                    qDebug() << "Name: " << attrib.value("name").toString();
-                    list.append(attrib.value("name").toString());
-                }
-            }
-        } // end repository
-
-    } // end while
-
-    if (xml.hasError()) {
-        qDebug() << "Error parsing XML!" << xml.errorString();
-    }
-
+    parseList(xml);
 }
 
 QList<OBSrequest*> OBSxmlReader::getRequests()
