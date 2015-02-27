@@ -46,9 +46,9 @@ public:
 private:
     static OBSxmlReader* instance;
     OBSxmlReader();
-    void parse(const QString &data);
-    void parseRequests(const QString& data);
-    void parseProjects(const QString& data);
+    void parsePackage(const QString &data);
+    void parseRequests(const QString &data);
+    void parseList(const QString &data);
     OBSpackage *obsPackage;
     QList<OBSrequest*> obsRequests;
     OBSrequest *obsRequest;

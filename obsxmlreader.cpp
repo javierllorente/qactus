@@ -45,7 +45,7 @@ void OBSxmlReader::addData(const QString& data)
         xml.readNext();
         if (xml.name()=="status" && xml.isStartElement()) {
             qDebug() << "OBSxmlReader: status tag found";
-            parse(data);
+            parsePackage(data);
             obsPackage = getPackage();
         } else if (xml.name()=="collection" && xml.isStartElement()) {
             qDebug() << "OBSxmlReader: collection tag found";
@@ -53,15 +53,15 @@ void OBSxmlReader::addData(const QString& data)
             obsRequests = getRequests();
         } else if (xml.name()=="directory" && xml.isStartElement()) {
             qDebug() << "OBSxmlReader: directory tag found";
-            parseProjects(data);
+            parseList(data);
         } else if (xml.name()=="project" && xml.isStartElement()) {
             qDebug() << "OBSxmlReader: project tag found";
-            parseProjects(data);
+            parseList(data);
         }
     }
 }
 
-void OBSxmlReader::parse(const QString& data)
+void OBSxmlReader::parsePackage(const QString &data)
 {
     QXmlStreamReader xml(data);
     obsPackage = new OBSpackage();
@@ -108,7 +108,7 @@ OBSpackage* OBSxmlReader::getPackage()
     return obsPackage;
 }
 
-void OBSxmlReader::parseRequests(const QString& data)
+void OBSxmlReader::parseRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
     obsRequests.clear();
@@ -199,7 +199,7 @@ void OBSxmlReader::parseRequests(const QString& data)
     }
 }
 
-void OBSxmlReader::parseProjects(const QString& data)
+void OBSxmlReader::parseList(const QString &data)
 {
     QXmlStreamReader xml(data);
 
