@@ -51,6 +51,7 @@ public:
     int getRequestNumber();
     QStringList getProjectList();
     QStringList getPackageListForProject(const QString &projectName);
+    QStringList getMetadataForProject(const QString &projectName);
 
 signals:
     void isAuthenticated(bool authenticated);

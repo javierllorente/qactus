@@ -120,6 +120,9 @@ QStringList RowEditor::getListFor(const QString &name)
 
             if (name == "projects") {
                 stringList = obsAccess->getProjectList();
+            } else if (name.contains("meta")) {
+                QStringList projectName = name.split("_meta");
+                stringList = obsAccess->getMetadataForProject(projectName[0]);
             } else {
                 stringList = obsAccess->getPackageListForProject(name);
             }
@@ -178,4 +181,26 @@ void RowEditor::refreshPackageAutocompleter(const QString&)
 void RowEditor::autocompletedPackageName_clicked(const QString&)
 {
     ui->lineEditRepository->setFocus();
+
+    repositoryList = getListFor(ui->lineEditProject->text() + "_meta");
+    QStringListModel *model = new QStringListModel(repositoryList);
+    repositoryCompleter = new QCompleter(model, this);
+
+    ui->lineEditRepository->setCompleter(repositoryCompleter);
+
+    connect(ui->lineEditRepository, SIGNAL(textEdited(const QString&)),
+            this, SLOT(refreshRepositoryAutocompleter(const QString&)));
+    connect(repositoryCompleter, SIGNAL(activated(const QString&)),
+            this, SLOT(autocompletedRepositoryName_clicked(const QString&)));
+}
+
+void RowEditor::refreshRepositoryAutocompleter(const QString&)
+{
+    QStringListModel *model = (QStringListModel*)(repositoryCompleter->model());
+    model->setStringList(repositoryList);
+}
+
+void RowEditor::autocompletedRepositoryName_clicked(const QString&)
+{
+    ui->lineEditArch->setFocus();
 }
