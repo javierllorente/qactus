@@ -27,37 +27,8 @@ RowEditor::RowEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QString lastUpdateStr = getLastUpdateDate();
-    QDate lastUpdateDate = QDate::fromString(lastUpdateStr);
-    QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-    QDir::setCurrent(dataDir);
-    QString fileName = "projects.xml";
-
-    /* projects.xml is downloaded if
-     * it doesn't exist or
-     * there is no lastupdate entry in settings file or
-     * 7 days have passed since projects.xml was downloaded
-     */
-    if (!QFile::exists(fileName) ||
-            lastUpdateStr.isEmpty() ||
-            lastUpdateDate.daysTo(QDate::currentDate()) == -7) {
-        OBSaccess *obsAccess = OBSaccess::getInstance();
-        if (obsAccess->isAuthenticated()) {
-            qDebug() << "Downloading project list...";
-            QProgressDialog progress(tr("Downloading project list..."), 0, 0, 0, this);
-            progress.setWindowModality(Qt::WindowModal);
-            progress.show();
-            projectList = obsAccess->getProjectList();
-            setLastUpdateDate(QDate::currentDate().toString());
-        }
-    } else {
-        qDebug() << "Reading project list...";
-        xmlReader = new OBSxmlReader();
-        xmlReader->readFile(fileName);
-        projectList = xmlReader->getList();
-    }
-
-    initProjectAutocompleter(projectList);
+    xmlReader = OBSxmlReader::getInstance();
+    initProjectAutocompleter();
 }
 
 RowEditor::~RowEditor()
@@ -122,9 +93,50 @@ void RowEditor::setArch(const QString &arch)
     ui->lineEditArch->setText(arch);
 }
 
-void RowEditor::initProjectAutocompleter(const QStringList &stringList)
+QStringList RowEditor::getListFor(const QString &name)
 {
-    QStringListModel *model = new QStringListModel(stringList);
+    QStringList stringList;
+    QString lastUpdateStr = getLastUpdateDate();
+    QDate lastUpdateDate = QDate::fromString(lastUpdateStr);
+    QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QDir::setCurrent(dataDir);
+    QString fileName = name + ".xml";
+    xmlReader->setFileName(fileName);
+
+    /* The XML file is downloaded if
+     * it doesn't exist or
+     * there is no lastupdate entry in settings file or
+     * 7 days have passed since the XML file was downloaded
+     */
+    if (!QFile::exists(fileName) ||
+            lastUpdateStr.isEmpty() ||
+            lastUpdateDate.daysTo(QDate::currentDate()) == -7) {
+        OBSaccess *obsAccess = OBSaccess::getInstance();
+        if (obsAccess->isAuthenticated()) {
+            qDebug() << "Downloading" << name + "...";
+            QProgressDialog progress(tr("Downloading") + name + "...", 0, 0, 0, this);
+            progress.setWindowModality(Qt::WindowModal);
+            progress.show();
+
+            if (name == "projects") {
+                stringList = obsAccess->getProjectList();
+            } else {
+                stringList = obsAccess->getPackageListForProject(name);
+            }
+            setLastUpdateDate(QDate::currentDate().toString());
+        }
+    } else {
+        qDebug() << "Reading" << name;
+        xmlReader->readFile();
+        stringList = xmlReader->getList();
+    }
+    return stringList;
+}
+
+void RowEditor::initProjectAutocompleter()
+{
+    projectList = getListFor("projects");
+    QStringListModel *model = new QStringListModel(projectList);
     projectCompleter = new QCompleter(model, this);
 
     ui->lineEditProject->setCompleter(projectCompleter);
@@ -141,7 +153,29 @@ void RowEditor::refreshProjectAutocompleter(const QString&)
     model->setStringList(projectList);
 }
 
-void RowEditor::autocompletedProjectName_clicked(const QString&)
+void RowEditor::autocompletedProjectName_clicked(const QString &projectName)
 {
     ui->lineEditPackage->setFocus();
+
+    packageList = getListFor(projectName);
+    QStringListModel *model = new QStringListModel(packageList);
+    packageCompleter = new QCompleter(model, this);
+
+    ui->lineEditPackage->setCompleter(packageCompleter);
+
+    connect(ui->lineEditPackage, SIGNAL(textEdited(const QString&)),
+            this, SLOT(refreshPackageAutocompleter(const QString&)));
+    connect(packageCompleter, SIGNAL(activated(const QString&)),
+            this, SLOT(autocompletedPackageName_clicked(const QString&)));
+}
+
+void RowEditor::refreshPackageAutocompleter(const QString&)
+{
+    QStringListModel *model = (QStringListModel*)(packageCompleter->model());
+    model->setStringList(packageList);
+}
+
+void RowEditor::autocompletedPackageName_clicked(const QString&)
+{
+    ui->lineEditRepository->setFocus();
 }

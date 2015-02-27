@@ -54,14 +54,19 @@ private:
     Ui::RowEditor *ui;
     QString getLastUpdateDate();
     void setLastUpdateDate(const QString &date);
+    QStringList getListFor(const QString &name);
     QStringList projectList;
     QCompleter *projectCompleter;
-    void initProjectAutocompleter(const QStringList &stringList);
+    void initProjectAutocompleter();
+    QStringList packageList;
+    QCompleter *packageCompleter;
     OBSxmlReader *xmlReader;
 
 private slots:
     void refreshProjectAutocompleter(const QString &);
-    void autocompletedProjectName_clicked(const QString &);
+    void autocompletedProjectName_clicked(const QString &projectName);
+    void refreshPackageAutocompleter(const QString&);
+    void autocompletedPackageName_clicked(const QString&);
 };
 
 #endif // ROWEDITOR_H
