@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.setApplicationName("Qactus");
-    a.setApplicationVersion("0.3.6");
+    a.setApplicationVersion("0.4.0");
     MainWindow w;
     w.show();
     return a.exec();
