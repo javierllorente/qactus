@@ -26,7 +26,7 @@ OBSaccess::OBSaccess()
 {
     authenticated = false;
     manager = NULL;
-    xmlReader = new OBSxmlReader();
+    xmlReader = OBSxmlReader::getInstance();
 }
 
 void OBSaccess::createManager()
