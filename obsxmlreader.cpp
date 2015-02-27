@@ -37,6 +37,7 @@ OBSxmlReader* OBSxmlReader::getInstance()
 
 void OBSxmlReader::addData(const QString& data)
 {
+    list.clear();
     qDebug() << "OBSxmlReader addData()";
     QXmlStreamReader xml(data);
 
@@ -52,6 +53,9 @@ void OBSxmlReader::addData(const QString& data)
             obsRequests = getRequests();
         } else if (xml.name()=="directory" && xml.isStartElement()) {
             qDebug() << "OBSxmlReader: directory tag found";
+            parseProjects(data);
+        } else if (xml.name()=="project" && xml.isStartElement()) {
+            qDebug() << "OBSxmlReader: project tag found";
             parseProjects(data);
         }
     }
@@ -176,7 +180,7 @@ void OBSxmlReader::parseRequests(const QString& data)
                 obsRequest->setDate(attrib.value("when").toString());
                 qDebug() << "Date: " <<  obsRequest->getDate();
             }
-        }
+        } // state
 
         if (xml.name()=="description") {
             if (xml.tokenType() != QXmlStreamReader::StartElement) {
@@ -187,7 +191,7 @@ void OBSxmlReader::parseRequests(const QString& data)
             qDebug() << "Description:\n" <<  obsRequest->getDescription();
             xml.readNextStartElement();
             obsRequests.append(obsRequest);
-        }
+        } // description
     }
 
     if (xml.hasError()) {
@@ -215,6 +219,19 @@ void OBSxmlReader::parseProjects(const QString& data)
                 }
             }
         } // end entry
+
+        if (xml.name()=="repository") {
+            if (xml.isStartElement()) {
+                QXmlStreamAttributes attrib = xml.attributes();
+
+                if (attrib.value("code").toString() == "unregistered_ichain_user") {
+                    qDebug() << "Unregistered username!";
+                } else {
+//                    qDebug() << "Name: " << attrib.value("name").toString();
+                    list.append(attrib.value("name").toString());
+                }
+            }
+        } // end repository
 
     } // end while
 
@@ -267,11 +284,24 @@ void OBSxmlReader::readFile()
                 if (attrib.value("code").toString() == "unregistered_ichain_user") {
                     qDebug() << "Unregistered username!";
                 } else {
-//                    qDebug() << "Project name: " << attrib.value("name").toString();
+//                    qDebug() << "Name: " << attrib.value("name").toString();
                     list.append(attrib.value("name").toString());
                 }
             }
         } // end entry
+
+        if (xml.name()=="repository") {
+            if (xml.isStartElement()) {
+                QXmlStreamAttributes attrib = xml.attributes();
+
+                if (attrib.value("code").toString() == "unregistered_ichain_user") {
+                    qDebug() << "Unregistered username!";
+                } else {
+//                    qDebug() << "Name: " << attrib.value("name").toString();
+                    list.append(attrib.value("name").toString());
+                }
+            }
+        } // end repository
 
     } // end while
 
