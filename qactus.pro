@@ -41,5 +41,5 @@ target.path = $$PREFIX/bin
 desktop.path = $$PREFIX/share/applications/
 desktop.files += qactus.desktop
 icon128.path = $$PREFIX/share/icons/hicolor/128x128/apps
-icon128.files += icons/128x128/qactus.png
+icon128.files += qactus.png
 RESOURCES = application.qrc
