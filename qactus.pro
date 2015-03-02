@@ -1,9 +1,13 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-12-22T04:00:42
 # -------------------------------------------------
+unix:isEmpty(PREFIX):PREFIX = /usr/local
 QT += network
 TARGET = qactus
 TEMPLATE = app
+DEPENDPATH += .
+INCLUDEPATH += .
+DESTDIR += .
 SOURCES += main.cpp \
     mainwindow.cpp \
     trayicon.cpp \
@@ -30,4 +34,12 @@ FORMS += mainwindow.ui \
 OTHER_FILES += README.md \
     LICENSE \
     license_template.txt
+INSTALLS += target \
+    icon128 \
+    desktop
+target.path = $$PREFIX/bin
+desktop.path = $$PREFIX/share/applications/
+desktop.files += qactus.desktop
+icon128.path = $$PREFIX/share/icons/hicolor/128x128/apps
+icon128.files += qactus.png
 RESOURCES = application.qrc
