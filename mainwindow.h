@@ -22,27 +22,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QAuthenticator>
-#include <QApplication>
-#include <QDebug>
-#include <QDesktopWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QUrl>
 #include <QMainWindow>
-#include <QMessageBox>
-#include <QXmlStreamReader>
-#include <QHttpRequestHeader>
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QAction>
-#include <QTimer>
-#include <QSslError>
-#include <QCoreApplication>
-#include "trayicon.h"
+#include <QTreeWidgetItem>
+#include <QSystemTrayIcon>
 
 namespace Ui {
     class MainWindow;
