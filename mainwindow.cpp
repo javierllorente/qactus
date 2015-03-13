@@ -56,6 +56,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     readSettings();
 
+    QKeychain::ReadPasswordJob job(QLatin1String("Qactus"));
+    job.setAutoDelete(false);
+    job.setKey(loginDialog->getUsername());
+    QEventLoop loop;
+    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
+    job.start();
+    loop.exec();
+    const QString pw = job.textData();
+    if (job.error()) {
+        qDebug() << "Restoring password failed: " << qPrintable(job.errorString());
+    } else {
+        qDebug() << "Password restored successfully";
+        obsAccess->setCredentials(job.key(), pw);
+        obsAccess->login();
+    }
+
     // Show login dialog on startup if user isn't logged in
     if(!obsAccess->isAuthenticated()) {
         // Centre login dialog
@@ -383,6 +399,20 @@ void MainWindow::getDescription(QTreeWidgetItem* item, int)
 void MainWindow::pushButton_Login_clicked()
 {
     obsAccess->setCredentials(loginDialog->getUsername(), loginDialog->getPassword());
+
+    QKeychain::WritePasswordJob job(QLatin1String("Qactus"));
+    job.setAutoDelete(false);
+    job.setKey(loginDialog->getUsername());
+    job.setTextData(loginDialog->getPassword());
+    QEventLoop loop;
+    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
+    job.start();
+    loop.exec();
+    if (job.error()) {
+        qDebug() << "Storing password failed: " << qPrintable(job.errorString());
+    } else {
+        qDebug() << "Password stored successfully";
+    }
 
 //    Display a warning if the username/password is empty.
     if (loginDialog->getUsername().isEmpty() || loginDialog->getPassword().isEmpty()) {

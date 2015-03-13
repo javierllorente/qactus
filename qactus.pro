@@ -2,6 +2,14 @@
 # Project created by QtCreator 2010-12-22T04:00:42
 # -------------------------------------------------
 unix:isEmpty(PREFIX):PREFIX = /usr/local
+unix {
+    INCLUDEPATH += /usr/include/qtkeychain
+    contains(QMAKE_HOST.arch, x86_64) {
+        LIBS += -L/usr/lib64/ -lqtkeychain
+    } else {
+        LIBS += -L/usr/lib/ -lqtkeychain
+    }
+}
 QT += network
 TARGET = qactus
 TEMPLATE = app

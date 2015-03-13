@@ -25,6 +25,7 @@
 #include <QMainWindow>
 #include <QTreeWidgetItem>
 #include <QSystemTrayIcon>
+#include <qtkeychain/keychain.h>
 
 namespace Ui {
     class MainWindow;
