@@ -125,9 +125,9 @@ void OBSrequest::setDate(const QString& date)
 
 QString OBSrequest::getDate()
 {
-    // Replace the "T" with a space
-    date = date.replace(10, 1, " ");
-    return date;
+    // Replace the "T" (as in 2015-03-13T20:01:33)
+    // with a space and return it
+    return date.replace(10, 1, " ");
 }
 
 void OBSrequest::setDescription(const QString& description)
