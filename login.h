@@ -40,6 +40,7 @@ public:
     QString getUsername();
     void setUsername(const QString&);
     QString getPassword();
+    bool isAutoLoginEnabled();
 
 private:
     Ui::Login *ui;

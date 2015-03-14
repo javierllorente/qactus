@@ -400,20 +400,6 @@ void MainWindow::pushButton_Login_clicked()
 {
     obsAccess->setCredentials(loginDialog->getUsername(), loginDialog->getPassword());
 
-    QKeychain::WritePasswordJob job(QLatin1String("Qactus"));
-    job.setAutoDelete(false);
-    job.setKey(loginDialog->getUsername());
-    job.setTextData(loginDialog->getPassword());
-    QEventLoop loop;
-    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
-    job.start();
-    loop.exec();
-    if (job.error()) {
-        qDebug() << "Storing password failed: " << qPrintable(job.errorString());
-    } else {
-        qDebug() << "Password stored successfully";
-    }
-
 //    Display a warning if the username/password is empty.
     if (loginDialog->getUsername().isEmpty() || loginDialog->getPassword().isEmpty()) {
         QMessageBox::warning(this,tr("Error"), tr("Empty username/password"), QMessageBox::Ok );
@@ -423,6 +409,34 @@ void MainWindow::pushButton_Login_clicked()
         progress.setWindowModality(Qt::WindowModal);
         progress.show();
         obsAccess->login();
+
+        if (loginDialog->isAutoLoginEnabled()) {
+            QKeychain::WritePasswordJob job(QLatin1String("Qactus"));
+            job.setAutoDelete(false);
+            job.setKey(loginDialog->getUsername());
+            job.setTextData(loginDialog->getPassword());
+            QEventLoop loop;
+            job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
+            job.start();
+            loop.exec();
+            if (job.error()) {
+                qDebug() << "Storing password failed: " << qPrintable(job.errorString());
+            } else {
+                qDebug() << "Password stored successfully";
+            }
+        } else {
+            QKeychain::DeletePasswordJob job(QLatin1String("Qactus"));
+            job.setAutoDelete(false);
+            job.setKey(loginDialog->getUsername());
+            QEventLoop loop;
+            job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
+            job.start();
+            loop.exec();
+            if (job.error()) {
+                qDebug() << "Deleting password failed: " << qPrintable(job.errorString());
+            }
+            qDebug() << "Password deleted successfully";
+        }
     }
 }
 

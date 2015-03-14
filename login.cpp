@@ -53,3 +53,8 @@ QString Login::getPassword()
 {
     return ui->lineEdit_Password->text();
 }
+
+bool Login::isAutoLoginEnabled()
+{
+    return ui->checkBox_AutoLogin->isChecked();
+}
