@@ -125,6 +125,8 @@ void OBSrequest::setDate(const QString& date)
 
 QString OBSrequest::getDate()
 {
+    // Replace the "T" with a space
+    date = date.replace(10, 1, " ");
     return date;
 }
 
