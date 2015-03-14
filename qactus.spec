@@ -17,7 +17,7 @@
 
 
 Name:           qactus
-Version:        0.4.0
+Version:        0.4.1
 Release:        0
 Summary:        An OBS notifier application
 License:        GPL-2.0 or GPL-3.0
@@ -26,6 +26,7 @@ Url:            http://www.javierllorente.com/
 Source:         %{name}-%{version}.tar.bz2
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  libqt4-devel
+BuildRequires:  qtkeychain-devel
 BuildRequires:  update-desktop-files
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
