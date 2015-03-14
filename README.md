@@ -19,6 +19,7 @@ This project was originally hosted on Nokia Developer Projects until 2013, when 
 Dependencies
 ------------
 Qt4
+QtKeychain
 
 
 Installation
