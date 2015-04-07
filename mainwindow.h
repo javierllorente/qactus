@@ -63,7 +63,7 @@ private:
     QAction *action_Add;
     QAction *action_Remove;
     QAction *action_Refresh;
-    QAction *action_Timer;
+    QAction *action_Configure;
     QAction *action_aboutQt;
 
     TrayIcon *trayIcon;
@@ -71,7 +71,6 @@ private:
     QAction *action_About;
     QAction *action_Quit;
     QAction *action_Restore;
-//    QAction *action_Configure;
 
     void createTreePackages();
     void createTreeRequests();

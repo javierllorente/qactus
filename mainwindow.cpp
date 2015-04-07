@@ -102,7 +102,7 @@ void MainWindow::changeEvent(QEvent *e)
 void MainWindow::enableButtons(bool isAuthenticated)
 {
     action_Refresh->setEnabled(isAuthenticated);
-    action_Timer->setEnabled(isAuthenticated);
+    action_Configure->setEnabled(isAuthenticated);
     ui->actionConfigure_Qactus->setEnabled(isAuthenticated);
 
     if (isAuthenticated) {
@@ -137,12 +137,12 @@ void MainWindow::createToolbar()
 
     ui->toolBar->addSeparator();
 
-    action_Timer = new QAction(tr("&Timer"), this);
-    action_Timer->setIcon(QIcon(":/icons/chronometer.png"));
-    action_Timer->setStatusTip(tr("Timer"));
-    action_Timer->setEnabled(false);
-    ui->toolBar->addAction(action_Timer);
-    connect(action_Timer, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
+    action_Configure = new QAction(tr("&Configure"), this);
+    action_Configure->setIcon(QIcon(":/icons/configure.png"));
+    action_Configure->setStatusTip(tr("Configure Qactus"));
+    action_Configure->setEnabled(false);
+    ui->toolBar->addAction(action_Configure);
+    connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
 
 }
 
