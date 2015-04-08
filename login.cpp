@@ -58,3 +58,9 @@ bool Login::isAutoLoginEnabled()
 {
     return ui->checkBox_AutoLogin->isChecked();
 }
+
+void Login::setAutoLoginEnabled(bool check)
+{
+    ui->checkBox_AutoLogin->setChecked(check);
+}
+

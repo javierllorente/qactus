@@ -542,6 +542,7 @@ void MainWindow::writeSettings()
 
     settings.beginGroup("Auth");
     settings.setValue("Username", obsAccess->getUsername());
+    settings.setValue("AutoLogin", loginDialog->isAutoLoginEnabled());
     settings.endGroup();
 
     settings.beginGroup("Timer");
@@ -577,8 +578,9 @@ void MainWindow::readSettings()
     move(settings.value("pos", QPoint(200, 200)).toPoint());
     settings.endGroup();
 
-    settings.beginGroup("auth");
-    loginDialog->setUsername(settings.value("username").toString());
+    settings.beginGroup("Auth");
+    loginDialog->setUsername(settings.value("Username").toString());
+    loginDialog->setAutoLoginEnabled(settings.value("AutoLogin").toBool());
     settings.endGroup();   
 
     int size = settings.beginReadArray("Packages");

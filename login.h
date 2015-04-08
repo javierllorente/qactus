@@ -41,6 +41,7 @@ public:
     void setUsername(const QString&);
     QString getPassword();
     bool isAutoLoginEnabled();
+    void setAutoLoginEnabled(bool check);
 
 private:
     Ui::Login *ui;
