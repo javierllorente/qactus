@@ -63,6 +63,7 @@ private:
     QAction *action_Add;
     QAction *action_Remove;
     QAction *action_Refresh;
+    QAction *action_MarkRead;
     QAction *action_Configure;
     QAction *action_aboutQt;
 
@@ -100,6 +101,7 @@ private slots:
     void editRow(QTreeWidgetItem*, int);
     void removeRow();
     void refreshView();
+    void markRead();
     void lineEdit_Password_returnPressed();
     void pushButton_Login_clicked();
     void on_actionAbout_triggered(bool);

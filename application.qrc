@@ -10,5 +10,6 @@
         <file>icons/list-remove.png</file>
         <file>obs.png</file>
         <file>obs_change.png</file>
+        <file>icons/mail-mark-read.png</file>
     </qresource>
 </RCC>

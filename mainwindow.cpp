@@ -135,6 +135,12 @@ void MainWindow::createToolbar()
     ui->toolBar->addAction(action_Refresh);
     connect(action_Refresh, SIGNAL(triggered()), this, SLOT(refreshView()));
 
+    action_MarkRead = new QAction(tr("&Mark all as read"), this);
+    action_MarkRead->setIcon(QIcon(":/icons/mail-mark-read.png"));
+    action_MarkRead->setStatusTip(tr("Mark all as read"));
+    ui->toolBar->addAction(action_MarkRead);
+    connect(action_MarkRead, SIGNAL(triggered()), this, SLOT(markRead()));
+
     ui->toolBar->addSeparator();
 
     action_Configure = new QAction(tr("&Configure"), this);
@@ -243,6 +249,15 @@ void MainWindow::refreshView()
     obsRequests = obsAccess->getRequests();
     insertRequests(obsRequests);
     statusBar()->showMessage(tr("Done"), 0);
+}
+
+void MainWindow::markRead()
+{
+    for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
+        if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
+            toggleItemFont(ui->treePackages->topLevelItem(i));
+        }
+    }
 }
 
 void MainWindow::createTreePackages()
@@ -627,6 +642,7 @@ void MainWindow::on_tabWidget_currentChanged(const int& index)
     // Disable add and remove for the request tab
     action_Add->setEnabled(!index);
     action_Remove->setEnabled(!index);
+    action_MarkRead->setEnabled(!index);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -642,11 +658,6 @@ bool MainWindow::event(QEvent *event)
         qDebug() << "Window activated";
         if (trayIcon->hasChangedIcon()) {
             trayIcon->setTrayIcon("obs.png");
-            for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
-                if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
-                    toggleItemFont(ui->treePackages->topLevelItem(i));
-                }
-            }
         }
         break;
     default:
