@@ -372,6 +372,7 @@ void MainWindow::setItemBoldFont(QTreeWidgetItem *item, bool bold)
     for (int i=0; i<5; i++) {
         item->setFont(i, font);
     }
+    trayIcon->setTrayIcon("obs.png");
 }
 
 void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
