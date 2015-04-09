@@ -17,7 +17,7 @@
 
 
 Name:           qactus
-Version:        0.4.1
+Version:        0.4.2
 Release:        0
 Summary:        An OBS notifier application
 License:        GPL-2.0 or GPL-3.0
