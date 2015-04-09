@@ -87,7 +87,7 @@ private:
     void insertRequests(QList<OBSrequest*>);
     QString breakLine(QString&, const int&);
     QColor getColorForStatus(const QString&);
-    void toggleItemFont(QTreeWidgetItem*);
+    void setItemBoldFont(QTreeWidgetItem* item, bool bold);
     void closeEvent(QCloseEvent*);
     bool event(QEvent *event);
 

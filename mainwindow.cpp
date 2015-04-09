@@ -255,7 +255,7 @@ void MainWindow::markRead()
 {
     for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
         if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
-            toggleItemFont(ui->treePackages->topLevelItem(i));
+            setItemBoldFont(ui->treePackages->topLevelItem(i), false);
         }
     }
 }
@@ -312,7 +312,7 @@ void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)
     if ((oldStatus != "") && (oldStatus != newStatus)) {
         qDebug() << "Build status has changed!";
         trayIcon->change();
-        toggleItemFont(item);
+        setItemBoldFont(item, true);
     }
     qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
 }
@@ -365,10 +365,10 @@ QColor MainWindow::getColorForStatus(const QString& status)
     return color;
 }
 
-void MainWindow::toggleItemFont(QTreeWidgetItem *item)
+void MainWindow::setItemBoldFont(QTreeWidgetItem *item, bool bold)
 {
     QFont font = item->font(0);
-    font.setBold(!font.bold());
+    font.setBold(bold);
     for (int i=0; i<5; i++) {
         item->setFont(i, font);
     }
