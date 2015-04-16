@@ -101,7 +101,8 @@ private slots:
     void editRow(QTreeWidgetItem*, int);
     void removeRow();
     void refreshView();
-    void markRead();
+    void markAllRead();
+    void markRead(QTreeWidgetItem*, int);
     void lineEdit_Password_returnPressed();
     void pushButton_Login_clicked();
     void on_actionAbout_triggered(bool);

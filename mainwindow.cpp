@@ -139,7 +139,7 @@ void MainWindow::createToolbar()
     action_MarkRead->setIcon(QIcon(":/icons/mail-mark-read.png"));
     action_MarkRead->setStatusTip(tr("Mark all as read"));
     ui->toolBar->addAction(action_MarkRead);
-    connect(action_MarkRead, SIGNAL(triggered()), this, SLOT(markRead()));
+    connect(action_MarkRead, SIGNAL(triggered()), this, SLOT(markAllRead()));
 
     ui->toolBar->addSeparator();
 
@@ -251,8 +251,19 @@ void MainWindow::refreshView()
     statusBar()->showMessage(tr("Done"), 0);
 }
 
-void MainWindow::markRead()
+void MainWindow::markRead(QTreeWidgetItem* item, int)
 {
+    qDebug() << "markRead() " << "Row: " + QString::number(ui->treePackages->indexOfTopLevelItem(item));
+    for (int i=0; i<ui->treePackages->columnCount(); i++) {
+        if (item->font(0).bold()) {
+            setItemBoldFont(ui->treePackages->topLevelItem(i), false);
+        }
+    }
+}
+
+void MainWindow::markAllRead()
+{
+    qDebug() << "markAllRead()";
     for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
         if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
             setItemBoldFont(ui->treePackages->topLevelItem(i), false);
@@ -273,6 +284,7 @@ void MainWindow::createTreePackages()
     ui->treePackages->setColumnWidth(4, 140); // Status
 
     connect(ui->treePackages, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(editRow(QTreeWidgetItem*, int)));
+    connect(ui->treePackages, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(markRead(QTreeWidgetItem*, int)));
 }
 
 void MainWindow::createTreeRequests()
