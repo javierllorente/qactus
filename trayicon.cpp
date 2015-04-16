@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2013 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2015 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,33 +23,30 @@
 TrayIcon::TrayIcon(QWidget *parent) :
     QSystemTrayIcon(parent)
 {
-    createTrayIcon();
-    trayIconChanged = false;
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), parent, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
-}
-
-void TrayIcon::createTrayIcon()
-{
-    trayIcon = new QSystemTrayIcon();
     trayIconMenu = new QMenu();
-    trayIcon->setIcon(QIcon(":/obs.png"));
-    trayIcon->setToolTip("Qactus");
-    trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->show();
+    normal();
+    setToolTip("Qactus");
+    setContextMenu(trayIconMenu);
+    connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), parent,
+            SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+    show();
 }
 
-void TrayIcon::change()
+void TrayIcon::notify()
 {
-    trayIcon->setIcon(QIcon(":/obs_change.png"));
+    setIcon(QIcon(":/obs_change.png"));
     trayIconChanged = true;
+    qDebug() << "TrayIcon notify()";
+}
+
+void TrayIcon::normal()
+{
+    setIcon(QIcon(":/obs.png"));
+    trayIconChanged = false;
+    qDebug() << "TrayIcon normal()";
 }
 
 bool TrayIcon::hasChangedIcon()
 {
     return trayIconChanged;
-}
-
-void TrayIcon::setTrayIcon(const QString& iconName)
-{
-    trayIcon->setIcon(QIcon(":/" + iconName));
 }
