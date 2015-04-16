@@ -256,8 +256,10 @@ void MainWindow::markRead()
     for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
         if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
             setItemBoldFont(ui->treePackages->topLevelItem(i), false);
-            trayIcon->normal();
         }
+    }
+    if (trayIcon->hasChangedIcon()) {
+        trayIcon->normal();
     }
 }
 
