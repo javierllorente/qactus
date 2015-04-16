@@ -256,6 +256,7 @@ void MainWindow::markRead()
     for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
         if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
             setItemBoldFont(ui->treePackages->topLevelItem(i), false);
+            trayIcon->normal();
         }
     }
 }
@@ -311,7 +312,7 @@ void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)
 //    change the tray icon
     if ((oldStatus != "") && (oldStatus != newStatus)) {
         qDebug() << "Build status has changed!";
-        trayIcon->change();
+        trayIcon->notify();
         setItemBoldFont(item, true);
     }
     qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
@@ -372,7 +373,6 @@ void MainWindow::setItemBoldFont(QTreeWidgetItem *item, bool bold)
     for (int i=0; i<5; i++) {
         item->setFont(i, font);
     }
-    trayIcon->setTrayIcon("obs.png");
 }
 
 void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
@@ -542,7 +542,7 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
     if (reason==QSystemTrayIcon::Trigger) {
         toggleVisibility();
         if (trayIcon->hasChangedIcon()) {
-            trayIcon->setTrayIcon("obs.png");
+            trayIcon->normal();
         }
     }
 
@@ -658,7 +658,7 @@ bool MainWindow::event(QEvent *event)
     case QEvent::WindowActivate:
         qDebug() << "Window activated";
         if (trayIcon->hasChangedIcon()) {
-            trayIcon->setTrayIcon("obs.png");
+            trayIcon->normal();
         }
         break;
     default:
