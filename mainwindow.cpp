@@ -119,6 +119,7 @@ void MainWindow::createToolbar()
     action_Add = new QAction(tr("&Add"), this);
     action_Add->setIcon(QIcon(":/icons/list-add.png"));
     action_Add->setStatusTip(tr("Add a new row"));
+    action_Add->setShortcut(QKeySequence("Ctrl+A"));
     ui->toolBar->addAction(action_Add);
     connect(action_Add, SIGNAL(triggered()), this, SLOT(addRow()));
 
@@ -132,12 +133,14 @@ void MainWindow::createToolbar()
     action_Refresh->setIcon(QIcon(":/icons/view-refresh.png"));
     action_Refresh->setStatusTip(tr("Refresh view"));
     action_Refresh->setEnabled(false);
+    action_Refresh->setShortcut(QKeySequence::Refresh);
     ui->toolBar->addAction(action_Refresh);
     connect(action_Refresh, SIGNAL(triggered()), this, SLOT(refreshView()));
 
     action_MarkRead = new QAction(tr("&Mark all as read"), this);
     action_MarkRead->setIcon(QIcon(":/icons/mail-mark-read.png"));
     action_MarkRead->setStatusTip(tr("Mark all as read"));
+    action_MarkRead->setShortcut(QKeySequence("Ctrl+M"));
     ui->toolBar->addAction(action_MarkRead);
     connect(action_MarkRead, SIGNAL(triggered()), this, SLOT(markAllRead()));
 
