@@ -263,6 +263,9 @@ void MainWindow::markRead(QTreeWidgetItem* item, int)
             setItemBoldFont(item, false);
         }
     }
+    if (trayIcon->hasChangedIcon()) {
+        trayIcon->normal();
+    }
 }
 
 void MainWindow::markAllRead()
