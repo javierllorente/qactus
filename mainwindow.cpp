@@ -260,7 +260,7 @@ void MainWindow::markRead(QTreeWidgetItem* item, int)
     qDebug() << "markRead() " << "Row: " + QString::number(ui->treePackages->indexOfTopLevelItem(item));
     for (int i=0; i<ui->treePackages->columnCount(); i++) {
         if (item->font(0).bold()) {
-            setItemBoldFont(ui->treePackages->topLevelItem(i), false);
+            setItemBoldFont(item, false);
         }
     }
 }
