@@ -126,6 +126,7 @@ void MainWindow::createToolbar()
     action_Remove = new QAction(tr("&Remove"), this);
     action_Remove->setIcon(QIcon(":/icons/list-remove.png"));
     action_Remove->setStatusTip(tr("Remove selected row"));
+    action_Remove->setShortcut(QKeySequence::Delete);
     ui->toolBar->addAction(action_Remove);
     connect(action_Remove, SIGNAL(triggered()), this, SLOT(removeRow()));
 
