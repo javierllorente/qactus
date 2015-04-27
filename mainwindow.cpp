@@ -379,7 +379,7 @@ QColor MainWindow::getColorForStatus(const QString& status)
     {
         color = Qt::darkRed;
     }
-    else if(status.contains("unknown"))
+    else if(status.contains("unknown")||status=="404")
     {
         color = Qt::red;
     }
