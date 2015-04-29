@@ -49,8 +49,8 @@ public:
     QString getUsername();
     QList<OBSrequest*> getRequests();
     int getRequestNumber();
-    void acceptRequest(const QString &id, const QString &comments);
-    void declineRequest(const QString &id, const QString &comments);
+    QString acceptRequest(const QString &id, const QString &comments);
+    QString declineRequest(const QString &id, const QString &comments);
     QStringList getProjectList();
     QStringList getPackageListForProject(const QString &projectName);
     QStringList getMetadataForProject(const QString &projectName);

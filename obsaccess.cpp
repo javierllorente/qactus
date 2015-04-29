@@ -87,6 +87,11 @@ void OBSaccess::postRequest(const QString &urlStr, const QUrl &data)
     request.setRawHeader("User-Agent", userAgent.toAscii());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     manager->post(request, data.encodedQuery());
+
+//    Make it a synchronous call
+    QEventLoop *loop = new QEventLoop;
+    connect(manager, SIGNAL(finished(QNetworkReply *)),loop, SLOT(quit()));
+    loop->exec();
 }
 
 void OBSaccess::setApiUrl(const QString &apiUrl)
@@ -191,18 +196,20 @@ int OBSaccess::getRequestNumber()
     return xmlReader->getRequestNumber();
 }
 
-void OBSaccess::acceptRequest(const QString &id, const QString &comments)
+QString OBSaccess::acceptRequest(const QString &id, const QString &comments)
 {
     QUrl data;
     data.addQueryItem("comments", comments);
     postRequest(apiUrl + "/request/" + id + "?cmd=changestate&newstate=accepted", data);
+    return xmlReader->getPackage()->getStatus();
 }
 
-void OBSaccess::declineRequest(const QString &id, const QString &comments)
+QString OBSaccess::declineRequest(const QString &id, const QString &comments)
 {
     QUrl data;
     data.addQueryItem("comments", comments);
     postRequest(apiUrl + "/request/" + id + "?cmd=changestate&newstate=declined", data);
+    return xmlReader->getPackage()->getStatus();
 }
 
 QStringList OBSaccess::getProjectList()
