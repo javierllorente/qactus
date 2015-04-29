@@ -78,7 +78,7 @@ private:
     static OBSaccess* instance;
     QString apiUrl;
     void request(const QString &urlStr);
-    void postRequest(const QString &urlStr, const QUrl &data);
+    void postRequest(const QString &urlStr, const QByteArray &data);
     QString curUsername;
     QString curPassword;
     QString data;
