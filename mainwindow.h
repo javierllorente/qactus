@@ -96,6 +96,8 @@ private:
 
 private slots:
     void enableButtons(bool);
+    void showContextMenu(const QPoint&);
+    void changeRequestState();
     void getDescription(QTreeWidgetItem*, int);
     void addRow();
     void editRow(QTreeWidgetItem*, int);

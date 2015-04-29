@@ -26,6 +26,7 @@
 #include "configure.h"
 #include "login.h"
 #include "roweditor.h"
+#include "requeststateeditor.h"
 
 #include "obsaccess.h"
 #include "obspackage.h"
@@ -51,6 +52,9 @@ MainWindow::MainWindow(QWidget *parent) :
     loginDialog = new Login(this);
     configureDialog = new Configure(this);
     ui->actionConfigure_Qactus->setEnabled(false);
+    connect(ui->treeRequests, SIGNAL(customContextMenuRequested(const QPoint&)),this,
+            SLOT(showContextMenu(const QPoint&)));
+    ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(obsAccess, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
 
@@ -154,6 +158,37 @@ void MainWindow::createToolbar()
     ui->toolBar->addAction(action_Configure);
     connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
 
+}
+
+void MainWindow::showContextMenu(const QPoint& point)
+{
+    QMenu *treeRequestsMenu = new QMenu(ui->treeRequests);
+
+    QAction *actionChangeRequestState =  new QAction(tr("Change &State"), this);
+    actionChangeRequestState->setIcon(QIcon(":/icons/system-switch-user.png"));
+    actionChangeRequestState->setText("Change State");
+    connect(actionChangeRequestState, SIGNAL(triggered()), this, SLOT(changeRequestState()));
+
+    treeRequestsMenu->addAction(actionChangeRequestState);
+
+    QModelIndex index = ui->treeRequests->indexAt(point);
+    if (index.isValid()) {
+        treeRequestsMenu->exec(ui->treeRequests->mapToGlobal(point));
+    }
+}
+
+void MainWindow::changeRequestState()
+{
+    qDebug() << "Launching RequestStateEditor...";
+    RequestStateEditor *reqStateEditor = new RequestStateEditor(this);
+    QTreeWidgetItem *item = ui->treeRequests->currentItem();
+    qDebug() << "Request selected:" << item->text(1);
+    reqStateEditor->setRequestId(item->text(1));
+
+    if (reqStateEditor->exec()) {
+
+    }
+    delete reqStateEditor;
 }
 
 void MainWindow::addRow()
