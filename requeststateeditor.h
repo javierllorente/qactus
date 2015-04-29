@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QDebug>
 #include <QMessageBox>
+#include <QProgressDialog>
 #include "obsaccess.h"
 
 namespace Ui {
@@ -19,6 +20,7 @@ public:
     ~RequestStateEditor();
 
     void setRequestId(const QString& id);
+    QString getResult();
 
 private slots:
     void on_acceptPushButton_clicked();
@@ -28,6 +30,7 @@ private:
     Ui::RequestStateEditor *ui;
     OBSaccess *obsAccess;
     QString id;
+    QString result;
 };
 
 #endif // REQUESTSTATEEDITOR_H

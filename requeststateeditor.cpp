@@ -24,7 +24,10 @@ void RequestStateEditor::setRequestId(const QString& id)
 void RequestStateEditor::on_acceptPushButton_clicked()
 {
     qDebug() << "Accepting request" << this->id;
-    QString result = obsAccess->acceptRequest(this->id, ui->commentsTextBrowser->toPlainText());
+    QProgressDialog progress(tr("Accepting request..."), 0, 0, 0, this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.show();
+    result = obsAccess->acceptRequest(this->id, ui->commentsTextBrowser->toPlainText());
     if (result=="ok") {
         close();
     } else {
@@ -36,11 +39,19 @@ void RequestStateEditor::on_acceptPushButton_clicked()
 void RequestStateEditor::on_declinePushButton_clicked()
 {
     qDebug() << "Declining request..." << this->id;
-    QString result = obsAccess->declineRequest(this->id, ui->commentsTextBrowser->toPlainText());
+    QProgressDialog progress(tr("Declining request..."), 0, 0, 0, this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.show();
+    result = obsAccess->declineRequest(this->id, ui->commentsTextBrowser->toPlainText());
     if (result=="ok") {
         close();
     } else {
         QMessageBox::critical(this, tr("Error declining request!"), result, QMessageBox::Ok );
     }
     qDebug() << "Declining result:" << result;
+}
+
+QString RequestStateEditor::getResult()
+{
+    return result;
 }
