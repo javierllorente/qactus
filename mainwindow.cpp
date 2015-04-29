@@ -185,8 +185,9 @@ void MainWindow::changeRequestState()
     qDebug() << "Request selected:" << item->text(1);
     reqStateEditor->setRequestId(item->text(1));
 
-    if (reqStateEditor->exec()) {
-
+    reqStateEditor->exec();
+    if (reqStateEditor->getResult()=="ok") {
+        item->setHidden(true);
     }
     delete reqStateEditor;
 }
