@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QDebug>
+#include <QMessageBox>
 #include "obsaccess.h"
 
 namespace Ui {

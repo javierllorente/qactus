@@ -28,8 +28,9 @@ void RequestStateEditor::on_acceptPushButton_clicked()
     if (result=="ok") {
         close();
     } else {
-        qDebug() << "Accepting result:" << result;
+        QMessageBox::critical(this, tr("Error accepting request!"), result, QMessageBox::Ok );
     }
+    qDebug() << "Accepting result:" << result;
 }
 
 void RequestStateEditor::on_declinePushButton_clicked()
@@ -39,6 +40,7 @@ void RequestStateEditor::on_declinePushButton_clicked()
     if (result=="ok") {
         close();
     } else {
-        qDebug() << "Declining result:" << result;
+        QMessageBox::critical(this, tr("Error declining request!"), result, QMessageBox::Ok );
     }
+    qDebug() << "Declining result:" << result;
 }
