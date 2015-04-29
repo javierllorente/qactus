@@ -23,12 +23,22 @@ void RequestStateEditor::setRequestId(const QString& id)
 
 void RequestStateEditor::on_acceptPushButton_clicked()
 {
-    qDebug() << "accepting request" << this->id;
-    obsAccess->acceptRequest(this->id, ui->commentsTextBrowser->toPlainText());
+    qDebug() << "Accepting request" << this->id;
+    QString result = obsAccess->acceptRequest(this->id, ui->commentsTextBrowser->toPlainText());
+    if (result=="ok") {
+        close();
+    } else {
+        qDebug() << "Accepting result:" << result;
+    }
 }
 
 void RequestStateEditor::on_declinePushButton_clicked()
 {
-    qDebug() << "declining request" << this->id;
-    obsAccess->declineRequest(this->id, ui->commentsTextBrowser->toPlainText());
+    qDebug() << "Declining request..." << this->id;
+    QString result = obsAccess->declineRequest(this->id, ui->commentsTextBrowser->toPlainText());
+    if (result=="ok") {
+        close();
+    } else {
+        qDebug() << "Declining result:" << result;
+    }
 }
