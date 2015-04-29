@@ -1,0 +1,22 @@
+Qactus ChangeLog
+================
+
+v0.5.0 (2015-04-29)
+- New feature: accepting/declining requests (right click->Change State)
+
+v0.4.3 (2015-04-17)
+- Fix tray icon not set to red on change
+- New feature: shortcuts for add, remove, refresh and mark all as read
+- New feature: mark as read for a single build item
+- Minor improvements
+
+v0.4.2 (2015-04-09)
+- New feature: 'Mark all as read'
+
+v0.4.1 (2015-03-14)
+- New feature: auto login
+
+v0.4.0 (2015-02-27)
+- Notifies you of build status changes
+- Features a complete build name autocompleter
+- Retrieves submit requests concerning you
