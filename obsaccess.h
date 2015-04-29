@@ -49,6 +49,8 @@ public:
     QString getUsername();
     QList<OBSrequest*> getRequests();
     int getRequestNumber();
+    void acceptRequest(const QString &id, const QString &comments);
+    void declineRequest(const QString &id, const QString &comments);
     QStringList getProjectList();
     QStringList getPackageListForProject(const QString &projectName);
     QStringList getMetadataForProject(const QString &projectName);
@@ -76,6 +78,7 @@ private:
     static OBSaccess* instance;
     QString apiUrl;
     void request(const QString &urlStr);
+    void postRequest(const QString &urlStr, const QUrl &data);
     QString curUsername;
     QString curPassword;
     QString data;
