@@ -85,6 +85,7 @@ void OBSaccess::postRequest(const QString &urlStr, const QUrl &data)
             QCoreApplication::applicationVersion();
     qDebug() << "User-Agent:" << userAgent;
     request.setRawHeader("User-Agent", userAgent.toAscii());
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     manager->post(request, data.encodedQuery());
 }
 
