@@ -20,6 +20,7 @@ public:
     ~RequestStateEditor();
 
     void setRequestId(const QString& id);
+    void setDiff(const QString &diff);
     QString getResult();
 
 private slots:

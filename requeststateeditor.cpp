@@ -21,6 +21,12 @@ void RequestStateEditor::setRequestId(const QString& id)
     ui->requestIdLabel->setText("Request ID: " + this->id);
 }
 
+void RequestStateEditor::setDiff(const QString& diff)
+{
+    ui->diffTextBrowser->setText(diff);
+
+}
+
 void RequestStateEditor::on_acceptPushButton_clicked()
 {
     qDebug() << "Accepting request" << this->id;

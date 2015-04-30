@@ -6,32 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>262</height>
+    <width>523</width>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Request State Change</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <item row="2" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="commentsLabel">
      <property name="text">
       <string>Comments:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QTextBrowser" name="commentsTextBrowser">
-     <property name="undoRedoEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="readOnly">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
+   <item row="9" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="acceptPushButton">
@@ -70,12 +60,32 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="diffLabel">
+     <property name="text">
+      <string>Changes:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="QTextBrowser" name="commentsTextBrowser">
+     <property name="undoRedoEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="readOnly">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QTextBrowser" name="diffTextBrowser"/>
    </item>
   </layout>
  </widget>
