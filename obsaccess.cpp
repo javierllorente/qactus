@@ -149,7 +149,7 @@ void OBSaccess::replyFinished(QNetworkReply *reply)
     qDebug() << "HTTP status code:" << httpStatusCode;
 //    qDebug() << "Network Reply: " << data;
 
-    if (httpStatusCode==404 && isAuthenticated()) {
+    if (httpStatusCode==404 && isAuthenticated()) {        
         xmlReader->addData(data);
     } else if (reply->error() != QNetworkReply::NoError) {
         authenticated = false;
@@ -165,7 +165,12 @@ void OBSaccess::replyFinished(QNetworkReply *reply)
         authenticated = true;
         emit isAuthenticated(authenticated);
         qDebug() << "Request succeeded!";
-        xmlReader->addData(data);
+
+        if(data.startsWith("Index")) {
+           // Don't process diffs
+        } else {
+            xmlReader->addData(data);
+        }
     }
 }
 
@@ -210,6 +215,14 @@ QString OBSaccess::declineRequest(const QString &id, const QString &comments)
     data.append(comments);
     postRequest(apiUrl + "/request/" + id + "?cmd=changestate&newstate=declined", data);
     return xmlReader->getPackage()->getStatus();
+}
+
+QString OBSaccess::diffRequest(const QString &source)
+{
+//    QByteArray data;
+    postRequest(apiUrl + "/source/" + source +
+                "?unified=1&tarlimit=0&cmd=diff&filelimit=0&expand=1", "");
+    return data;
 }
 
 QStringList OBSaccess::getProjectList()
