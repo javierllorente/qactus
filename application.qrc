@@ -10,9 +10,9 @@
         <file>icons/list-remove.png</file>
         <file>obs.png</file>
         <file>obs_change.png</file>
-        <file>icons/mail-mark-read.png</file>
         <file>icons/system-switch-user.png</file>
         <file>icons/dialog-ok-apply.png</file>
         <file>icons/dialog-cancel.png</file>
+        <file>icons/view-task.png</file>
     </qresource>
 </RCC>
