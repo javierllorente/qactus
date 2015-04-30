@@ -51,6 +51,7 @@ public:
     int getRequestNumber();
     QString acceptRequest(const QString &id, const QString &comments);
     QString declineRequest(const QString &id, const QString &comments);
+    QString diffRequest(const QString &source);
     QStringList getProjectList();
     QStringList getPackageListForProject(const QString &projectName);
     QStringList getMetadataForProject(const QString &projectName);
