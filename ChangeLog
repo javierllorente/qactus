@@ -1,6 +1,12 @@
 Qactus ChangeLog
 ================
 
+v0.5.1 (2015-04-30)
+- New feature: request diff is retrieved and displayed on 
+request state change dialog
+- Row and request state change dialogs improved
+- Minor improvements
+
 v0.5.0 (2015-04-29)
 - New feature: accepting/declining requests (right click->Change State)
 
