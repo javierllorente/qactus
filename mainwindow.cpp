@@ -185,6 +185,16 @@ void MainWindow::changeRequestState()
     qDebug() << "Request selected:" << item->text(1);
     reqStateEditor->setRequestId(item->text(1));
 
+    if(item->text(2)!="N/A") {
+        QProgressDialog progress(tr("Getting diff..."), 0, 0, 0, this);
+        progress.setWindowModality(Qt::WindowModal);
+        progress.show();
+        QString diff = obsAccess->diffRequest(item->text(2));
+        reqStateEditor->setDiff(diff);
+        qDebug() << "diff";
+        qDebug() << diff;
+    }
+
     reqStateEditor->exec();
     if (reqStateEditor->getResult()=="ok") {
         item->setHidden(true);
