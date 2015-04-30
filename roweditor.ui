@@ -6,18 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>332</width>
-    <height>264</height>
+    <width>384</width>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Row Editor</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayoutProject">
      <item>
       <widget class="QLabel" name="labelProject">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>62</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Project:</string>
        </property>
@@ -28,10 +40,35 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0">
+    <spacer name="verticalSpacerProject">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>7</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayoutPackage">
      <item>
       <widget class="QLabel" name="labelPackage">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>62</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Package:</string>
        </property>
@@ -42,10 +79,35 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="3" column="0">
+    <spacer name="verticalSpacerPackage">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>7</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="0" colspan="2">
     <layout class="QHBoxLayout" name="otherHorizontalLayout">
      <item>
       <widget class="QLabel" name="labelRepository">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>62</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Repository:</string>
        </property>
@@ -55,6 +117,22 @@
       <widget class="QLineEdit" name="lineEditRepository"/>
      </item>
      <item>
+      <spacer name="horizontalSpacerArch">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>10</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QLabel" name="labelArch">
        <property name="text">
         <string>Arch:</string>
@@ -62,11 +140,31 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEditArch"/>
+      <widget class="QLineEdit" name="lineEditArch">
+       <property name="maximumSize">
+        <size>
+         <width>75</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
-   <item>
+   <item row="5" column="0">
+    <spacer name="verticalSpacerOther">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>12</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
