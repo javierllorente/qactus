@@ -143,7 +143,7 @@ void MainWindow::createToolbar()
     connect(action_Refresh, SIGNAL(triggered()), this, SLOT(refreshView()));
 
     action_MarkRead = new QAction(tr("&Mark all as read"), this);
-    action_MarkRead->setIcon(QIcon(":/icons/mail-mark-read.png"));
+    action_MarkRead->setIcon(QIcon(":/icons/view-task.png"));
     action_MarkRead->setStatusTip(tr("Mark all as read"));
     action_MarkRead->setShortcut(QKeySequence("Ctrl+M"));
     ui->toolBar->addAction(action_MarkRead);
