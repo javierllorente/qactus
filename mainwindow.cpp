@@ -193,6 +193,8 @@ void MainWindow::changeRequestState()
         reqStateEditor->setDiff(diff);
         qDebug() << "diff";
         qDebug() << diff;
+    } else if (item->text(5)=="delete") {
+        reqStateEditor->setDiff(item->text(5) + " " + item->text(3));
     }
 
     reqStateEditor->exec();
