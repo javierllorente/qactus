@@ -351,6 +351,7 @@ void MainWindow::createTreeRequests()
     ui->treeRequests->setColumnWidth(5, 60); // Type
     ui->treeRequests->setColumnWidth(6, 60); // State
 
+    connect(ui->treeRequests, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(changeRequestState()));
     connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getDescription(QTreeWidgetItem*, int)));
 }
 
