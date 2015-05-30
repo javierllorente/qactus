@@ -185,7 +185,7 @@ void MainWindow::changeRequestState()
     qDebug() << "Request selected:" << item->text(1);
     reqStateEditor->setRequestId(item->text(1));
 
-    if(item->text(2)!="N/A") {
+    if(item->text(5)=="submit") {
         QProgressDialog progress(tr("Getting diff..."), 0, 0, 0, this);
         progress.setWindowModality(Qt::WindowModal);
         progress.show();
@@ -193,7 +193,7 @@ void MainWindow::changeRequestState()
         reqStateEditor->setDiff(diff);
         qDebug() << "diff";
         qDebug() << diff;
-    } else if (item->text(5)=="delete") {
+    } else {
         reqStateEditor->setDiff(item->text(5) + " " + item->text(3));
     }
 
