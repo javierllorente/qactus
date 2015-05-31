@@ -185,6 +185,10 @@ void MainWindow::changeRequestState()
     QTreeWidgetItem *item = ui->treeRequests->currentItem();
     qDebug() << "Request selected:" << item->text(1);
     reqStateEditor->setRequestId(item->text(1));
+    reqStateEditor->setDate(item->text(0));
+    reqStateEditor->setSource(item->text(2));
+    reqStateEditor->setTarget(item->text(3));
+    reqStateEditor->setRequester(item->text(4));
 
     if(item->text(5)=="submit") {
         QProgressDialog progress(tr("Getting diff..."), 0, 0, 0, this);

@@ -20,6 +20,10 @@ public:
     ~RequestStateEditor();
 
     void setRequestId(const QString& id);
+    void setSource(const QString& source);
+    void setRequester(const QString& requester);
+    void setTarget(const QString& target);
+    void setDate(const QString& date);
     void setDiff(const QString &diff);
     QString getResult();
 

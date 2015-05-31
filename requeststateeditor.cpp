@@ -19,7 +19,27 @@ RequestStateEditor::~RequestStateEditor()
 void RequestStateEditor::setRequestId(const QString& id)
 {
     this->id = id;
-    ui->requestIdLabel->setText("Request ID: " + this->id);
+    ui->requestIdLabelText->setText(id);
+}
+
+void RequestStateEditor::setRequester(const QString& requester)
+{
+    ui->requesterLabel->setText("Created by " + requester);
+}
+
+void RequestStateEditor::setSource(const QString& source)
+{
+    ui->sourceLabelText->setText(source);
+}
+
+void RequestStateEditor::setTarget(const QString& target)
+{
+    ui->targetLabelText->setText(target);
+}
+
+void RequestStateEditor::setDate(const QString& date)
+{
+    ui->dateLabelText->setText(date);
 }
 
 void RequestStateEditor::setDiff(const QString& diff)
@@ -30,11 +50,11 @@ void RequestStateEditor::setDiff(const QString& diff)
 
 void RequestStateEditor::on_acceptPushButton_clicked()
 {
-    qDebug() << "Accepting request" << this->id;
+    qDebug() << "Accepting request" << id;
     QProgressDialog progress(tr("Accepting request..."), 0, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    result = obsAccess->acceptRequest(this->id, ui->commentsTextBrowser->toPlainText());
+    result = obsAccess->acceptRequest(id, ui->commentsTextBrowser->toPlainText());
     if (result=="ok") {
         close();
     } else {
@@ -45,11 +65,11 @@ void RequestStateEditor::on_acceptPushButton_clicked()
 
 void RequestStateEditor::on_declinePushButton_clicked()
 {
-    qDebug() << "Declining request..." << this->id;
+    qDebug() << "Declining request..." << id;
     QProgressDialog progress(tr("Declining request..."), 0, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    result = obsAccess->declineRequest(this->id, ui->commentsTextBrowser->toPlainText());
+    result = obsAccess->declineRequest(id, ui->commentsTextBrowser->toPlainText());
     if (result=="ok") {
         close();
     } else {
