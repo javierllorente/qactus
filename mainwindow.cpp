@@ -30,6 +30,7 @@
 
 #include "obsaccess.h"
 #include "obspackage.h"
+#include "autotooltipdelegate.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -340,6 +341,8 @@ void MainWindow::createTreePackages()
 
     connect(ui->treePackages, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(editRow(QTreeWidgetItem*, int)));
     connect(ui->treePackages, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(markRead(QTreeWidgetItem*, int)));
+
+    ui->treePackages->setItemDelegate(new AutoToolTipDelegate(ui->treePackages));
 }
 
 void MainWindow::createTreeRequests()
@@ -355,6 +358,8 @@ void MainWindow::createTreeRequests()
 
     connect(ui->treeRequests, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(changeRequestState()));
     connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getDescription(QTreeWidgetItem*, int)));
+
+    ui->treeRequests->setItemDelegate(new AutoToolTipDelegate(ui->treeRequests));
 }
 
 void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)

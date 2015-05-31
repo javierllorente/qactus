@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     obsxmlreader.cpp \
     obsrequest.cpp \
     roweditor.cpp \
-    requeststateeditor.cpp
+    requeststateeditor.cpp \
+    autotooltipdelegate.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -36,7 +37,8 @@ HEADERS += mainwindow.h \
     obsxmlreader.h \
     obsrequest.h \
     roweditor.h \
-    requeststateeditor.h
+    requeststateeditor.h \
+    autotooltipdelegate.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \
