@@ -697,7 +697,7 @@ void MainWindow::readSettingsTimer()
         configureDialog->startTimer(settings.value("Value").toInt());
     } else {
         qDebug() << "Timer Active = false";
-        configureDialog->setTimerValue(settings.value("value").toInt());
+        configureDialog->setTimerValue(settings.value("Value").toInt());
     }
     settings.endGroup();
 }
