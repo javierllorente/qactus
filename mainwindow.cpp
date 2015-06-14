@@ -556,22 +556,16 @@ void MainWindow::about()
                        "<h2 align=\"left\">" + QCoreApplication::applicationName() + "</h2>" +
                        tr("A Qt-based OBS notifier") + "<br>" +
                        tr("Version:") + " " + QCoreApplication::applicationVersion() +
+                       "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a>" +
                        "<div align=\"left\">" +
                           "<p>" +
-                          "<b>" + tr("Author:") + "</b><br>"
-                          "Javier Llorente<br>"
-                          "<a href='mailto:javier@opensuse.org'>javier@opensuse.org</a><br><br>"
-                          "<b>" + tr("Contributors:") + "</b> <br>"
-                          "Sivan Greenberg<br>"
-                          "<a href='mailto:sivan@omniqueue.com'>sivan@omniqueue.com</a><br><br>"
-                          "<b>" + tr("Artwork:") + "</b> <br>" +
-                          tr("Icons by the Oxygen Team") + "<br>"
-                          "<a href=\"http://www.oxygen-icons.org/\">http://www.oxygen-icons.org/</a><br><br>" +
-                          tr("Tray icon by the Open Build Service") + "<br>"
-                          "<a href=\"http://openbuildservice.org/\">http://openbuildservice.org/</a>"
+                          "&copy; 2010-2015 Javier Llorente (Main developer)<br>"
+                          "&copy; 2010-2011 Sivan Greenberg (Former contributor)  &nbsp; <br><br>"
+                          + tr("Icons by the Oxygen Team") + "<br>"
+                          + tr("Tray icon by the Open Build Service") + /*"<br>"*/
                           "</p>"
                           "<p>" +
-                          "<b>" + tr("License:") + "</b> <br>"
+                          "<b>" + tr("License") + "</b> <br>"
                           "<nobr>" + tr("This program is under the GPLv3") + "</nobr>"
                           "</p>"
                           "</div>"
