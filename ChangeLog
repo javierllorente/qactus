@@ -1,6 +1,14 @@
 Qactus ChangeLog
 ================
 
+v0.6.0 (2015-06-15)
+- Qactus has been ported to Qt5
+- Fix getting timer interval from settings on startup
+- Request state editor improvements (displays more info)
+- Open request state editor on double click
+- Show tooltip on cell if text is truncated
+- Minor improvements
+
 v0.5.1 (2015-04-30)
 - New feature: request diff is retrieved and displayed on 
 request state change dialog
