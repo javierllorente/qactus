@@ -241,7 +241,8 @@ void OBSxmlReader::parseList(QXmlStreamReader &xml)
 
 void OBSxmlReader::stringToFile(const QString &data)
 {
-    QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
+            "/data/" + QCoreApplication::applicationName();
     QDir dir(dataDir);
 
     if (!dir.exists()) {
@@ -262,7 +263,8 @@ QFile* OBSxmlReader::openFile()
     qDebug() << "OBSxmlReader openFile()";
     list.clear();
     QFile* file = new QFile(fileName);
-    QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
+            "/data/" + QCoreApplication::applicationName();
     QDir::setCurrent(dataDir);
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Error: Cannot read file " << dataDir << fileName << "(" << file->errorString() << ")";

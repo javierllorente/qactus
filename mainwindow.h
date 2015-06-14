@@ -22,10 +22,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include <QTreeWidgetItem>
-#include <QSystemTrayIcon>
-#include <qtkeychain/keychain.h>
+#include <QtGui/QSystemTrayIcon>
+#include <qt5keychain/keychain.h>
 
 namespace Ui {
     class MainWindow;

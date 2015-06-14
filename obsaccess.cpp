@@ -68,7 +68,7 @@ void OBSaccess::request(const QString &urlStr)
     const QString userAgent = QCoreApplication::applicationName() + " " +
             QCoreApplication::applicationVersion();
     qDebug() << "User-Agent:" << userAgent;
-    request.setRawHeader("User-Agent", userAgent.toAscii());
+    request.setRawHeader("User-Agent", userAgent.toLatin1());
     manager->get(request);
 
 //    Don't make a new request until we get a reply
@@ -84,7 +84,7 @@ void OBSaccess::postRequest(const QString &urlStr, const QByteArray &data)
     const QString userAgent = QCoreApplication::applicationName() + " " +
             QCoreApplication::applicationVersion();
     qDebug() << "User-Agent:" << userAgent;
-    request.setRawHeader("User-Agent", userAgent.toAscii());
+    request.setRawHeader("User-Agent", userAgent.toLatin1());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     manager->post(request, data);
 

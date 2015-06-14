@@ -27,6 +27,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDesktopServices>
+#include <QCoreApplication>
 #include "obspackage.h"
 #include "obsrequest.h"
 

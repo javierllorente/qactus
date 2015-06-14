@@ -98,7 +98,8 @@ QStringList RowEditor::getListFor(const QString &name)
     QStringList stringList;
     QString lastUpdateStr = getLastUpdateDate();
     QDate lastUpdateDate = QDate::fromString(lastUpdateStr);
-    QString dataDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
+            "/data/" + QCoreApplication::applicationName();
     QDir::setCurrent(dataDir);
     QString fileName = name + ".xml";
     xmlReader->setFileName(fileName);

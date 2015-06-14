@@ -3,14 +3,14 @@
 # -------------------------------------------------
 unix:isEmpty(PREFIX):PREFIX = /usr/local
 unix {
-    INCLUDEPATH += /usr/include/qtkeychain
+    INCLUDEPATH += /usr/include/qt5keychain
     contains(QMAKE_HOST.arch, x86_64) {
-        LIBS += -L/usr/lib64/ -lqtkeychain
+        LIBS += -L/usr/lib64/ -lqt5keychain
     } else {
-        LIBS += -L/usr/lib/ -lqtkeychain
+        LIBS += -L/usr/lib/ -lqt5keychain
     }
 }
-QT += network
+QT += core gui widgets network
 TARGET = qactus
 TEMPLATE = app
 DEPENDPATH += .
