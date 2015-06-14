@@ -24,7 +24,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QTreeWidgetItem>
-#include <QtGui/QSystemTrayIcon>
+#include <QtWidgets/QSystemTrayIcon>
 #include <qt5keychain/keychain.h>
 
 namespace Ui {
