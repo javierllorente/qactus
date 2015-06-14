@@ -337,11 +337,11 @@ void MainWindow::markAllRead()
 void MainWindow::createTreePackages()
 {
     ui->treePackages->setColumnCount(5);
-    ui->treePackages->setColumnWidth(0, 150); // Project
-    ui->treePackages->setColumnWidth(1, 150); // Package
-    ui->treePackages->setColumnWidth(2, 115); // Repository
+    ui->treePackages->setColumnWidth(0, 185); // Project
+    ui->treePackages->setColumnWidth(1, 160); // Package
+    ui->treePackages->setColumnWidth(2, 140); // Repository
     ui->treePackages->setColumnWidth(3, 75); // Arch
-    ui->treePackages->setColumnWidth(4, 140); // Status
+    ui->treePackages->setColumnWidth(4, 100); // Status
 
     connect(ui->treePackages, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(editRow(QTreeWidgetItem*, int)));
     connect(ui->treePackages, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(markRead(QTreeWidgetItem*, int)));
@@ -352,7 +352,7 @@ void MainWindow::createTreePackages()
 void MainWindow::createTreeRequests()
 {
     ui->treeRequests->setColumnCount(7);
-    ui->treeRequests->setColumnWidth(0, 140); // Date
+    ui->treeRequests->setColumnWidth(0, 135); // Date
     ui->treeRequests->setColumnWidth(1, 60); // SR ID
     ui->treeRequests->setColumnWidth(2, 160); // Source project
     ui->treeRequests->setColumnWidth(3, 160); // Target project
