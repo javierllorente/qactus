@@ -18,7 +18,7 @@ This project was originally hosted on Nokia Developer Projects until 2013, when 
 
 Dependencies
 ------------
-Qt4
+Qt5
 QtKeychain
 
 
@@ -26,7 +26,7 @@ Installation
 ------------
 ```
 cd qactus
-qmake qactus.pro DESTDIR=/install/dir
+qmake-qt5 qactus.pro DESTDIR=/install/dir
 make
 ```
 
