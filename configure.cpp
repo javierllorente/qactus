@@ -50,15 +50,15 @@ void Configure::createTimer()
 void Configure::startTimer(const int& interval)
 {
     qDebug() << "startTimer()";
-    timer->start(interval);
+//  Convert mins into msecs and start timer
+    timer->start(interval*60000);
 }
 
 void Configure::on_buttonBox_accepted()
 {
     if (ui->checkBox_Timer->isChecked()) {
-//        Start the timer if the checkbox is checked
-//        and convert mins into msecs
-        timer->start(ui->spinBox->value()*60000);
+//      Start the timer if the checkbox is checked
+        startTimer(ui->spinBox->value());
         qDebug() << "Timer set to" << ui->spinBox->value() << "minutes";
 
     } else if (timer->isActive()) {
