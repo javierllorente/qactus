@@ -691,11 +691,12 @@ void MainWindow::readSettingsTimer()
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("Timer");
     if (settings.value("Active").toBool()) {
-        qDebug () << "Timer Active = true";
+        qDebug() << "Timer Active = true";
         configureDialog->setCheckedTimerCheckbox(true);
-        configureDialog->startTimer(settings.value("value").toInt()*60000);
+        qDebug() << "Interval:" << settings.value("Value").toString() << "minutes";
+        configureDialog->startTimer(settings.value("Value").toInt());
     } else {
-        qDebug () << "Timer Active = false";
+        qDebug() << "Timer Active = false";
         configureDialog->setTimerValue(settings.value("value").toInt());
     }
     settings.endGroup();
