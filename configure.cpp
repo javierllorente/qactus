@@ -49,9 +49,13 @@ void Configure::createTimer()
 }
 void Configure::startTimer(const int& interval)
 {
-    qDebug() << "startTimer()";
-//  Convert mins into msecs and start timer
-    timer->start(interval*60000);
+    if (interval >= 5) {
+        qDebug() << "startTimer()";
+//      Convert mins into msecs and start timer
+        timer->start(interval*60000);
+    } else {
+        qDebug() << "Error starting timer: Wrong timer interval (smaller than 5)";
+    }
 }
 
 void Configure::on_buttonBox_accepted()
