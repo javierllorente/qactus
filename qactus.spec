@@ -17,7 +17,7 @@
 
 
 Name:           qactus
-Version:        0.5.1
+Version:        0.6.0
 Release:        0
 Summary:        An OBS notifier application
 License:        GPL-2.0 or GPL-3.0
@@ -25,8 +25,11 @@ Group:          Utility/Development/Other
 Url:            http://www.javierllorente.com/
 Source:         %{name}-%{version}.tar.bz2
 BuildRequires:  hicolor-icon-theme
-BuildRequires:  libqt4-devel
-BuildRequires:  qtkeychain-devel
+BuildRequires:  pkgconfig(Qt5Core)
+BuildRequires:  pkgconfig(Qt5Gui)
+BuildRequires:  pkgconfig(Qt5Widgets)
+BuildRequires:  pkgconfig(Qt5Network)
+BuildRequires:  qtkeychain-qt5-devel
 BuildRequires:  update-desktop-files
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
@@ -41,7 +44,7 @@ cat > .qmake.cache <<EOF
 PREFIX=%{_prefix}
 QMAKE_CXXFLAGS_RELEASE += "%{optflags}"
 EOF
-qmake
+qmake-qt5
 make %{?_smp_mflags}
 
 %install
