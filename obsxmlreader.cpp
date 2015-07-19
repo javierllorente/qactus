@@ -87,6 +87,8 @@ void OBSXmlReader::parsePackage(const QString &data)
 
         if (xml.name()=="details") {
             if (xml.tokenType() != QXmlStreamReader::StartElement) {
+                // emit signal if we get a 404
+                emit finishedParsingPackage(obsPackage, row);
                 return;
             }
             xml.readNext();
