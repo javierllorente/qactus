@@ -23,10 +23,10 @@
 
 #include <QString>
 
-class OBSrequest
+class OBSRequest
 {
 public:
-    OBSrequest();
+    OBSRequest();
     void setId(const QString &);
     void setActionType(const QString &);
     void setSourceProject(const QString &);

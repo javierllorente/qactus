@@ -64,7 +64,7 @@ private:
     QCompleter *repositoryCompleter;
     QStringList archList;
     QCompleter *archCompleter;
-    OBSxmlReader *xmlReader;
+    OBSXmlReader *xmlReader;
 
 private slots:
     void refreshProjectAutocompleter(const QString &);

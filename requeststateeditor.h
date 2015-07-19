@@ -33,7 +33,7 @@ private slots:
 
 private:
     Ui::RequestStateEditor *ui;
-    OBSaccess *obsAccess;
+    OBSAccess *obsAccess;
     QString id;
     QString result;
 };

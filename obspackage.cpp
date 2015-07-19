@@ -20,36 +20,36 @@
 
 #include "obspackage.h"
 
-OBSpackage::OBSpackage()
+OBSPackage::OBSPackage()
 {
 }
 
-void OBSpackage::setName(const QString& name)
+void OBSPackage::setName(const QString& name)
 {
     this->name = name;
 }
 
-QString OBSpackage::getName()
+QString OBSPackage::getName()
 {
     return name;
 }
 
-void OBSpackage::setStatus(const QString& status)
+void OBSPackage::setStatus(const QString& status)
 {
     this->status = status;
 }
 
-QString OBSpackage::getStatus()
+QString OBSPackage::getStatus()
 {
     return status;
 }
 
-void OBSpackage::setDetails(const QString& details)
+void OBSPackage::setDetails(const QString& details)
 {
     this->details = details;
 }
 
-QString OBSpackage::getDetails()
+QString OBSPackage::getDetails()
 {
     return details;
 }

@@ -31,14 +31,14 @@
 #include "obspackage.h"
 #include "obsrequest.h"
 
-class OBSxmlReader : public QXmlStreamReader
+class OBSXmlReader : public QXmlStreamReader
 {
 public:
-    static OBSxmlReader* getInstance();
+    static OBSXmlReader* getInstance();
     void addData(const QString &data);
 
-    OBSpackage* getPackage();
-    QList<OBSrequest*> getRequests();
+    OBSPackage* getPackage();
+    QList<OBSRequest*> getRequests();
     int getRequestNumber();
     QStringList getList();
     void readFile();
@@ -46,14 +46,14 @@ public:
     void getArchsForRepository(const QString &repository);
 
 private:
-    static OBSxmlReader* instance;
-    OBSxmlReader();
+    static OBSXmlReader* instance;
+    OBSXmlReader();
     void parsePackage(const QString &data);
     void parseRequests(const QString &data);
     void parseList(QXmlStreamReader &xml);
-    OBSpackage *obsPackage;
-    QList<OBSrequest*> obsRequests;
-    OBSrequest *obsRequest;
+    OBSPackage *obsPackage;
+    QList<OBSRequest*> obsRequests;
+    OBSRequest *obsRequest;
     QString requestNumber;
     QStringList list;
     void stringToFile(const QString &data);

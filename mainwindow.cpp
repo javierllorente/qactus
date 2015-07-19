@@ -39,9 +39,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    obsAccess = OBSaccess::getInstance();
+    obsAccess = OBSAccess::getInstance();
     obsAccess->setApiUrl("https://api.opensuse.org");
-    obsPackage = new OBSpackage();
+    obsPackage = new OBSPackage();
 
     createToolbar();
     trayIcon = new TrayIcon(this);
@@ -366,7 +366,7 @@ void MainWindow::createTreeRequests()
     ui->treeRequests->setItemDelegate(new AutoToolTipDelegate(ui->treeRequests));
 }
 
-void MainWindow::insertBuildStatus(OBSpackage* obsPackage, const int& row)
+void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
 {
     QString details = obsPackage->getDetails();
     QString status = obsPackage->getStatus();
@@ -454,7 +454,7 @@ void MainWindow::setItemBoldFont(QTreeWidgetItem *item, bool bold)
     }
 }
 
-void MainWindow::insertRequests(QList<OBSrequest*> obsRequests)
+void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
 {
 //    If we already have inserted submit requests,
 //    we remove them and insert the latest ones

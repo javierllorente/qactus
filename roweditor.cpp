@@ -27,7 +27,7 @@ RowEditor::RowEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    xmlReader = OBSxmlReader::getInstance();
+    xmlReader = OBSXmlReader::getInstance();
     initProjectAutocompleter();
 }
 
@@ -112,7 +112,7 @@ QStringList RowEditor::getListFor(const QString &name)
     if (!QFile::exists(fileName) ||
             lastUpdateStr.isEmpty() ||
             lastUpdateDate.daysTo(QDate::currentDate()) == -7) {
-        OBSaccess *obsAccess = OBSaccess::getInstance();
+        OBSAccess *obsAccess = OBSAccess::getInstance();
         if (obsAccess->isAuthenticated()) {
             qDebug() << "Downloading" << name + "...";
             QProgressDialog progress(tr("Downloading") + name + "...", 0, 0, 0, this);

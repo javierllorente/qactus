@@ -8,7 +8,7 @@ RequestStateEditor::RequestStateEditor(QWidget *parent) :
     ui->setupUi(this);
     ui->commentsTextBrowser->setFocus();
     ui->diffTextBrowser->setFocusPolicy(Qt::NoFocus);
-    obsAccess = OBSaccess::getInstance();
+    obsAccess = OBSAccess::getInstance();
 }
 
 RequestStateEditor::~RequestStateEditor()

@@ -33,21 +33,21 @@
 #include "obsxmlreader.h"
 #include "obspackage.h"
 
-class OBSxmlReader;
-class OBSpackage;
+class OBSXmlReader;
+class OBSPackage;
 
-class OBSaccess : public QObject
+class OBSAccess : public QObject
 {
      Q_OBJECT
 
 public:
-    static OBSaccess* getInstance();
+    static OBSAccess* getInstance();
     bool isAuthenticated();
     void setApiUrl(const QString &apiUrl);
     void login();
-    OBSpackage* getBuildStatus(const QStringList &list);
+    OBSPackage* getBuildStatus(const QStringList &list);
     QString getUsername();
-    QList<OBSrequest*> getRequests();
+    QList<OBSRequest*> getRequests();
     int getRequestNumber();
     QString acceptRequest(const QString &id, const QString &comments);
     QString declineRequest(const QString &id, const QString &comments);
@@ -75,8 +75,8 @@ private:
  */
     QNetworkAccessManager* manager;
     void createManager();
-    OBSaccess();
-    static OBSaccess* instance;
+    OBSAccess();
+    static OBSAccess* instance;
     QString apiUrl;
     void request(const QString &urlStr);
     void postRequest(const QString &urlStr, const QByteArray &data);
@@ -84,8 +84,8 @@ private:
     QString curPassword;
     QString data;
     bool authenticated;
-    OBSxmlReader *xmlReader;
-    QList<OBSrequest*> obsRequests;
+    OBSXmlReader *xmlReader;
+    QList<OBSRequest*> obsRequests;
 
 };
 

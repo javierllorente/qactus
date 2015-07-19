@@ -20,16 +20,16 @@
 
 #include "obsaccess.h"
 
-OBSaccess* OBSaccess::instance = NULL;
+OBSAccess* OBSAccess::instance = NULL;
 
-OBSaccess::OBSaccess()
+OBSAccess::OBSAccess()
 {
     authenticated = false;
     manager = NULL;
-    xmlReader = OBSxmlReader::getInstance();
+    xmlReader = OBSXmlReader::getInstance();
 }
 
-void OBSaccess::createManager()
+void OBSAccess::createManager()
 {
     manager = new QNetworkAccessManager();
     connect(manager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
@@ -38,15 +38,15 @@ void OBSaccess::createManager()
     connect(manager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> &)), this, SLOT(onSslErrors(QNetworkReply*, const QList<QSslError> &)));
 }
 
-OBSaccess* OBSaccess::getInstance()
+OBSAccess* OBSAccess::getInstance()
 {
     if (!instance) {
-        instance = new OBSaccess();
+        instance = new OBSAccess();
     }
     return instance;
 }
 
-void OBSaccess::setCredentials(const QString& username, const QString& password)
+void OBSAccess::setCredentials(const QString& username, const QString& password)
 {
 //    Allow login with another username/password
     delete manager;
@@ -56,12 +56,12 @@ void OBSaccess::setCredentials(const QString& username, const QString& password)
     curPassword = password;
 }
 
-QString OBSaccess::getUsername()
+QString OBSAccess::getUsername()
 {
     return curUsername;
 }
 
-void OBSaccess::request(const QString &urlStr)
+void OBSAccess::request(const QString &urlStr)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(urlStr));
@@ -77,7 +77,7 @@ void OBSaccess::request(const QString &urlStr)
     loop->exec();
 }
 
-void OBSaccess::postRequest(const QString &urlStr, const QByteArray &data)
+void OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(urlStr));
@@ -94,12 +94,12 @@ void OBSaccess::postRequest(const QString &urlStr, const QByteArray &data)
     loop->exec();
 }
 
-void OBSaccess::setApiUrl(const QString &apiUrl)
+void OBSAccess::setApiUrl(const QString &apiUrl)
 {
     this->apiUrl = apiUrl;
 }
 
-void OBSaccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
+void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
 {
     static QString prevPassword = "";
     static QString prevUsername = "";
@@ -131,12 +131,12 @@ void OBSaccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator
     }
 }
 
-bool OBSaccess::isAuthenticated()
+bool OBSAccess::isAuthenticated()
 {
     return authenticated;
 }
 
-void OBSaccess::replyFinished(QNetworkReply *reply)
+void OBSAccess::replyFinished(QNetworkReply *reply)
 {
       // QNetworkReply is a sequential-access QIODevice, which means that
       // once data is read from the object, it no longer kept by the device.
@@ -174,12 +174,12 @@ void OBSaccess::replyFinished(QNetworkReply *reply)
     }
 }
 
-void OBSaccess::login()
+void OBSAccess::login()
 {
     request(apiUrl + "/");
 }
 
-OBSpackage* OBSaccess::getBuildStatus(const QStringList &stringList)
+OBSPackage* OBSAccess::getBuildStatus(const QStringList &stringList)
 {
 //    URL format: https://api.opensuse.org/build/KDE:Extra/openSUSE_13.2/x86_64/qrae/_status
     request(apiUrl + "/build/"
@@ -190,18 +190,18 @@ OBSpackage* OBSaccess::getBuildStatus(const QStringList &stringList)
     return xmlReader->getPackage();
 }
 
-QList<OBSrequest*> OBSaccess::getRequests()
+QList<OBSRequest*> OBSAccess::getRequests()
 {
     request(apiUrl + "/request?view=collection&states=new&roles=maintainer&user=" + getUsername());
     return xmlReader->getRequests();
 }
 
-int OBSaccess::getRequestNumber()
+int OBSAccess::getRequestNumber()
 {
     return xmlReader->getRequestNumber();
 }
 
-QString OBSaccess::acceptRequest(const QString &id, const QString &comments)
+QString OBSAccess::acceptRequest(const QString &id, const QString &comments)
 {
     QByteArray data;
     data.append(comments);
@@ -209,7 +209,7 @@ QString OBSaccess::acceptRequest(const QString &id, const QString &comments)
     return xmlReader->getPackage()->getStatus();
 }
 
-QString OBSaccess::declineRequest(const QString &id, const QString &comments)
+QString OBSAccess::declineRequest(const QString &id, const QString &comments)
 {
     QByteArray data;
     data.append(comments);
@@ -217,7 +217,7 @@ QString OBSaccess::declineRequest(const QString &id, const QString &comments)
     return xmlReader->getPackage()->getStatus();
 }
 
-QString OBSaccess::diffRequest(const QString &source)
+QString OBSAccess::diffRequest(const QString &source)
 {
 //    QByteArray data;
     postRequest(apiUrl + "/source/" + source +
@@ -225,25 +225,25 @@ QString OBSaccess::diffRequest(const QString &source)
     return data;
 }
 
-QStringList OBSaccess::getProjectList()
+QStringList OBSAccess::getProjectList()
 {
     request(apiUrl + "/source");
     return xmlReader->getList();
 }
 
-QStringList OBSaccess::getPackageListForProject(const QString &projectName)
+QStringList OBSAccess::getPackageListForProject(const QString &projectName)
 {
     request(apiUrl + "/source/" + projectName);
     return xmlReader->getList();
 }
 
-QStringList OBSaccess::getMetadataForProject(const QString &projectName)
+QStringList OBSAccess::getMetadataForProject(const QString &projectName)
 {
     request(apiUrl + "/source/" + projectName + "/_meta");
     return xmlReader->getList();
 }
 
-void OBSaccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &list)
+void OBSAccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &list)
 {
     QString errorString;
     QString message;

@@ -24,10 +24,10 @@
 #include <QObject>
 #include <QString>
 
-class OBSpackage : public QObject
+class OBSPackage : public QObject
 {
 public:
-    OBSpackage();
+    OBSPackage();
     void setName(const QString &);
     void setStatus(const QString &);
     void setDetails(const QString &);

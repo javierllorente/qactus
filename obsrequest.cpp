@@ -20,51 +20,51 @@
 
 #include "obsrequest.h"
 
-OBSrequest::OBSrequest()
+OBSRequest::OBSRequest()
 {
 }
 
-void OBSrequest::setId(const QString& id)
+void OBSRequest::setId(const QString& id)
 {
     this->id = id;
 }
 
-QString OBSrequest::getId()
+QString OBSRequest::getId()
 {
     return id;
 }
 
-void OBSrequest::setActionType(const QString& actionType)
+void OBSRequest::setActionType(const QString& actionType)
 {
     this->actionType = actionType;
 }
 
-QString OBSrequest::getActionType()
+QString OBSRequest::getActionType()
 {
     return actionType;
 }
 
-void OBSrequest::setSourceProject(const QString& sourceProject)
+void OBSRequest::setSourceProject(const QString& sourceProject)
 {
     this->sourceProject = sourceProject;
 }
 
-QString OBSrequest::getSourceProject()
+QString OBSRequest::getSourceProject()
 {
     return sourceProject;
 }
 
-void OBSrequest::setSourcePackage(const QString& sourcePackage)
+void OBSRequest::setSourcePackage(const QString& sourcePackage)
 {
     this->sourcePackage = sourcePackage;
 }
 
-QString OBSrequest::getSourcePackage()
+QString OBSRequest::getSourcePackage()
 {
     return sourcePackage;
 }
 
-QString OBSrequest::getSource()
+QString OBSRequest::getSource()
 {
     if (!sourcePackage.isEmpty()) {
         return sourceProject + "/" + sourcePackage;
@@ -73,69 +73,69 @@ QString OBSrequest::getSource()
     }
 }
 
-void OBSrequest::setTargetProject(const QString& targetProject)
+void OBSRequest::setTargetProject(const QString& targetProject)
 {
     this->targetProject = targetProject;
 }
 
-QString OBSrequest::getTargetProject()
+QString OBSRequest::getTargetProject()
 {
     return targetProject;
 }
 
-void OBSrequest::setTargetPackage(const QString& targetPackage)
+void OBSRequest::setTargetPackage(const QString& targetPackage)
 {
     this->targetPackage = targetPackage;
 }
 
-QString OBSrequest::getTargetPackage()
+QString OBSRequest::getTargetPackage()
 {
     return targetPackage;
 }
 
-QString OBSrequest::getTarget()
+QString OBSRequest::getTarget()
 {
     return targetProject + "/" + targetPackage;
 }
 
-void OBSrequest::setState(const QString& state)
+void OBSRequest::setState(const QString& state)
 {
     this->state = state;
 }
 
-QString OBSrequest::getState()
+QString OBSRequest::getState()
 {
     return state;
 }
 
-void OBSrequest::setRequester(const QString& requester)
+void OBSRequest::setRequester(const QString& requester)
 {
     this->requester = requester;
 }
 
-QString OBSrequest::getRequester()
+QString OBSRequest::getRequester()
 {
     return requester;
 }
 
-void OBSrequest::setDate(const QString& date)
+void OBSRequest::setDate(const QString& date)
 {
     this->date = date;
 }
 
-QString OBSrequest::getDate()
+QString OBSRequest::getDate()
 {
     // Replace the "T" (as in 2015-03-13T20:01:33)
     // with a space and return it
     return date.replace(10, 1, " ");
 }
 
-void OBSrequest::setDescription(const QString& description)
+void OBSRequest::setDescription(const QString& description)
 {
     this->description = description;
 }
 
-QString OBSrequest::getDescription()
+QString OBSRequest::getDescription()
 {
     return description;
 }

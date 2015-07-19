@@ -33,12 +33,12 @@ namespace Ui {
 
 class Login;
 class TrayIcon;
-class OBSxmlReader;
+class OBSXmlReader;
 class Configure;
 
-class OBSaccess;
-class OBSpackage;
-class OBSrequest;
+class OBSAccess;
+class OBSPackage;
+class OBSRequest;
 
 class MainWindow : public QMainWindow
 {
@@ -54,9 +54,9 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    OBSaccess *obsAccess;
-    OBSpackage *obsPackage;
-    QList<OBSrequest*> obsRequests;
+    OBSAccess *obsAccess;
+    OBSPackage *obsPackage;
+    QList<OBSRequest*> obsRequests;
 
     QToolBar *toolBar;
     void createToolbar();
@@ -83,8 +83,8 @@ private:
 
     QString packageErrors;
 
-    void insertBuildStatus(OBSpackage*, const int&);
-    void insertRequests(QList<OBSrequest*>);
+    void insertBuildStatus(OBSPackage*, const int&);
+    void insertRequests(QList<OBSRequest*>);
     QString breakLine(QString&, const int&);
     QColor getColorForStatus(const QString&);
     void setItemBoldFont(QTreeWidgetItem* item, bool bold);
