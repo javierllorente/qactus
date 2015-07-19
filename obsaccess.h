@@ -45,7 +45,7 @@ public:
     bool isAuthenticated();
     void setApiUrl(const QString &apiUrl);
     void login();
-    OBSPackage* getBuildStatus(const QStringList &list);
+    OBSPackage* getBuildStatus(const QStringList &list, const int &row);
     QString getUsername();
     QList<OBSRequest*> getRequests();
     int getRequestNumber();
@@ -64,6 +64,8 @@ public slots:
     void provideAuthentication(QNetworkReply* reply, QAuthenticator* ator);
     void replyFinished(QNetworkReply* reply);
     void onSslErrors(QNetworkReply* reply, const QList<QSslError> &list);
+    void packageIsReady(OBSPackage*, const int&);
+    void requestsAreReady(QList<OBSRequest*>);
 
 private:
 /*
@@ -79,6 +81,7 @@ private:
     static OBSAccess* instance;
     QString apiUrl;
     void request(const QString &urlStr);
+    void request(const QString &urlStr, const int &row);
     void postRequest(const QString &urlStr, const QByteArray &data);
     QString curUsername;
     QString curPassword;
@@ -87,6 +90,9 @@ private:
     OBSXmlReader *xmlReader;
     QList<OBSRequest*> obsRequests;
 
+signals:
+    void finishedParsingPackage(OBSPackage*, const int&);
+    void finishedParsingRequests(QList<OBSRequest*>);
 };
 
 #endif // OBSACCESS_H

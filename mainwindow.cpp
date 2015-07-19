@@ -41,7 +41,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     obsAccess = OBSAccess::getInstance();
     obsAccess->setApiUrl("https://api.opensuse.org");
-    obsPackage = new OBSPackage();
 
     createToolbar();
     trayIcon = new TrayIcon(this);
@@ -58,6 +57,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(obsAccess, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
+
+    connect(obsAccess, SIGNAL(finishedParsingPackage(OBSPackage*, const int&)),
+            this, SLOT(insertBuildStatus(OBSPackage*, const int&)));
+    connect(obsAccess, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)),
+            this, SLOT(insertRequests(QList<OBSRequest*>)));
 
     readSettings();
 
@@ -291,8 +295,7 @@ void MainWindow::refreshView()
             tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(1)));
 //            Get build status
             statusBar()->showMessage(tr("Getting build statuses..."), 5000);
-            obsPackage = obsAccess->getBuildStatus(tableStringList);
-            insertBuildStatus(obsPackage, r);
+            obsAccess->getBuildStatus(tableStringList, r);
         }
     }
 
@@ -304,7 +307,6 @@ void MainWindow::refreshView()
 //    Get SRs
     statusBar()->showMessage(tr("Getting requests..."), 5000);
     obsRequests = obsAccess->getRequests();
-    insertRequests(obsRequests);
     statusBar()->showMessage(tr("Done"), 0);
 }
 

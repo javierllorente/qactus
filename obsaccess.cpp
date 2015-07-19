@@ -27,6 +27,10 @@ OBSAccess::OBSAccess()
     authenticated = false;
     manager = NULL;
     xmlReader = OBSXmlReader::getInstance();
+    connect(xmlReader, SIGNAL(finishedParsingPackage(OBSPackage*, const int&)),
+            this, SLOT(packageIsReady(OBSPackage*, const int&)));
+    connect(xmlReader, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)),
+            this, SLOT(requestsAreReady(QList<OBSRequest*>)));
 }
 
 void OBSAccess::createManager()
@@ -36,6 +40,7 @@ void OBSAccess::createManager()
     SLOT(provideAuthentication(QNetworkReply*,QAuthenticator*)));
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
     connect(manager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> &)), this, SLOT(onSslErrors(QNetworkReply*, const QList<QSslError> &)));
+
 }
 
 OBSAccess* OBSAccess::getInstance()
@@ -75,6 +80,17 @@ void OBSAccess::request(const QString &urlStr)
     QEventLoop *loop = new QEventLoop;
     connect(manager, SIGNAL(finished(QNetworkReply *)),loop, SLOT(quit()));
     loop->exec();
+}
+
+void OBSAccess::request(const QString &urlStr, const int &row)
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl(urlStr));
+    const QString userAgent = QCoreApplication::applicationName() + " " +
+            QCoreApplication::applicationVersion();
+    request.setRawHeader("User-Agent", userAgent.toLatin1());
+    QNetworkReply *reply = manager->get(request);
+    reply->setProperty("row", row);
 }
 
 void OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
@@ -138,18 +154,23 @@ bool OBSAccess::isAuthenticated()
 
 void OBSAccess::replyFinished(QNetworkReply *reply)
 {
-      // QNetworkReply is a sequential-access QIODevice, which means that
-      // once data is read from the object, it no longer kept by the device.
-      // It is therefore the application's responsibility to keep this data if it needs to.
-      // See http://doc.qt.nokia.com/latest/qnetworkreply.html for more info
+    // QNetworkReply is a sequential-access QIODevice, which means that
+    // once data is read from the object, it no longer kept by the device.
+    // It is therefore the application's responsibility to keep this data if it needs to.
+    // See http://doc.qt.nokia.com/latest/qnetworkreply.html for more info
 
     data = (QString) reply->readAll();
+    int row = reply->property("row").toInt();
+    qDebug() << "Reply row property:" << QString::number(row);
+    xmlReader->setPackageRow(row);
+
     qDebug() << "URL:" << reply->url();
     int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << "HTTP status code:" << httpStatusCode;
 //    qDebug() << "Network Reply: " << data;
 
-    if (httpStatusCode==404 && isAuthenticated()) {        
+    // Package/Project not found
+    if (httpStatusCode==404 && isAuthenticated()) {
         xmlReader->addData(data);
     } else if (reply->error() != QNetworkReply::NoError) {
         authenticated = false;
@@ -179,14 +200,14 @@ void OBSAccess::login()
     request(apiUrl + "/");
 }
 
-OBSPackage* OBSAccess::getBuildStatus(const QStringList &stringList)
+OBSPackage* OBSAccess::getBuildStatus(const QStringList &stringList, const int &row)
 {
 //    URL format: https://api.opensuse.org/build/KDE:Extra/openSUSE_13.2/x86_64/qrae/_status
     request(apiUrl + "/build/"
                  + stringList[0] + "/"
             + stringList[1] + "/"
             + stringList[2] + "/"
-            + stringList[3] + "/_status");
+            + stringList[3] + "/_status", row);
     return xmlReader->getPackage();
 }
 
@@ -269,4 +290,14 @@ void OBSAccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &li
 //        reply->ignoreSslErrors();
 //    }
 
+}
+
+void OBSAccess::packageIsReady(OBSPackage* obsPackage, const int &row)
+{
+    emit finishedParsingPackage(obsPackage, row);
+}
+
+void OBSAccess::requestsAreReady(QList<OBSRequest*> obsRequests)
+{
+    emit finishedParsingRequests(obsRequests);
 }

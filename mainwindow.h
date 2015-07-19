@@ -55,7 +55,6 @@ private:
     Ui::MainWindow *ui;
 
     OBSAccess *obsAccess;
-    OBSPackage *obsPackage;
     QList<OBSRequest*> obsRequests;
 
     QToolBar *toolBar;
@@ -83,8 +82,6 @@ private:
 
     QString packageErrors;
 
-    void insertBuildStatus(OBSPackage*, const int&);
-    void insertRequests(QList<OBSRequest*>);
     QString breakLine(QString&, const int&);
     QColor getColorForStatus(const QString&);
     void setItemBoldFont(QTreeWidgetItem* item, bool bold);
@@ -115,6 +112,8 @@ private slots:
     void on_actionConfigure_Qactus_triggered();
     void on_actionLogin_triggered();
     void on_tabWidget_currentChanged(const int&);
+    void insertBuildStatus(OBSPackage*, const int&);
+    void insertRequests(QList<OBSRequest*>);
 };
 
 

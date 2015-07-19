@@ -31,12 +31,15 @@
 #include "obspackage.h"
 #include "obsrequest.h"
 
-class OBSXmlReader : public QXmlStreamReader
+class OBSXmlReader : public QObject
 {
+    Q_OBJECT
+
 public:
+
     static OBSXmlReader* getInstance();
     void addData(const QString &data);
-
+    void setPackageRow(const int &row);
     OBSPackage* getPackage();
     QList<OBSRequest*> getRequests();
     int getRequestNumber();
@@ -49,6 +52,7 @@ private:
     static OBSXmlReader* instance;
     OBSXmlReader();
     void parsePackage(const QString &data);
+    int row;
     void parseRequests(const QString &data);
     void parseList(QXmlStreamReader &xml);
     OBSPackage *obsPackage;
@@ -59,6 +63,10 @@ private:
     void stringToFile(const QString &data);
     QString fileName;
     QFile* openFile();
+
+signals:
+    void finishedParsingPackage(OBSPackage*, const int&);
+    void finishedParsingRequests(QList<OBSRequest*>);
 };
 
 #endif // OBSXMLREADER_H
