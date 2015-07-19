@@ -306,7 +306,7 @@ void MainWindow::refreshView()
 
 //    Get SRs
     statusBar()->showMessage(tr("Getting requests..."), 5000);
-    obsRequests = obsAccess->getRequests();
+    obsAccess->getRequests();
     statusBar()->showMessage(tr("Done"), 0);
 }
 
@@ -458,6 +458,9 @@ void MainWindow::setItemBoldFont(QTreeWidgetItem *item, bool bold)
 
 void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
 {
+    // Needed for getDescription()
+    this->obsRequests = obsRequests;
+
 //    If we already have inserted submit requests,
 //    we remove them and insert the latest ones
     int rows = ui->treeRequests->topLevelItemCount();
