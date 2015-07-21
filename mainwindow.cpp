@@ -75,18 +75,11 @@ MainWindow::MainWindow(QWidget *parent) :
     const QString pw = job.textData();
     if (job.error()) {
         qDebug() << "Restoring password failed: " << qPrintable(job.errorString());
+        loginDialog->show();
     } else {
         qDebug() << "Password restored successfully";
         obsAccess->setCredentials(job.key(), pw);
         obsAccess->login();
-    }
-
-    // Show login dialog on startup if user isn't logged in
-    if(!obsAccess->isAuthenticated()) {
-        // Centre login dialog
-        loginDialog->move(this->geometry().center().x()-loginDialog->geometry().center().x(),
-                          this->geometry().center().y()-loginDialog->geometry().center().y());
-        loginDialog->show();
     }
 }
 
