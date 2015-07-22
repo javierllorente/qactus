@@ -168,19 +168,14 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
         authenticated = false;
         emit isAuthenticated(authenticated);
         qDebug() << "Request failed!";
-
-//        packageErrors += reply->errorString() + "\n\n";
-//        qDebug() << "Request failed, " << packageErrors;
-////        QMessageBox::critical(this,tr("Error"), tr("An error has occured:\n") + reply->errorString(), QMessageBox::Ok );
-////        statusBar()->showMessage(tr("Error ") + reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString(), 500000);
-//        return;
+        qDebug() << "Error: " << reply->errorString();
     } else {
         authenticated = true;
         emit isAuthenticated(authenticated);
         qDebug() << "Request succeeded!";
 
         if(data.startsWith("Index")) {
-           // Don't process diffs
+            // Don't process diffs
             requestDiff = data;
         } else {
             xmlReader->addData(data);
