@@ -31,12 +31,10 @@ namespace Ui {
     class MainWindow;
 }
 
+class OBS;
 class Login;
 class TrayIcon;
-class OBSXmlReader;
 class Configure;
-
-class OBSAccess;
 class OBSPackage;
 class OBSRequest;
 
@@ -54,7 +52,7 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    OBSAccess *obsAccess;
+    OBS *obs;
     QList<OBSRequest*> obsRequests;
 
     QToolBar *toolBar;

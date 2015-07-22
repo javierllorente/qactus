@@ -27,10 +27,6 @@ OBSAccess::OBSAccess()
     authenticated = false;
     manager = NULL;
     xmlReader = OBSXmlReader::getInstance();
-    connect(xmlReader, SIGNAL(finishedParsingPackage(OBSPackage*, const int&)),
-            this, SLOT(packageIsReady(OBSPackage*, const int&)));
-    connect(xmlReader, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)),
-            this, SLOT(requestsAreReady(QList<OBSRequest*>)));
 }
 
 void OBSAccess::createManager()
@@ -39,8 +35,8 @@ void OBSAccess::createManager()
     connect(manager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
     SLOT(provideAuthentication(QNetworkReply*,QAuthenticator*)));
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
-    connect(manager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> &)), this, SLOT(onSslErrors(QNetworkReply*, const QList<QSslError> &)));
-
+    connect(manager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> &)),
+            this, SLOT(onSslErrors(QNetworkReply*, const QList<QSslError> &)));
 }
 
 OBSAccess* OBSAccess::getInstance()
@@ -108,11 +104,6 @@ void OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
     QEventLoop *loop = new QEventLoop;
     connect(manager, SIGNAL(finished(QNetworkReply *)),loop, SLOT(quit()));
     loop->exec();
-}
-
-void OBSAccess::setApiUrl(const QString &apiUrl)
-{
-    this->apiUrl = apiUrl;
 }
 
 void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
@@ -189,79 +180,16 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
 
         if(data.startsWith("Index")) {
            // Don't process diffs
+            requestDiff = data;
         } else {
             xmlReader->addData(data);
         }
     }
 }
 
-void OBSAccess::login()
+QString OBSAccess::getRequestDiff()
 {
-    request(apiUrl + "/");
-}
-
-OBSPackage* OBSAccess::getBuildStatus(const QStringList &stringList, const int &row)
-{
-//    URL format: https://api.opensuse.org/build/KDE:Extra/openSUSE_13.2/x86_64/qrae/_status
-    request(apiUrl + "/build/"
-                 + stringList[0] + "/"
-            + stringList[1] + "/"
-            + stringList[2] + "/"
-            + stringList[3] + "/_status", row);
-    return xmlReader->getPackage();
-}
-
-QList<OBSRequest*> OBSAccess::getRequests()
-{
-    request(apiUrl + "/request?view=collection&states=new&roles=maintainer&user=" + getUsername());
-    return xmlReader->getRequests();
-}
-
-int OBSAccess::getRequestNumber()
-{
-    return xmlReader->getRequestNumber();
-}
-
-QString OBSAccess::acceptRequest(const QString &id, const QString &comments)
-{
-    QByteArray data;
-    data.append(comments);
-    postRequest(apiUrl + "/request/" + id + "?cmd=changestate&newstate=accepted", data);
-    return xmlReader->getPackage()->getStatus();
-}
-
-QString OBSAccess::declineRequest(const QString &id, const QString &comments)
-{
-    QByteArray data;
-    data.append(comments);
-    postRequest(apiUrl + "/request/" + id + "?cmd=changestate&newstate=declined", data);
-    return xmlReader->getPackage()->getStatus();
-}
-
-QString OBSAccess::diffRequest(const QString &source)
-{
-//    QByteArray data;
-    postRequest(apiUrl + "/source/" + source +
-                "?unified=1&tarlimit=0&cmd=diff&filelimit=0&expand=1", "");
-    return data;
-}
-
-QStringList OBSAccess::getProjectList()
-{
-    request(apiUrl + "/source");
-    return xmlReader->getList();
-}
-
-QStringList OBSAccess::getPackageListForProject(const QString &projectName)
-{
-    request(apiUrl + "/source/" + projectName);
-    return xmlReader->getList();
-}
-
-QStringList OBSAccess::getMetadataForProject(const QString &projectName)
-{
-    request(apiUrl + "/source/" + projectName + "/_meta");
-    return xmlReader->getList();
+    return requestDiff;
 }
 
 void OBSAccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &list)
@@ -290,14 +218,4 @@ void OBSAccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &li
 //        reply->ignoreSslErrors();
 //    }
 
-}
-
-void OBSAccess::packageIsReady(OBSPackage* obsPackage, const int &row)
-{
-    emit finishedParsingPackage(obsPackage, row);
-}
-
-void OBSAccess::requestsAreReady(QList<OBSRequest*> obsRequests)
-{
-    emit finishedParsingRequests(obsRequests);
 }

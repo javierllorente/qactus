@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QProgressDialog>
-#include "obsaccess.h"
+#include "obs.h"
 
 namespace Ui {
 class RequestStateEditor;
@@ -36,7 +36,7 @@ class RequestStateEditor : public QDialog
     Q_OBJECT
 
 public:
-    explicit RequestStateEditor(QWidget *parent = 0);
+    explicit RequestStateEditor(QWidget *parent = 0, OBS *obs = 0);
     ~RequestStateEditor();
 
     void setRequestId(const QString& id);
@@ -53,7 +53,7 @@ private slots:
 
 private:
     Ui::RequestStateEditor *ui;
-    OBSAccess *obsAccess;
+    OBS *mOBS;
     QString id;
     QString result;
 };

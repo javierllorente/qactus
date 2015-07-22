@@ -21,13 +21,13 @@
 #include "roweditor.h"
 #include "ui_roweditor.h"
 
-RowEditor::RowEditor(QWidget *parent) :
+RowEditor::RowEditor(QWidget *parent, OBS *obs) :
     QDialog(parent),
-    ui(new Ui::RowEditor)
+    ui(new Ui::RowEditor),
+    mOBS(obs),
+    mXmlReader(obs->getXmlReader())
 {
     ui->setupUi(this);
-
-    xmlReader = OBSXmlReader::getInstance();
     initProjectAutocompleter();
 }
 
@@ -102,7 +102,7 @@ QStringList RowEditor::getListFor(const QString &name)
             "/data/" + QCoreApplication::applicationName();
     QDir::setCurrent(dataDir);
     QString fileName = name + ".xml";
-    xmlReader->setFileName(fileName);
+    mXmlReader->setFileName(fileName);
 
     /* The XML file is downloaded if
      * it doesn't exist or
@@ -112,27 +112,27 @@ QStringList RowEditor::getListFor(const QString &name)
     if (!QFile::exists(fileName) ||
             lastUpdateStr.isEmpty() ||
             lastUpdateDate.daysTo(QDate::currentDate()) == -7) {
-        OBSAccess *obsAccess = OBSAccess::getInstance();
-        if (obsAccess->isAuthenticated()) {
+//        OBSAccess *obsAccess = OBSAccess::getInstance();
+        if (mOBS->isAuthenticated()) {
             qDebug() << "Downloading" << name + "...";
             QProgressDialog progress(tr("Downloading") + name + "...", 0, 0, 0, this);
             progress.setWindowModality(Qt::WindowModal);
             progress.show();
 
             if (name == "projects") {
-                stringList = obsAccess->getProjectList();
+                stringList = mOBS->getProjectList();
             } else if (name.contains("meta")) {
                 QStringList projectName = name.split("_meta");
-                stringList = obsAccess->getMetadataForProject(projectName[0]);
+                stringList = mOBS->getProjectMetadata(projectName[0]);
             } else {
-                stringList = obsAccess->getPackageListForProject(name);
+                stringList = mOBS->getProjectPackageList(name);
             }
             setLastUpdateDate(QDate::currentDate().toString());
         }
     }
     qDebug() << "Reading" << name;
-    xmlReader->readFile();
-    stringList = xmlReader->getList();
+    mXmlReader->readFile();
+    stringList = mXmlReader->getList();
 
     return stringList;
 }
@@ -205,8 +205,8 @@ void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
 {
     ui->lineEditArch->setFocus();
 
-    xmlReader->getArchsForRepository(repository);
-    archList = xmlReader->getList();
+    mXmlReader->getArchsForRepository(repository);
+    archList = mXmlReader->getList();
     QStringListModel *model = new QStringListModel(archList);
     archCompleter = new QCompleter(model, this);
 

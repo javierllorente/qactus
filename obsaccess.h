@@ -31,10 +31,8 @@
 #include <QEventLoop>
 #include <QCoreApplication>
 #include "obsxmlreader.h"
-#include "obspackage.h"
 
 class OBSXmlReader;
-class OBSPackage;
 
 class OBSAccess : public QObject
 {
@@ -43,35 +41,27 @@ class OBSAccess : public QObject
 public:
     static OBSAccess* getInstance();
     bool isAuthenticated();
-    void setApiUrl(const QString &apiUrl);
-    void login();
-    OBSPackage* getBuildStatus(const QStringList &list, const int &row);
     QString getUsername();
-    QList<OBSRequest*> getRequests();
-    int getRequestNumber();
-    QString acceptRequest(const QString &id, const QString &comments);
-    QString declineRequest(const QString &id, const QString &comments);
-    QString diffRequest(const QString &source);
-    QStringList getProjectList();
-    QStringList getPackageListForProject(const QString &projectName);
-    QStringList getMetadataForProject(const QString &projectName);
+
+    QString getRequestDiff();
 
 signals:
     void isAuthenticated(bool authenticated);
 
 public slots:
     void setCredentials(const QString&, const QString&);
+    void request(const QString &urlStr);
+    void request(const QString &urlStr, const int &row);
+    void postRequest(const QString &urlStr, const QByteArray &data);
     void provideAuthentication(QNetworkReply* reply, QAuthenticator* ator);
     void replyFinished(QNetworkReply* reply);
     void onSslErrors(QNetworkReply* reply, const QList<QSslError> &list);
-    void packageIsReady(OBSPackage*, const int&);
-    void requestsAreReady(QList<OBSRequest*>);
 
 private:
 /*
  * We need to instantiate QNAM only once, as it should be used as
  * as singleton or a utility instead of recreating it for each
- * request. This class (OBSaccess) uses the singleton pattern to
+ * request. This class (OBSAccess) uses the singleton pattern to
  * achieve this.
  *
  */
@@ -79,20 +69,12 @@ private:
     void createManager();
     OBSAccess();
     static OBSAccess* instance;
-    QString apiUrl;
-    void request(const QString &urlStr);
-    void request(const QString &urlStr, const int &row);
-    void postRequest(const QString &urlStr, const QByteArray &data);
     QString curUsername;
     QString curPassword;
     QString data;
+    QString requestDiff;
     bool authenticated;
     OBSXmlReader *xmlReader;
-    QList<OBSRequest*> obsRequests;
-
-signals:
-    void finishedParsingPackage(OBSPackage*, const int&);
-    void finishedParsingRequests(QList<OBSRequest*>);
 };
 
 #endif // OBSACCESS_H

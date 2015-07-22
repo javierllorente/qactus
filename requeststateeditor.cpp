@@ -21,14 +21,14 @@
 #include "requeststateeditor.h"
 #include "ui_requeststateeditor.h"
 
-RequestStateEditor::RequestStateEditor(QWidget *parent) :
+RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs) :
     QDialog(parent),
-    ui(new Ui::RequestStateEditor)
+    ui(new Ui::RequestStateEditor),
+    mOBS(obs)
 {
     ui->setupUi(this);
     ui->commentsTextBrowser->setFocus();
     ui->diffTextBrowser->setFocusPolicy(Qt::NoFocus);
-    obsAccess = OBSAccess::getInstance();
 }
 
 RequestStateEditor::~RequestStateEditor()
@@ -74,7 +74,7 @@ void RequestStateEditor::on_acceptPushButton_clicked()
     QProgressDialog progress(tr("Accepting request..."), 0, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    result = obsAccess->acceptRequest(id, ui->commentsTextBrowser->toPlainText());
+    result = mOBS->acceptRequest(id, ui->commentsTextBrowser->toPlainText());
     if (result=="ok") {
         close();
     } else {
@@ -89,7 +89,7 @@ void RequestStateEditor::on_declinePushButton_clicked()
     QProgressDialog progress(tr("Declining request..."), 0, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    result = obsAccess->declineRequest(id, ui->commentsTextBrowser->toPlainText());
+    result = mOBS->declineRequest(id, ui->commentsTextBrowser->toPlainText());
     if (result=="ok") {
         close();
     } else {

@@ -27,7 +27,7 @@
 #include <QDate>
 #include <QSettings>
 #include <QProgressDialog>
-#include "obsaccess.h"
+#include "obs.h"
 #include "obsxmlreader.h"
 
 namespace Ui {
@@ -39,7 +39,7 @@ class RowEditor : public QDialog
     Q_OBJECT
 
 public:
-    explicit RowEditor(QWidget *parent = 0);
+    explicit RowEditor(QWidget *parent = 0, OBS *obs = 0);
     ~RowEditor();
     QString getProject();
     QString getPackage();
@@ -52,6 +52,8 @@ public:
 
 private:
     Ui::RowEditor *ui;
+    OBS *mOBS;
+    OBSXmlReader *mXmlReader;
     QString getLastUpdateDate();
     void setLastUpdateDate(const QString &date);
     QStringList getListFor(const QString &name);
@@ -64,7 +66,6 @@ private:
     QCompleter *repositoryCompleter;
     QStringList archList;
     QCompleter *archCompleter;
-    OBSXmlReader *xmlReader;
 
 private slots:
     void refreshProjectAutocompleter(const QString &);

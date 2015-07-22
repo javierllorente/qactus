@@ -21,17 +21,14 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "obs.h"
 #include "trayicon.h"
-#include "obsxmlreader.h"
 #include "configure.h"
 #include "login.h"
 #include "roweditor.h"
 #include "requeststateeditor.h"
-
-#include "obsaccess.h"
 #include "obspackage.h"
 #include "autotooltipdelegate.h"
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -39,8 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    obsAccess = OBSAccess::getInstance();
-    obsAccess->setApiUrl("https://api.opensuse.org");
+    obs = new OBS();
+    obs->setApiUrl("https://api.opensuse.org");
 
     createToolbar();
     trayIcon = new TrayIcon(this);
@@ -56,11 +53,11 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(showContextMenu(const QPoint&)));
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(obsAccess, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
+    connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
 
-    connect(obsAccess, SIGNAL(finishedParsingPackage(OBSPackage*, const int&)),
-            this, SLOT(insertBuildStatus(OBSPackage*, const int&)));
-    connect(obsAccess, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)),
+    connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
+            this, SLOT(insertBuildStatus(OBSPackage*, const int)));
+    connect(obs, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)),
             this, SLOT(insertRequests(QList<OBSRequest*>)));
 
     readSettings();
@@ -78,8 +75,8 @@ MainWindow::MainWindow(QWidget *parent) :
         loginDialog->show();
     } else {
         qDebug() << "Password restored successfully";
-        obsAccess->setCredentials(job.key(), pw);
-        obsAccess->login();
+        obs->setCredentials(job.key(), pw);
+        obs->login();
     }
 }
 
@@ -178,7 +175,7 @@ void MainWindow::showContextMenu(const QPoint& point)
 void MainWindow::changeRequestState()
 {
     qDebug() << "Launching RequestStateEditor...";
-    RequestStateEditor *reqStateEditor = new RequestStateEditor(this);
+    RequestStateEditor *reqStateEditor = new RequestStateEditor(this, obs);
     QTreeWidgetItem *item = ui->treeRequests->currentItem();
     qDebug() << "Request selected:" << item->text(1);
     reqStateEditor->setRequestId(item->text(1));
@@ -191,7 +188,7 @@ void MainWindow::changeRequestState()
         QProgressDialog progress(tr("Getting diff..."), 0, 0, 0, this);
         progress.setWindowModality(Qt::WindowModal);
         progress.show();
-        QString diff = obsAccess->diffRequest(item->text(2));
+        QString diff = obs->getRequestDiff(item->text(2));
         reqStateEditor->setDiff(diff);
         qDebug() << "diff";
         qDebug() << diff;
@@ -209,7 +206,7 @@ void MainWindow::changeRequestState()
 void MainWindow::addRow()
 {
     qDebug() << "Launching RowEditor...";
-    RowEditor *rowEditor = new RowEditor(this);
+    RowEditor *rowEditor = new RowEditor(this, obs);
 
     if (rowEditor->exec()) {
         QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
@@ -227,7 +224,7 @@ void MainWindow::addRow()
 void MainWindow::editRow(QTreeWidgetItem* item, int)
 {
     qDebug() << "Launching RowEditor in edit mode...";
-    RowEditor *rowEditor = new RowEditor(this);
+    RowEditor *rowEditor = new RowEditor(this, obs);
     rowEditor->setProject(item->text(0));
     rowEditor->setPackage(item->text(1));
     rowEditor->setRepository(item->text(2));
@@ -288,7 +285,7 @@ void MainWindow::refreshView()
             tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(1)));
 //            Get build status
             statusBar()->showMessage(tr("Getting build statuses..."), 5000);
-            obsAccess->getBuildStatus(tableStringList, r);
+            obs->getBuildStatus(tableStringList, r);
         }
     }
 
@@ -299,7 +296,7 @@ void MainWindow::refreshView()
 
 //    Get SRs
     statusBar()->showMessage(tr("Getting requests..."), 5000);
-    obsAccess->getRequests();
+    obs->getRequests();
     statusBar()->showMessage(tr("Done"), 0);
 }
 
@@ -457,14 +454,14 @@ void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
 //    If we already have inserted submit requests,
 //    we remove them and insert the latest ones
     int rows = ui->treeRequests->topLevelItemCount();
-    int requests = obsAccess->getRequestNumber();
+    int requests = obs->getRequestCount();
     qDebug() << "InsertRequests() " << "Rows:" << rows << "Requests:" << requests;
 
     if (rows>0) {
         ui->treeRequests->clear();
     }
 
-    qDebug() << "RequestNumber: " << obsAccess->getRequestNumber();
+    qDebug() << "RequestCount: " << obs->getRequestCount();
     qDebug() << "requests: " << requests;
     qDebug() << "obsRequests size: " << obsRequests.size();
 
@@ -491,7 +488,7 @@ void MainWindow::getDescription(QTreeWidgetItem* item, int)
 
 void MainWindow::pushButton_Login_clicked()
 {
-    obsAccess->setCredentials(loginDialog->getUsername(), loginDialog->getPassword());
+    obs->setCredentials(loginDialog->getUsername(), loginDialog->getPassword());
 
 //    Display a warning if the username/password is empty.
     if (loginDialog->getUsername().isEmpty() || loginDialog->getPassword().isEmpty()) {
@@ -501,7 +498,7 @@ void MainWindow::pushButton_Login_clicked()
         QProgressDialog progress(tr("Logging in..."), 0, 0, 0, this);
         progress.setWindowModality(Qt::WindowModal);
         progress.show();
-        obsAccess->login();
+        obs->login();
 
         if (loginDialog->isAutoLoginEnabled()) {
             QKeychain::WritePasswordJob job(QLatin1String("Qactus"));
@@ -628,7 +625,7 @@ void MainWindow::writeSettings()
     settings.endGroup();
 
     settings.beginGroup("Auth");
-    settings.setValue("Username", obsAccess->getUsername());
+    settings.setValue("Username", obs->getUsername());
     settings.setValue("AutoLogin", loginDialog->isAutoLoginEnabled());
     settings.endGroup();
 

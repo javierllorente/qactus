@@ -38,24 +38,24 @@ OBSXmlReader* OBSXmlReader::getInstance()
 void OBSXmlReader::addData(const QString& data)
 {
     list.clear();
-    qDebug() << "OBSxmlReader addData()";
+    qDebug() << "OBSXmlReader addData()";
     QXmlStreamReader xml(data);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
         if (xml.name()=="status" && xml.isStartElement()) {
-            qDebug() << "OBSxmlReader: status tag found";
+            qDebug() << "OBSXmlReader: status tag found";
             parsePackage(data);
             obsPackage = getPackage();
         } else if (xml.name()=="collection" && xml.isStartElement()) {
-            qDebug() << "OBSxmlReader: collection tag found";
+            qDebug() << "OBSXmlReader: collection tag found";
             parseRequests(data);
             obsRequests = getRequests();
         } else if (xml.name()=="directory" && xml.isStartElement()) {
-            qDebug() << "OBSxmlReader: directory tag found";
+            qDebug() << "OBSXmlReader: directory tag found";
             stringToFile(data);
         } else if (xml.name()=="project" && xml.isStartElement()) {
-            qDebug() << "OBSxmlReader: project tag found";
+            qDebug() << "OBSXmlReader: project tag found";
             stringToFile(data);
         }
     }
@@ -211,7 +211,7 @@ void OBSXmlReader::parseRequests(const QString &data)
 
 void OBSXmlReader::parseList(QXmlStreamReader &xml)
 {
-    qDebug() << "OBSxmlReader parseList()";
+    qDebug() << "OBSXmlReader parseList()";
     while (!xml.atEnd() && !xml.hasError()) {
 
         xml.readNext();
@@ -247,6 +247,7 @@ void OBSXmlReader::parseList(QXmlStreamReader &xml)
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
     }
+    emit finishedParsingList(list);
 }
 
 void OBSXmlReader::stringToFile(const QString &data)
@@ -270,7 +271,7 @@ void OBSXmlReader::stringToFile(const QString &data)
 
 QFile* OBSXmlReader::openFile()
 {
-    qDebug() << "OBSxmlReader openFile()";
+    qDebug() << "OBSXmlReader openFile()";
     list.clear();
     QFile* file = new QFile(fileName);
     QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
@@ -291,7 +292,7 @@ void OBSXmlReader::readFile()
 
 void OBSXmlReader::getArchsForRepository(const QString &repository)
 {
-    qDebug() << "OBSxmlReader getArchsForRepository()";
+    qDebug() << "OBSXmlReader getArchsForRepository()";
     list.clear();
     QXmlStreamReader xml;
     xml.setDevice(openFile());

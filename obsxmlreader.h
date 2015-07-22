@@ -67,6 +67,7 @@ private:
 signals:
     void finishedParsingPackage(OBSPackage*, const int&);
     void finishedParsingRequests(QList<OBSRequest*>);
+    void finishedParsingList(QStringList);
 };
 
 #endif // OBSXMLREADER_H
