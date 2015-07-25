@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
     connect(obs, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)),
             this, SLOT(insertRequests(QList<OBSRequest*>)));
+    connect(ui->treePackages, SIGNAL(obsUrlDropped(const QStringList&)),
+            this, SLOT(addDroppedUrl(const QStringList&)));
 
     readSettings();
 
@@ -220,6 +222,40 @@ void MainWindow::addRow()
     delete rowEditor;
 }
 
+void MainWindow::addDroppedUrl(const QStringList& data)
+{
+    if(obs->isAuthenticated()) {
+        QString project = data[1];
+        QString fileName = project + "_meta" + ".xml";
+        OBSXmlReader *xmlReader = obs->getXmlReader();
+        xmlReader->setFileName(fileName);
+        obs->getProjectMetadata(project);
+        xmlReader->readFile();
+        QStringList repositoryList = xmlReader->getList();
+        QString package = data[2];
+
+        foreach (QString repository, repositoryList) {
+            xmlReader->getArchsForRepository(repository);
+            QStringList archList = xmlReader->getList();
+
+            foreach (QString architecture, archList) {
+                QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
+                item->setText(0, project);
+                item->setText(1, package);
+                item->setText(2, repository);
+                item->setText(3, architecture);
+                ui->treePackages->addTopLevelItem(item);
+                int index = ui->treePackages->indexOfTopLevelItem(item);
+                qDebug() << "Build" << item->text(1)
+                         << "(" << project << "," << repository << "," << architecture << ")"
+                         << "added at" << index;
+            }
+        }
+    } else {
+        qDebug() << "Not authenticated!";
+    }
+}
+
 void MainWindow::editRow(QTreeWidgetItem* item, int)
 {
     qDebug() << "Launching RowEditor in edit mode...";
@@ -334,8 +370,10 @@ void MainWindow::createTreePackages()
     ui->treePackages->setColumnWidth(3, 75); // Arch
     ui->treePackages->setColumnWidth(4, 100); // Status
 
-    connect(ui->treePackages, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(editRow(QTreeWidgetItem*, int)));
-    connect(ui->treePackages, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(markRead(QTreeWidgetItem*, int)));
+    connect(ui->treePackages, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            this, SLOT(editRow(QTreeWidgetItem*, int)));
+    connect(ui->treePackages, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
+            this, SLOT(markRead(QTreeWidgetItem*, int)));
 
     ui->treePackages->setItemDelegate(new AutoToolTipDelegate(ui->treePackages));
 }

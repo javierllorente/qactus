@@ -94,6 +94,7 @@ private slots:
     void changeRequestState();
     void getDescription(QTreeWidgetItem*, int);
     void addRow();
+    void addDroppedUrl(const QStringList &data);
     void editRow(QTreeWidgetItem*, int);
     void removeRow();
     void refreshView();
