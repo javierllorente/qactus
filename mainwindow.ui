@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>779</width>
+    <width>785</width>
     <height>520</height>
    </rect>
   </property>
@@ -191,13 +191,13 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>779</width>
-     <height>19</height>
+     <width>785</width>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Fi&amp;le</string>
     </property>
     <addaction name="actionLogin"/>
     <addaction name="actionQuit"/>
@@ -211,7 +211,7 @@
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>Settings</string>
+     <string>Setti&amp;ngs</string>
     </property>
     <addaction name="actionConfigure_Qactus"/>
    </widget>
@@ -237,12 +237,12 @@
      <normaloff>:/icons/help-about.png</normaloff>:/icons/help-about.png</iconset>
    </property>
    <property name="text">
-    <string>About</string>
+    <string>&amp;About</string>
    </property>
   </action>
   <action name="action_aboutQt">
    <property name="text">
-    <string>About Qt</string>
+    <string>About &amp;Qt</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -251,7 +251,7 @@
      <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
    </property>
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -266,7 +266,7 @@
      <normaloff>:/icons/configure.png</normaloff>:/icons/configure.png</iconset>
    </property>
    <property name="text">
-    <string>Configure Qactus</string>
+    <string>&amp;Configure Qactus</string>
    </property>
   </action>
   <action name="actionLogin">
@@ -275,7 +275,7 @@
      <normaloff>:/icons/dialog-password.png</normaloff>:/icons/dialog-password.png</iconset>
    </property>
    <property name="text">
-    <string>Login</string>
+    <string>&amp;Login</string>
    </property>
   </action>
  </widget>
