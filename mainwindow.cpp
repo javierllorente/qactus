@@ -226,17 +226,11 @@ void MainWindow::addDroppedUrl(const QStringList& data)
 {
     if(obs->isAuthenticated()) {
         QString project = data[1];
-        QString fileName = project + "_meta" + ".xml";
-        OBSXmlReader *xmlReader = obs->getXmlReader();
-        xmlReader->setFileName(fileName);
-        obs->getProjectMetadata(project);
-        xmlReader->readFile();
-        QStringList repositoryList = xmlReader->getList();
+        QStringList repositoryList = obs->getProjectMetadata(project);
         QString package = data[2];
 
         foreach (QString repository, repositoryList) {
-            xmlReader->getRepositoryArchs(repository);
-            QStringList archList = xmlReader->getList();
+            QStringList archList = obs->getRepositoryArchs(repository);
 
             foreach (QString architecture, archList) {
                 QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
