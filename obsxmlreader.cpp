@@ -290,7 +290,7 @@ void OBSXmlReader::readFile()
     parseList(xml);
 }
 
-void OBSXmlReader::getArchsForRepository(const QString &repository)
+void OBSXmlReader::getRepositoryArchs(const QString &repository)
 {
     qDebug() << "OBSXmlReader getArchsForRepository()";
     list.clear();

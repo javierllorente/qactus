@@ -46,7 +46,7 @@ public:
     QStringList getList();
     void readFile();
     void setFileName(const QString &fileName);
-    void getArchsForRepository(const QString &repository);
+    void getRepositoryArchs(const QString &repository);
 
 private:
     static OBSXmlReader* instance;
