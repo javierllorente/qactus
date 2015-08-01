@@ -24,8 +24,7 @@
 RowEditor::RowEditor(QWidget *parent, OBS *obs) :
     QDialog(parent),
     ui(new Ui::RowEditor),
-    mOBS(obs),
-    mXmlReader(obs->getXmlReader())
+    mOBS(obs)
 {
     ui->setupUi(this);
     initProjectAutocompleter();
@@ -203,8 +202,7 @@ void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
 {
     ui->lineEditArch->setFocus();
 
-    mXmlReader->getArchsForRepository(repository);
-    archList = mXmlReader->getList();
+    archList = mOBS->getRepositoryArchs(repository);
     QStringListModel *model = new QStringListModel(archList);
     archCompleter = new QCompleter(model, this);
 
