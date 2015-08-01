@@ -28,7 +28,6 @@
 #include <QSettings>
 #include <QProgressDialog>
 #include "obs.h"
-#include "obsxmlreader.h"
 
 namespace Ui {
 class RowEditor;
@@ -53,7 +52,6 @@ public:
 private:
     Ui::RowEditor *ui;
     OBS *mOBS;
-    OBSXmlReader *mXmlReader;
     QString getLastUpdateDate();
     void setLastUpdateDate(const QString &date);
     QStringList getListFor(const QString &name);
