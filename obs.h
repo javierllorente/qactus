@@ -49,6 +49,7 @@ public:
     QStringList getProjectList();
     QStringList getProjectPackageList(const QString &projectName);
     QStringList getProjectMetadata(const QString &projectName);
+    QStringList readXmlFile(const QString &xmlFile);
     OBSXmlReader* getXmlReader();
 
 private:
