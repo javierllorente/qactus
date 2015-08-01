@@ -235,7 +235,7 @@ void MainWindow::addDroppedUrl(const QStringList& data)
         QString package = data[2];
 
         foreach (QString repository, repositoryList) {
-            xmlReader->getArchsForRepository(repository);
+            xmlReader->getRepositoryArchs(repository);
             QStringList archList = xmlReader->getList();
 
             foreach (QString architecture, archList) {
