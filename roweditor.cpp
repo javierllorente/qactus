@@ -102,7 +102,6 @@ QStringList RowEditor::getListFor(const QString &name)
             "/data/" + QCoreApplication::applicationName();
     QDir::setCurrent(dataDir);
     QString fileName = name + ".xml";
-    mXmlReader->setFileName(fileName);
 
     /* The XML file is downloaded if
      * it doesn't exist or
@@ -112,7 +111,6 @@ QStringList RowEditor::getListFor(const QString &name)
     if (!QFile::exists(fileName) ||
             lastUpdateStr.isEmpty() ||
             lastUpdateDate.daysTo(QDate::currentDate()) == -7) {
-//        OBSAccess *obsAccess = OBSAccess::getInstance();
         if (mOBS->isAuthenticated()) {
             qDebug() << "Downloading" << name + "...";
             QProgressDialog progress(tr("Downloading") + name + "...", 0, 0, 0, this);
@@ -129,10 +127,10 @@ QStringList RowEditor::getListFor(const QString &name)
             }
             setLastUpdateDate(QDate::currentDate().toString());
         }
+    } else {
+        qDebug() << "Reading" << name;
+        stringList = mOBS->readXmlFile(fileName);
     }
-    qDebug() << "Reading" << name;
-    mXmlReader->readFile();
-    stringList = mXmlReader->getList();
 
     return stringList;
 }
