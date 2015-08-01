@@ -66,7 +66,6 @@ void OBS::postRequest(const QString &urlStr, const QByteArray &data)
     obsAccess->postRequest(urlStr, data);
 }
 
-
 bool OBS::isAuthenticated()
 {
     return obsAccess->isAuthenticated();
@@ -124,20 +123,32 @@ QString OBS::getRequestDiff(const QString &source)
 
 QStringList OBS::getProjectList()
 {
+    xmlReader->setFileName("projects.xml");
     request(apiUrl + "/source");
+    xmlReader->readFile();
     return xmlReader->getList();
 }
 
 QStringList OBS::getProjectPackageList(const QString &projectName)
 {
+    xmlReader->setFileName(projectName + ".xml");
     request(apiUrl + "/source/" + projectName);
+    xmlReader->readFile();
     return xmlReader->getList();
 }
 
-
 QStringList OBS::getProjectMetadata(const QString &projectName)
 {
+    xmlReader->setFileName(projectName + "_meta.xml");
     request(apiUrl + "/source/" + projectName + "/_meta");
+    xmlReader->readFile();
+    return xmlReader->getList();
+}
+
+QStringList OBS::readXmlFile(const QString &xmlFile)
+{
+    xmlReader->setFileName(xmlFile);
+    xmlReader->readFile();
     return xmlReader->getList();
 }
 
