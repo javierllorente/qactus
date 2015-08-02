@@ -102,6 +102,7 @@ void OBSXmlReader::parsePackage(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
     }
 
     emit finishedParsingPackage(obsPackage, row);
@@ -205,7 +206,9 @@ void OBSXmlReader::parseRequests(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
     }
+
     emit finishedParsingRequests(obsRequests);
 }
 
@@ -246,7 +249,9 @@ void OBSXmlReader::parseList(QXmlStreamReader &xml)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
     }
+
     emit finishedParsingList(list);
 }
 
