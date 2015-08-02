@@ -332,6 +332,7 @@ void OBSXmlReader::getRepositoryArchs(const QString &repository)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
     }
 }
 
