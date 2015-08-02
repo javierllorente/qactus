@@ -16,13 +16,16 @@ Qactus to Javier.
 
 This project was originally hosted on Nokia Developer Projects until 2013, when the service was discontinued.
 
+Installation
+------------
+openSUSE packages are available at http://software.opensuse.org/package/qactus
+
 Dependencies
 ------------
 Qt5
 QtKeychain
 
-
-Installation
+Building Qactus
 ------------
 ```
 cd qactus
