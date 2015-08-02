@@ -452,6 +452,10 @@ QColor MainWindow::getColorForStatus(const QString& status)
     {
         color = Qt::darkBlue;
     }
+    else if(status=="disabled")
+    {
+        color = Qt::gray;
+    }
     else if(status=="failed")
     {
         color = Qt::red;
