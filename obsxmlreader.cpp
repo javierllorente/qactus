@@ -292,7 +292,7 @@ void OBSXmlReader::readFile()
 
 void OBSXmlReader::getRepositoryArchs(const QString &repository)
 {
-    qDebug() << "OBSXmlReader getArchsForRepository()";
+    qDebug() << "OBSXmlReader getRepositoryArchs()";
     list.clear();
     QXmlStreamReader xml;
     xml.setDevice(openFile());
