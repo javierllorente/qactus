@@ -24,7 +24,7 @@ void PackageTreeWidget::dropEvent(QDropEvent *event)
         QString urlStr = urlList.at(0).toString();
 
         qDebug () << "Dropped url:" << urlStr;
-        QRegExp rx("^(?:http|https)://\\S+package/show/(\\S+)/(\\S+)");
+        QRegExp rx("^(?:http|https)://(\\S+)/package/show/(\\S+)/(\\S+)");
         if(urlStr.contains(rx)) {
             qDebug () << "Valid OBS URL found!";
             QStringList list = rx.capturedTexts();
