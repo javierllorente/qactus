@@ -35,6 +35,7 @@ public:
     void setCredentials(const QString &username, const QString &password);
     QString getUsername();
     void setApiUrl(const QString &apiUrl);
+    QString getApiUrl() const;
     void request(const QString& urlStr);
     void request(const QString &urlStr, const int &row);
     void postRequest(const QString &urlStr, const QByteArray &data);
@@ -51,7 +52,7 @@ public:
     QStringList getProjectMetadata(const QString &projectName);
     QStringList getRepositoryArchs(const QString &repository);
     QStringList readXmlFile(const QString &xmlFile);
-    OBSXmlReader* getXmlReader();
+    OBSXmlReader* getXmlReader();   
 
 private:
     OBSAccess *obsAccess;

@@ -51,6 +51,11 @@ void OBS::setApiUrl(const QString &apiUrl)
     this->apiUrl = apiUrl;
 }
 
+QString OBS::getApiUrl() const
+{
+    return apiUrl;
+}
+
 void OBS::request(const QString &urlStr)
 {
     obsAccess->request(urlStr);
