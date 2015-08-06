@@ -224,26 +224,33 @@ void MainWindow::addRow()
 
 void MainWindow::addDroppedUrl(const QStringList& data)
 {
-    if(obs->isAuthenticated()) {
-        QString project = data[1];
-        QStringList repositoryList = obs->getProjectMetadata(project);
-        QString package = data[2];
+    QString domain = data[1].section('.', -2);
+    qDebug() << "Dropped domain:" << domain;
 
-        foreach (QString repository, repositoryList) {
-            QStringList archList = obs->getRepositoryArchs(repository);
+    if (obs->isAuthenticated()) {
+        if (obs->getApiUrl().endsWith(domain)) {
+            QString project = data[2];
+            QStringList repositoryList = obs->getProjectMetadata(project);
+            QString package = data[3];
 
-            foreach (QString architecture, archList) {
-                QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
-                item->setText(0, project);
-                item->setText(1, package);
-                item->setText(2, repository);
-                item->setText(3, architecture);
-                ui->treePackages->addTopLevelItem(item);
-                int index = ui->treePackages->indexOfTopLevelItem(item);
-                qDebug() << "Build" << item->text(1)
-                         << "(" << project << "," << repository << "," << architecture << ")"
-                         << "added at" << index;
+            foreach (QString repository, repositoryList) {
+                QStringList archList = obs->getRepositoryArchs(repository);
+
+                foreach (QString architecture, archList) {
+                    QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
+                    item->setText(0, project);
+                    item->setText(1, package);
+                    item->setText(2, repository);
+                    item->setText(3, architecture);
+                    ui->treePackages->addTopLevelItem(item);
+                    int index = ui->treePackages->indexOfTopLevelItem(item);
+                    qDebug() << "Build" << item->text(1)
+                             << "(" << project << "," << repository << "," << architecture << ")"
+                             << "added at" << index;
+                }
             }
+        } else {
+            qDebug() << "ApiUrl doesn't end with dropped domain!";
         }
     } else {
         qDebug() << "Not authenticated!";
