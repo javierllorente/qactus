@@ -224,11 +224,12 @@ void MainWindow::addRow()
 
 void MainWindow::addDroppedUrl(const QStringList& data)
 {
-    QString domain = data[1].section('.', -2);
-    qDebug() << "Dropped domain:" << domain;
+    QString droppedUrlDomain = data[1].section('.', -2);
+    qDebug() << "droppedUrlDomain:" << droppedUrlDomain;
+    qDebug() << "apiUrl:" << obs->getApiUrl();
 
     if (obs->isAuthenticated()) {
-        if (obs->getApiUrl().endsWith(domain)) {
+        if (obs->getApiUrl().endsWith(droppedUrlDomain)) {
             QString project = data[2];
             QStringList repositoryList = obs->getProjectMetadata(project);
             QString package = data[3];
@@ -250,7 +251,7 @@ void MainWindow::addDroppedUrl(const QStringList& data)
                 }
             }
         } else {
-            qDebug() << "ApiUrl doesn't end with dropped domain!";
+            qDebug() << "apiUrl doesn't end with droppedUrlDomain!";
         }
     } else {
         qDebug() << "Not authenticated!";
