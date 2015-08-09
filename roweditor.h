@@ -56,13 +56,17 @@ private:
     void setLastUpdateDate(const QString &date);
     QStringList getListFor(const QString &name);
     QStringList projectList;
+    QStringListModel *projectModel;
     QCompleter *projectCompleter;
     void initProjectAutocompleter();
     QStringList packageList;
+    QStringListModel *packageModel;
     QCompleter *packageCompleter;
     QStringList repositoryList;
+    QStringListModel *repositoryModel;
     QCompleter *repositoryCompleter;
     QStringList archList;
+    QStringListModel *archModel;
     QCompleter *archCompleter;
 
 private slots:

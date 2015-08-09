@@ -27,11 +27,27 @@ RowEditor::RowEditor(QWidget *parent, OBS *obs) :
     mOBS(obs)
 {
     ui->setupUi(this);
+    projectModel = NULL;
+    projectCompleter = NULL;
+    packageModel = NULL;
+    packageCompleter = NULL;
+    repositoryModel = NULL;
+    repositoryCompleter = NULL;
+    archModel = NULL;
+    archCompleter = NULL;
     initProjectAutocompleter();
 }
 
 RowEditor::~RowEditor()
 {
+    delete projectModel;
+    delete projectCompleter;
+    delete packageModel;
+    delete packageCompleter;
+    delete repositoryModel;
+    delete repositoryCompleter;
+    delete archModel;
+    delete archCompleter;
     delete ui;
 }
 
@@ -137,8 +153,8 @@ QStringList RowEditor::getListFor(const QString &name)
 void RowEditor::initProjectAutocompleter()
 {
     projectList = getListFor("projects");
-    QStringListModel *model = new QStringListModel(projectList);
-    projectCompleter = new QCompleter(model, this);
+    projectModel = new QStringListModel(projectList);
+    projectCompleter = new QCompleter(projectModel, this);
 
     ui->lineEditProject->setCompleter(projectCompleter);
 
@@ -150,8 +166,7 @@ void RowEditor::initProjectAutocompleter()
 
 void RowEditor::refreshProjectAutocompleter(const QString&)
 {
-    QStringListModel *model = (QStringListModel*)(projectCompleter->model());
-    model->setStringList(projectList);
+    projectModel->setStringList(projectList);
 }
 
 void RowEditor::autocompletedProjectName_clicked(const QString &projectName)
@@ -159,8 +174,8 @@ void RowEditor::autocompletedProjectName_clicked(const QString &projectName)
     ui->lineEditPackage->setFocus();
 
     packageList = getListFor(projectName);
-    QStringListModel *model = new QStringListModel(packageList);
-    packageCompleter = new QCompleter(model, this);
+    packageModel = new QStringListModel(packageList);
+    packageCompleter = new QCompleter(packageModel, this);
 
     ui->lineEditPackage->setCompleter(packageCompleter);
 
@@ -172,8 +187,7 @@ void RowEditor::autocompletedProjectName_clicked(const QString &projectName)
 
 void RowEditor::refreshPackageAutocompleter(const QString&)
 {
-    QStringListModel *model = (QStringListModel*)(packageCompleter->model());
-    model->setStringList(packageList);
+    packageModel->setStringList(packageList);
 }
 
 void RowEditor::autocompletedPackageName_clicked(const QString&)
@@ -181,8 +195,8 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
     ui->lineEditRepository->setFocus();
 
     repositoryList = getListFor(ui->lineEditProject->text() + "_meta");
-    QStringListModel *model = new QStringListModel(repositoryList);
-    repositoryCompleter = new QCompleter(model, this);
+    repositoryModel = new QStringListModel(repositoryList);
+    repositoryCompleter = new QCompleter(repositoryModel, this);
 
     ui->lineEditRepository->setCompleter(repositoryCompleter);
 
@@ -194,8 +208,7 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
 
 void RowEditor::refreshRepositoryAutocompleter(const QString&)
 {
-    QStringListModel *model = (QStringListModel*)(repositoryCompleter->model());
-    model->setStringList(repositoryList);
+    repositoryModel->setStringList(repositoryList);
 }
 
 void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
@@ -203,8 +216,8 @@ void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
     ui->lineEditArch->setFocus();
 
     archList = mOBS->getRepositoryArchs(repository);
-    QStringListModel *model = new QStringListModel(archList);
-    archCompleter = new QCompleter(model, this);
+    archModel = new QStringListModel(archList);
+    archCompleter = new QCompleter(archModel, this);
 
     ui->lineEditArch->setCompleter(archCompleter);
 
@@ -214,6 +227,5 @@ void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
 
 void RowEditor::refreshArchAutocompleter(const QString&)
 {
-    QStringListModel *model = (QStringListModel*)(archCompleter->model());
-    model->setStringList(archList);
+    archModel->setStringList(archList);
 }
