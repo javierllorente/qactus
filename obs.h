@@ -41,8 +41,8 @@ public:
     void postRequest(const QString &urlStr, const QByteArray &data);
     bool isAuthenticated();
     void login();
-    OBSPackage* getBuildStatus(const QStringList &stringList, const int &row);
-    QList<OBSRequest*> getRequests();
+    void getBuildStatus(const QStringList &stringList, const int &row);
+    void getRequests();
     int getRequestCount();
     QString acceptRequest(const QString &id, const QString &comments);
     QString declineRequest(const QString &id, const QString &comments);
