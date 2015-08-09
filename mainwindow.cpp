@@ -28,6 +28,7 @@
 #include "requeststateeditor.h"
 #include "obspackage.h"
 #include "autotooltipdelegate.h"
+#include "requesttreewidgetitem.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -392,7 +393,7 @@ void MainWindow::createTreeRequests()
     ui->treeRequests->setColumnWidth(6, 60); // State
 
     connect(ui->treeRequests, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(changeRequestState()));
-    connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getDescription(QTreeWidgetItem*, int)));
+    connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getRequestDescription(QTreeWidgetItem*, int)));
 
     ui->treeRequests->setItemDelegate(new AutoToolTipDelegate(ui->treeRequests));
 }
@@ -491,9 +492,6 @@ void MainWindow::setItemBoldFont(QTreeWidgetItem *item, bool bold)
 
 void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
 {
-    // Needed for getDescription()
-    this->obsRequests = obsRequests;
-
 //    If we already have inserted submit requests,
 //    we remove them and insert the latest ones
     int rows = ui->treeRequests->topLevelItemCount();
@@ -509,7 +507,7 @@ void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
     qDebug() << "obsRequests size: " << obsRequests.size();
 
     for (int i=0; i<obsRequests.size(); i++) {
-        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeRequests);
+        RequestTreeWidgetItem *item = new RequestTreeWidgetItem(ui->treeRequests);
         item->setText(0, obsRequests.at(i)->getDate());
         item->setText(1, obsRequests.at(i)->getId());
         item->setText(2, obsRequests.at(i)->getSource());
@@ -517,16 +515,19 @@ void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
         item->setText(4, obsRequests.at(i)->getRequester());
         item->setText(5, obsRequests.at(i)->getActionType());
         item->setText(6, obsRequests.at(i)->getState());
+        item->setDescription(obsRequests.at(i)->getDescription());
 
         ui->treeRequests->insertTopLevelItem(i, item);
     }
 }
 
-void MainWindow::getDescription(QTreeWidgetItem* item, int)
+void MainWindow::getRequestDescription(QTreeWidgetItem* item, int)
 {
-    qDebug() << "getDescription() " << "Row: " + QString::number(ui->treeRequests->indexOfTopLevelItem(item));
-    qDebug() << "Description: " + obsRequests.at(ui->treeRequests->indexOfTopLevelItem(item))->getDescription();
-    ui->textBrowser->setText(obsRequests.at(ui->treeRequests->indexOfTopLevelItem(item))->getDescription());
+    QString requestDescription = static_cast<RequestTreeWidgetItem*>(item)->getDescription();
+    qDebug() << "getRequestDescription() " << "Row clicked: "
+                + QString::number(ui->treeRequests->indexOfTopLevelItem(item));
+    qDebug() << "Request description: " + requestDescription;
+    ui->textBrowser->setText(requestDescription);
 }
 
 void MainWindow::pushButton_Login_clicked()
