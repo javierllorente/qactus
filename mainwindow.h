@@ -52,7 +52,6 @@ private:
     Ui::MainWindow *ui;
 
     OBS *obs;
-    QList<OBSRequest*> obsRequests;
 
     QToolBar *toolBar;
     void createToolbar();
@@ -92,7 +91,7 @@ private slots:
     void enableButtons(bool);
     void showContextMenu(const QPoint&);
     void changeRequestState();
-    void getDescription(QTreeWidgetItem*, int);
+    void getRequestDescription(QTreeWidgetItem*, int);
     void addRow();
     void addDroppedUrl(const QStringList &data);
     void editRow(QTreeWidgetItem*, int);
