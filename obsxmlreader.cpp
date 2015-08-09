@@ -148,8 +148,11 @@ void OBSXmlReader::parseRequests(const QString &data)
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest = new OBSRequest;
                 obsRequest->setId(attrib.value("id").toString());
+            } else if (xml.isEndElement()){
+                obsRequests.append(obsRequest);
+                qDebug() << "added " << obsRequest->getId();
             }
-        }
+        } // request
 
         if (xml.name()=="action")  {
             if (xml.isStartElement()) {
@@ -193,14 +196,14 @@ void OBSXmlReader::parseRequests(const QString &data)
         } // state
 
         if (xml.name()=="description") {
-            if (xml.tokenType() != QXmlStreamReader::StartElement) {
-                return;
+            if (xml.isStartElement()) {
+                xml.readNext();
+                obsRequest->setDescription(xml.text().toString());
+                qDebug() << "Description:\n" <<  obsRequest->getDescription();
+                if(!xml.text().isEmpty()) {
+                    xml.readNextStartElement();
+                }
             }
-            xml.readNext();
-            obsRequest->setDescription(xml.text().toString());
-            qDebug() << "Description:\n" <<  obsRequest->getDescription();
-            xml.readNextStartElement();
-            obsRequests.append(obsRequest);
         } // description
     }
 
