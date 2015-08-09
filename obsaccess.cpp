@@ -181,6 +181,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
             xmlReader->addData(data);
         }
     }
+    reply->deleteLater();
 }
 
 QString OBSAccess::getRequestDiff()

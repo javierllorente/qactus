@@ -402,6 +402,7 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
 {
     QString details = obsPackage->getDetails();
     QString status = obsPackage->getStatus();
+    delete obsPackage;
 
 //    If the line is too long (>250), break it
     details = breakLine(details, 250);
@@ -519,6 +520,8 @@ void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
 
         ui->treeRequests->insertTopLevelItem(i, item);
     }
+    qDeleteAll(obsRequests.begin(), obsRequests.end());
+    obsRequests.clear();
 }
 
 void MainWindow::getRequestDescription(QTreeWidgetItem* item, int)
