@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     requeststateeditor.cpp \
     autotooltipdelegate.cpp \
     obs.cpp \
-    packagetreewidget.cpp
+    packagetreewidget.cpp \
+    requesttreewidgetitem.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -42,7 +43,8 @@ HEADERS += mainwindow.h \
     requeststateeditor.h \
     autotooltipdelegate.h \
     obs.h \
-    packagetreewidget.h
+    packagetreewidget.h \
+    requesttreewidgetitem.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \
