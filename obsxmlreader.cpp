@@ -200,6 +200,7 @@ void OBSXmlReader::parseRequests(const QString &data)
                 xml.readNext();
                 obsRequest->setDescription(xml.text().toString());
                 qDebug() << "Description:\n" <<  obsRequest->getDescription();
+                // if tag is not empty (ie: <description/>), read next start element
                 if(!xml.text().isEmpty()) {
                     xml.readNextStartElement();
                 }
