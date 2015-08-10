@@ -500,6 +500,9 @@ void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
     qDebug() << "InsertRequests() " << "Rows:" << rows << "Requests:" << requests;
 
     if (rows>0) {
+        // Clears the tree widget by removing all of its items and selections.
+        // Note: Each item is removed from the tree widget before being deleted.
+        // http://doc.qt.io/qt-5/qtreewidget.html#clear
         ui->treeRequests->clear();
     }
 
