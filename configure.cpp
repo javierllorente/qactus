@@ -40,11 +40,20 @@ void Configure::createTimer()
 {
     timer = new QTimer(this);
 
-    ui->spinBox->setMinimum(5);
-    ui->spinBox->setMaximum(1440);
-    ui->spinBox->setDisabled(true);
+    ui->spinBoxTimer->setMinimum(5);
+    ui->spinBoxTimer->setMaximum(1440);
+    ui->spinBoxTimer->setDisabled(true);
 
-    connect(ui->checkBox_Timer, SIGNAL(toggled(bool)), ui->spinBox, SLOT(setEnabled(bool)));
+    connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));
+
+    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->comboBoxProxyType, SLOT(setEnabled(bool)));
+    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->lineEditProxyServer, SLOT(setEnabled(bool)));
+    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->spinBoxProxyPort, SLOT(setEnabled(bool)));
+    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->lineEditProxyUsername, SLOT(setEnabled(bool)));
+    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->lineEditProxyPassword, SLOT(setEnabled(bool)));
+
+    ui->comboBoxProxyType->addItem("Socks 5");
+    ui->comboBoxProxyType->addItem("HTTP");
 
 }
 void Configure::startTimer(const int& interval)
@@ -60,20 +69,23 @@ void Configure::startTimer(const int& interval)
 
 void Configure::on_buttonBox_accepted()
 {
-    if (ui->checkBox_Timer->isChecked()) {
+    if (ui->checkBoxTimer->isChecked()) {
 //      Start the timer if the checkbox is checked
-        startTimer(ui->spinBox->value());
-        qDebug() << "Timer set to" << ui->spinBox->value() << "minutes";
+        startTimer(ui->spinBoxTimer->value());
+        qDebug() << "Timer set to" << ui->spinBoxTimer->value() << "minutes";
 
     } else if (timer->isActive()) {
         timer->stop();
         qDebug() << "The timer has been stopped";
     }
+
+    toggleProxy(ui->checkBoxProxy->isChecked());
+
 }
 
 void Configure::on_buttonBox_rejected()
 {
-    ui->checkBox_Timer->setChecked(timer->isActive());
+    ui->checkBoxTimer->setChecked(timer->isActive());
 }
 
 bool Configure::isTimerActive()
@@ -83,16 +95,96 @@ bool Configure::isTimerActive()
 
 int Configure::getTimerValue()
 {
-    return ui->spinBox->value();
+    return ui->spinBoxTimer->value();
 }
 
 void Configure::setTimerValue(const int& value)
 {
-    ui->spinBox->setValue(value);
-    qDebug() << "Timer value:" << ui->spinBox->value() << "minutes";
+    ui->spinBoxTimer->setValue(value);
+    qDebug() << "Timer value:" << ui->spinBoxTimer->value() << "minutes";
 }
 
 void Configure::setCheckedTimerCheckbox(bool check)
 {
-    ui->checkBox_Timer->setChecked(check);
+    ui->checkBoxTimer->setChecked(check);
+}
+
+void Configure::toggleProxy(bool enableProxy)
+{
+    if (enableProxy) {
+        qDebug() << "Proxy has been enabled";
+        QNetworkProxy::ProxyType proxyType = ui->comboBoxProxyType->currentIndex() == 0 ?
+                    QNetworkProxy::Socks5Proxy : QNetworkProxy::HttpProxy;
+        proxy.setType(proxyType);
+        proxy.setHostName(ui->lineEditProxyServer->text());
+        proxy.setPort(ui->spinBoxProxyPort->text().toInt());
+        proxy.setUser(ui->lineEditProxyUsername->text());
+        proxy.setPassword(ui->lineEditProxyPassword->text());
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else {
+        qDebug() << "Proxy has been disabled";
+        proxy.setApplicationProxy(QNetworkProxy::NoProxy);
+    }
+}
+
+bool Configure::isProxyEnabled()
+{
+    return ui->checkBoxProxy->isChecked();
+}
+
+void Configure::setCheckedProxyCheckbox(bool check)
+{
+    ui->checkBoxProxy->setChecked(check);
+}
+
+void Configure::setProxyType(const int &proxyType)
+{
+    ui->comboBoxProxyType->setCurrentIndex(proxyType == 1 ? 0 : 1);
+}
+
+int Configure::getProxyType() const
+{
+    QNetworkProxy::ProxyType proxyType = ui->comboBoxProxyType->currentIndex() == 0 ?
+                QNetworkProxy::Socks5Proxy : QNetworkProxy::HttpProxy;
+    return proxyType;
+}
+
+void Configure::setProxyServer(const QString &proxyServer)
+{
+    ui->lineEditProxyServer->setText(proxyServer);
+}
+
+QString Configure::getProxyServer() const
+{
+    return ui->lineEditProxyServer->text();
+}
+
+void Configure::setProxyPort(const int &proxyPort)
+{
+    ui->spinBoxProxyPort->setValue(proxyPort);
+}
+
+int Configure::getProxyPort() const
+{
+    return ui->spinBoxProxyPort->value();
+}
+
+void Configure::setProxyUsername(const QString &proxyUsername)
+{
+    ui->lineEditProxyUsername->setText(proxyUsername);
+}
+
+QString Configure::getProxyUsername() const
+{
+    return ui->lineEditProxyUsername->text();
+}
+
+void Configure::setProxyPassword(const QString &proxyPassword)
+{
+    ui->lineEditProxyPassword->setText(proxyPassword);
+}
+
+QString Configure::getProxyPassword() const
+{
+    return ui->lineEditProxyPassword->text();
 }

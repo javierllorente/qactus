@@ -26,6 +26,7 @@
 #include <QCheckBox>
 #include <QTimer>
 #include <QSpinBox>
+#include <QNetworkProxy>
 
 namespace Ui {
     class Configure;
@@ -43,7 +44,20 @@ public:
     void setTimerValue(const int&);
     int getTimerValue();
     bool isTimerActive();
-    void setCheckedTimerCheckbox(bool);
+    void setCheckedTimerCheckbox(bool check);
+    void toggleProxy(bool enableProxy);
+    bool isProxyEnabled();
+    void setCheckedProxyCheckbox(bool check);
+    void setProxyType(const int &proxyType);
+    int getProxyType() const;
+    void setProxyServer(const QString &proxyServer);
+    QString getProxyServer() const;
+    void setProxyPort(const int &proxyPort);
+    int getProxyPort() const;
+    void setProxyUsername(const QString &proxyUsername);
+    QString getProxyUsername() const;
+    void setProxyPassword(const QString &proxyPassword);
+    QString getProxyPassword() const;
 
 private slots:
     void on_buttonBox_accepted();
@@ -53,6 +67,7 @@ private:
     Ui::Configure *ui;
     QTimer *timer;
     void createTimer();
+    QNetworkProxy proxy;
 };
 
 #endif // CONFIGURE_H
