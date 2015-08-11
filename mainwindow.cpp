@@ -674,6 +674,15 @@ void MainWindow::writeSettings()
     settings.setValue("pos", pos());
     settings.endGroup();
 
+    settings.beginGroup("Proxy");
+    settings.setValue("Enabled", configureDialog->isProxyEnabled());
+    settings.setValue("Type", configureDialog->getProxyType());
+    settings.setValue("Server", configureDialog->getProxyServer());
+    settings.setValue("Port", configureDialog->getProxyPort());
+    settings.setValue("Username", configureDialog->getProxyUsername());
+    settings.setValue("Password", configureDialog->getProxyPassword());
+    settings.endGroup();
+
     settings.beginGroup("Auth");
     settings.setValue("Username", obs->getUsername());
     settings.setValue("AutoLogin", loginDialog->isAutoLoginEnabled());
@@ -710,6 +719,20 @@ void MainWindow::readSettings()
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("MainWindow");
     move(settings.value("pos", QPoint(200, 200)).toPoint());
+    settings.endGroup();
+
+    settings.beginGroup("Proxy");
+    if (settings.value("Enabled").toBool()) {
+        configureDialog->setCheckedProxyCheckbox(true);
+        configureDialog->setProxyType(settings.value("Type").toInt());
+        configureDialog->setProxyServer(settings.value("Server").toString());
+        configureDialog->setProxyPort(settings.value("Port").toInt());
+        configureDialog->setProxyUsername(settings.value("Username").toString());
+        configureDialog->setProxyPassword(settings.value("Password").toString());
+        // FIX-ME: If proxy is enabled on a non-proxy environment you have
+        // to edit Qactus.conf and set Enabled=false to get Qactus to log in
+        configureDialog->toggleProxy(true);
+    }
     settings.endGroup();
 
     settings.beginGroup("Auth");
