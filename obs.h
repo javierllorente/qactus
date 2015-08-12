@@ -61,7 +61,7 @@ private:
 
 signals:
     void isAuthenticated(bool);
-    void networkError(QString);
+    void networkError(const QString&);
     void finishedParsingPackage(OBSPackage*, const int&);
     void finishedParsingRequests(QList<OBSRequest*>);
     void finishedParsingList(QStringList);

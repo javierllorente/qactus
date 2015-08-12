@@ -102,7 +102,7 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::showNetworkError(QString networkError)
+void MainWindow::showNetworkError(const QString &networkError)
 {
     qDebug() << "showNetworkError()";
 

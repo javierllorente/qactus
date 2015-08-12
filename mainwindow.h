@@ -89,7 +89,7 @@ private:
     Configure *configureDialog;
 
 private slots:
-    void showNetworkError(QString networkError);
+    void showNetworkError(const QString &networkError);
     void enableButtons(bool);
     void showContextMenu(const QPoint&);
     void changeRequestState();
