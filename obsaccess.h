@@ -48,6 +48,7 @@ public:
 
 signals:
     void isAuthenticated(bool authenticated);
+    void networkError(const QString &error);
 
 public slots:
     void setCredentials(const QString&, const QString&);

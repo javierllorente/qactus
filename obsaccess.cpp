@@ -166,9 +166,8 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
         xmlReader->addData(data);
     } else if (reply->error() != QNetworkReply::NoError) {
         authenticated = false;
-        emit isAuthenticated(authenticated);
-        qDebug() << "Request failed!";
-        qDebug() << "Error: " << reply->errorString();
+        qDebug() << "Request failed! Error:" << reply->errorString();
+        emit networkError(reply->errorString());
     } else {
         authenticated = true;
         emit isAuthenticated(authenticated);
