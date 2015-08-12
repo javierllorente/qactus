@@ -25,6 +25,7 @@
 #include <QTreeWidgetItem>
 #include <QtWidgets/QSystemTrayIcon>
 #include <qt5keychain/keychain.h>
+#include <QMessageBox>
 
 namespace Ui {
     class MainWindow;
@@ -75,7 +76,7 @@ private:
     void writeSettings();
     void readSettings();
     void readSettingsTimer();
-
+    QMessageBox *errorBox;
     QString packageErrors;
 
     QString breakLine(QString&, const int&);
@@ -88,6 +89,7 @@ private:
     Configure *configureDialog;
 
 private slots:
+    void showNetworkError(QString networkError);
     void enableButtons(bool);
     void showContextMenu(const QPoint&);
     void changeRequestState();

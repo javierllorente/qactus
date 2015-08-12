@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createStatusBar();
 
     loginDialog = new Login(this);
+    errorBox = NULL;
     configureDialog = new Configure(this);
     ui->actionConfigure_Qactus->setEnabled(false);
     connect(ui->treeRequests, SIGNAL(customContextMenuRequested(const QPoint&)),this,
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
+    connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
 
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
@@ -97,6 +99,28 @@ void MainWindow::changeEvent(QEvent *e)
         break;
     default:
         break;
+    }
+}
+
+void MainWindow::showNetworkError(QString networkError)
+{
+    qDebug() << "showNetworkError()";
+
+    // The QMessageBox is only displayed once if there are
+    // repeated errors (queued requests, probably same error)
+    if(!errorBox) {
+        errorBox = new QMessageBox(this);
+    } else if(!errorBox->isVisible()) {
+        errorBox->setWindowTitle(tr("Network Error"));
+        errorBox->setText(networkError);
+        errorBox->setIcon(QMessageBox::Critical);
+        int ret = errorBox->exec();
+        if (ret) {
+            // Not very elegant.
+            // Other options: fix code, use smart pointers?
+            delete errorBox;
+            errorBox = NULL;
+        }
     }
 }
 
@@ -311,11 +335,10 @@ void MainWindow::refreshView()
 
     for (int r=0; r<rows; r++) {
 //        Ignore rows with empty cells and process rows with data
-        if (ui->treePackages->topLevelItem(r)->text(0).isEmpty() ||
-                ui->treePackages->topLevelItem(r)->text(1).isEmpty() ||
-                ui->treePackages->topLevelItem(r)->text(2).isEmpty() ||
-                ui->treePackages->topLevelItem(r)->text(3).isEmpty()) {
-        } else {
+        if (!ui->treePackages->topLevelItem(r)->text(0).isEmpty() ||
+                !ui->treePackages->topLevelItem(r)->text(1).isEmpty() ||
+                !ui->treePackages->topLevelItem(r)->text(2).isEmpty() ||
+                !ui->treePackages->topLevelItem(r)->text(3).isEmpty()) {
             QStringList tableStringList;
             tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(0)));
             tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(2)));
