@@ -67,6 +67,7 @@ private:
     Ui::Configure *ui;
     QTimer *timer;
     void createTimer();
+    void proxySettingsSetup();
     QNetworkProxy proxy;
 };
 

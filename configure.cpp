@@ -29,6 +29,7 @@ Configure::Configure(QWidget *parent) :
 
     createTimer();
     connect(timer, SIGNAL(timeout()), parent, SLOT(refreshView()));
+    proxySettingsSetup();
 }
 
 Configure::~Configure()
@@ -44,8 +45,11 @@ void Configure::createTimer()
     ui->spinBoxTimer->setMaximum(1440);
     ui->spinBoxTimer->setDisabled(true);
 
-    connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));
+    connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));    
+}
 
+void Configure::proxySettingsSetup()
+{
     connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->comboBoxProxyType, SLOT(setEnabled(bool)));
     connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->lineEditProxyServer, SLOT(setEnabled(bool)));
     connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->spinBoxProxyPort, SLOT(setEnabled(bool)));
@@ -54,7 +58,6 @@ void Configure::createTimer()
 
     ui->comboBoxProxyType->addItem("Socks 5");
     ui->comboBoxProxyType->addItem("HTTP");
-
 }
 void Configure::startTimer(const int& interval)
 {
