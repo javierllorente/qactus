@@ -26,8 +26,8 @@ OBSAccess* OBSAccess::instance = NULL;
 OBSAccess::OBSAccess()
 {
     authenticated = false;
-    manager = NULL;
     xmlReader = OBSXmlReader::getInstance();
+    createManager();
 }
 
 void OBSAccess::createManager()
@@ -164,6 +164,10 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     // Package/Project not found
     if (httpStatusCode==404 && isAuthenticated()) {
         xmlReader->addData(data);
+    } else if (httpStatusCode==401) {
+        qDebug() << "Authentication failed!";
+        authenticated = false;
+        emit isAuthenticated(authenticated);
     } else if (reply->error() != QNetworkReply::NoError) {
         authenticated = false;
         qDebug() << "Request failed! Error:" << reply->errorString();
