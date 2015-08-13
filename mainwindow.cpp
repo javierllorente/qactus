@@ -343,11 +343,6 @@ void MainWindow::refreshView()
         }
     }
 
-    if (packageErrors.size()>1) {
-        QMessageBox::critical(this,tr("Error"), packageErrors, QMessageBox::Ok );
-        packageErrors.clear();
-    }
-
 //    Get SRs
     statusBar()->showMessage(tr("Getting requests..."), 5000);
     obs->getRequests();

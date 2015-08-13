@@ -77,7 +77,6 @@ private:
     void readSettings();
     void readSettingsTimer();
     QMessageBox *errorBox;
-    QString packageErrors;
 
     QString breakLine(QString&, const int&);
     QColor getColorForStatus(const QString&);
