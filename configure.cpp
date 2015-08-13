@@ -86,6 +86,15 @@ void Configure::on_buttonBox_accepted()
 void Configure::on_buttonBox_rejected()
 {
     ui->checkBoxTimer->setChecked(timer->isActive());
+    ui->spinBoxTimer->setValue(timer->interval()/60000);
+    bool check = proxy.applicationProxy() != QNetworkProxy::NoProxy;
+    ui->checkBoxProxy->setChecked(check);
+    int index = proxy.type() == QNetworkProxy::Socks5Proxy ? 0 : 1;
+    ui->comboBoxProxyType->setCurrentIndex(index);
+    ui->lineEditProxyServer->setText(proxy.hostName());
+    ui->spinBoxProxyPort->setValue(proxy.port());
+    ui->lineEditProxyUsername->setText(proxy.user());
+    ui->lineEditProxyPassword->setText(proxy.password());
 }
 
 bool Configure::isTimerActive()
