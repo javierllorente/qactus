@@ -90,7 +90,7 @@ private:
 
 private slots:
     void showNetworkError(const QString &networkError);
-    void enableButtons(bool);
+    void isAuthenticated(bool authenticated);
     void showContextMenu(const QPoint&);
     void changeRequestState();
     void getRequestDescription(QTreeWidgetItem*, int);
