@@ -49,12 +49,11 @@ MainWindow::MainWindow(QWidget *parent) :
     loginDialog = new Login(this);
     errorBox = NULL;
     configureDialog = new Configure(this);
-    ui->actionConfigure_Qactus->setEnabled(false);
     connect(ui->treeRequests, SIGNAL(customContextMenuRequested(const QPoint&)),this,
             SLOT(showContextMenu(const QPoint&)));
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(enableButtons(bool)));
+    connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(isAuthenticated(bool)));
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
 
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
@@ -65,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(addDroppedUrl(const QStringList&)));
 
     readSettings();
+    readSettingsTimer();
 
     QKeychain::ReadPasswordJob job(QLatin1String("Qactus"));
     job.setAutoDelete(false);
@@ -124,15 +124,10 @@ void MainWindow::showNetworkError(const QString &networkError)
     }
 }
 
-void MainWindow::enableButtons(bool isAuthenticated)
+void MainWindow::isAuthenticated(bool authenticated)
 {
-    action_Refresh->setEnabled(isAuthenticated);
-    action_Configure->setEnabled(isAuthenticated);
-    ui->actionConfigure_Qactus->setEnabled(isAuthenticated);
-
-    if (isAuthenticated) {
+    if (authenticated) {
         qDebug() << "User is authenticated";
-        readSettingsTimer();
         statusBar()->showMessage(tr("Online"), 0);
     } else {
         loginDialog->show();
@@ -158,7 +153,6 @@ void MainWindow::createToolbar()
     action_Refresh = new QAction(tr("&Refresh"), this);
     action_Refresh->setIcon(QIcon(":/icons/view-refresh.png"));
     action_Refresh->setStatusTip(tr("Refresh view"));
-    action_Refresh->setEnabled(false);
     action_Refresh->setShortcut(QKeySequence::Refresh);
     ui->toolBar->addAction(action_Refresh);
     connect(action_Refresh, SIGNAL(triggered()), this, SLOT(refreshView()));
@@ -175,7 +169,6 @@ void MainWindow::createToolbar()
     action_Configure = new QAction(tr("&Configure"), this);
     action_Configure->setIcon(QIcon(":/icons/configure.png"));
     action_Configure->setStatusTip(tr("Configure Qactus"));
-    action_Configure->setEnabled(false);
     ui->toolBar->addAction(action_Configure);
     connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
 
