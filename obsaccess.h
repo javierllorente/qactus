@@ -32,7 +32,6 @@
 #include <QEventLoop>
 #include <QCoreApplication>
 #include "obsxmlreader.h"
-#include <QMessageBox>
 
 class OBSXmlReader;
 
