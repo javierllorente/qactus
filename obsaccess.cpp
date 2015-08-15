@@ -109,6 +109,7 @@ void OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
 
 void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
 {
+    qDebug() << "provideAuthentication() called";
     static QString prevPassword = "";
     static QString prevUsername = "";
 //    qDebug() << reply->readAll();
