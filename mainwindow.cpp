@@ -37,7 +37,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     obs = new OBS();
-    obs->setApiUrl("https://api.opensuse.org");
 
     createToolbar();
     trayIcon = new TrayIcon(this);
@@ -48,12 +47,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     loginDialog = new Login(this);
     errorBox = NULL;
-    configureDialog = new Configure(this);
+    configureDialog = new Configure(this, obs);
     connect(ui->treeRequests, SIGNAL(customContextMenuRequested(const QPoint&)),this,
             SLOT(showContextMenu(const QPoint&)));
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(isAuthenticated(bool)));
+    connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
+            this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
 
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
@@ -120,6 +121,58 @@ void MainWindow::showNetworkError(const QString &networkError)
             // Other options: fix code, use smart pointers?
             delete errorBox;
             errorBox = NULL;
+        }
+    }
+}
+
+void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
+{
+    QSslConfiguration sslConfig;
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
+            "/data/" + QCoreApplication::applicationName();
+    QDir::setCurrent(dataDir);
+
+    QString apiUrldomain = obs->getApiUrl().section('.', -2);
+    apiUrldomain.replace(".", "");
+    apiUrldomain.replace("/", "");
+    QString filename =  apiUrldomain + ".pem";
+
+    if (QFile::exists(filename)) {
+        qDebug() << "Reading self-signed certificate" << filename;
+        QFile file(filename);
+        file.open(QIODevice::ReadOnly);
+        QByteArray byteArray = file.readAll();
+        file.close();
+        QSslCertificate sslCertificate(byteArray);
+        QSslSocket::addDefaultCaCertificate(sslCertificate);
+        reply->ignoreSslErrors();
+        return;
+    } else {
+        sslConfig = reply->sslConfiguration();
+        QSslCertificate sslCertificate = sslConfig.peerCertificate();
+//        qDebug() << sslCertificate.toText();
+
+        QStringList certInfo = sslCertificate.subjectInfo("CN");
+        QMessageBox::StandardButton result = QMessageBox::warning(this,
+                                                                  QString(tr("Warning")),
+                                                                  QString(tr(
+                                                                              "Do you want to accept this "
+                                                                              "self-signed certificate from "
+                                                                              )
+                                                                          + certInfo.at(0)
+                                                                          ),
+                                                                  QMessageBox::Yes | QMessageBox::No);
+        if (result == QMessageBox::Yes)  {
+            qDebug() << "Saving self-signed certificate as" << filename;
+
+            QFile file(filename);
+            file.open(QIODevice::WriteOnly);
+            file.write(sslCertificate.toPem());
+            file.close();
+
+            QSslSocket::addDefaultCaCertificate(sslCertificate);
+            obs->request(reply->url().toString(), reply->property("row").toInt());
+            reply->ignoreSslErrors();
         }
     }
 }
@@ -695,6 +748,7 @@ void MainWindow::writeSettings()
     settings.endGroup();
 
     settings.beginGroup("Auth");
+    settings.setValue("ApiUrl", obs->getApiUrl() + "/");
     settings.setValue("Username", obs->getUsername());
     settings.setValue("AutoLogin", loginDialog->isAutoLoginEnabled());
     settings.endGroup();
@@ -727,6 +781,7 @@ void MainWindow::writeSettings()
 
 void MainWindow::readSettings()
 {
+    qDebug() << "Reading settings...";
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("MainWindow");
     move(settings.value("pos", QPoint(200, 200)).toPoint());
@@ -747,6 +802,7 @@ void MainWindow::readSettings()
     settings.endGroup();
 
     settings.beginGroup("Auth");
+    configureDialog->setApiUrl(settings.value("ApiUrl").toString());
     loginDialog->setUsername(settings.value("Username").toString());
     loginDialog->setAutoLoginEnabled(settings.value("AutoLogin").toBool());
     settings.endGroup();   
