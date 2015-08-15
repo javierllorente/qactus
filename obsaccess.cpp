@@ -192,15 +192,19 @@ QString OBSAccess::getRequestDiff()
     return requestDiff;
 }
 
-void OBSAccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &list)
+void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
 {
     QString errorString;
     QString message;
 
-    foreach (const QSslError &error, list) {
+    foreach (const QSslError &sslError, list) {
         if (list.count() >= 1) {
             errorString += ", ";
-            errorString = error.errorString();
+            errorString = sslError.errorString();
+            if (sslError.error() == QSslError::SelfSignedCertificateInChain) {
+                qDebug() << "Self signed certificate!";
+                emit selfSignedCertificate(reply);
+            }
         }
     }
     qDebug() << "SSL Errors:" << errorString;
@@ -211,11 +215,5 @@ void OBSAccess::onSslErrors(QNetworkReply* /*reply*/, const QList<QSslError> &li
         message=list.count()+tr(" SSL errors have occured: %1");
     }
 
-//    if (QMessageBox::warning(this,tr("Warning"),
-//                             message.arg(errorString),
-//                             QMessageBox::Ignore | QMessageBox::Abort) == QMessageBox::Ignore) {
-////        Ignore SSL error(s) if the user presses ignore
-//        reply->ignoreSslErrors();
-//    }
-
+   qDebug() << "onSslErrors() url:" << reply->url() << "row:" << reply->property("row").toInt();
 }

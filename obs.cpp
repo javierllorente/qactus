@@ -28,6 +28,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
     // Forward signals
     connect(obsAccess, SIGNAL(isAuthenticated(bool)),
             this, SIGNAL(isAuthenticated(bool)));
+    connect(obsAccess, SIGNAL(selfSignedCertificate(QNetworkReply*)),
+            this, SIGNAL(selfSignedCertificate(QNetworkReply*)));
     connect(obsAccess, SIGNAL(networkError(QString)),
             this, SIGNAL(networkError(QString)));
     connect(xmlReader, SIGNAL(finishedParsingPackage(OBSPackage*, const int)),

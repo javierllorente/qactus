@@ -32,6 +32,7 @@
 #include <QEventLoop>
 #include <QCoreApplication>
 #include "obsxmlreader.h"
+#include <QMessageBox>
 
 class OBSXmlReader;
 
@@ -48,6 +49,7 @@ public:
 
 signals:
     void isAuthenticated(bool authenticated);
+    void selfSignedCertificate(QNetworkReply *reply);
     void networkError(const QString &error);
 
 public slots:
@@ -55,6 +57,8 @@ public slots:
     void request(const QString &urlStr);
     void request(const QString &urlStr, const int &row);
     void postRequest(const QString &urlStr, const QByteArray &data);
+
+private slots:
     void provideAuthentication(QNetworkReply* reply, QAuthenticator* ator);
     void replyFinished(QNetworkReply* reply);
     void onSslErrors(QNetworkReply* reply, const QList<QSslError> &list);
