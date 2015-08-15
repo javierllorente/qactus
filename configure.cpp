@@ -21,9 +21,10 @@
 #include "configure.h"
 #include "ui_configure.h"
 
-Configure::Configure(QWidget *parent) :
+Configure::Configure(QWidget *parent, OBS *obs) :
     QDialog(parent),
-    ui(new Ui::Configure)
+    ui(new Ui::Configure),
+    mOBS(obs)
 {
     ui->setupUi(this);
 
@@ -35,6 +36,20 @@ Configure::Configure(QWidget *parent) :
 Configure::~Configure()
 {
     delete ui;
+}
+
+void Configure::setApiUrl(QString apiUrlStr)
+{
+    if (apiUrlStr.isEmpty()) {
+        apiUrlStr = "https://api.opensuse.org/";
+    }
+
+    if (apiUrlStr.endsWith("/")) {
+        apiUrlStr = apiUrlStr.left(apiUrlStr.length()-1);
+    }
+
+    setOBSApiUrl(apiUrlStr);
+    ui->lineEditApiUrl->setText(apiUrlStr + "/");
 }
 
 void Configure::createTimer()
@@ -71,7 +86,9 @@ void Configure::startTimer(const int& interval)
 }
 
 void Configure::on_buttonBox_accepted()
-{
+{   
+    setApiUrl(ui->lineEditApiUrl->text());
+
     if (ui->checkBoxTimer->isChecked()) {
 //      Start the timer if the checkbox is checked
         startTimer(ui->spinBoxTimer->value());
@@ -88,6 +105,8 @@ void Configure::on_buttonBox_accepted()
 
 void Configure::on_buttonBox_rejected()
 {
+    ui->lineEditApiUrl->setText(mOBS->getApiUrl() + "/");
+
     ui->checkBoxTimer->setChecked(timer->isActive());
     ui->spinBoxTimer->setValue(timer->interval()/60000);
 
@@ -103,6 +122,11 @@ void Configure::on_buttonBox_rejected()
         ui->lineEditProxyUsername->setText(proxy.user());
         ui->lineEditProxyPassword->setText(proxy.password());
     }
+}
+
+void Configure::setOBSApiUrl(const QString &apiUrlStr)
+{
+    mOBS->setApiUrl(apiUrlStr);
 }
 
 bool Configure::isTimerActive()

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>491</width>
-    <height>401</height>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,6 +32,27 @@
       <pixmap resource="application.qrc">:/icons/configure.png</pixmap>
      </property>
     </widget>
+   </item>
+   <item>
+    <widget class="Line" name="lineApiUrl">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayoutApiUrl">
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelApiUrl">
+       <property name="text">
+        <string>OBS API:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEditApiUrl"/>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="Line" name="lineTimer">
@@ -92,7 +113,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QFormLayout" name="formLayout">
+    <layout class="QFormLayout" name="formLayoutProxy">
      <item row="0" column="0">
       <widget class="QLabel" name="labelProxyType">
        <property name="text">

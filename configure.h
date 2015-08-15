@@ -27,6 +27,7 @@
 #include <QTimer>
 #include <QSpinBox>
 #include <QNetworkProxy>
+#include "obs.h"
 
 namespace Ui {
     class Configure;
@@ -37,9 +38,10 @@ class Configure : public QDialog
     Q_OBJECT
 
 public:
-    explicit Configure(QWidget *parent = 0);
+    explicit Configure(QWidget *parent = 0, OBS *obs = 0);
     ~Configure();
 
+    void setApiUrl(QString apiUrlStr);
     void startTimer(const int&);
     void setTimerValue(const int&);
     int getTimerValue();
@@ -65,6 +67,8 @@ private slots:
 
 private:
     Ui::Configure *ui;
+    OBS *mOBS;
+    void setOBSApiUrl(const QString &apiUrlStr);
     QTimer *timer;
     void createTimer();
     void proxySettingsSetup();
