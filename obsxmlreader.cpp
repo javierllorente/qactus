@@ -98,6 +98,15 @@ void OBSXmlReader::parsePackage(const QString &data)
 //            no details
         } // end details
 
+        if (xml.name()=="summary" && xml.isStartElement()) {
+            xml.readNext();
+            qDebug() << "Summary:" << xml.text().toString();
+            // If user doesn't exist, return
+            if (xml.text().toString().startsWith("Couldn't find User with login")) {
+                return;
+            }
+        } // end summary
+
     } // end while
 
     if (xml.hasError()) {
