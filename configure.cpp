@@ -87,6 +87,10 @@ void Configure::startTimer(const int& interval)
 
 void Configure::on_buttonBox_accepted()
 {   
+    if (ui->lineEditApiUrl->text() != mOBS->getApiUrl()) {
+        qDebug() << "Api has been changed!";
+        emit apiChanged();
+    }
     setApiUrl(ui->lineEditApiUrl->text());
 
     if (ui->checkBoxTimer->isChecked()) {

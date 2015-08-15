@@ -61,6 +61,9 @@ public:
     void setProxyPassword(const QString &proxyPassword);
     QString getProxyPassword() const;
 
+signals:
+    void apiChanged();
+
 private slots:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
