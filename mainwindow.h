@@ -26,6 +26,7 @@
 #include <QtWidgets/QSystemTrayIcon>
 #include <qt5keychain/keychain.h>
 #include <QMessageBox>
+#include <QNetworkReply>
 
 namespace Ui {
     class MainWindow;
@@ -89,6 +90,7 @@ private:
 
 private slots:
     void showNetworkError(const QString &networkError);
+    void handleSelfSignedCertificates(QNetworkReply*);
     void isAuthenticated(bool authenticated);
     void showContextMenu(const QPoint&);
     void changeRequestState();
