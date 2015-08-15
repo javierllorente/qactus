@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
             this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
+    connect(configureDialog, SIGNAL(apiChanged()), this, SLOT(apiChanged()));
 
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
@@ -175,6 +176,12 @@ void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
             reply->ignoreSslErrors();
         }
     }
+}
+
+void MainWindow::apiChanged()
+{
+    loginDialog->setUsername("");
+    loginDialog->show();
 }
 
 void MainWindow::isAuthenticated(bool authenticated)

@@ -91,6 +91,7 @@ private:
 private slots:
     void showNetworkError(const QString &networkError);
     void handleSelfSignedCertificates(QNetworkReply*);
+    void apiChanged();
     void isAuthenticated(bool authenticated);
     void showContextMenu(const QPoint&);
     void changeRequestState();
