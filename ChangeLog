@@ -1,6 +1,19 @@
 Qactus ChangeLog
 ================
 
+v0.7.0 (2015-08-16)
+- New feature: you can now add packages by dropping OBS package URLs
+on the packages' tab
+- New feature: proxy support
+- New feature: self-signed certificate support
+- New feature: using any OBS instance is now supported
+- Networking improvements: async getBuildStatus() requests
+- Code refactoring: OBS façade created, some code cleanup
+- Error handling: it's more verbose about HTTP and SSL errors
+- Fixed getting description from OBSRequest
+- Fixed parsing empty tags (ie: <description/>)
+- Minor improvements
+
 v0.6.0 (2015-06-15)
 - Qactus has been ported to Qt5
 - Fix getting timer interval from settings on startup
