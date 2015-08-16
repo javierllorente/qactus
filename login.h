@@ -43,6 +43,9 @@ public:
     bool isAutoLoginEnabled();
     void setAutoLoginEnabled(bool check);
 
+public slots:
+    void clearCredentials();
+
 private:
     Ui::Login *ui;
 

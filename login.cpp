@@ -68,3 +68,10 @@ void Login::setAutoLoginEnabled(bool check)
     ui->checkBox_AutoLogin->setChecked(check);
 }
 
+void Login::clearCredentials()
+{
+    ui->lineEdit_Username->clear();
+    ui->lineEdit_Password->clear();
+    ui->lineEdit_Username->setFocus();
+}
+
