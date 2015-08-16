@@ -87,7 +87,7 @@ void Configure::startTimer(const int& interval)
 
 void Configure::on_buttonBox_accepted()
 {   
-    if (ui->lineEditApiUrl->text() != mOBS->getApiUrl()) {
+    if (ui->lineEditApiUrl->text() != mOBS->getApiUrl() + "/") {
         qDebug() << "Api has been changed!";
         emit apiChanged();
     }
