@@ -455,7 +455,7 @@ void MainWindow::createTreePackages()
 void MainWindow::createTreeRequests()
 {
     ui->treeRequests->setColumnCount(7);
-    ui->treeRequests->setColumnWidth(0, 135); // Date
+    ui->treeRequests->setColumnWidth(0, 145); // Date
     ui->treeRequests->setColumnWidth(1, 60); // SR ID
     ui->treeRequests->setColumnWidth(2, 160); // Source project
     ui->treeRequests->setColumnWidth(3, 160); // Target project
