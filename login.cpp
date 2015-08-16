@@ -27,6 +27,10 @@ Login::Login(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setTabOrder(ui->lineEdit_Username, ui->lineEdit_Password);
+    setTabOrder(ui->lineEdit_Password, ui->checkBox_AutoLogin);
+    setTabOrder(ui->checkBox_AutoLogin, ui->pushButton_Login);
+
     connect(ui->pushButton_Login, SIGNAL(clicked()), parent, SLOT(pushButton_Login_clicked()) );
     connect(ui->lineEdit_Password, SIGNAL(returnPressed()), parent, SLOT(lineEdit_Password_returnPressed()));
 }
