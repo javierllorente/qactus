@@ -31,6 +31,9 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     createTimer();
     connect(timer, SIGNAL(timeout()), parent, SLOT(refreshView()));
     proxySettingsSetup();
+
+    connect(ui->listWidget, SIGNAL(currentRowChanged(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
+    ui->listWidget->setCurrentRow(0);
 }
 
 Configure::~Configure()
