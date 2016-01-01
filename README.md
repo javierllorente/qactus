@@ -3,7 +3,7 @@ qactus
 
 Qactus is a Qt-based OBS notifier application
 
-Copyright (C) 2010-2015 Javier Llorente <javier@opensuse.org>
+Copyright (C) 2010-2016 Javier Llorente <javier@opensuse.org>
 
 Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
 
