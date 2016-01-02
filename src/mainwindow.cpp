@@ -675,7 +675,7 @@ void MainWindow::about()
                        "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a>" +
                        "<div align=\"left\">" +
                           "<p>" +
-                          "&copy; 2010-2015 Javier Llorente (Main developer)<br>"
+                          "&copy; 2010-2016 Javier Llorente (Main developer)<br>"
                           "&copy; 2010-2011 Sivan Greenberg (Former contributor)  &nbsp; <br><br>"
                           + tr("Icons by the Oxygen Team") + "<br>"
                           + tr("Tray icon by the Open Build Service") + /*"<br>"*/
