@@ -114,7 +114,8 @@ private slots:
     void on_actionLogin_triggered();
     void on_tabWidget_currentChanged(const int&);
     void insertBuildStatus(OBSPackage*, const int&);
-    void insertRequests(QList<OBSRequest*>);
+    void insertRequest(OBSRequest*);
+    void removeRequest(const QString& id);
 };
 
 

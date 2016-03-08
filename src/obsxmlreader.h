@@ -41,7 +41,6 @@ public:
     void addData(const QString &data);
     void setPackageRow(const int &row);
     OBSPackage* getPackage();
-    QList<OBSRequest*> getRequests();
     int getRequestNumber();
     QStringList getList();
     void readFile();
@@ -53,10 +52,12 @@ private:
     OBSXmlReader();
     void parsePackage(const QString &data);
     int row;
+    QList<QString> requestIdList;
+    QList<QString> oldRequestIdList;
     void parseRequests(const QString &data);
+    void parseRequest(QXmlStreamReader &xml);
     void parseList(QXmlStreamReader &xml);
     OBSPackage *obsPackage;
-    QList<OBSRequest*> obsRequests;
     OBSRequest *obsRequest;
     QString requestNumber;
     QStringList list;
@@ -66,7 +67,8 @@ private:
 
 signals:
     void finishedParsingPackage(OBSPackage*, const int&);
-    void finishedParsingRequests(QList<OBSRequest*>);
+    void finishedParsingRequest(OBSRequest*);
+    void removeRequest(const QString&);
     void finishedParsingList(QStringList);
 };
 

@@ -61,8 +61,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
-    connect(obs, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)),
-            this, SLOT(insertRequests(QList<OBSRequest*>)));
+    connect(obs, SIGNAL(finishedParsingRequest(OBSRequest*)),
+            this, SLOT(insertRequest(OBSRequest*)));
+    connect(obs, SIGNAL(removeRequest(const QString&)),
+            this, SLOT(removeRequest(const QString&)));
     connect(ui->treePackages, SIGNAL(obsUrlDropped(const QStringList&)),
             this, SLOT(addDroppedUrl(const QStringList&)));
 
@@ -562,40 +564,32 @@ void MainWindow::setItemBoldFont(QTreeWidgetItem *item, bool bold)
     }
 }
 
-void MainWindow::insertRequests(QList<OBSRequest*> obsRequests)
+void MainWindow::insertRequest(OBSRequest* obsRequest)
 {
-//    If we already have inserted submit requests,
-//    we remove them and insert the latest ones
     int rows = ui->treeRequests->topLevelItemCount();
     int requests = obs->getRequestCount();
-    qDebug() << "InsertRequests() " << "Rows:" << rows << "Requests:" << requests;
+    qDebug() << "Table rows:" << rows+1 << "Total requests:" << requests;
 
-    if (rows>0) {
-        // Clears the tree widget by removing all of its items and selections.
-        // Note: Each item is removed from the tree widget before being deleted.
-        // http://doc.qt.io/qt-5/qtreewidget.html#clear
-        ui->treeRequests->clear();
-    }
+    RequestTreeWidgetItem *item = new RequestTreeWidgetItem(ui->treeRequests);
+    item->setText(0, obsRequest->getDate());
+    item->setText(1, obsRequest->getId());
+    item->setText(2, obsRequest->getSource());
+    item->setText(3, obsRequest->getTarget());
+    item->setText(4, obsRequest->getRequester());
+    item->setText(5, obsRequest->getActionType());
+    item->setText(6, obsRequest->getState());
+    item->setDescription(obsRequest->getDescription());
+    ui->treeRequests->addTopLevelItem(item);
 
-    qDebug() << "RequestCount: " << obs->getRequestCount();
-    qDebug() << "requests: " << requests;
-    qDebug() << "obsRequests size: " << obsRequests.size();
+    qDebug() << "Request added:" << obsRequest->getId();
+    delete obsRequest;
+}
 
-    for (int i=0; i<obsRequests.size(); i++) {
-        RequestTreeWidgetItem *item = new RequestTreeWidgetItem(ui->treeRequests);
-        item->setText(0, obsRequests.at(i)->getDate());
-        item->setText(1, obsRequests.at(i)->getId());
-        item->setText(2, obsRequests.at(i)->getSource());
-        item->setText(3, obsRequests.at(i)->getTarget());
-        item->setText(4, obsRequests.at(i)->getRequester());
-        item->setText(5, obsRequests.at(i)->getActionType());
-        item->setText(6, obsRequests.at(i)->getState());
-        item->setDescription(obsRequests.at(i)->getDescription());
-
-        ui->treeRequests->insertTopLevelItem(i, item);
-    }
-    qDeleteAll(obsRequests.begin(), obsRequests.end());
-    obsRequests.clear();
+void MainWindow::removeRequest(const QString& id)
+{
+    QList<QTreeWidgetItem*> itemList = ui->treeRequests->findItems(id, Qt::MatchExactly, 1);
+    delete itemList.at(0);
+    qDebug() << "Request removed:" << id;
 }
 
 void MainWindow::getRequestDescription(QTreeWidgetItem* item, int)

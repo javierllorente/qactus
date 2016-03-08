@@ -64,7 +64,8 @@ signals:
     void selfSignedCertificate(QNetworkReply*);
     void networkError(const QString&);
     void finishedParsingPackage(OBSPackage*, const int&);
-    void finishedParsingRequests(QList<OBSRequest*>);
+    void finishedParsingRequest(OBSRequest*);
+    void removeRequest(const QString&);
     void finishedParsingList(QStringList);
 
 public slots:

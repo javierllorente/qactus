@@ -50,7 +50,6 @@ void OBSXmlReader::addData(const QString& data)
         } else if (xml.name()=="collection" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: collection tag found";
             parseRequests(data);
-            obsRequests = getRequests();
         } else if (xml.name()=="directory" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: directory tag found";
             stringToFile(data);
@@ -130,7 +129,7 @@ OBSPackage* OBSXmlReader::getPackage()
 void OBSXmlReader::parseRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
-    obsRequests.clear();
+    QString id;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -152,69 +151,23 @@ void OBSXmlReader::parseRequests(const QString &data)
             }
         } // collection
 
-        if (xml.name()=="request") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest = new OBSRequest;
-                obsRequest->setId(attrib.value("id").toString());
-            } else if (xml.isEndElement()){
-                obsRequests.append(obsRequest);
-                qDebug() << "added " << obsRequest->getId();
-            }
-        } // request
+        if (xml.isStartElement()) {
 
-        if (xml.name()=="action")  {
-            if (xml.isStartElement()) {
+            if (xml.name()=="request") {
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest->setActionType(attrib.value("type").toString());
-                qDebug() << "Action type:" <<  obsRequest->getActionType();
-//                if (obsRequest->getActionType()=="delete") {
-//                    obsRequest->setSourceProject("N/A");
-//                }
+                id = attrib.value("id").toString();
             }
-        } // action
 
-        if (xml.name()=="source") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest->setSourceProject(attrib.value("project").toString());
-                obsRequest->setSourcePackage(attrib.value("package").toString());
-                qDebug() << "Source: " <<  obsRequest->getSource();
+            if(!id.isEmpty() && !requestIdList.contains(id)) {
+                parseRequest(xml);
             }
-        } // source
 
-        if (xml.name()=="target") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest->setTargetProject(attrib.value("project").toString());
-                obsRequest->setTargetPackage(attrib.value("package").toString());
-                qDebug() << "Target: " <<  obsRequest->getTarget();
-            }
-        } // target
-
-        if (xml.name()=="state") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest->setState(attrib.value("name").toString());
-                qDebug() << "State: " <<  obsRequest->getState();
-                obsRequest->setRequester(attrib.value("who").toString());
-                qDebug() << "Requester: " <<  obsRequest->getRequester();
-                obsRequest->setDate(attrib.value("when").toString());
-                qDebug() << "Date: " <<  obsRequest->getDate();
-            }
-        } // state
-
-        if (xml.name()=="description") {
-            if (xml.isStartElement()) {
-                xml.readNext();
-                obsRequest->setDescription(xml.text().toString());
-                qDebug() << "Description:\n" <<  obsRequest->getDescription();
-                // if tag is not empty (ie: <description/>), read next start element
-                if(!xml.text().isEmpty()) {
-                    xml.readNextStartElement();
-                }
-            }
-        } // description
+        } else if (xml.name()=="request" && xml.isEndElement()) {
+             if(!id.isEmpty() && !requestIdList.contains(id)) {
+                requestIdList.append(obsRequest->getId());
+                emit finishedParsingRequest(obsRequest);
+             }
+        }
     }
 
     if (xml.hasError()) {
@@ -222,7 +175,83 @@ void OBSXmlReader::parseRequests(const QString &data)
         return;
     }
 
-    emit finishedParsingRequests(obsRequests);
+    if (oldRequestIdList.size()>0) {
+        QSet<QString> currentSet = requestIdList.toSet();
+        QSet<QString> oldSet = oldRequestIdList.toSet();
+
+        // For code's clarity sake (substraction is perfomed on oldSet)
+        QList<QString> removedRequests = oldSet.subtract(currentSet).toList();
+
+        foreach (QString requestId, removedRequests) {
+                requestIdList.removeOne(requestId);
+                emit removeRequest(requestId);
+        }
+    }
+    oldRequestIdList = requestIdList;
+}
+
+void OBSXmlReader::parseRequest(QXmlStreamReader &xml)
+{
+    if (xml.name()=="request") {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            obsRequest = new OBSRequest;
+            obsRequest->setId(attrib.value("id").toString());
+        }
+    } // request
+
+    if (xml.name()=="action")  {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            obsRequest->setActionType(attrib.value("type").toString());
+            qDebug() << "Action type:" <<  obsRequest->getActionType();
+//                if (obsRequest->getActionType()=="delete") {
+//                    obsRequest->setSourceProject("N/A");
+//                }
+        }
+    } // action
+
+    if (xml.name()=="source") {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            obsRequest->setSourceProject(attrib.value("project").toString());
+            obsRequest->setSourcePackage(attrib.value("package").toString());
+            qDebug() << "Source: " <<  obsRequest->getSource();
+        }
+    } // source
+
+    if (xml.name()=="target") {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            obsRequest->setTargetProject(attrib.value("project").toString());
+            obsRequest->setTargetPackage(attrib.value("package").toString());
+            qDebug() << "Target: " <<  obsRequest->getTarget();
+        }
+    } // target
+
+    if (xml.name()=="state") {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            obsRequest->setState(attrib.value("name").toString());
+            qDebug() << "State: " <<  obsRequest->getState();
+            obsRequest->setRequester(attrib.value("who").toString());
+            qDebug() << "Requester: " <<  obsRequest->getRequester();
+            obsRequest->setDate(attrib.value("when").toString());
+            qDebug() << "Date: " <<  obsRequest->getDate();
+        }
+    } // state
+
+    if (xml.name()=="description") {
+        if (xml.isStartElement()) {
+            xml.readNext();
+            obsRequest->setDescription(xml.text().toString());
+            qDebug() << "Description:\n" <<  obsRequest->getDescription();
+            // if tag is not empty (ie: <description/>), read next start element
+            if(!xml.text().isEmpty()) {
+                xml.readNextStartElement();
+            }
+        }
+    } // description
 }
 
 void OBSXmlReader::parseList(QXmlStreamReader &xml)
@@ -347,11 +376,6 @@ void OBSXmlReader::getRepositoryArchs(const QString &repository)
         qDebug() << "Error parsing XML!" << xml.errorString();
         return;
     }
-}
-
-QList<OBSRequest*> OBSXmlReader::getRequests()
-{
-    return obsRequests;
 }
 
 int OBSXmlReader::getRequestNumber()

@@ -34,8 +34,10 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(networkError(QString)));
     connect(xmlReader, SIGNAL(finishedParsingPackage(OBSPackage*, const int)),
             this, SIGNAL(finishedParsingPackage(OBSPackage*,int)));
-    connect(xmlReader, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)),
-            this, SIGNAL(finishedParsingRequests(QList<OBSRequest*>)));
+    connect(xmlReader, SIGNAL(finishedParsingRequest(OBSRequest*)),
+            this, SIGNAL(finishedParsingRequest(OBSRequest*)));
+    connect(xmlReader, SIGNAL(removeRequest(const QString&)),
+            this, SIGNAL(removeRequest(const QString&)));
     connect(xmlReader, SIGNAL(finishedParsingList(QStringList)),
             this, SIGNAL(finishedParsingList(QStringList)));
 }
