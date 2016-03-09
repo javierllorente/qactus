@@ -236,7 +236,10 @@ void OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             qDebug() << "State: " <<  obsRequest->getState();
             obsRequest->setRequester(attrib.value("who").toString());
             qDebug() << "Requester: " <<  obsRequest->getRequester();
-            obsRequest->setDate(attrib.value("when").toString());
+            QString date = attrib.value("when").toString();
+            // Replace the "T" (as in 2015-03-13T20:01:33)
+            date.replace(10, 1, " ");
+            obsRequest->setDate(date);
             qDebug() << "Date: " <<  obsRequest->getDate();
         }
     } // state
