@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013, 2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013, 2015, 2016 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,51 +20,72 @@
 
 #include "obsrequest.h"
 
+
 OBSRequest::OBSRequest()
 {
 }
 
-void OBSRequest::setId(const QString& id)
+OBSRequest::OBSRequest(const OBSRequest &other)
+{
+    *this = other;
+}
+
+OBSRequest& OBSRequest::operator=(const OBSRequest &other)
+{
+    this->setId(other.getId());
+    this->setActionType(other.getActionType());
+    this->setSourceProject(other.getSourceProject());
+    this->setSourcePackage(other.getSourcePackage());
+    this->setTargetProject(other.getTargetProject());
+    this->setTargetPackage(other.getTargetPackage());
+    this->setState(other.getState());
+    this->setRequester(other.getRequester());
+    this->setDate(other.getDate());
+    this->setDescription(other.getDescription());
+    return *this;
+}
+
+void OBSRequest::setId(const QString &id)
 {
     this->id = id;
 }
 
-QString OBSRequest::getId()
+QString OBSRequest::getId() const
 {
     return id;
 }
 
-void OBSRequest::setActionType(const QString& actionType)
+void OBSRequest::setActionType(const QString &actionType)
 {
     this->actionType = actionType;
 }
 
-QString OBSRequest::getActionType()
+QString OBSRequest::getActionType() const
 {
     return actionType;
 }
 
-void OBSRequest::setSourceProject(const QString& sourceProject)
+void OBSRequest::setSourceProject(const QString &sourceProject)
 {
     this->sourceProject = sourceProject;
 }
 
-QString OBSRequest::getSourceProject()
+QString OBSRequest::getSourceProject() const
 {
     return sourceProject;
 }
 
-void OBSRequest::setSourcePackage(const QString& sourcePackage)
+void OBSRequest::setSourcePackage(const QString &sourcePackage)
 {
     this->sourcePackage = sourcePackage;
 }
 
-QString OBSRequest::getSourcePackage()
+QString OBSRequest::getSourcePackage() const
 {
     return sourcePackage;
 }
 
-QString OBSRequest::getSource()
+QString OBSRequest::getSource() const
 {
     if (!sourcePackage.isEmpty()) {
         return sourceProject + "/" + sourcePackage;
@@ -73,69 +94,67 @@ QString OBSRequest::getSource()
     }
 }
 
-void OBSRequest::setTargetProject(const QString& targetProject)
+void OBSRequest::setTargetProject(const QString &targetProject)
 {
     this->targetProject = targetProject;
 }
 
-QString OBSRequest::getTargetProject()
+QString OBSRequest::getTargetProject() const
 {
     return targetProject;
 }
 
-void OBSRequest::setTargetPackage(const QString& targetPackage)
+void OBSRequest::setTargetPackage(const QString &targetPackage)
 {
     this->targetPackage = targetPackage;
 }
 
-QString OBSRequest::getTargetPackage()
+QString OBSRequest::getTargetPackage() const
 {
     return targetPackage;
 }
 
-QString OBSRequest::getTarget()
+QString OBSRequest::getTarget() const
 {
     return targetProject + "/" + targetPackage;
 }
 
-void OBSRequest::setState(const QString& state)
+void OBSRequest::setState(const QString &state)
 {
     this->state = state;
 }
 
-QString OBSRequest::getState()
+QString OBSRequest::getState() const
 {
     return state;
 }
 
-void OBSRequest::setRequester(const QString& requester)
+void OBSRequest::setRequester(const QString &requester)
 {
     this->requester = requester;
 }
 
-QString OBSRequest::getRequester()
+QString OBSRequest::getRequester() const
 {
     return requester;
 }
 
-void OBSRequest::setDate(const QString& date)
+void OBSRequest::setDate(const QString &date)
 {
     this->date = date;
 }
 
-QString OBSRequest::getDate()
+QString OBSRequest::getDate() const
 {
-    // Replace the "T" (as in 2015-03-13T20:01:33)
-    // with a space and return it
-    return date.replace(10, 1, " ");
+    return date;
 }
 
-void OBSRequest::setDescription(const QString& description)
+void OBSRequest::setDescription(const QString &description)
 {
     this->description = description;
 }
 
-QString OBSRequest::getDescription()
+QString OBSRequest::getDescription() const
 {
     return description;
 }

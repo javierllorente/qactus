@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013, 2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013, 2015, 2016 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,6 +27,13 @@ class OBSRequest
 {
 public:
     OBSRequest();
+    OBSRequest(const OBSRequest &other);
+    OBSRequest &operator=(const OBSRequest &other);
+    inline bool operator==(const OBSRequest &rhs)
+    {
+        return this->getId()==rhs.getId();
+    }
+
     void setId(const QString &);
     void setActionType(const QString &);
     void setSourceProject(const QString &);
@@ -38,18 +45,18 @@ public:
     void setDate(const QString &);
     void setDescription(const QString &);
 
-    QString getId();
-    QString getActionType();
-    QString getSourceProject();
-    QString getSourcePackage();
-    QString getSource();
-    QString getTargetProject();
-    QString getTargetPackage();
-    QString getTarget();
-    QString getState();
-    QString getRequester();
-    QString getDate();
-    QString getDescription();
+    QString getId() const;
+    QString getActionType() const;
+    QString getSourceProject() const;
+    QString getSourcePackage() const;
+    QString getSource() const;
+    QString getTargetProject() const;
+    QString getTargetPackage() const;
+    QString getTarget() const;
+    QString getState() const;
+    QString getRequester() const;
+    QString getDate() const;
+    QString getDescription() const;
 
 private:
     QString id;
