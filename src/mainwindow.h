@@ -70,6 +70,8 @@ private:
     QAction *action_Quit;
     QAction *action_Restore;
 
+    void loadProjectTree();
+    void addItem(const QString& itemName, QTreeWidget *treeWidget);
     void createTreePackages();
     void createTreeRequests();
 
@@ -95,6 +97,8 @@ private slots:
     void isAuthenticated(bool authenticated);
     void showContextMenu(const QPoint&);
     void changeRequestState();
+    void getPackages(QTreeWidgetItem*, int);
+    void getPackageFiles(QTreeWidgetItem*, int);
     void getRequestDescription(QTreeWidgetItem*, int);
     void addRow();
     void addDroppedUrl(const QStringList &data);

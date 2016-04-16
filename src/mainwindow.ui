@@ -14,7 +14,7 @@
    <string>Qactus</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="application.qrc">
+   <iconset resource="../application.qrc">
     <normaloff>:/obs.png</normaloff>:/obs.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -24,6 +24,71 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
+      <widget class="QWidget" name="browserTab">
+       <attribute name="title">
+        <string>Browser</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_browserTab">
+        <item>
+         <widget class="QTreeWidget" name="treeProjects">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <attribute name="headerVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QTreeWidget" name="treeBuilds">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string notr="true">1</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTreeWidget" name="treeFiles">
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string notr="true">1</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tabPackages">
        <attribute name="title">
         <string>Packages</string>
@@ -192,7 +257,7 @@
      <x>0</x>
      <y>0</y>
      <width>785</width>
-     <height>29</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -233,7 +298,7 @@
   </widget>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="application.qrc">
+    <iconset resource="../application.qrc">
      <normaloff>:/icons/help-about.png</normaloff>:/icons/help-about.png</iconset>
    </property>
    <property name="text">
@@ -247,7 +312,7 @@
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset resource="application.qrc">
+    <iconset resource="../application.qrc">
      <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
    </property>
    <property name="text">
@@ -262,7 +327,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="application.qrc">
+    <iconset resource="../application.qrc">
      <normaloff>:/icons/configure.png</normaloff>:/icons/configure.png</iconset>
    </property>
    <property name="text">
@@ -271,7 +336,7 @@
   </action>
   <action name="actionLogin">
    <property name="icon">
-    <iconset resource="application.qrc">
+    <iconset resource="../application.qrc">
      <normaloff>:/icons/dialog-password.png</normaloff>:/icons/dialog-password.png</iconset>
    </property>
    <property name="text">
@@ -287,7 +352,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="application.qrc"/>
+  <include location="../application.qrc"/>
  </resources>
  <connections/>
 </ui>

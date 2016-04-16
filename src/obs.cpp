@@ -154,6 +154,13 @@ QStringList OBS::getProjectMetadata(const QString &projectName)
     return xmlReader->getList();
 }
 
+QStringList OBS::getPackageFileList(const QString &projectName, const QString &packageName)
+{
+    request(apiUrl + "/source/" + projectName + "/" + packageName);
+    xmlReader->readFile();
+    return xmlReader->getList();
+}
+
 QStringList OBS::getRepositoryArchs(const QString &repository)
 {
     xmlReader->getRepositoryArchs(repository);

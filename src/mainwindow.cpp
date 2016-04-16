@@ -87,6 +87,9 @@ MainWindow::MainWindow(QWidget *parent) :
         obs->setCredentials(job.key(), pw);
         obs->login();
     }
+    if (obs->isAuthenticated()) {
+        loadProjectTree();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -234,6 +237,42 @@ void MainWindow::createToolbar()
     ui->toolBar->addAction(action_Configure);
     connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
 
+}
+
+void MainWindow::loadProjectTree()
+{
+    connect(ui->treeProjects, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getPackages(QTreeWidgetItem*, int)));
+    connect(ui->treeBuilds, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getPackageFiles(QTreeWidgetItem*,int)));
+
+    foreach (QString project, obs->getProjectList()) {
+        addItem(project, ui->treeProjects);
+    }
+}
+
+void MainWindow::addItem(const QString& itemName, QTreeWidget* treeWidget)
+{
+    QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget);
+    item->setText(0, itemName);
+    ui->treeProjects->addTopLevelItem(item);
+}
+
+void MainWindow::getPackages(QTreeWidgetItem* item, int)
+{
+    qDebug() << "getPackages()";
+    ui->treeBuilds->clear();
+    ui->treeFiles->clear();
+    foreach (QString package, obs->getProjectPackageList(item->text(0))) {
+        addItem(package, ui->treeBuilds);
+    }
+}
+
+void MainWindow::getPackageFiles(QTreeWidgetItem* item, int)
+{
+    qDebug() << "getPackageFiles()";
+    ui->treeFiles->clear();
+    foreach (QString packageFile, obs->getPackageFileList(ui->treeProjects->currentItem()->text(0), item->text(0))) {
+        addItem(packageFile, ui->treeFiles);
+    }
 }
 
 void MainWindow::showContextMenu(const QPoint& point)
