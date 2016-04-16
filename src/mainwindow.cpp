@@ -241,6 +241,10 @@ void MainWindow::createToolbar()
 
 void MainWindow::loadProjectTree()
 {
+    action_Add->setEnabled(false);
+    action_Remove->setEnabled(false);
+    action_MarkRead->setEnabled(false);
+
     connect(ui->treeProjects, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getPackages(QTreeWidgetItem*, int)));
     connect(ui->treeBuilds, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getPackageFiles(QTreeWidgetItem*,int)));
 
@@ -889,10 +893,14 @@ void MainWindow::on_actionLogin_triggered()
 
 void MainWindow::on_tabWidget_currentChanged(const int& index)
 {
-    // Disable add and remove for the request tab
-    action_Add->setEnabled(!index);
-    action_Remove->setEnabled(!index);
-    action_MarkRead->setEnabled(!index);
+    // Enable add and remove for the monitor tab
+    bool enabled = false;
+    if(index==1) {
+        enabled = true;
+    }
+    action_Add->setEnabled(enabled);
+    action_Remove->setEnabled(enabled);
+    action_MarkRead->setEnabled(enabled);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
