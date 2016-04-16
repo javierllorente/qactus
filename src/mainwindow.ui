@@ -89,11 +89,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabPackages">
+      <widget class="QWidget" name="tabMonitor">
        <attribute name="title">
-        <string>Packages</string>
+        <string>Monitor</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_tabPackages">
+       <layout class="QGridLayout" name="gridLayout_tabMonitor">
         <item row="0" column="0">
          <widget class="PackageTreeWidget" name="treePackages">
           <property name="sizePolicy">
