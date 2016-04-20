@@ -245,38 +245,52 @@ void MainWindow::loadProjectTree()
     action_Remove->setEnabled(false);
     action_MarkRead->setEnabled(false);
 
-    connect(ui->treeProjects, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getPackages(QTreeWidgetItem*, int)));
-    connect(ui->treeBuilds, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getPackageFiles(QTreeWidgetItem*,int)));
+    connect(ui->treeProjects, SIGNAL(clicked(QModelIndex)), this, SLOT(getPackages(QModelIndex)));
+    connect(ui->treeBuilds, SIGNAL(clicked(QModelIndex)), this, SLOT(getPackageFiles(QModelIndex)));
 
-    foreach (QString project, obs->getProjectList()) {
-        addItem(project, ui->treeProjects);
-    }
+    QStringListModel* sourceModel = new QStringListModel(this);
+    sourceModel->setStringList(obs->getProjectList());
+    proxyModelProjects = new QSortFilterProxyModel(this);
+    proxyModelProjects->setSourceModel(sourceModel);
+    ui->treeProjects->setModel(proxyModelProjects);
+
+    connect(ui->lineEditFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
+
+
+    ui->hSplitterBrowser->setStretchFactor(1, 1);
+    ui->hSplitterBrowser->setStretchFactor(0, 0);
 }
 
-void MainWindow::addItem(const QString& itemName, QTreeWidget* treeWidget)
+void MainWindow::filterResults(QString item)
 {
-    QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget);
-    item->setText(0, itemName);
-    ui->treeProjects->addTopLevelItem(item);
+    proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
+    proxyModelProjects->setFilterKeyColumn(0);
 }
 
-void MainWindow::getPackages(QTreeWidgetItem* item, int)
+void MainWindow::getPackages(QModelIndex index)
 {
-    qDebug() << "getPackages()";
-    ui->treeBuilds->clear();
-    ui->treeFiles->clear();
-    foreach (QString package, obs->getProjectPackageList(item->text(0))) {
-        addItem(package, ui->treeBuilds);
-    }
+    QString project = index.data().toString();
+    qDebug() << "getPackages()" << project;
+//    ui->treeBuilds->clear();
+    ui->treeFiles->setHidden(true);
+
+    QStringListModel* sourceModel = new QStringListModel(this);
+    sourceModel->setStringList(obs->getProjectPackageList(project));
+    proxyModelBuilds = new QSortFilterProxyModel(this);
+    proxyModelBuilds->setSourceModel(sourceModel);
+    ui->treeBuilds->setModel(proxyModelBuilds);
 }
 
-void MainWindow::getPackageFiles(QTreeWidgetItem* item, int)
+void MainWindow::getPackageFiles(QModelIndex index)
 {
     qDebug() << "getPackageFiles()";
-    ui->treeFiles->clear();
-    foreach (QString packageFile, obs->getPackageFileList(ui->treeProjects->currentItem()->text(0), item->text(0))) {
-        addItem(packageFile, ui->treeFiles);
-    }
+    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentPackage = index.data().toString();
+
+    QStringListModel* model = new QStringListModel(this);
+    model->setStringList(obs->getPackageFileList(currentProject, currentPackage));
+    ui->treeFiles->setModel(model);
+    ui->treeFiles->setHidden(false);
 }
 
 void MainWindow::showContextMenu(const QPoint& point)

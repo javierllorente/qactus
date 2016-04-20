@@ -27,6 +27,7 @@
 #include <qt5keychain/keychain.h>
 #include <QMessageBox>
 #include <QNetworkReply>
+#include <QSortFilterProxyModel>
 
 namespace Ui {
     class MainWindow;
@@ -71,7 +72,8 @@ private:
     QAction *action_Restore;
 
     void loadProjectTree();
-    void addItem(const QString& itemName, QTreeWidget *treeWidget);
+    QSortFilterProxyModel* proxyModelProjects;
+    QSortFilterProxyModel* proxyModelBuilds;
     void createTreePackages();
     void createTreeRequests();
 
@@ -97,8 +99,9 @@ private slots:
     void isAuthenticated(bool authenticated);
     void showContextMenu(const QPoint&);
     void changeRequestState();
-    void getPackages(QTreeWidgetItem*, int);
-    void getPackageFiles(QTreeWidgetItem*, int);
+    void getPackages(QModelIndex index);
+    void getPackageFiles(QModelIndex index);
+    void filterResults(QString item);
     void getRequestDescription(QTreeWidgetItem*, int);
     void addRow();
     void addDroppedUrl(const QStringList &data);
