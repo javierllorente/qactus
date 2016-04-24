@@ -30,6 +30,7 @@
 #include <QCoreApplication>
 #include "obspackage.h"
 #include "obsrequest.h"
+#include "obsfile.h"
 
 class OBSXmlReader : public QObject
 {
@@ -44,6 +45,7 @@ public:
     int getRequestNumber();
     QStringList getList();
     void readFile();
+    void getFiles();
     void setFileName(const QString &fileName);
     void getRepositoryArchs(const QString &repository);
 
@@ -57,6 +59,7 @@ private:
     void parseRequests(const QString &data);
     void parseRequest(QXmlStreamReader &xml);
     void parseList(QXmlStreamReader &xml);
+    void parseFiles(QXmlStreamReader &xml);
     OBSPackage *obsPackage;
     OBSRequest *obsRequest;
     QString requestNumber;
@@ -70,6 +73,7 @@ signals:
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void finishedParsingList(QStringList);
+    void finishedParsingFile(OBSFile*);
 };
 
 #endif // OBSXMLREADER_H
