@@ -59,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(configureDialog, SIGNAL(apiChanged()), this, SLOT(apiChanged()));
     connect(configureDialog, SIGNAL(apiChanged()), loginDialog, SLOT(clearCredentials()));
 
+    connect(obs, SIGNAL(finishedParsingFile(OBSFile*)),
+            this, SLOT(insertFile(OBSFile*)));
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
     connect(obs, SIGNAL(finishedParsingRequest(OBSRequest*)),
@@ -88,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
         obs->login();
     }
     if (obs->isAuthenticated()) {
-        loadProjectTree();
+        setupBrowser();
     }
 }
 
@@ -239,7 +241,7 @@ void MainWindow::createToolbar()
 
 }
 
-void MainWindow::loadProjectTree()
+void MainWindow::setupBrowser()
 {
     action_Add->setEnabled(false);
     action_Remove->setEnabled(false);
@@ -247,18 +249,27 @@ void MainWindow::loadProjectTree()
 
     connect(ui->treeProjects, SIGNAL(clicked(QModelIndex)), this, SLOT(getPackages(QModelIndex)));
     connect(ui->treeBuilds, SIGNAL(clicked(QModelIndex)), this, SLOT(getPackageFiles(QModelIndex)));
-
-    QStringListModel* sourceModel = new QStringListModel(this);
-    sourceModel->setStringList(obs->getProjectList());
-    proxyModelProjects = new QSortFilterProxyModel(this);
-    proxyModelProjects->setSourceModel(sourceModel);
-    ui->treeProjects->setModel(proxyModelProjects);
-
     connect(ui->lineEditFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
-
 
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
+
+    sourceModelProjects = new QStringListModel(ui->treeProjects);
+    proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
+    sourceModelBuilds = new QStringListModel(ui->treeBuilds);
+    proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
+    sourceModelFiles = NULL;
+
+    ui->treeFiles->setRootIsDecorated(false);
+
+    loadProjectTree();
+}
+
+void MainWindow::loadProjectTree()
+{
+    sourceModelProjects->setStringList(obs->getProjectList());
+    proxyModelProjects->setSourceModel(sourceModelProjects);
+    ui->treeProjects->setModel(proxyModelProjects);
 }
 
 void MainWindow::filterResults(QString item)
@@ -271,26 +282,30 @@ void MainWindow::getPackages(QModelIndex index)
 {
     QString project = index.data().toString();
     qDebug() << "getPackages()" << project;
-//    ui->treeBuilds->clear();
-    ui->treeFiles->setHidden(true);
 
-    QStringListModel* sourceModel = new QStringListModel(this);
-    sourceModel->setStringList(obs->getProjectPackageList(project));
-    proxyModelBuilds = new QSortFilterProxyModel(this);
-    proxyModelBuilds->setSourceModel(sourceModel);
+    sourceModelBuilds->setStringList(obs->getProjectPackageList(project));
+    proxyModelBuilds->setSourceModel(sourceModelBuilds);
     ui->treeBuilds->setModel(proxyModelBuilds);
+
+    delete sourceModelFiles;
+    sourceModelFiles = NULL;
 }
 
 void MainWindow::getPackageFiles(QModelIndex index)
 {
     qDebug() << "getPackageFiles()";
+
+    QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeFiles->model());
+    sourceModelFiles = new QStandardItemModel(ui->treeFiles);
+    QStringList treeFilesHeaders;
+    treeFilesHeaders << tr("File name") << tr("Size") << tr("Modified Time");
+    sourceModelFiles->setHorizontalHeaderLabels(treeFilesHeaders);
+    ui->treeFiles->setModel(sourceModelFiles);
+    delete oldModel;
+
     QString currentProject = ui->treeProjects->currentIndex().data().toString();
     QString currentPackage = index.data().toString();
-
-    QStringListModel* model = new QStringListModel(this);
-    model->setStringList(obs->getPackageFileList(currentProject, currentPackage));
-    ui->treeFiles->setModel(model);
-    ui->treeFiles->setHidden(false);
+    obs->getPackageFileList(currentProject, currentPackage);
 }
 
 void MainWindow::showContextMenu(const QPoint& point)
@@ -526,6 +541,19 @@ void MainWindow::createTreeRequests()
     connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getRequestDescription(QTreeWidgetItem*, int)));
 
     ui->treeRequests->setItemDelegate(new AutoToolTipDelegate(ui->treeRequests));
+}
+
+void MainWindow::insertFile(OBSFile *obsFile)
+{
+    qDebug() << "insertFile()";
+    QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
+    QStandardItem *itemName = new QStandardItem(obsFile->getName());
+    QStandardItem *itemSize = new QStandardItem(obsFile->getSize());
+    QStandardItem *itemLastModified = new QStandardItem(obsFile->getLastModified());
+    QList<QStandardItem*> items;
+    items << itemName << itemSize << itemLastModified;
+    model->appendRow(items);
+    delete obsFile;
 }
 
 void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)

@@ -27,7 +27,9 @@
 #include <qt5keychain/keychain.h>
 #include <QMessageBox>
 #include <QNetworkReply>
+#include <QStringListModel>
 #include <QSortFilterProxyModel>
+#include <QStandardItemModel>
 
 namespace Ui {
     class MainWindow;
@@ -37,6 +39,7 @@ class OBS;
 class Login;
 class TrayIcon;
 class Configure;
+class OBSFile;
 class OBSPackage;
 class OBSRequest;
 
@@ -71,9 +74,13 @@ private:
     QAction *action_Quit;
     QAction *action_Restore;
 
+    void setupBrowser();
     void loadProjectTree();
-    QSortFilterProxyModel* proxyModelProjects;
-    QSortFilterProxyModel* proxyModelBuilds;
+    QStringListModel *sourceModelProjects;
+    QStringListModel *sourceModelBuilds;
+    QSortFilterProxyModel *proxyModelProjects;
+    QSortFilterProxyModel *proxyModelBuilds;
+    QStandardItemModel *sourceModelFiles;
     void createTreePackages();
     void createTreeRequests();
 
@@ -120,6 +127,7 @@ private slots:
     void on_actionConfigure_Qactus_triggered();
     void on_actionLogin_triggered();
     void on_tabWidget_currentChanged(const int&);
+    void insertFile(OBSFile*);
     void insertBuildStatus(OBSPackage*, const int&);
     void insertRequest(OBSRequest*);
     void removeRequest(const QString& id);
