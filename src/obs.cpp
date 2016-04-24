@@ -40,6 +40,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(removeRequest(const QString&)));
     connect(xmlReader, SIGNAL(finishedParsingList(QStringList)),
             this, SIGNAL(finishedParsingList(QStringList)));
+    connect(xmlReader, SIGNAL(finishedParsingFile(OBSFile*)),
+            this, SIGNAL(finishedParsingFile(OBSFile*)));
 }
 
 void OBS::setCredentials(const QString &username, const QString &password)
@@ -154,11 +156,11 @@ QStringList OBS::getProjectMetadata(const QString &projectName)
     return xmlReader->getList();
 }
 
-QStringList OBS::getPackageFileList(const QString &projectName, const QString &packageName)
+void OBS::getPackageFileList(const QString &projectName, const QString &packageName)
 {
     request(apiUrl + "/source/" + projectName + "/" + packageName);
-    xmlReader->readFile();
-    return xmlReader->getList();
+//    xmlReader->readFile();
+    xmlReader->getFiles();
 }
 
 QStringList OBS::getRepositoryArchs(const QString &repository)
