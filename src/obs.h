@@ -50,7 +50,7 @@ public:
     QStringList getProjectList();
     QStringList getProjectPackageList(const QString &projectName);
     QStringList getProjectMetadata(const QString &projectName);
-    QStringList getPackageFileList(const QString &projectName, const QString &packageName);
+    void getPackageFileList(const QString &projectName, const QString &packageName);
     QStringList getRepositoryArchs(const QString &repository);
     QStringList readXmlFile(const QString &xmlFile);
     OBSXmlReader* getXmlReader();   
@@ -68,6 +68,7 @@ signals:
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void finishedParsingList(QStringList);
+    void finishedParsingFile(OBSFile*);
 
 public slots:
 
