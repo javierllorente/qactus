@@ -24,7 +24,7 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="browserTab">
+      <widget class="QWidget" name="tabBrowser">
        <attribute name="title">
         <string>Browser</string>
        </attribute>
