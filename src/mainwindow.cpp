@@ -277,8 +277,13 @@ void MainWindow::loadProjectTree()
 
 void MainWindow::filterResults(QString item)
 {
-    proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
-    proxyModelProjects->setFilterKeyColumn(0);
+    if (ui->radioButtonProject->isChecked()) {
+        proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
+        proxyModelProjects->setFilterKeyColumn(0);
+    } else if (ui->radioButtonPackages->isChecked()) {
+        proxyModelBuilds->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
+        proxyModelBuilds->setFilterKeyColumn(0);
+    }
 }
 
 void MainWindow::getPackages(QModelIndex index)
