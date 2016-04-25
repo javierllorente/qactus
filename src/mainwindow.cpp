@@ -260,6 +260,9 @@ void MainWindow::setupBrowser()
     proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
     sourceModelFiles = NULL;
 
+    ui->treeProjects->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->treeBuilds->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setRootIsDecorated(false);
 
     loadProjectTree();
