@@ -36,7 +36,8 @@ SOURCES += main.cpp \
     obs.cpp \
     packagetreewidget.cpp \
     requesttreewidgetitem.cpp \
-    obsfile.cpp
+    obsfile.cpp \
+    obsresult.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -51,7 +52,8 @@ HEADERS += mainwindow.h \
     obs.h \
     packagetreewidget.h \
     requesttreewidgetitem.h \
-    obsfile.h
+    obsfile.h \
+    obsresult.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \
