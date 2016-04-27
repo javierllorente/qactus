@@ -24,12 +24,26 @@ OBSPackage::OBSPackage()
 {
 }
 
+
+OBSPackage::OBSPackage(const OBSPackage &other)
+{
+    *this = other;
+}
+
+OBSPackage& OBSPackage::operator=(const OBSPackage &other)
+{
+    this->setName(other.getName());
+    this->setStatus(other.getStatus());
+    this->setDetails(other.getDetails());
+    return *this;
+}
+
 void OBSPackage::setName(const QString& name)
 {
     this->name = name;
 }
 
-QString OBSPackage::getName()
+QString OBSPackage::getName() const
 {
     return name;
 }
@@ -39,7 +53,7 @@ void OBSPackage::setStatus(const QString& status)
     this->status = status;
 }
 
-QString OBSPackage::getStatus()
+QString OBSPackage::getStatus() const
 {
     return status;
 }
@@ -49,7 +63,7 @@ void OBSPackage::setDetails(const QString& details)
     this->details = details;
 }
 
-QString OBSPackage::getDetails()
+QString OBSPackage::getDetails() const
 {
     return details;
 }

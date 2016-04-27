@@ -21,19 +21,24 @@
 #ifndef OBSPACKAGE_H
 #define OBSPACKAGE_H
 
-#include <QObject>
 #include <QString>
 
-class OBSPackage : public QObject
+class OBSPackage
 {
 public:
     OBSPackage();
+    OBSPackage(const OBSPackage &other);
+    OBSPackage &operator=(const OBSPackage &other);
+    inline bool operator==(const OBSPackage &rhs)
+    {
+        return this->getName()==rhs.getName();
+    }
     void setName(const QString &);
     void setStatus(const QString &);
     void setDetails(const QString &);
-    QString getName();
-    QString getStatus();
-    QString getDetails();
+    QString getName() const;
+    QString getStatus() const;
+    QString getDetails() const;
 
 private:
     QString name;
