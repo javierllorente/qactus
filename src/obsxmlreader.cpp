@@ -43,7 +43,12 @@ void OBSXmlReader::addData(const QString& data)
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        if (xml.name()=="status" && xml.isStartElement()) {
+
+        if (xml.name()=="resultlist" && xml.isStartElement()) {
+            qDebug() << "OBSXmlReader: resultlist tag found";
+            parseResultList(data);
+            break;
+        } else if (xml.name()=="status" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: status tag found";
             parsePackage(data);
             obsPackage = getPackage();
@@ -124,6 +129,54 @@ void OBSXmlReader::setPackageRow(const int &row)
 OBSPackage* OBSXmlReader::getPackage()
 {
     return obsPackage;
+}
+
+void OBSXmlReader::parseResultList(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSResult *obsResult = NULL;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        if (xml.isStartElement()) {
+
+            if (xml.name()=="resultlist") {
+                xml.readNextStartElement();
+            }
+
+            if (xml.name()=="result") {
+                obsResult = new OBSResult();
+                QXmlStreamAttributes attrib = xml.attributes();
+                obsResult->setProject(attrib.value("project").toString());
+                obsResult->setRepository(attrib.value("repository").toString());
+                obsResult->setArch(attrib.value("arch").toString());
+                obsResult->setCode(attrib.value("code").toString());
+                obsResult->setState(attrib.value("state").toString());
+                qDebug() << obsResult->getProject()
+                         << obsResult->getRepository()
+                         << obsResult->getArch()
+                         << obsResult->getCode()
+                         << obsResult->getState();
+            }
+
+            if (xml.name()=="status") {
+                QXmlStreamAttributes attrib = xml.attributes();
+                obsResult->getPackage()->setName(attrib.value("package").toString());
+                obsResult->getPackage()->setStatus(attrib.value("code").toString());
+                qDebug() <<  obsResult->getPackage()->getName() << obsResult->getPackage()->getStatus();
+            }
+
+            if (xml.name()=="details") {
+                xml.readNext();
+                obsResult->getPackage()->setDetails(xml.text().toString());
+                qDebug() << "Details:" << obsResult->getPackage()->getDetails();
+            }
+        }
+
+        if (xml.name()=="result" && xml.isEndElement()) {
+            emit finishedParsingResult(obsResult);
+        }
+    }
 }
 
 void OBSXmlReader::parseRequests(const QString &data)

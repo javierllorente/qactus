@@ -31,6 +31,7 @@
 #include "obspackage.h"
 #include "obsrequest.h"
 #include "obsfile.h"
+#include "obsresult.h"
 
 class OBSXmlReader : public QObject
 {
@@ -54,6 +55,7 @@ private:
     OBSXmlReader();
     void parsePackage(const QString &data);
     int row;
+    void parseResultList(const QString &data);
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
     void parseRequests(const QString &data);
@@ -70,6 +72,7 @@ private:
 
 signals:
     void finishedParsingPackage(OBSPackage*, const int&);
+    void finishedParsingResult(OBSResult*);
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void finishedParsingList(QStringList);
