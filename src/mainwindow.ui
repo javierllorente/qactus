@@ -174,8 +174,13 @@
                </widget>
                <widget class="QWidget" name="tab_2">
                 <attribute name="title">
-                 <string>Something</string>
+                 <string>Build Results</string>
                 </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_2">
+                 <item>
+                  <widget class="QTreeView" name="treeBuildResults"/>
+                 </item>
+                </layout>
                </widget>
               </widget>
              </widget>
