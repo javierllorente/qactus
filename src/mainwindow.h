@@ -40,6 +40,7 @@ class Login;
 class TrayIcon;
 class Configure;
 class OBSFile;
+class OBSResult;
 class OBSPackage;
 class OBSRequest;
 
@@ -81,6 +82,8 @@ private:
     QSortFilterProxyModel *proxyModelProjects;
     QSortFilterProxyModel *proxyModelBuilds;
     QStandardItemModel *sourceModelFiles;
+    QStandardItemModel *sourceModelBuildResults;
+    void getBuildResults();
     void createTreePackages();
     void createTreeRequests();
 
@@ -128,6 +131,7 @@ private slots:
     void on_actionLogin_triggered();
     void on_tabWidget_currentChanged(const int&);
     void insertFile(OBSFile*);
+    void insertResult(OBSResult*);
     void insertBuildStatus(OBSPackage*, const int&);
     void insertRequest(OBSRequest*);
     void removeRequest(const QString& id);

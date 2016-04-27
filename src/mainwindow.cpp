@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(insertFile(OBSFile*)));
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
+    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)),
+            SLOT(insertResult(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingRequest(OBSRequest*)),
             this, SLOT(insertRequest(OBSRequest*)));
     connect(obs, SIGNAL(removeRequest(const QString&)),
@@ -314,6 +316,23 @@ void MainWindow::getPackageFiles(QModelIndex index)
     QString currentProject = ui->treeProjects->currentIndex().data().toString();
     QString currentPackage = index.data().toString();
     obs->getPackageFileList(currentProject, currentPackage);
+
+    getBuildResults();
+}
+
+void MainWindow::getBuildResults()
+{
+    QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
+    sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
+    QStringList treeBuildResultsHeaders;
+    treeBuildResultsHeaders << tr("Repository") << tr("Arch") << tr("Status");
+    sourceModelBuildResults->setHorizontalHeaderLabels(treeBuildResultsHeaders);
+    ui->treeBuildResults->setModel(sourceModelBuildResults);
+    delete oldModel;
+
+    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    obs->getAllBuildStatus(currentProject, currentPackage);
 }
 
 void MainWindow::showContextMenu(const QPoint& point)
@@ -562,6 +581,24 @@ void MainWindow::insertFile(OBSFile *obsFile)
     items << itemName << itemSize << itemLastModified;
     model->appendRow(items);
     delete obsFile;
+}
+
+void MainWindow::insertResult(OBSResult *obsResult)
+{
+    qDebug() << "insertResult()";
+    QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
+    QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
+    QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
+    QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
+    if (!obsResult->getPackage()->getDetails().isEmpty()) {
+        QString details = obsResult->getPackage()->getDetails();
+        details = breakLine(details, 250);
+        itemBuildResult->setToolTip(details);
+    }
+    QList<QStandardItem*> items;
+    items << itemRepository << itemArch << itemBuildResult;
+    model->appendRow(items);
+    delete obsResult;
 }
 
 void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
