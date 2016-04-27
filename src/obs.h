@@ -42,6 +42,7 @@ public:
     bool isAuthenticated();
     void login();
     void getBuildStatus(const QStringList &stringList, const int &row);
+    void getAllBuildStatus(const QString &project, const QString &package);
     void getRequests();
     int getRequestCount();
     QString acceptRequest(const QString &id, const QString &comments);
@@ -65,6 +66,7 @@ signals:
     void selfSignedCertificate(QNetworkReply*);
     void networkError(const QString&);
     void finishedParsingPackage(OBSPackage*, const int&);
+    void finishedParsingResult(OBSResult*);
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void finishedParsingList(QStringList);
