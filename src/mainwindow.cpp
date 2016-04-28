@@ -333,6 +333,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
     treeFilesHeaders << tr("File name") << tr("Size") << tr("Modified Time");
     sourceModelFiles->setHorizontalHeaderLabels(treeFilesHeaders);
     ui->treeFiles->setModel(sourceModelFiles);
+    ui->treeFiles->setColumnWidth(0, 200);
     delete oldModel;
 
     QString currentProject = ui->treeProjects->currentIndex().data().toString();
@@ -350,6 +351,7 @@ void MainWindow::getBuildResults()
     treeBuildResultsHeaders << tr("Repository") << tr("Arch") << tr("Status");
     sourceModelBuildResults->setHorizontalHeaderLabels(treeBuildResultsHeaders);
     ui->treeBuildResults->setModel(sourceModelBuildResults);
+    ui->treeBuildResults->setColumnWidth(0, 200);
     delete oldModel;
 
     QString currentProject = ui->treeProjects->currentIndex().data().toString();
