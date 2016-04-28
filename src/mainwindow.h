@@ -84,6 +84,8 @@ private:
     QStandardItemModel *sourceModelFiles;
     QStandardItemModel *sourceModelBuildResults;
     void getBuildResults();
+    void filterProjects(const QString &item);
+    void filterBuilds(const QString &item);
     void createTreePackages();
     void createTreeRequests();
 
@@ -112,6 +114,7 @@ private slots:
     void getPackages(QModelIndex index);
     void getPackageFiles(QModelIndex index);
     void filterResults(QString item);
+    void filterRadioButtonClicked(bool);
     void getRequestDescription(QTreeWidgetItem*, int);
     void addRow();
     void addDroppedUrl(const QStringList &data);

@@ -252,6 +252,8 @@ void MainWindow::setupBrowser()
     connect(ui->treeProjects, SIGNAL(clicked(QModelIndex)), this, SLOT(getPackages(QModelIndex)));
     connect(ui->treeBuilds, SIGNAL(clicked(QModelIndex)), this, SLOT(getPackageFiles(QModelIndex)));
     connect(ui->lineEditFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
+    connect(ui->radioButtonPackages, SIGNAL(clicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
+    connect(ui->radioButtonProject, SIGNAL(clicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
 
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
@@ -276,16 +278,36 @@ void MainWindow::loadProjectTree()
     proxyModelProjects->setSourceModel(sourceModelProjects);
     ui->treeProjects->setModel(proxyModelProjects);
 }
+void MainWindow::filterProjects(const QString &item)
+{
+    proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
+    proxyModelProjects->setFilterKeyColumn(0);
+}
+
+void MainWindow::filterBuilds(const QString &item)
+{
+    proxyModelBuilds->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
+    proxyModelBuilds->setFilterKeyColumn(0);
+}
 
 void MainWindow::filterResults(QString item)
 {
-    if (ui->radioButtonProject->isChecked()) {
-        proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
-        proxyModelProjects->setFilterKeyColumn(0);
-    } else if (ui->radioButtonPackages->isChecked()) {
-        proxyModelBuilds->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
-        proxyModelBuilds->setFilterKeyColumn(0);
+    ui->radioButtonProject->isChecked() ? filterProjects(item) : filterBuilds(item);
+}
+
+void MainWindow::filterRadioButtonClicked(bool)
+{
+    qDebug() << "filterRadioButtonClicked()";
+    QString projectItem, buildItem;
+
+    if (!ui->lineEditFilter->text().isEmpty() && ui->radioButtonPackages->isChecked()) {
+        buildItem = ui->lineEditFilter->text();
+    } else if (!ui->lineEditFilter->text().isEmpty() && ui->radioButtonProject->isChecked()) {
+        projectItem = ui->lineEditFilter->text();
     }
+
+    filterProjects(projectItem);
+    filterBuilds(buildItem);
 }
 
 void MainWindow::getPackages(QModelIndex index)
