@@ -604,7 +604,8 @@ void MainWindow::insertFile(OBSFile *obsFile)
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     QStandardItem *itemName = new QStandardItem(obsFile->getName());
     QStandardItem *itemSize = new QStandardItem(obsFile->getSize());
-    QStandardItem *itemLastModified = new QStandardItem(obsFile->getLastModified());
+    QString lastModified = unixTimeToDate(obsFile->getLastModified());
+    QStandardItem *itemLastModified = new QStandardItem(lastModified);
     QList<QStandardItem*> items;
     items << itemName << itemSize << itemLastModified;
     model->appendRow(items);
@@ -659,6 +660,12 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
         setItemBoldFont(item, true);
     }
     qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
+}
+
+QString MainWindow::unixTimeToDate(const QString &unixTime)
+{
+    QDateTime dateTime = QDateTime::fromTime_t(unixTime.toUInt());
+    return dateTime.toString("dd/MM/yyyy H:mm");
 }
 
 QString MainWindow::breakLine(QString& details, const int& maxSize)

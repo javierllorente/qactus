@@ -95,6 +95,7 @@ private:
     void readSettingsTimer();
     QMessageBox *errorBox;
 
+    QString unixTimeToDate(const QString &unixTime);
     QString breakLine(QString&, const int&);
     QColor getColorForStatus(const QString&);
     void setItemBoldFont(QTreeWidgetItem* item, bool bold);
