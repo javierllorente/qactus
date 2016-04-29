@@ -263,6 +263,7 @@ void MainWindow::setupBrowser()
     sourceModelBuilds = new QStringListModel(ui->treeBuilds);
     proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
     sourceModelFiles = NULL;
+    sourceModelBuildResults = NULL;
 
     ui->treeProjects->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuilds->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -321,6 +322,9 @@ void MainWindow::getPackages(QModelIndex index)
 
     delete sourceModelFiles;
     sourceModelFiles = NULL;
+
+    delete sourceModelBuildResults;
+    sourceModelBuildResults = NULL;
 }
 
 void MainWindow::getPackageFiles(QModelIndex index)
