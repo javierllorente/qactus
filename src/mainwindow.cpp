@@ -268,6 +268,7 @@ void MainWindow::setupBrowser()
     ui->treeProjects->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuilds->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setRootIsDecorated(false);
 
     loadProjectTree();
