@@ -36,6 +36,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingPackage(OBSPackage*,int)));
     connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SIGNAL(finishedParsingResult(OBSResult*)));
+    connect(xmlReader, SIGNAL(finishedParsingRevision(OBSRevision*)),
+            this, SIGNAL(finishedParsingRevision(OBSRevision*)));
     connect(xmlReader, SIGNAL(finishedParsingRequest(OBSRequest*)),
             this, SIGNAL(finishedParsingRequest(OBSRequest*)));
     connect(xmlReader, SIGNAL(removeRequest(const QString&)),
@@ -108,6 +110,15 @@ void OBS::getAllBuildStatus(const QString &project, const QString &package)
             + project + "/"
             + "_result?package="
             + package);
+}
+
+void OBS::getRevisions(const QString &project, const QString &package)
+{
+    //    URL format: https://api.opensuse.org/source/KDE:Extra/qactus/_history
+    request(apiUrl + "/source/"
+            + project + "/"
+            + package + "/"
+            + "_history");
 }
 
 void OBS::getRequests()

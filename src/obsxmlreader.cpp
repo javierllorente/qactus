@@ -48,6 +48,10 @@ void OBSXmlReader::addData(const QString& data)
             qDebug() << "OBSXmlReader: resultlist tag found";
             parseResultList(data);
             break;
+
+        } else if (xml.name()=="revisionlist" && xml.isStartElement()) {
+            qDebug() << "OBSXmlReader: revisionlist tag found";
+            parseRevisionList(data);
         } else if (xml.name()=="status" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: status tag found";
             parsePackage(data);
@@ -175,6 +179,46 @@ void OBSXmlReader::parseResultList(const QString &data)
 
         if (xml.name()=="result" && xml.isEndElement()) {
             emit finishedParsingResult(obsResult);
+        }
+    }
+}
+
+void OBSXmlReader::parseRevisionList(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSRevision *obsRevision = NULL;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        if (xml.isStartElement()) {
+
+            if (xml.name()=="revisionlist") {
+                xml.readNextStartElement();
+            }
+            if (xml.name()=="revision") {
+                obsRevision = new OBSRevision();
+                QXmlStreamAttributes attrib = xml.attributes();
+                obsRevision->setRev(attrib.value("rev").toUInt());
+            }
+            if (xml.name()==("version")) {
+                xml.readNext();
+                obsRevision->setVersion(xml.text().toString());
+            }
+            if (xml.name()==("time")) {
+                xml.readNext();
+                obsRevision->setTime(xml.text().toUInt());
+            }
+            if (xml.name()==("user")) {
+                xml.readNext();
+                obsRevision->setUser(xml.text().toString());
+            }
+            if (xml.name()==("comment")) {
+                xml.readNext();
+                obsRevision->setComment(xml.text().toString());
+            }
+        }
+        if (xml.name()=="revision" && xml.isEndElement()) {
+            emit finishedParsingRevision(obsRevision);
         }
     }
 }

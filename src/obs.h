@@ -43,6 +43,7 @@ public:
     void login();
     void getBuildStatus(const QStringList &stringList, const int &row);
     void getAllBuildStatus(const QString &project, const QString &package);
+    void getRevisions(const QString &project, const QString &package);
     void getRequests();
     int getRequestCount();
     QString acceptRequest(const QString &id, const QString &comments);
@@ -67,6 +68,7 @@ signals:
     void networkError(const QString&);
     void finishedParsingPackage(OBSPackage*, const int&);
     void finishedParsingResult(OBSResult*);
+    void finishedParsingRevision(OBSRevision*);
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void finishedParsingList(QStringList);
