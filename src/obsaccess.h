@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2016 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -76,7 +76,6 @@ private:
     static OBSAccess* instance;
     QString curUsername;
     QString curPassword;
-    QString data;
     QString requestDiff;
     bool authenticated;
     OBSXmlReader *xmlReader;

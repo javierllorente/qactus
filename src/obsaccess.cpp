@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2016 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -152,7 +152,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     // It is therefore the application's responsibility to keep this data if it needs to.
     // See http://doc.qt.nokia.com/latest/qnetworkreply.html for more info
 
-    data = (QString) reply->readAll();
+    QString data = QString::fromUtf8(reply->readAll());
     int row = reply->property("row").toInt();
     qDebug() << "Reply row property:" << QString::number(row);
     xmlReader->setPackageRow(row);
@@ -162,29 +162,40 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     qDebug() << "HTTP status code:" << httpStatusCode;
 //    qDebug() << "Network Reply: " << data;
 
-    // Package/Project not found
-    if (httpStatusCode==404 && isAuthenticated()) {
-        xmlReader->addData(data);
-    } else if (httpStatusCode==401) {
-        qDebug() << "Authentication failed!";
-        authenticated = false;
-        emit isAuthenticated(authenticated);
-    } else if (reply->error() != QNetworkReply::NoError) {
-        authenticated = false;
-        qDebug() << "Request failed! Error:" << reply->errorString();
-        emit networkError(reply->errorString());
-    } else {
+    switch (reply->error()) {
+
+    case QNetworkReply::NoError:
         authenticated = true;
         emit isAuthenticated(authenticated);
         qDebug() << "Request succeeded!";
-
         if(data.startsWith("Index")) {
             // Don't process diffs
             requestDiff = data;
         } else {
             xmlReader->addData(data);
         }
+        break;
+
+    case QNetworkReply::ContentNotFoundError: // 404
+        // Package/Project not found
+        if (isAuthenticated()) {
+            xmlReader->addData(data);
+        }
+        break;
+
+    case QNetworkReply::ContentAccessDenied: // 401
+        qDebug() << "Authentication failed!";
+        authenticated = false;
+        emit isAuthenticated(authenticated);
+        break;
+
+    default: // Other errors
+        authenticated = false;
+        qDebug() << "Request failed! Error:" << reply->errorString();
+        emit networkError(reply->errorString());
+        break;
     }
+
     reply->deleteLater();
 }
 
