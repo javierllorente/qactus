@@ -35,10 +35,10 @@ OBSXmlReader* OBSXmlReader::getInstance()
     return instance;
 }
 
-void OBSXmlReader::addData(const QString& data)
+void OBSXmlReader::addData(const QString &data)
 {
     list.clear();
-    qDebug() << "OBSXmlReader addData()";
+    qDebug() << "OBSXmlReader::addData()";
     QXmlStreamReader xml(data);
 
     while (!xml.atEnd() && !xml.hasError()) {
@@ -67,6 +67,21 @@ void OBSXmlReader::addData(const QString& data)
             stringToFile(data);
         }
     }
+}
+
+void OBSXmlReader::parseProjectList(const QString &data)
+{
+    projectListToFile(data);
+}
+
+void OBSXmlReader::parsePackageList(const QString &data)
+{
+    packageListToFile(data);
+}
+
+void OBSXmlReader::parseFileList(const QString &data)
+{
+    fileListToFile(data);
 }
 
 void OBSXmlReader::parsePackage(const QString &data)
@@ -137,6 +152,7 @@ OBSPackage* OBSXmlReader::getPackage()
 
 void OBSXmlReader::parseResultList(const QString &data)
 {
+    qDebug() << "OBSXmlReader::parseResultList()";
     QXmlStreamReader xml(data);
     OBSResult *obsResult = NULL;
 
@@ -356,7 +372,7 @@ void OBSXmlReader::parseRequest(QXmlStreamReader &xml)
 
 void OBSXmlReader::parseList(QXmlStreamReader &xml)
 {
-    qDebug() << "OBSXmlReader parseList()";
+    qDebug() << "OBSXmlReader::parseList()";
     while (!xml.atEnd() && !xml.hasError()) {
 
         xml.readNext();
@@ -397,9 +413,9 @@ void OBSXmlReader::parseList(QXmlStreamReader &xml)
     emit finishedParsingList(list);
 }
 
-void OBSXmlReader::parseFiles(QXmlStreamReader &xml)
+void OBSXmlReader::parseFileList(QXmlStreamReader &xml)
 {
-    qDebug() << "OBSXmlReader parseFiles()";
+    qDebug() << "OBSXmlReader::parseFileList()";
     while (!xml.atEnd() && !xml.hasError()) {
 
         xml.readNext();
@@ -441,9 +457,27 @@ void OBSXmlReader::stringToFile(const QString &data)
     file.close();
 }
 
+void OBSXmlReader::projectListToFile(const QString &data)
+{
+    stringToFile(data);
+    emit projectListIsReady();
+}
+
+void OBSXmlReader::packageListToFile(const QString &data)
+{
+    stringToFile(data);
+    emit packageListIsReady();
+}
+
+void OBSXmlReader::fileListToFile(const QString &data)
+{
+    stringToFile(data);
+    readFileList();
+}
+
 QFile* OBSXmlReader::openFile()
 {
-    qDebug() << "OBSXmlReader openFile()";
+    qDebug() << "OBSXmlReader::openFile()" << fileName;
     list.clear();
     QFile* file = new QFile(fileName);
     QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
@@ -455,23 +489,23 @@ QFile* OBSXmlReader::openFile()
     return file;
 }
 
-void OBSXmlReader::readFile()
+void OBSXmlReader::readList()
 {
     QXmlStreamReader xml;
     xml.setDevice(openFile());
     parseList(xml);
 }
 
-void OBSXmlReader::getFiles()
+void OBSXmlReader::readFileList()
 {
     QXmlStreamReader xml;
     xml.setDevice(openFile());
-    parseFiles(xml);
+    parseFileList(xml);
 }
 
 void OBSXmlReader::getRepositoryArchs(const QString &repository)
 {
-    qDebug() << "OBSXmlReader getRepositoryArchs()";
+    qDebug() << "OBSXmlReader::getRepositoryArchs()";
     list.clear();
     QXmlStreamReader xml;
     xml.setDevice(openFile());

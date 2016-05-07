@@ -39,15 +39,18 @@ class OBSXmlReader : public QObject
     Q_OBJECT
 
 public:
-
     static OBSXmlReader* getInstance();
     void addData(const QString &data);
     void setPackageRow(const int &row);
+    void parseProjectList(const QString &data);
+    void parsePackageList(const QString &data);
+    void parseFileList(const QString &data);
+    void parseResultList(const QString &data);
     OBSPackage* getPackage();
     int getRequestNumber();
     QStringList getList();
-    void readFile();
-    void getFiles();
+    void readList();
+    void readFileList();
     void setFileName(const QString &fileName);
     void getRepositoryArchs(const QString &repository);
 
@@ -56,19 +59,21 @@ private:
     OBSXmlReader();
     void parsePackage(const QString &data);
     int row;
-    void parseResultList(const QString &data);
     void parseRevisionList(const QString &data);
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
     void parseRequests(const QString &data);
     void parseRequest(QXmlStreamReader &xml);
     void parseList(QXmlStreamReader &xml);
-    void parseFiles(QXmlStreamReader &xml);
+    void parseFileList(QXmlStreamReader &xml);
     OBSPackage *obsPackage;
     OBSRequest *obsRequest;
     QString requestNumber;
     QStringList list;
     void stringToFile(const QString &data);
+    void projectListToFile(const QString &data);
+    void packageListToFile(const QString &data);
+    void fileListToFile(const QString &data);
     QString fileName;
     QFile* openFile();
 
@@ -79,6 +84,8 @@ signals:
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void finishedParsingList(QStringList);
+    void projectListIsReady();
+    void packageListIsReady();
     void finishedParsingFile(OBSFile*);
 };
 
