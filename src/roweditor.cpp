@@ -133,12 +133,14 @@ QStringList RowEditor::getListFor(const QString &name)
             progress.show();
 
             if (name == "projects") {
-                stringList = mOBS->getProjectList();
+//                FIX-ME
+//                stringList = mOBS->getProjectList();
             } else if (name.contains("meta")) {
                 QStringList projectName = name.split("_meta");
                 stringList = mOBS->getProjectMetadata(projectName[0]);
             } else {
-                stringList = mOBS->getProjectPackageList(name);
+//                FIX-ME
+//                stringList = mOBS->getProjectPackageList(name);
             }
             setLastUpdateDate(QDate::currentDate().toString());
         }
