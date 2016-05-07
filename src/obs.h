@@ -49,10 +49,10 @@ public:
     QString acceptRequest(const QString &id, const QString &comments);
     QString declineRequest(const QString &id, const QString &comments);
     QString getRequestDiff(const QString &source);
-    QStringList getProjectList();
-    QStringList getProjectPackageList(const QString &projectName);
-    QStringList getProjectMetadata(const QString &projectName);
-    void getPackageFileList(const QString &projectName, const QString &packageName);
+    void getProjects();
+    void getPackages(const QString &project);
+    QStringList getProjectMetadata(const QString &project);
+    void getFiles(const QString &project, const QString &package);
     QStringList getRepositoryArchs(const QString &repository);
     QStringList readXmlFile(const QString &xmlFile);
     OBSXmlReader* getXmlReader();   
@@ -71,6 +71,8 @@ signals:
     void finishedParsingRevision(OBSRevision*);
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
+    void projectListIsReady();
+    void packageListIsReady();
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);
 

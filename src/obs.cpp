@@ -42,6 +42,10 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingRequest(OBSRequest*)));
     connect(xmlReader, SIGNAL(removeRequest(const QString&)),
             this, SIGNAL(removeRequest(const QString&)));
+    connect(xmlReader, SIGNAL(projectListIsReady()),
+            this, SIGNAL(projectListIsReady()));
+    connect(xmlReader, SIGNAL(packageListIsReady()),
+            this, SIGNAL(packageListIsReady()));
     connect(xmlReader, SIGNAL(finishedParsingList(QStringList)),
             this, SIGNAL(finishedParsingList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingFile(OBSFile*)),
@@ -106,10 +110,10 @@ void OBS::getBuildStatus(const QStringList &stringList, const int &row)
 void OBS::getAllBuildStatus(const QString &project, const QString &package)
 {
     //    URL format: https://api.opensuse.org/build/KDE:Extra/_result?package=qactus
-    request(apiUrl + "/build/"
-            + project + "/"
-            + "_result?package="
-            + package);
+    obsAccess->getAllBuildStatus(apiUrl + "/build/"
+                                 + project + "/"
+                                 + "_result?package="
+                                 + package);
 }
 
 void OBS::getRevisions(const QString &project, const QString &package)
@@ -154,35 +158,30 @@ QString OBS::getRequestDiff(const QString &source)
     return obsAccess->getRequestDiff();
 }
 
-QStringList OBS::getProjectList()
+void OBS::getProjects()
 {
     xmlReader->setFileName("projects.xml");
-    request(apiUrl + "/source");
-    xmlReader->readFile();
+    obsAccess->getProjects(apiUrl + "/source");
+}
+
+void OBS::getPackages(const QString &project)
+{
+    xmlReader->setFileName(project + ".xml");
+    obsAccess->getPackages(apiUrl + "/source/" + project);
+}
+
+QStringList OBS::getProjectMetadata(const QString &project)
+{
+    xmlReader->setFileName(project + "_meta.xml");
+    request(apiUrl + "/source/" + project + "/_meta");
+    xmlReader->readList();
     return xmlReader->getList();
 }
 
-QStringList OBS::getProjectPackageList(const QString &projectName)
+void OBS::getFiles(const QString &project, const QString &package)
 {
-    xmlReader->setFileName(projectName + ".xml");
-    request(apiUrl + "/source/" + projectName);
-    xmlReader->readFile();
-    return xmlReader->getList();
-}
-
-QStringList OBS::getProjectMetadata(const QString &projectName)
-{
-    xmlReader->setFileName(projectName + "_meta.xml");
-    request(apiUrl + "/source/" + projectName + "/_meta");
-    xmlReader->readFile();
-    return xmlReader->getList();
-}
-
-void OBS::getPackageFileList(const QString &projectName, const QString &packageName)
-{
-    request(apiUrl + "/source/" + projectName + "/" + packageName);
-//    xmlReader->readFile();
-    xmlReader->getFiles();
+    xmlReader->setFileName(project + "_" + package + ".xml");
+    obsAccess->getFiles(apiUrl + "/source/" + project + "/" + package);
 }
 
 QStringList OBS::getRepositoryArchs(const QString &repository)
@@ -194,7 +193,7 @@ QStringList OBS::getRepositoryArchs(const QString &repository)
 QStringList OBS::readXmlFile(const QString &xmlFile)
 {
     xmlReader->setFileName(xmlFile);
-    xmlReader->readFile();
+    xmlReader->readList();
     return xmlReader->getList();
 }
 
