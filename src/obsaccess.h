@@ -43,6 +43,12 @@ public:
     static OBSAccess* getInstance();
     bool isAuthenticated();
     QString getUsername();
+    void request(const QString &urlStr);
+    void getProjects(const QString &urlStr);
+    void getPackages(const QString &urlStr);
+    void getFiles(const QString &urlStr);
+    void getAllBuildStatus(const QString &urlStr);
+    void request(const QString &urlStr, const int &row);
 
     QString getRequestDiff();
 
@@ -53,8 +59,6 @@ signals:
 
 public slots:
     void setCredentials(const QString&, const QString&);
-    void request(const QString &urlStr);
-    void request(const QString &urlStr, const int &row);
     void postRequest(const QString &urlStr, const QByteArray &data);
 
 private slots:
@@ -76,6 +80,9 @@ private:
     static OBSAccess* instance;
     QString curUsername;
     QString curPassword;
+    QNetworkReply *browseRequest(const QString &urlStr);
+    enum RequestType { ProjectList, PackageList, FileList, BuildStatusList };
+    static const QString userAgent;
     QString requestDiff;
     bool authenticated;
     OBSXmlReader *xmlReader;

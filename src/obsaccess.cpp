@@ -21,7 +21,8 @@
 
 #include "obsaccess.h"
 
-OBSAccess* OBSAccess::instance = NULL;
+OBSAccess *OBSAccess::instance = NULL;
+const QString OBSAccess::userAgent = QString("Qactus") + " " + QACTUS_VERSION;
 
 OBSAccess::OBSAccess()
 {
@@ -32,15 +33,15 @@ OBSAccess::OBSAccess()
 
 void OBSAccess::createManager()
 {
-    manager = new QNetworkAccessManager();
+    manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
-    SLOT(provideAuthentication(QNetworkReply*,QAuthenticator*)));
+            SLOT(provideAuthentication(QNetworkReply*,QAuthenticator*)));
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
     connect(manager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> &)),
             this, SLOT(onSslErrors(QNetworkReply*, const QList<QSslError> &)));
 }
 
-OBSAccess* OBSAccess::getInstance()
+OBSAccess *OBSAccess::getInstance()
 {
     if (!instance) {
         instance = new OBSAccess();
@@ -67,10 +68,8 @@ void OBSAccess::request(const QString &urlStr)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(urlStr));
-    const QString userAgent = QCoreApplication::applicationName() + " " +
-            QCoreApplication::applicationVersion();
     qDebug() << "User-Agent:" << userAgent;
-    request.setRawHeader("User-Agent", userAgent.toLatin1());
+    request.setRawHeader("User-Agent", userAgent.toLatin1());  
     manager->get(request);
 
 //    Don't make a new request until we get a reply
@@ -79,12 +78,44 @@ void OBSAccess::request(const QString &urlStr)
     loop->exec();
 }
 
+QNetworkReply *OBSAccess::browseRequest(const QString &urlStr)
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl(urlStr));
+    qDebug() << "User-Agent:" << userAgent;
+    request.setRawHeader("User-Agent", userAgent.toLatin1());
+    QNetworkReply *reply = manager->get(request);
+    return reply;
+}
+
+void OBSAccess::getProjects(const QString &urlStr)
+{
+    QNetworkReply *reply = browseRequest(urlStr);
+    reply->setProperty("reqtype", OBSAccess::ProjectList);
+}
+
+void OBSAccess::getPackages(const QString &urlStr)
+{
+    QNetworkReply *reply = browseRequest(urlStr);
+    reply->setProperty("reqtype", OBSAccess::PackageList);
+}
+
+void OBSAccess::getFiles(const QString &urlStr)
+{
+    QNetworkReply *reply = browseRequest(urlStr);
+    reply->setProperty("reqtype", OBSAccess::FileList);
+}
+
+void OBSAccess::getAllBuildStatus(const QString &urlStr)
+{
+    QNetworkReply *reply = browseRequest(urlStr);
+    reply->setProperty("reqtype", OBSAccess::BuildStatusList);
+}
+
 void OBSAccess::request(const QString &urlStr, const int &row)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(urlStr));
-    const QString userAgent = QCoreApplication::applicationName() + " " +
-            QCoreApplication::applicationVersion();
     request.setRawHeader("User-Agent", userAgent.toLatin1());
     QNetworkReply *reply = manager->get(request);
     reply->setProperty("row", row);
@@ -94,8 +125,6 @@ void OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(urlStr));
-    const QString userAgent = QCoreApplication::applicationName() + " " +
-            QCoreApplication::applicationVersion();
     qDebug() << "User-Agent:" << userAgent;
     request.setRawHeader("User-Agent", userAgent.toLatin1());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
@@ -109,18 +138,15 @@ void OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
 
 void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
 {
-    qDebug() << "provideAuthentication() called";
+    qDebug() << "OBSAccess::provideAuthentication()";
     static QString prevPassword = "";
     static QString prevUsername = "";
 //    qDebug() << reply->readAll();
 
-    if (reply->error()!=QNetworkReply::NoError)
-    {
+    if (reply->error()!=QNetworkReply::NoError) {
             qDebug() << "Request failed!" << reply->errorString();
 //            statusBar()->showMessage(tr("Connection failed"), 0);
-    }
-    else
-    {
+    } else {
         if ((curPassword != prevPassword) || (curUsername != prevUsername)) {
             prevPassword = curPassword;
             prevUsername = curUsername;
@@ -131,12 +157,15 @@ void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator
             qDebug() << "Authentication failed";
             prevPassword = "";
             prevUsername = "";
-
+            authenticated = false;
+            emit isAuthenticated(authenticated);
         }
     }
 
     if (reply->error()==QNetworkReply::NoError) {
+        qDebug() << "User is authenticated";
         authenticated = true;
+        emit isAuthenticated(authenticated);
     }
 }
 
@@ -147,33 +176,65 @@ bool OBSAccess::isAuthenticated()
 
 void OBSAccess::replyFinished(QNetworkReply *reply)
 {
+    qDebug() << "OBSAccess::replyFinished()";
+
     // QNetworkReply is a sequential-access QIODevice, which means that
     // once data is read from the object, it no longer kept by the device.
     // It is therefore the application's responsibility to keep this data if it needs to.
     // See http://doc.qt.nokia.com/latest/qnetworkreply.html for more info
 
     QString data = QString::fromUtf8(reply->readAll());
-    int row = reply->property("row").toInt();
-    qDebug() << "Reply row property:" << QString::number(row);
-    xmlReader->setPackageRow(row);
-
     qDebug() << "URL:" << reply->url();
     int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << "HTTP status code:" << httpStatusCode;
 //    qDebug() << "Network Reply: " << data;
 
+    /* Set package row always (error/no error) if property is valid.
+     * Needed for inserting the build status
+     */
+    if(reply->property("row").isValid()) {
+        int row = reply->property("row").toInt();
+        qDebug() << "Reply row property:" << QString::number(row);
+        xmlReader->setPackageRow(row);
+    }
+
     switch (reply->error()) {
 
     case QNetworkReply::NoError:
-        authenticated = true;
-        emit isAuthenticated(authenticated);
         qDebug() << "Request succeeded!";
         if(data.startsWith("Index")) {
             // Don't process diffs
             requestDiff = data;
-        } else {
-            xmlReader->addData(data);
+            return;
         }
+        if (reply->property("reqtype").isValid()) {
+            QString reqType = "RequestType";
+
+            switch(reply->property("reqtype").toInt()) {
+
+            case OBSAccess::ProjectList: // <directory>
+                qDebug() << reqType << "ProjectList";
+                xmlReader->parseProjectList(data);
+                break;
+
+            case OBSAccess::PackageList: // <directory>
+                qDebug() << reqType << "PackageList";
+                xmlReader->parsePackageList(data);
+                break;
+
+            case OBSAccess::FileList: // <directory>
+                qDebug() << reqType << "FileList";
+                xmlReader->parseFileList(data);
+                break;
+
+            case OBSAccess::BuildStatusList: // <resultlist>
+                qDebug() << reqType << "BuildStatusList";
+                xmlReader->parseResultList(data);
+                break;
+            }
+            return;
+        }
+        xmlReader->addData(data);
         break;
 
     case QNetworkReply::ContentNotFoundError: // 404
@@ -184,13 +245,10 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
         break;
 
     case QNetworkReply::ContentAccessDenied: // 401
-        qDebug() << "Authentication failed!";
-        authenticated = false;
-        emit isAuthenticated(authenticated);
+        qDebug() << "Access denied!";
         break;
 
     default: // Other errors
-        authenticated = false;
         qDebug() << "Request failed! Error:" << reply->errorString();
         emit networkError(reply->errorString());
         break;
