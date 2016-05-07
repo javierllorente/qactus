@@ -76,7 +76,6 @@ private:
     QAction *action_Restore;
 
     void setupBrowser();
-    void loadProjectTree();
     QStringListModel *sourceModelProjects;
     QStringListModel *sourceModelBuilds;
     QSortFilterProxyModel *proxyModelProjects;
@@ -134,6 +133,8 @@ private slots:
     void on_actionConfigure_Qactus_triggered();
     void on_actionLogin_triggered();
     void on_tabWidget_currentChanged(const int&);
+    void insertProjectList();
+    void insertPackageList();
     void insertFile(OBSFile*);
     void insertResult(OBSResult*);
     void insertBuildStatus(OBSPackage*, const int&);

@@ -59,8 +59,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(configureDialog, SIGNAL(apiChanged()), this, SLOT(apiChanged()));
     connect(configureDialog, SIGNAL(apiChanged()), loginDialog, SLOT(clearCredentials()));
 
-    connect(obs, SIGNAL(finishedParsingFile(OBSFile*)),
-            this, SLOT(insertFile(OBSFile*)));
+    connect(obs, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
+    connect(obs, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
+    connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(insertFile(OBSFile*)));
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)),
@@ -91,9 +92,6 @@ MainWindow::MainWindow(QWidget *parent) :
         obs->setCredentials(job.key(), pw);
         obs->login();
     }
-    if (obs->isAuthenticated()) {
-        setupBrowser();
-    }
 }
 
 MainWindow::~MainWindow()
@@ -116,7 +114,7 @@ void MainWindow::changeEvent(QEvent *e)
 
 void MainWindow::showNetworkError(const QString &networkError)
 {
-    qDebug() << "showNetworkError()";
+    qDebug() << "MainWindow::showNetworkError()";
 
     // The QMessageBox is only displayed once if there are
     // repeated errors (queued requests, probably same error)
@@ -196,7 +194,7 @@ void MainWindow::apiChanged()
 void MainWindow::isAuthenticated(bool authenticated)
 {
     if (authenticated) {
-        qDebug() << "User is authenticated";
+        setupBrowser();
         statusBar()->showMessage(tr("Online"), 0);
     } else {
         loginDialog->show();
@@ -240,7 +238,6 @@ void MainWindow::createToolbar()
     action_Configure->setStatusTip(tr("Configure Qactus"));
     ui->toolBar->addAction(action_Configure);
     connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
-
 }
 
 void MainWindow::setupBrowser()
@@ -270,16 +267,9 @@ void MainWindow::setupBrowser()
     ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setRootIsDecorated(false);
-
-    loadProjectTree();
+    obs->getProjects();
 }
 
-void MainWindow::loadProjectTree()
-{
-    sourceModelProjects->setStringList(obs->getProjectList());
-    proxyModelProjects->setSourceModel(sourceModelProjects);
-    ui->treeProjects->setModel(proxyModelProjects);
-}
 void MainWindow::filterProjects(const QString &item)
 {
     proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
@@ -299,7 +289,7 @@ void MainWindow::filterResults(QString item)
 
 void MainWindow::filterRadioButtonClicked(bool)
 {
-    qDebug() << "filterRadioButtonClicked()";
+    qDebug() << "MainWindow::filterRadioButtonClicked()";
     QString projectItem, buildItem;
 
     if (!ui->lineEditFilter->text().isEmpty() && ui->radioButtonPackages->isChecked()) {
@@ -315,22 +305,13 @@ void MainWindow::filterRadioButtonClicked(bool)
 void MainWindow::getPackages(QModelIndex index)
 {
     QString project = index.data().toString();
-    qDebug() << "getPackages()" << project;
-
-    sourceModelBuilds->setStringList(obs->getProjectPackageList(project));
-    proxyModelBuilds->setSourceModel(sourceModelBuilds);
-    ui->treeBuilds->setModel(proxyModelBuilds);
-
-    delete sourceModelFiles;
-    sourceModelFiles = NULL;
-
-    delete sourceModelBuildResults;
-    sourceModelBuildResults = NULL;
+    qDebug() << "MainWindow::getPackages()" << project;
+    obs->getPackages(project);
 }
 
 void MainWindow::getPackageFiles(QModelIndex index)
 {
-    qDebug() << "getPackageFiles()";
+    qDebug() << "MainWindow::getPackageFiles()";
 
     QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     sourceModelFiles = new QStandardItemModel(ui->treeFiles);
@@ -343,13 +324,16 @@ void MainWindow::getPackageFiles(QModelIndex index)
 
     QString currentProject = ui->treeProjects->currentIndex().data().toString();
     QString currentPackage = index.data().toString();
-    obs->getPackageFileList(currentProject, currentPackage);
+    obs->getFiles(currentProject, currentPackage);
+    statusBar()->showMessage(tr("Getting package data..."), 5000);
 
     getBuildResults();
 }
 
 void MainWindow::getBuildResults()
 {
+    qDebug() << "MainWindow::getBuildResults()";
+
     QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
     sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
     QStringList treeBuildResultsHeaders;
@@ -541,7 +525,7 @@ void MainWindow::refreshView()
 
 void MainWindow::markRead(QTreeWidgetItem* item, int)
 {
-    qDebug() << "markRead() " << "Row: " + QString::number(ui->treePackages->indexOfTopLevelItem(item));
+    qDebug() << "MainWindow::markRead() " << "Row: " + QString::number(ui->treePackages->indexOfTopLevelItem(item));
     for (int i=0; i<ui->treePackages->columnCount(); i++) {
         if (item->font(0).bold()) {
             setItemBoldFont(item, false);
@@ -554,7 +538,7 @@ void MainWindow::markRead(QTreeWidgetItem* item, int)
 
 void MainWindow::markAllRead()
 {
-    qDebug() << "markAllRead()";
+    qDebug() << "MainWindow::markAllRead()";
     for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
         if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
             setItemBoldFont(ui->treePackages->topLevelItem(i), false);
@@ -599,9 +583,35 @@ void MainWindow::createTreeRequests()
     ui->treeRequests->setItemDelegate(new AutoToolTipDelegate(ui->treeRequests));
 }
 
+void MainWindow::insertProjectList()
+{
+    OBSXmlReader *reader = obs->getXmlReader();
+    reader->readList();
+    sourceModelProjects->setStringList(reader->getList());
+    proxyModelProjects->setSourceModel(sourceModelProjects);
+    ui->treeProjects->setModel(proxyModelProjects);
+}
+
+void MainWindow::insertPackageList()
+{
+    qDebug() << "MainWindow::insertPackageList()";
+    OBSXmlReader *reader = obs->getXmlReader();
+    reader->readList();
+
+    sourceModelBuilds->setStringList(reader->getList());
+    proxyModelBuilds->setSourceModel(sourceModelBuilds);
+    ui->treeBuilds->setModel(proxyModelBuilds);
+
+    delete sourceModelFiles;
+    sourceModelFiles = NULL;
+
+    delete sourceModelBuildResults;
+    sourceModelBuildResults = NULL;
+}
+
 void MainWindow::insertFile(OBSFile *obsFile)
 {
-    qDebug() << "insertFile()";
+    qDebug() << "MainWindow::insertFile()";
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     QStandardItem *itemName = new QStandardItem(obsFile->getName());
     QStandardItem *itemSize = new QStandardItem(obsFile->getSize());
@@ -615,11 +625,12 @@ void MainWindow::insertFile(OBSFile *obsFile)
 
 void MainWindow::insertResult(OBSResult *obsResult)
 {
-    qDebug() << "insertResult()";
+    qDebug() << "MainWindow::insertResult()";
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
     QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
     QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
     QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
+    itemBuildResult->setForeground(getColorForStatus(itemBuildResult->text()));
     if (!obsResult->getPackage()->getDetails().isEmpty()) {
         QString details = obsResult->getPackage()->getDetails();
         details = breakLine(details, 250);
@@ -628,11 +639,13 @@ void MainWindow::insertResult(OBSResult *obsResult)
     QList<QStandardItem*> items;
     items << itemRepository << itemArch << itemBuildResult;
     model->appendRow(items);
+    statusBar()->showMessage(tr("Done"), 0);
     delete obsResult;
 }
 
 void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
 {
+    qDebug() << "MainWindow::insertBuildStatus()";
     QString details = obsPackage->getDetails();
     QString status = obsPackage->getStatus();
     delete obsPackage;
@@ -895,7 +908,7 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
         }
     }
 
-    qDebug() << "trayicon clicked";
+    qDebug() << "MainWindow::trayIconClicked()";
 }
 
 void MainWindow::writeSettings()
@@ -948,7 +961,7 @@ void MainWindow::writeSettings()
 
 void MainWindow::readSettings()
 {
-    qDebug() << "Reading settings...";
+    qDebug() << "MainWindow::readSettings()";
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("MainWindow");
     move(settings.value("pos", QPoint(200, 200)).toPoint());
