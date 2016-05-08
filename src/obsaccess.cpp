@@ -71,11 +71,6 @@ void OBSAccess::request(const QString &urlStr)
     qDebug() << "User-Agent:" << userAgent;
     request.setRawHeader("User-Agent", userAgent.toLatin1());  
     manager->get(request);
-
-//    Don't make a new request until we get a reply
-    QEventLoop *loop = new QEventLoop;
-    connect(manager, SIGNAL(finished(QNetworkReply *)),loop, SLOT(quit()));
-    loop->exec();
 }
 
 QNetworkReply *OBSAccess::browseRequest(const QString &urlStr)
