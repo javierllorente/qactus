@@ -113,6 +113,7 @@ void MainWindow::readPassword()
     } else {
         qDebug() << "Password restored successfully";
         obs->setCredentials(job.key(), pw);
+        statusBar()->showMessage(tr("Logging in..."), 0);
         obs->login();
     }
 }
