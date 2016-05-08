@@ -75,6 +75,7 @@ private:
     QAction *action_Quit;
     QAction *action_Restore;
 
+    void readPassword();
     void setupBrowser();
     QStringListModel *sourceModelProjects;
     QStringListModel *sourceModelBuilds;

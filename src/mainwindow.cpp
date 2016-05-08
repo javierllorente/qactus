@@ -75,23 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     readSettings();
     readSettingsTimer();
-
-    QKeychain::ReadPasswordJob job(QLatin1String("Qactus"));
-    job.setAutoDelete(false);
-    job.setKey(loginDialog->getUsername());
-    QEventLoop loop;
-    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
-    job.start();
-    loop.exec();
-    const QString pw = job.textData();
-    if (job.error()) {
-        qDebug() << "Restoring password failed: " << qPrintable(job.errorString());
-        loginDialog->show();
-    } else {
-        qDebug() << "Password restored successfully";
-        obs->setCredentials(job.key(), pw);
-        obs->login();
-    }
+    readPassword();
 }
 
 MainWindow::~MainWindow()
@@ -109,6 +93,27 @@ void MainWindow::changeEvent(QEvent *e)
         break;
     default:
         break;
+    }
+}
+
+void MainWindow::readPassword()
+{
+    qDebug() << "MainWindow::readPassword()";
+    QKeychain::ReadPasswordJob job(QLatin1String("Qactus"));
+    job.setAutoDelete(false);
+    job.setKey(loginDialog->getUsername());
+    QEventLoop loop;
+    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
+    job.start();
+    loop.exec();
+    const QString pw = job.textData();
+    if (job.error()) {
+        qDebug() << "Restoring password failed: " << qPrintable(job.errorString());
+        loginDialog->show();
+    } else {
+        qDebug() << "Password restored successfully";
+        obs->setCredentials(job.key(), pw);
+        obs->login();
     }
 }
 
