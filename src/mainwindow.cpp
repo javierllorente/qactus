@@ -247,6 +247,7 @@ void MainWindow::createToolbar()
 
 void MainWindow::setupBrowser()
 {
+    qDebug() << "MainWindow::setupBrowser()";
     action_Add->setEnabled(false);
     action_Remove->setEnabled(false);
     action_MarkRead->setEnabled(false);
