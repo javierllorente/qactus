@@ -45,6 +45,7 @@ public:
     QString getUsername();
     void request(const QString &urlStr);
     void getProjects(const QString &urlStr);
+    void getProjectMetadata(const QString &urlStr);
     void getPackages(const QString &urlStr);
     void getFiles(const QString &urlStr);
     void getAllBuildStatus(const QString &urlStr);
@@ -81,7 +82,7 @@ private:
     QString curUsername;
     QString curPassword;
     QNetworkReply *browseRequest(const QString &urlStr);
-    enum RequestType { ProjectList, PackageList, FileList, BuildStatusList };
+    enum RequestType { ProjectList, ProjectMetadata, PackageList, FileList, BuildStatusList };
     static const QString userAgent;
     QString requestDiff;
     bool authenticated;

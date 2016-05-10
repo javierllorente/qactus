@@ -89,6 +89,12 @@ void OBSAccess::getProjects(const QString &urlStr)
     reply->setProperty("reqtype", OBSAccess::ProjectList);
 }
 
+void OBSAccess::getProjectMetadata(const QString &urlStr)
+{
+    QNetworkReply *reply = browseRequest(urlStr);
+    reply->setProperty("reqtype", OBSAccess::ProjectMetadata);
+}
+
 void OBSAccess::getPackages(const QString &urlStr)
 {
     QNetworkReply *reply = browseRequest(urlStr);
@@ -210,6 +216,11 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
             case OBSAccess::ProjectList: // <directory>
                 qDebug() << reqType << "ProjectList";
                 xmlReader->parseProjectList(data);
+                break;
+
+            case OBSAccess::ProjectMetadata: // <project>
+                qDebug() << reqType << "ProjectList";
+                xmlReader->parseProjectMetadata(data);
                 break;
 
             case OBSAccess::PackageList: // <directory>
