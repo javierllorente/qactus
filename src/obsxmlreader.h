@@ -43,6 +43,7 @@ public:
     void addData(const QString &data);
     void setPackageRow(const int &row);
     void parseProjectList(const QString &data);
+    void parseProjectMetadata(const QString &data);
     void parsePackageList(const QString &data);
     void parseFileList(const QString &data);
     void parseResultList(const QString &data);
@@ -72,6 +73,7 @@ private:
     QStringList list;
     void stringToFile(const QString &data);
     void projectListToFile(const QString &data);
+    void projectMetadataToFile(const QString &data);
     void packageListToFile(const QString &data);
     void fileListToFile(const QString &data);
     QString fileName;
@@ -80,11 +82,13 @@ private:
 signals:
     void finishedParsingPackage(OBSPackage*, const int&);
     void finishedParsingResult(OBSResult*);
+    void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void finishedParsingList(QStringList);
     void projectListIsReady();
+    void projectMetadataIsReady();
     void packageListIsReady();
     void finishedParsingFile(OBSFile*);
 };

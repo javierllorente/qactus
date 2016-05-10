@@ -74,6 +74,11 @@ void OBSXmlReader::parseProjectList(const QString &data)
     projectListToFile(data);
 }
 
+void OBSXmlReader::parseProjectMetadata(const QString &data)
+{
+    projectMetadataToFile(data);
+}
+
 void OBSXmlReader::parsePackageList(const QString &data)
 {
     packageListToFile(data);
@@ -195,6 +200,10 @@ void OBSXmlReader::parseResultList(const QString &data)
 
         if (xml.name()=="result" && xml.isEndElement()) {
             emit finishedParsingResult(obsResult);
+        }
+
+        if (xml.name()=="resultlist" && xml.isEndElement()) {
+            emit finishedParsingResultList();
         }
     }
 }
@@ -461,6 +470,12 @@ void OBSXmlReader::projectListToFile(const QString &data)
 {
     stringToFile(data);
     emit projectListIsReady();
+}
+
+void OBSXmlReader::projectMetadataToFile(const QString &data)
+{
+    stringToFile(data);
+    emit projectMetadataIsReady();
 }
 
 void OBSXmlReader::packageListToFile(const QString &data)
