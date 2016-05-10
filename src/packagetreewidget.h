@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <QTreeWidget>
 #include <QDropEvent>
 #include <QMimeData>
+#include "obs.h"
 #include <QDebug>
 
 class PackageTreeWidget : public QTreeWidget
@@ -33,6 +34,7 @@ class PackageTreeWidget : public QTreeWidget
 
 public:
     PackageTreeWidget(QWidget *parent = 0);
+    void setOBS(OBS *obs);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
@@ -40,7 +42,7 @@ protected:
     void dropEvent(QDropEvent *event);
 
 signals:
-    void obsUrlDropped(const QStringList&);
+    void obsUrlDropped(const QString &project, const QString &package);
 
 };
 

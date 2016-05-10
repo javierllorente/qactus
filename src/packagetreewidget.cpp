@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,6 +26,12 @@ PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
     setAcceptDrops(true);
 }
 
+void PackageTreeWidget::setOBS(OBS *obs)
+{
+    connect(this, SIGNAL(obsUrlDropped(QString,QString)), obs, SLOT(getAllBuildStatus(QString,QString)));
+}
+
+
 void PackageTreeWidget::dragEnterEvent(QDragEnterEvent *event)
 {
     event->acceptProposedAction();
@@ -38,6 +44,7 @@ void PackageTreeWidget::dragMoveEvent(QDragMoveEvent *event)
 
 void PackageTreeWidget::dropEvent(QDropEvent *event)
 {
+    qDebug() << "PackageTreeWidget::dropEvent()";
     const QMimeData *mimeData = event->mimeData();
     if (mimeData->hasUrls()) {
         QList<QUrl> urlList = mimeData->urls();
@@ -48,9 +55,10 @@ void PackageTreeWidget::dropEvent(QDropEvent *event)
         if(urlStr.contains(rx)) {
             qDebug () << "Valid OBS URL found!";
             QStringList list = rx.capturedTexts();
-            emit obsUrlDropped(list);
+            QString project = list[2];
+            QString package = list[3];
+            emit obsUrlDropped(project, package);
         }
     }
-
-
 }
+
