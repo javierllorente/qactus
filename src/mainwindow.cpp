@@ -65,13 +65,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)),
-            SLOT(insertResult(OBSResult*)));
+            this, SLOT(insertResult(OBSResult*)));
+    connect(obs, SIGNAL(finishedParsingResultList()),
+            this, SLOT(finishedResultListSlot()));
     connect(obs, SIGNAL(finishedParsingRequest(OBSRequest*)),
             this, SLOT(insertRequest(OBSRequest*)));
     connect(obs, SIGNAL(removeRequest(const QString&)),
             this, SLOT(removeRequest(const QString&)));
-    connect(ui->treePackages, SIGNAL(obsUrlDropped(const QStringList&)),
-            this, SLOT(addDroppedUrl(const QStringList&)));
 
     readSettings();
     readSettingsTimer();
@@ -421,40 +421,35 @@ void MainWindow::addRow()
     delete rowEditor;
 }
 
-void MainWindow::addDroppedUrl(const QStringList& data)
+void MainWindow::insertDroppedPackage(OBSResult *result)
 {
-    QString droppedUrlDomain = data[1].section('.', -2);
-    qDebug() << "droppedUrlDomain:" << droppedUrlDomain;
-    qDebug() << "apiUrl:" << obs->getApiUrl();
+    qDebug() << "MainWindow::insertDroppedPackage()";
 
-    if (obs->isAuthenticated()) {
-        if (obs->getApiUrl().endsWith(droppedUrlDomain)) {
-            QString project = data[2];
-            QStringList repositoryList = obs->getProjectMetadata(project);
-            QString package = data[3];
-
-            foreach (QString repository, repositoryList) {
-                QStringList archList = obs->getRepositoryArchs(repository);
-
-                foreach (QString architecture, archList) {
-                    QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
-                    item->setText(0, project);
-                    item->setText(1, package);
-                    item->setText(2, repository);
-                    item->setText(3, architecture);
-                    ui->treePackages->addTopLevelItem(item);
-                    int index = ui->treePackages->indexOfTopLevelItem(item);
-                    qDebug() << "Build" << item->text(1)
-                             << "(" << project << "," << repository << "," << architecture << ")"
-                             << "added at" << index;
-                }
-            }
-        } else {
-            qDebug() << "apiUrl doesn't end with droppedUrlDomain!";
-        }
-    } else {
-        qDebug() << "Not authenticated!";
+    QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
+    item->setText(0, result->getProject());
+    item->setText(1, result->getPackage()->getName());
+    item->setText(2, result->getRepository());
+    item->setText(3, result->getArch());
+    QString status = result->getPackage()->getStatus();
+    item->setText(4, status);
+    if (!result->getPackage()->getDetails().isEmpty()) {
+        QString details = result->getPackage()->getDetails();
+        details = breakLine(details, 250);
+        item->setToolTip(4, details);
     }
+    item->setForeground(4, getColorForStatus(status));
+
+    ui->treePackages->addTopLevelItem(item);
+    int index = ui->treePackages->indexOfTopLevelItem(item);
+    qDebug() << "Build" << item->text(1)
+             << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
+             << "added at" << index;
+}
+
+void MainWindow::finishedResultListSlot()
+{
+   qDebug() << "MainWindow::finishedResultListSlot()";
+   statusBar()->showMessage(tr("Done"), 0);
 }
 
 void MainWindow::editRow(QTreeWidgetItem* item, int)
@@ -558,6 +553,7 @@ void MainWindow::markAllRead()
 
 void MainWindow::createTreePackages()
 {
+    ui->treePackages->setOBS(obs);
     ui->treePackages->setColumnCount(5);
     ui->treePackages->setColumnWidth(0, 185); // Project
     ui->treePackages->setColumnWidth(1, 160); // Package
@@ -592,6 +588,7 @@ void MainWindow::createTreeRequests()
 
 void MainWindow::insertProjectList()
 {
+    qDebug() << "MainWindow::insertProjectList()";
     OBSXmlReader *reader = obs->getXmlReader();
     reader->readList();
     sourceModelProjects->setStringList(reader->getList());
@@ -601,19 +598,23 @@ void MainWindow::insertProjectList()
 
 void MainWindow::insertPackageList()
 {
-    qDebug() << "MainWindow::insertPackageList()";
-    OBSXmlReader *reader = obs->getXmlReader();
-    reader->readList();
+    if (ui->tabWidget->currentIndex()==0) {
+        // Browser tab
+        qDebug() << "MainWindow::insertPackageList()";
 
-    sourceModelBuilds->setStringList(reader->getList());
-    proxyModelBuilds->setSourceModel(sourceModelBuilds);
-    ui->treeBuilds->setModel(proxyModelBuilds);
+        OBSXmlReader *reader = obs->getXmlReader();
+        reader->readList();
 
-    delete sourceModelFiles;
-    sourceModelFiles = NULL;
+        sourceModelBuilds->setStringList(reader->getList());
+        proxyModelBuilds->setSourceModel(sourceModelBuilds);
+        ui->treeBuilds->setModel(proxyModelBuilds);
 
-    delete sourceModelBuildResults;
-    sourceModelBuildResults = NULL;
+        delete sourceModelFiles;
+        sourceModelFiles = NULL;
+
+        delete sourceModelBuildResults;
+        sourceModelBuildResults = NULL;
+    }
 }
 
 void MainWindow::insertFile(OBSFile *obsFile)
@@ -633,21 +634,29 @@ void MainWindow::insertFile(OBSFile *obsFile)
 void MainWindow::insertResult(OBSResult *obsResult)
 {
     qDebug() << "MainWindow::insertResult()";
-    QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
-    QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
-    QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
-    QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
-    itemBuildResult->setForeground(getColorForStatus(itemBuildResult->text()));
-    if (!obsResult->getPackage()->getDetails().isEmpty()) {
-        QString details = obsResult->getPackage()->getDetails();
-        details = breakLine(details, 250);
-        itemBuildResult->setToolTip(details);
+
+    if (ui->tabWidget->currentIndex()==1) {
+        // Monitor tab
+        insertDroppedPackage(obsResult);
+
+    } else {
+        QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
+        QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
+        QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
+        QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
+        itemBuildResult->setForeground(getColorForStatus(itemBuildResult->text()));
+
+        if (!obsResult->getPackage()->getDetails().isEmpty()) {
+            QString details = obsResult->getPackage()->getDetails();
+            details = breakLine(details, 250);
+            itemBuildResult->setToolTip(details);
+        }
+
+        QList<QStandardItem*> items;
+        items << itemRepository << itemArch << itemBuildResult;
+        model->appendRow(items);
+        delete obsResult;
     }
-    QList<QStandardItem*> items;
-    items << itemRepository << itemArch << itemBuildResult;
-    model->appendRow(items);
-    statusBar()->showMessage(tr("Done"), 0);
-    delete obsResult;
 }
 
 void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)

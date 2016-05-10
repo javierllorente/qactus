@@ -95,6 +95,7 @@ private:
     void readSettingsTimer();
     QMessageBox *errorBox;
 
+    void insertDroppedPackage(OBSResult *result);
     QString unixTimeToDate(const QString &unixTime);
     QString breakLine(QString&, const int&);
     QColor getColorForStatus(const QString&);
@@ -118,7 +119,7 @@ private slots:
     void filterRadioButtonClicked(bool);
     void getRequestDescription(QTreeWidgetItem*, int);
     void addRow();
-    void addDroppedUrl(const QStringList &data);
+    void finishedResultListSlot();
     void editRow(QTreeWidgetItem*, int);
     void removeRow();
     void refreshView();
