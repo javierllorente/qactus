@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -70,10 +70,13 @@ private:
     QCompleter *archCompleter;
 
 private slots:
+    void insertProjectList();
     void refreshProjectAutocompleter(const QString &);
     void autocompletedProjectName_clicked(const QString &projectName);
+    void insertPackageList();
     void refreshPackageAutocompleter(const QString&);
     void autocompletedPackageName_clicked(const QString&);
+    void insertProjectMetadata();
     void refreshRepositoryAutocompleter(const QString&);
     void autocompletedRepositoryName_clicked(const QString&repository);
     void refreshArchAutocompleter(const QString&);

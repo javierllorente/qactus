@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -110,6 +110,9 @@ void RowEditor::setArch(const QString &arch)
 
 QStringList RowEditor::getListFor(const QString &name)
 {
+    // Not used anymore. To be refactored :)
+
+    qDebug() << "RowEditor::getListFor()";
     QStringList stringList;
     QString lastUpdateStr = getLastUpdateDate();
     QDate lastUpdateDate = QDate::fromString(lastUpdateStr);
@@ -133,13 +136,11 @@ QStringList RowEditor::getListFor(const QString &name)
             progress.show();
 
             if (name == "projects") {
-//                FIX-ME
 //                stringList = mOBS->getProjectList();
             } else if (name.contains("meta")) {
                 QStringList projectName = name.split("_meta");
-                stringList = mOBS->getProjectMetadata(projectName[0]);
+//                stringList = mOBS->getProjectMetadata(projectName[0]);
             } else {
-//                FIX-ME
 //                stringList = mOBS->getProjectPackageList(name);
             }
             setLastUpdateDate(QDate::currentDate().toString());
@@ -154,7 +155,18 @@ QStringList RowEditor::getListFor(const QString &name)
 
 void RowEditor::initProjectAutocompleter()
 {
-    projectList = getListFor("projects");
+    qDebug() << "RowEditor::initProjectAutocompleter()";
+    connect(mOBS, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
+    mOBS->getProjects();
+}
+
+void RowEditor::insertProjectList()
+{
+    qDebug() << "RowEditor::insertProjectList()";
+    OBSXmlReader *reader = mOBS->getXmlReader();
+    reader->readList();
+
+    projectList = reader->getList();
     projectModel = new QStringListModel(projectList);
     projectCompleter = new QCompleter(projectModel, this);
 
@@ -175,7 +187,17 @@ void RowEditor::autocompletedProjectName_clicked(const QString &projectName)
 {
     ui->lineEditPackage->setFocus();
 
-    packageList = getListFor(projectName);
+    connect(mOBS, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
+    mOBS->getPackages(projectName);
+}
+
+void RowEditor::insertPackageList()
+{
+    qDebug() << "RowEditor::insertPackageList()";
+    OBSXmlReader *reader = mOBS->getXmlReader();
+    reader->readList();
+
+    packageList = reader->getList();
     packageModel = new QStringListModel(packageList);
     packageCompleter = new QCompleter(packageModel, this);
 
@@ -196,7 +218,18 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
 {
     ui->lineEditRepository->setFocus();
 
-    repositoryList = getListFor(ui->lineEditProject->text() + "_meta");
+    connect(mOBS, SIGNAL(projectMetadataIsReady()), this, SLOT(insertProjectMetadata()));
+    QString project = ui->lineEditProject->text();
+    mOBS->getProjectMetadata(project);
+}
+
+void RowEditor::insertProjectMetadata()
+{
+    qDebug() << "RowEditor::insertProjectMetadata()";
+    OBSXmlReader *reader = mOBS->getXmlReader();
+    reader->readList();
+
+    repositoryList = reader->getList();
     repositoryModel = new QStringListModel(repositoryList);
     repositoryCompleter = new QCompleter(repositoryModel, this);
 
