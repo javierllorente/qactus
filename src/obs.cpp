@@ -36,6 +36,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingPackage(OBSPackage*,int)));
     connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SIGNAL(finishedParsingResult(OBSResult*)));
+    connect(xmlReader, SIGNAL(finishedParsingResultList()),
+            this, SIGNAL(finishedParsingResultList()));
     connect(xmlReader, SIGNAL(finishedParsingRevision(OBSRevision*)),
             this, SIGNAL(finishedParsingRevision(OBSRevision*)));
     connect(xmlReader, SIGNAL(finishedParsingRequest(OBSRequest*)),
@@ -44,6 +46,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(removeRequest(const QString&)));
     connect(xmlReader, SIGNAL(projectListIsReady()),
             this, SIGNAL(projectListIsReady()));
+    connect(xmlReader, SIGNAL(projectMetadataIsReady()),
+            this, SIGNAL(projectMetadataIsReady()));
     connect(xmlReader, SIGNAL(packageListIsReady()),
             this, SIGNAL(packageListIsReady()));
     connect(xmlReader, SIGNAL(finishedParsingList(QStringList)),
@@ -170,12 +174,10 @@ void OBS::getPackages(const QString &project)
     obsAccess->getPackages(apiUrl + "/source/" + project);
 }
 
-QStringList OBS::getProjectMetadata(const QString &project)
+void OBS::getProjectMetadata(const QString &project)
 {
     xmlReader->setFileName(project + "_meta.xml");
-    request(apiUrl + "/source/" + project + "/_meta");
-    xmlReader->readList();
-    return xmlReader->getList();
+    obsAccess->getProjectMetadata(apiUrl + "/source/" + project + "/_meta");
 }
 
 void OBS::getFiles(const QString &project, const QString &package)

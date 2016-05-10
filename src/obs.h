@@ -42,7 +42,6 @@ public:
     bool isAuthenticated();
     void login();
     void getBuildStatus(const QStringList &stringList, const int &row);
-    void getAllBuildStatus(const QString &project, const QString &package);
     void getRevisions(const QString &project, const QString &package);
     void getRequests();
     int getRequestCount();
@@ -51,7 +50,7 @@ public:
     QString getRequestDiff(const QString &source);
     void getProjects();
     void getPackages(const QString &project);
-    QStringList getProjectMetadata(const QString &project);
+    void getProjectMetadata(const QString &project);
     void getFiles(const QString &project, const QString &package);
     QStringList getRepositoryArchs(const QString &repository);
     QStringList readXmlFile(const QString &xmlFile);
@@ -68,16 +67,18 @@ signals:
     void networkError(const QString&);
     void finishedParsingPackage(OBSPackage*, const int&);
     void finishedParsingResult(OBSResult*);
+    void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void projectListIsReady();
+    void projectMetadataIsReady();
     void packageListIsReady();
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);
 
 public slots:
-
+    void getAllBuildStatus(const QString &project, const QString &package);
 };
 
 #endif // OBS_H
