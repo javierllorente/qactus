@@ -201,7 +201,6 @@ void MainWindow::isAuthenticated(bool authenticated)
 {
     if (authenticated) {
         setupBrowser();
-        statusBar()->showMessage(tr("Online"), 0);
     } else {
         loginDialog->show();
     }
@@ -249,6 +248,7 @@ void MainWindow::createToolbar()
 void MainWindow::setupBrowser()
 {
     qDebug() << "MainWindow::setupBrowser()";
+    statusBar()->showMessage(tr("Getting projects..."), 5000);
     action_Add->setEnabled(false);
     action_Remove->setEnabled(false);
     action_MarkRead->setEnabled(false);
@@ -594,6 +594,7 @@ void MainWindow::insertProjectList()
     sourceModelProjects->setStringList(reader->getList());
     proxyModelProjects->setSourceModel(sourceModelProjects);
     ui->treeProjects->setModel(proxyModelProjects);
+    statusBar()->showMessage(tr("Done"), 0);
 }
 
 void MainWindow::insertPackageList()
