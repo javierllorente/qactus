@@ -434,10 +434,10 @@ void MainWindow::insertDroppedPackage(OBSResult *result)
     item->setText(4, status);
     if (!result->getPackage()->getDetails().isEmpty()) {
         QString details = result->getPackage()->getDetails();
-        details = breakLine(details, 250);
+        details = Utils::breakLine(details, 250);
         item->setToolTip(4, details);
     }
-    item->setForeground(4, getColorForStatus(status));
+    item->setForeground(4, Utils::getColorForStatus(status));
 
     ui->treePackages->addTopLevelItem(item);
     int index = ui->treePackages->indexOfTopLevelItem(item);
@@ -530,7 +530,7 @@ void MainWindow::markRead(QTreeWidgetItem* item, int)
     qDebug() << "MainWindow::markRead() " << "Row: " + QString::number(ui->treePackages->indexOfTopLevelItem(item));
     for (int i=0; i<ui->treePackages->columnCount(); i++) {
         if (item->font(0).bold()) {
-            setItemBoldFont(item, false);
+            Utils::setItemBoldFont(item, false);
         }
     }
     if (trayIcon->hasChangedIcon()) {
@@ -543,7 +543,7 @@ void MainWindow::markAllRead()
     qDebug() << "MainWindow::markAllRead()";
     for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
         if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
-            setItemBoldFont(ui->treePackages->topLevelItem(i), false);
+            Utils::setItemBoldFont(ui->treePackages->topLevelItem(i), false);
         }
     }
     if (trayIcon->hasChangedIcon()) {
@@ -624,7 +624,7 @@ void MainWindow::insertFile(OBSFile *obsFile)
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     QStandardItem *itemName = new QStandardItem(obsFile->getName());
     QStandardItem *itemSize = new QStandardItem(obsFile->getSize());
-    QString lastModified = unixTimeToDate(obsFile->getLastModified());
+    QString lastModified = Utils::unixTimeToDate(obsFile->getLastModified());
     QStandardItem *itemLastModified = new QStandardItem(lastModified);
     QList<QStandardItem*> items;
     items << itemName << itemSize << itemLastModified;
@@ -645,11 +645,11 @@ void MainWindow::insertResult(OBSResult *obsResult)
         QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
         QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
         QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
-        itemBuildResult->setForeground(getColorForStatus(itemBuildResult->text()));
+        itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
 
         if (!obsResult->getPackage()->getDetails().isEmpty()) {
             QString details = obsResult->getPackage()->getDetails();
-            details = breakLine(details, 250);
+            details = Utils::breakLine(details, 250);
             itemBuildResult->setToolTip(details);
         }
 
@@ -668,7 +668,7 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
     delete obsPackage;
 
 //    If the line is too long (>250), break it
-    details = breakLine(details, 250);
+    details = Utils::breakLine(details, 250);
     if (details.size()>0) {
         qDebug() << "Details string size: " << details.size();
     }
@@ -678,7 +678,7 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
     item->setText(4, status);
     QString newStatus = item->text(4);
     item->setToolTip(4, details);
-    item->setForeground(4, getColorForStatus(status));
+    item->setForeground(4, Utils::getColorForStatus(status));
 
     qDebug() << "Build status" << status << "inserted in" << row
              << "(Total rows:" << ui->treePackages->topLevelItemCount() << ")";
@@ -688,76 +688,9 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
     if ((oldStatus != "") && (oldStatus != newStatus)) {
         qDebug() << "Build status has changed!";
         trayIcon->notify();
-        setItemBoldFont(item, true);
+        Utils::setItemBoldFont(item, true);
     }
     qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
-}
-
-QString MainWindow::unixTimeToDate(const QString &unixTime)
-{
-    QDateTime dateTime = QDateTime::fromTime_t(unixTime.toUInt());
-    return dateTime.toString("dd/MM/yyyy H:mm");
-}
-
-QString MainWindow::breakLine(QString& details, const int& maxSize)
-{
-    int i = maxSize;
-    if (details.size()>i) {
-        for (; i<details.size(); i++) {
-            if (details[i]==QChar(',') || details[i]==QChar('-') || details[i]==QChar(' ')) {
-                details.insert(++i,QString("<br>"));
-                break;
-            }
-        }
-    }
-    return details;
-}
-
-QColor MainWindow::getColorForStatus(const QString& status)
-{
-//    Change the status' colour according to the status itself
-    QColor color;
-    color = Qt::black;
-
-    if(status=="succeeded")
-    {
-        color = Qt::darkGreen;
-    }
-    else if(status=="blocked")
-    {
-        color = Qt::gray;
-    }
-    else if(status=="scheduled"||status=="building")
-    {
-        color = Qt::darkBlue;
-    }
-    else if(status=="disabled")
-    {
-        color = Qt::gray;
-    }
-    else if(status=="failed")
-    {
-        color = Qt::red;
-    }
-    else if(status=="unresolvable")
-    {
-        color = Qt::darkRed;
-    }
-    else if(status.contains("unknown")||status=="404")
-    {
-        color = Qt::red;
-    }
-
-    return color;
-}
-
-void MainWindow::setItemBoldFont(QTreeWidgetItem *item, bool bold)
-{
-    QFont font = item->font(0);
-    font.setBold(bold);
-    for (int i=0; i<5; i++) {
-        item->setFont(i, font);
-    }
 }
 
 void MainWindow::insertRequest(OBSRequest* obsRequest)

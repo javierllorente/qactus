@@ -30,6 +30,7 @@
 #include <QStringListModel>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
+#include "utils.h"
 
 namespace Ui {
     class MainWindow;
@@ -96,10 +97,6 @@ private:
     QMessageBox *errorBox;
 
     void insertDroppedPackage(OBSResult *result);
-    QString unixTimeToDate(const QString &unixTime);
-    QString breakLine(QString&, const int&);
-    QColor getColorForStatus(const QString&);
-    void setItemBoldFont(QTreeWidgetItem* item, bool bold);
     void closeEvent(QCloseEvent*);
     bool event(QEvent *event);
 
