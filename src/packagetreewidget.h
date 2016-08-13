@@ -25,8 +25,11 @@
 #include <QTreeWidget>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QTreeWidgetItem>
 #include "obs.h"
+#include "obsresult.h"
 #include <QDebug>
+#include "utils.h"
 
 class PackageTreeWidget : public QTreeWidget
 {
@@ -43,6 +46,9 @@ protected:
 
 signals:
     void obsUrlDropped(const QString &project, const QString &package);
+
+public slots:
+    void insertDroppedPackage(OBSResult *result);
 
 };
 

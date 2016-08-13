@@ -421,31 +421,6 @@ void MainWindow::addRow()
     delete rowEditor;
 }
 
-void MainWindow::insertDroppedPackage(OBSResult *result)
-{
-    qDebug() << "MainWindow::insertDroppedPackage()";
-
-    QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
-    item->setText(0, result->getProject());
-    item->setText(1, result->getPackage()->getName());
-    item->setText(2, result->getRepository());
-    item->setText(3, result->getArch());
-    QString status = result->getPackage()->getStatus();
-    item->setText(4, status);
-    if (!result->getPackage()->getDetails().isEmpty()) {
-        QString details = result->getPackage()->getDetails();
-        details = Utils::breakLine(details, 250);
-        item->setToolTip(4, details);
-    }
-    item->setForeground(4, Utils::getColorForStatus(status));
-
-    ui->treePackages->addTopLevelItem(item);
-    int index = ui->treePackages->indexOfTopLevelItem(item);
-    qDebug() << "Build" << item->text(1)
-             << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
-             << "added at" << index;
-}
-
 void MainWindow::finishedResultListSlot()
 {
    qDebug() << "MainWindow::finishedResultListSlot()";
@@ -638,7 +613,7 @@ void MainWindow::insertResult(OBSResult *obsResult)
 
     if (ui->tabWidget->currentIndex()==1) {
         // Monitor tab
-        insertDroppedPackage(obsResult);
+        ui->treePackages->insertDroppedPackage(obsResult);
 
     } else {
         QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());

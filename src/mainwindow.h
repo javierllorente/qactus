@@ -96,7 +96,6 @@ private:
     void readSettingsTimer();
     QMessageBox *errorBox;
 
-    void insertDroppedPackage(OBSResult *result);
     void closeEvent(QCloseEvent*);
     bool event(QEvent *event);
 

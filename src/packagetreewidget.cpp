@@ -62,3 +62,28 @@ void PackageTreeWidget::dropEvent(QDropEvent *event)
     }
 }
 
+void PackageTreeWidget::insertDroppedPackage(OBSResult *result)
+{
+    qDebug() << "PackageTreeWidget::insertDroppedPackage()";
+
+    QTreeWidgetItem *item = new QTreeWidgetItem(this);
+    item->setText(0, result->getProject());
+    item->setText(1, result->getPackage()->getName());
+    item->setText(2, result->getRepository());
+    item->setText(3, result->getArch());
+    QString status = result->getPackage()->getStatus();
+    item->setText(4, status);
+    if (!result->getPackage()->getDetails().isEmpty()) {
+        QString details = result->getPackage()->getDetails();
+        details = Utils::breakLine(details, 250);
+        item->setToolTip(4, details);
+    }
+    item->setForeground(4, Utils::getColorForStatus(status));
+
+    addTopLevelItem(item);
+    int index = indexOfTopLevelItem(item);
+    qDebug() << "Build" << item->text(1)
+             << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
+             << "added at" << index;
+}
+
