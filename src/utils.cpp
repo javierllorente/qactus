@@ -26,6 +26,20 @@ QString Utils::unixTimeToDate(const QString &unixTime)
     return dateTime.toString("dd/MM/yyyy H:mm");
 }
 
+QString Utils::fileSizeHuman(float fileSize)
+{
+    QStringList unitList = (QStringList() << "Bytes" << "KB" << "MB" << "GB" << "TB");
+    QStringListIterator i(unitList);
+    QString unit = i.next();
+    int precision = (fileSize < 1024) ? 0 : 2;
+    while (fileSize >= 1024 && i.hasNext()) {
+        unit = i.next();
+        fileSize /= 1024;
+    }
+    return QString().setNum(fileSize,'f',precision) + " " + unit;
+}
+
+
 QString Utils::breakLine(QString &details, int maxSize)
 {
     int i = maxSize;

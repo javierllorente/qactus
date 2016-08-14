@@ -598,7 +598,7 @@ void MainWindow::insertFile(OBSFile *obsFile)
     qDebug() << "MainWindow::insertFile()";
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     QStandardItem *itemName = new QStandardItem(obsFile->getName());
-    QStandardItem *itemSize = new QStandardItem(obsFile->getSize());
+    QStandardItem *itemSize = new QStandardItem(Utils::fileSizeHuman(obsFile->getSize().toInt()));
     QString lastModified = Utils::unixTimeToDate(obsFile->getLastModified());
     QStandardItem *itemLastModified = new QStandardItem(lastModified);
     QList<QStandardItem*> items;

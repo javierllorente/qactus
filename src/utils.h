@@ -30,6 +30,7 @@ class Utils
 {
 public:
     static QString unixTimeToDate(const QString &unixTime);
+    static QString fileSizeHuman(float fileSize);
     static QString breakLine(QString &details, int maxSize);
     static QColor getColorForStatus(const QString &status);
     static void setItemBoldFont(QTreeWidgetItem *item, bool bold);
