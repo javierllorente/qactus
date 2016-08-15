@@ -76,7 +76,11 @@ QColor Utils::getColorForStatus(const QString &status)
     {
         color = Qt::gray;
     }
-    else if (status=="failed")
+    else if (status=="excluded")
+    {
+        color.setRgb(0, 102, 153);
+    }
+    else if (status=="failed"||status=="broken")
     {
         color = Qt::red;
     }
