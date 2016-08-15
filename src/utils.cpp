@@ -62,31 +62,38 @@ QColor Utils::getColorForStatus(const QString &status)
 
     if (status=="succeeded")
     {
-        color = Qt::darkGreen;
+        color.setRgb(110, 185, 39);
     }
     else if (status=="blocked")
     {
-        color = Qt::gray;
+        color.setRgb(187, 187, 187); // colour should be white and bg should be rgb(187, 187, 187)
     }
-    else if (status=="scheduled"||status=="building")
+    else if (status=="scheduled") {
+        color.setRgb(17, 17, 221);//  bg should be rgb(187, 187, 187)
+    }
+    else if (status=="building")
     {
-        color = Qt::darkBlue;
+        color.setRgb(0, 0, 255); // bg should be rgb(187, 187, 187)
     }
     else if (status=="disabled")
     {
-        color = Qt::gray;
+        color.setRgb(187, 187, 187);
     }
     else if (status=="excluded")
     {
         color.setRgb(0, 102, 153);
     }
-    else if (status=="failed"||status=="broken")
+    else if (status=="failed")
     {
-        color = Qt::red;
+        color.setRgb(255, 0, 0);
+    }    
+    else if(status=="broken") {
+
+        color.setRgb(238, 0, 0);
     }
     else if (status=="unresolvable")
     {
-        color = Qt::darkRed;
+        color.setRgb(204, 0, 0);
     }
     else if (status.contains("unknown")||status=="404")
     {
