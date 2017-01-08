@@ -5,3 +5,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += src
+
+RESOURCES += \
+    application.qrc
