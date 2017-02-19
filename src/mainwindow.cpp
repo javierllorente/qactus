@@ -281,6 +281,8 @@ void MainWindow::filterProjects(const QString &item)
 {
     proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
     proxyModelProjects->setFilterKeyColumn(0);
+    QModelIndex currentIndex = ui->treeProjects->currentIndex();
+    ui->treeProjects->scrollTo(currentIndex, QAbstractItemView::PositionAtTop);
 }
 
 void MainWindow::filterBuilds(const QString &item)
