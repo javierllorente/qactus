@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013, 2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ public:
     ~Configure();
 
     void setApiUrl(QString apiUrlStr);
-    void startTimer(const int&);
+    void setTimerInterval(int);
     void setTimerValue(const int&);
     int getTimerValue();
     bool isTimerActive();
@@ -65,6 +65,7 @@ signals:
     void apiChanged();
 
 private slots:
+    void startTimer(bool authenticated);
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
 
@@ -72,6 +73,7 @@ private:
     Ui::Configure *ui;
     OBS *mOBS;
     void setOBSApiUrl(const QString &apiUrlStr);
+    int interval;
     QTimer *timer;
     void createTimer();
     void proxySettingsSetup();

@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -57,13 +57,15 @@ void Configure::setApiUrl(QString apiUrlStr)
 
 void Configure::createTimer()
 {
+    interval = 0;
     timer = new QTimer(this);
 
     ui->spinBoxTimer->setMinimum(5);
     ui->spinBoxTimer->setMaximum(1440);
     ui->spinBoxTimer->setDisabled(true);
 
-    connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));    
+    connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));
+    connect(mOBS, SIGNAL(isAuthenticated(bool)), this, SLOT(startTimer(bool)));
 }
 
 void Configure::proxySettingsSetup()
@@ -77,14 +79,25 @@ void Configure::proxySettingsSetup()
     ui->comboBoxProxyType->addItem("Socks 5");
     ui->comboBoxProxyType->addItem("HTTP");
 }
-void Configure::startTimer(const int& interval)
+
+void Configure::setTimerInterval(int interval)
 {
-    if (interval >= 5) {
-        qDebug() << "startTimer()";
-//      Convert mins into msecs and start timer
+    qDebug() << "Configure::setTimerInterval()" << interval;
+        if (interval >= 5) {
+//            Convert mins into msecs
+            this->interval = interval;
+        } else {
+            qDebug() << "Error starting timer: Wrong timer interval (smaller than 5)";
+        }
+}
+
+void Configure::startTimer(bool authenticated)
+{
+    if (authenticated && ui->checkBoxTimer->isChecked() && !timer->isActive()) {
+        qDebug() << "Configure::startTimer()" << interval;
         timer->start(interval*60000);
     } else {
-        qDebug() << "Error starting timer: Wrong timer interval (smaller than 5)";
+        timer->stop();
     }
 }
 
@@ -98,7 +111,8 @@ void Configure::on_buttonBox_accepted()
 
     if (ui->checkBoxTimer->isChecked()) {
 //      Start the timer if the checkbox is checked
-        startTimer(ui->spinBoxTimer->value());
+        setTimerInterval(ui->spinBoxTimer->value());
+        startTimer(mOBS->isAuthenticated());
         qDebug() << "Timer set to" << ui->spinBoxTimer->value() << "minutes";
 
     } else if (timer->isActive()) {
@@ -149,7 +163,7 @@ int Configure::getTimerValue()
 void Configure::setTimerValue(const int& value)
 {
     ui->spinBoxTimer->setValue(value);
-    qDebug() << "Timer value:" << ui->spinBoxTimer->value() << "minutes";
+    qDebug() << "Configure::setTimerValue()" << ui->spinBoxTimer->value() << "minutes";
 }
 
 void Configure::setCheckedTimerCheckbox(bool check)
