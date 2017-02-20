@@ -199,6 +199,7 @@ void MainWindow::apiChanged()
 
 void MainWindow::isAuthenticated(bool authenticated)
 {
+    action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         setupBrowser();
     } else {
@@ -226,6 +227,7 @@ void MainWindow::createToolbar()
     action_Refresh->setIcon(QIcon(":/icons/view-refresh.png"));
     action_Refresh->setStatusTip(tr("Refresh view"));
     action_Refresh->setShortcut(QKeySequence::Refresh);
+    action_Refresh->setEnabled(false);
     ui->toolBar->addAction(action_Refresh);
     connect(action_Refresh, SIGNAL(triggered()), this, SLOT(refreshView()));
 
@@ -775,7 +777,7 @@ void MainWindow::about()
                        "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a>" +
                        "<div align=\"left\">" +
                           "<p>" +
-                          "&copy; 2010-2016 Javier Llorente (Main developer)<br>"
+                          "&copy; 2010-2017 Javier Llorente (Main developer)<br>"
                           "&copy; 2010-2011 Sivan Greenberg (Former contributor)  &nbsp; <br><br>"
                           + tr("Icons by the Oxygen Team") + "<br>"
                           + tr("Tray icon by the Open Build Service") + /*"<br>"*/
@@ -933,12 +935,12 @@ void MainWindow::readSettingsTimer()
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("Timer");
     if (settings.value("Active").toBool()) {
-        qDebug() << "Timer Active = true";
+        qDebug() << "MainWindow::readSettingsTimer() Timer Active = true";
         configureDialog->setCheckedTimerCheckbox(true);
-        qDebug() << "Interval:" << settings.value("Value").toString() << "minutes";
-        configureDialog->startTimer(settings.value("Value").toInt());
+        qDebug() << "MainWindow::readSettingsTimer() Interval:" << settings.value("Value").toString() << "minutes";
+        configureDialog->setTimerInterval(settings.value("Value").toInt());
     } else {
-        qDebug() << "Timer Active = false";
+        qDebug() << "MainWindow::readSettingsTimer() Timer Active = false";
         configureDialog->setTimerValue(settings.value("Value").toInt());
     }
     settings.endGroup();
