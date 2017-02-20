@@ -139,34 +139,23 @@ void OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
 
 void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
 {
-    qDebug() << "OBSAccess::provideAuthentication()";
+    qDebug() << "OBSAccess::provideAuthentication() for" << reply->request().url().toString();
     static QString prevPassword = "";
     static QString prevUsername = "";
 //    qDebug() << reply->readAll();
 
-    if (reply->error()!=QNetworkReply::NoError) {
-            qDebug() << "Request failed!" << reply->errorString();
-//            statusBar()->showMessage(tr("Connection failed"), 0);
-    } else {
-        if ((curPassword != prevPassword) || (curUsername != prevUsername)) {
-            prevPassword = curPassword;
-            prevUsername = curUsername;
-            ator->setUser(curUsername);
-            ator->setPassword(curPassword);
-//            statusBar()->showMessage(tr("Authenticating..."), 5000);
-        } else {
-            qDebug() << "Authentication failed";
-            prevPassword = "";
-            prevUsername = "";
-            authenticated = false;
-            emit isAuthenticated(authenticated);
-        }
-    }
 
-    if (reply->error()==QNetworkReply::NoError) {
-        qDebug() << "User is authenticated";
-        authenticated = true;
-        emit isAuthenticated(authenticated);
+    if ((curPassword != prevPassword) || (curUsername != prevUsername)) {
+        prevPassword = curPassword;
+        prevUsername = curUsername;
+        ator->setUser(curUsername);
+        ator->setPassword(curPassword);;
+        //            statusBar()->showMessage(tr("Authenticating..."), 5000);
+    } else {
+        prevPassword = "";
+        prevUsername = "";
+        //            authenticated = false;
+        //            emit isAuthenticated(authenticated);
     }
 }
 
@@ -177,18 +166,24 @@ bool OBSAccess::isAuthenticated()
 
 void OBSAccess::replyFinished(QNetworkReply *reply)
 {
-    qDebug() << "OBSAccess::replyFinished()";
-
     // QNetworkReply is a sequential-access QIODevice, which means that
     // once data is read from the object, it no longer kept by the device.
     // It is therefore the application's responsibility to keep this data if it needs to.
     // See http://doc.qt.nokia.com/latest/qnetworkreply.html for more info
 
     QString data = QString::fromUtf8(reply->readAll());
-    qDebug() << "URL:" << reply->url();
+    qDebug() << "OBSAccess::replyFinished()" << reply->url().toString();
     int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug() << "HTTP status code:" << httpStatusCode;
+    qDebug() << "OBSAccess::replyFinished() HTTP status code:" << httpStatusCode;
 //    qDebug() << "Network Reply: " << data;
+
+    if (httpStatusCode==302) {
+        authenticated = true;
+        emit isAuthenticated(authenticated);
+    } else if (httpStatusCode==401) {
+        authenticated = false;
+        emit isAuthenticated(authenticated);
+    }
 
     /* Set package row always (error/no error) if property is valid.
      * Needed for inserting the build status
@@ -202,7 +197,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     switch (reply->error()) {
 
     case QNetworkReply::NoError:
-        qDebug() << "Request succeeded!";
+        qDebug() << "OBSAccess::replyFinished() Request succeeded! Status code:" << httpStatusCode;
         if(data.startsWith("Index")) {
             // Don't process diffs
             requestDiff = data;
@@ -251,11 +246,11 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
         break;
 
     case QNetworkReply::ContentAccessDenied: // 401
-        qDebug() << "Access denied!";
+        qDebug() << "OBSAccess::replyFinished() Access denied!";
         break;
 
     default: // Other errors
-        qDebug() << "Request failed! Error:" << reply->errorString();
+        qDebug() << "OBSAccess::replyFinished() Request failed! Error:" << reply->errorString();
         emit networkError(reply->errorString());
         break;
     }
@@ -278,12 +273,12 @@ void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
             errorString += ", ";
             errorString = sslError.errorString();
             if (sslError.error() == QSslError::SelfSignedCertificateInChain) {
-                qDebug() << "Self signed certificate!";
+                qDebug() << "OBSAccess::onSslErrors() Self signed certificate!";
                 emit selfSignedCertificate(reply);
             }
         }
     }
-    qDebug() << "SSL Errors:" << errorString;
+    qDebug() << "OBSAccess::onSslErrors() SSL Errors:" << errorString;
 
     if (list.count() == 1) {
         message=tr("An SSL error has occured: %1");
@@ -291,5 +286,5 @@ void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
         message=list.count()+tr(" SSL errors have occured: %1");
     }
 
-   qDebug() << "onSslErrors() url:" << reply->url() << "row:" << reply->property("row").toInt();
+   qDebug() << "OBSAccess::onSslErrors() url:" << reply->url() << "row:" << reply->property("row").toInt();
 }
