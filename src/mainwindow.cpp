@@ -113,7 +113,8 @@ void MainWindow::readPassword()
     } else {
         qDebug() << "Password restored successfully";
         obs->setCredentials(job.key(), pw);
-        statusBar()->showMessage(tr("Logging in..."), 0);
+        emit updateStatusBar(tr("Logging in..."), false);
+
         obs->login();
     }
 }
@@ -250,7 +251,7 @@ void MainWindow::createToolbar()
 void MainWindow::setupBrowser()
 {
     qDebug() << "MainWindow::setupBrowser()";
-    statusBar()->showMessage(tr("Getting projects..."), 5000);
+    emit updateStatusBar(tr("Getting projects..."), false);
     action_Add->setEnabled(false);
     action_Remove->setEnabled(false);
     action_MarkRead->setEnabled(false);
@@ -317,12 +318,14 @@ void MainWindow::getPackages(QModelIndex index)
 {
     QString project = index.data().toString();
     qDebug() << "MainWindow::getPackages()" << project;
+    emit updateStatusBar(tr("Getting packages..."), false);
     obs->getPackages(project);
 }
 
 void MainWindow::getPackageFiles(QModelIndex index)
 {
     qDebug() << "MainWindow::getPackageFiles()";
+    emit updateStatusBar(tr("Getting package files.."), false);
 
     QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     sourceModelFiles = new QStandardItemModel(ui->treeFiles);
@@ -336,7 +339,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
     QString currentProject = ui->treeProjects->currentIndex().data().toString();
     QString currentPackage = index.data().toString();
     obs->getFiles(currentProject, currentPackage);
-    statusBar()->showMessage(tr("Getting package data..."), 5000);
+    emit updateStatusBar(tr("Getting package data..."), false);
 
     getBuildResults();
 }
@@ -344,6 +347,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
 void MainWindow::getBuildResults()
 {
     qDebug() << "MainWindow::getBuildResults()";
+       emit updateStatusBar(tr("Getting build results..."), false);
 
     QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
     sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
@@ -428,7 +432,7 @@ void MainWindow::addRow()
 void MainWindow::finishedResultListSlot()
 {
    qDebug() << "MainWindow::finishedResultListSlot()";
-   statusBar()->showMessage(tr("Done"), 0);
+   emit updateStatusBar(tr("Done"), true);
 }
 
 void MainWindow::editRow(QTreeWidgetItem* item, int)
@@ -478,8 +482,9 @@ void MainWindow::removeRow()
 
 void MainWindow::refreshView()
 {
-    qDebug() << "Refreshing view...";
+    qDebug() << "MainWindow::refreshView()";
     int rows = ui->treePackages->topLevelItemCount();
+    emit updateStatusBar(tr("Getting build statuses..."), false);
 
     for (int r=0; r<rows; r++) {
 //        Ignore rows with empty cells and process rows with data
@@ -493,15 +498,13 @@ void MainWindow::refreshView()
             tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(3)));
             tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(1)));
 //            Get build status
-            statusBar()->showMessage(tr("Getting build statuses..."), 5000);
             obs->getBuildStatus(tableStringList, r);
         }
     }
 
 //    Get SRs
-    statusBar()->showMessage(tr("Getting requests..."), 5000);
+    emit updateStatusBar(tr("Getting requests..."), false);
     obs->getRequests();
-    statusBar()->showMessage(tr("Done"), 0);
 }
 
 void MainWindow::markRead(QTreeWidgetItem* item, int)
@@ -573,7 +576,7 @@ void MainWindow::insertProjectList()
     sourceModelProjects->setStringList(reader->getList());
     proxyModelProjects->setSourceModel(sourceModelProjects);
     ui->treeProjects->setModel(proxyModelProjects);
-    statusBar()->showMessage(tr("Done"), 0);
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void MainWindow::insertPackageList()
@@ -595,6 +598,7 @@ void MainWindow::insertPackageList()
         delete sourceModelBuildResults;
         sourceModelBuildResults = NULL;
     }
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void MainWindow::insertFile(OBSFile *obsFile)
@@ -670,10 +674,15 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
         Utils::setItemBoldFont(item, true);
     }
     qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
+
+    if (row == ui->treePackages->topLevelItemCount()-1) {
+        emit updateStatusBar(tr("Done"), true);
+    }
 }
 
 void MainWindow::insertRequest(OBSRequest* obsRequest)
 {
+    qDebug() << "MainWindow::insertRequest()";
     int rows = ui->treeRequests->topLevelItemCount();
     int requests = obs->getRequestCount();
     qDebug() << "Table rows:" << rows+1 << "Total requests:" << requests;
@@ -691,6 +700,10 @@ void MainWindow::insertRequest(OBSRequest* obsRequest)
 
     qDebug() << "Request added:" << obsRequest->getId();
     delete obsRequest;
+
+    if (rows == ui->treeRequests->topLevelItemCount()-1) {
+        emit updateStatusBar(tr("Done"), true);
+    }
 }
 
 void MainWindow::removeRequest(const QString& id)
@@ -707,6 +720,13 @@ void MainWindow::getRequestDescription(QTreeWidgetItem* item, int)
                 + QString::number(ui->treeRequests->indexOfTopLevelItem(item));
     qDebug() << "Request description: " + requestDescription;
     ui->textBrowser->setText(requestDescription);
+}
+
+void MainWindow::updateStatusBarSlot(const QString &message, bool progressBarHidden)
+{
+    qDebug() << "MainWindow::updateStatusBarSlot()";
+    ui->statusbar->showMessage(message);
+    progressBar->setHidden(progressBarHidden);
 }
 
 void MainWindow::pushButton_Login_clicked()
@@ -814,7 +834,16 @@ void MainWindow::createActions()
 
 void MainWindow::createStatusBar()
 {
-    statusBar()->showMessage(tr("Offline"));
+    connect(this, SIGNAL(updateStatusBar(QString,bool)), this, SLOT(updateStatusBarSlot(QString,bool)));
+
+    ui->statusbar->showMessage(tr("Offline"));
+    progressBar = new QProgressBar(ui->statusbar);
+    progressBar->setHidden(true);
+    progressBar->setTextVisible(false);
+    progressBar->setMaximum(0);
+    progressBar->setMaximum(0);
+    progressBar->setMaximumSize(50, ui->statusbar->height());
+    ui->statusbar->addPermanentWidget(progressBar, 10);
 }
 
 void MainWindow::toggleVisibility()

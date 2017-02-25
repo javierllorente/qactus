@@ -30,6 +30,7 @@
 #include <QStringListModel>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
+#include <QProgressBar>
 #include "utils.h"
 
 namespace Ui {
@@ -62,6 +63,7 @@ private:
     OBS *obs;
 
     QToolBar *toolBar;
+    QProgressBar *progressBar;
     void createToolbar();
     QAction *action_Add;
     QAction *action_Remove;
@@ -102,6 +104,9 @@ private:
     Login *loginDialog;
     Configure *configureDialog;
 
+signals:
+    void updateStatusBar(QString message, bool progressBarHidden);
+
 private slots:
     void showNetworkError(const QString &networkError);
     void handleSelfSignedCertificates(QNetworkReply*);
@@ -138,6 +143,7 @@ private slots:
     void insertBuildStatus(OBSPackage*, const int&);
     void insertRequest(OBSRequest*);
     void removeRequest(const QString& id);
+    void updateStatusBarSlot(const QString &message, bool progressBarHidden);
 };
 
 
