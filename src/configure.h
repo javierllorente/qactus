@@ -60,9 +60,12 @@ public:
     QString getProxyUsername() const;
     void setProxyPassword(const QString &proxyPassword);
     QString getProxyPassword() const;
+    bool isIncludeHomeProjects();
+    void setIncludeHomeProjects(bool check);
 
 signals:
     void apiChanged();
+    void includeHomeProjectsChanged();
 
 private slots:
     void startTimer(bool authenticated);
@@ -78,6 +81,7 @@ private:
     void createTimer();
     void proxySettingsSetup();
     QNetworkProxy proxy;
+    bool includeHomeProjects;
 };
 
 #endif // CONFIGURE_H

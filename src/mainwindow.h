@@ -103,6 +103,8 @@ private:
 
     Login *loginDialog;
     Configure *configureDialog;
+    QItemSelectionModel *projectsSelectionModel;
+    QItemSelectionModel *buildsSelectionModel;
 
 signals:
     void updateStatusBar(QString message, bool progressBarHidden);
@@ -116,7 +118,7 @@ private slots:
     void changeRequestState();
     void getPackages(QModelIndex index);
     void getPackageFiles(QModelIndex index);
-    void filterResults(QString item);
+    void filterResults(const QString &item);
     void filterRadioButtonClicked(bool);
     void getRequestDescription(QTreeWidgetItem*, int);
     void addRow();
@@ -144,6 +146,9 @@ private slots:
     void insertRequest(OBSRequest*);
     void removeRequest(const QString& id);
     void updateStatusBarSlot(const QString &message, bool progressBarHidden);
+    void refreshProjectFilter();
+    void projectSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void buildSelectionChanged(const QItemSelection &, const QItemSelection &);
 };
 
 

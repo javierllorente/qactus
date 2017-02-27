@@ -37,6 +37,43 @@
      </property>
      <widget class="QWidget" name="generalPage">
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="2" column="2">
+        <layout class="QVBoxLayout" name="verticalLayoutGeneral">
+         <item>
+          <widget class="QCheckBox" name="checkBoxTimer">
+           <property name="text">
+            <string>Enable timer</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="lineTimer">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="13" column="2">
+        <spacer name="verticalSpacerBrowser">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="0" column="2">
         <layout class="QFormLayout" name="formLayoutApiUrl">
          <property name="verticalSpacing">
@@ -66,6 +103,22 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="1" column="2">
+        <spacer name="verticalSpacerApi">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="3" column="2">
         <layout class="QFormLayout" name="formLayoutTimer">
@@ -97,45 +150,19 @@
          </item>
         </layout>
        </item>
-       <item row="4" column="2">
-        <spacer name="verticalSpacerTimer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="2" column="2">
-        <layout class="QVBoxLayout" name="verticalLayoutGeneral">
+       <item row="7" column="2">
+        <layout class="QVBoxLayout" name="verticalLayoutBrowser">
          <item>
-          <widget class="QCheckBox" name="checkBoxTimer">
+          <widget class="QCheckBox" name="checkBoxHomeProjects">
            <property name="text">
-            <string>Enable timer</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="Line" name="lineTimer">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <string>Include home projects in browser</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="2">
-        <spacer name="verticalSpacerApi">
+       <item row="4" column="2">
+        <spacer name="verticalSpacerTimer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

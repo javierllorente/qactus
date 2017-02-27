@@ -30,10 +30,12 @@ Configure::Configure(QWidget *parent, OBS *obs) :
 
     createTimer();
     connect(timer, SIGNAL(timeout()), parent, SLOT(refreshView()));
+    ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
     proxySettingsSetup();
 
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
     ui->listWidget->setCurrentRow(0);
+
 }
 
 Configure::~Configure()
@@ -122,6 +124,8 @@ void Configure::on_buttonBox_accepted()
 
     toggleProxy(ui->checkBoxProxy->isChecked());
 
+    includeHomeProjects = ui->checkBoxHomeProjects->isChecked();
+    emit includeHomeProjectsChanged();
 }
 
 void Configure::on_buttonBox_rejected()
@@ -143,6 +147,8 @@ void Configure::on_buttonBox_rejected()
         ui->lineEditProxyUsername->setText(proxy.user());
         ui->lineEditProxyPassword->setText(proxy.password());
     }
+
+    ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
 }
 
 void Configure::setOBSApiUrl(const QString &apiUrlStr)
@@ -249,4 +255,14 @@ void Configure::setProxyPassword(const QString &proxyPassword)
 QString Configure::getProxyPassword() const
 {
     return ui->lineEditProxyPassword->text();
+}
+
+bool Configure::isIncludeHomeProjects()
+{
+    return includeHomeProjects;
+}
+
+void Configure::setIncludeHomeProjects(bool check)
+{
+    includeHomeProjects = check;
 }

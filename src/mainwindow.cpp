@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent) :
     loginDialog = new Login(this);
     errorBox = NULL;
     configureDialog = new Configure(this, obs);
+    ui->hSplitterBrowser->setStretchFactor(1, 1);
+    ui->hSplitterBrowser->setStretchFactor(0, 0);
     connect(ui->treeRequests, SIGNAL(customContextMenuRequested(const QPoint&)),this,
             SLOT(showContextMenu(const QPoint&)));
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -251,19 +253,16 @@ void MainWindow::createToolbar()
 void MainWindow::setupBrowser()
 {
     qDebug() << "MainWindow::setupBrowser()";
-    emit updateStatusBar(tr("Getting projects..."), false);
+
     action_Add->setEnabled(false);
     action_Remove->setEnabled(false);
     action_MarkRead->setEnabled(false);
+    ui->lineEditFilter->setFocus();
 
-    connect(ui->treeProjects, SIGNAL(clicked(QModelIndex)), this, SLOT(getPackages(QModelIndex)));
-    connect(ui->treeBuilds, SIGNAL(clicked(QModelIndex)), this, SLOT(getPackageFiles(QModelIndex)));
     connect(ui->lineEditFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
     connect(ui->radioButtonPackages, SIGNAL(clicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
     connect(ui->radioButtonProject, SIGNAL(clicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
-
-    ui->hSplitterBrowser->setStretchFactor(1, 1);
-    ui->hSplitterBrowser->setStretchFactor(0, 0);
+    connect(configureDialog, SIGNAL(includeHomeProjectsChanged()), this, SLOT(refreshProjectFilter()));
 
     sourceModelProjects = new QStringListModel(ui->treeProjects);
     proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
@@ -272,54 +271,102 @@ void MainWindow::setupBrowser()
     sourceModelFiles = NULL;
     sourceModelBuildResults = NULL;
 
+    ui->treeProjects->setModel(proxyModelProjects);
+    projectsSelectionModel = ui->treeProjects->selectionModel();
+    ui->treeBuilds->setModel(proxyModelBuilds);
+    buildsSelectionModel = ui->treeBuilds->selectionModel();
+
+    connect(projectsSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
+            SLOT(projectSelectionChanged(QItemSelection,QItemSelection)));
+    connect(buildsSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
+            SLOT(buildSelectionChanged(QItemSelection,QItemSelection)));
+
     ui->treeProjects->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuilds->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setRootIsDecorated(false);
+
+    emit updateStatusBar(tr("Getting projects..."), false);
     obs->getProjects();
 }
 
 void MainWindow::filterProjects(const QString &item)
 {
-    proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
+    bool homeProjects = configureDialog->isIncludeHomeProjects();
+    QString regExp = !homeProjects ? "^(?!home)(.*" + item + ")" : item;
+    proxyModelProjects->setFilterRegExp(QRegExp(regExp, Qt::CaseInsensitive));
     proxyModelProjects->setFilterKeyColumn(0);
+
     QModelIndex currentIndex = ui->treeProjects->currentIndex();
     ui->treeProjects->scrollTo(currentIndex, QAbstractItemView::PositionAtTop);
 }
 
 void MainWindow::filterBuilds(const QString &item)
 {
-    proxyModelBuilds->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive, QRegExp::FixedString));
+    qDebug() << "MainWindow::filterBuilds()" << item;
+    proxyModelBuilds->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive));
     proxyModelBuilds->setFilterKeyColumn(0);
 }
 
-void MainWindow::filterResults(QString item)
+void MainWindow::filterResults(const QString &item)
 {
+    qDebug() << "MainWindow::filterResults())";
     ui->radioButtonProject->isChecked() ? filterProjects(item) : filterBuilds(item);
+
+    // Delete  treeBuilds' model rows when filter doesn't match a project
+    if (proxyModelProjects->rowCount()==0 && ui->treeBuilds->model()->hasChildren()) {
+        ui->treeBuilds->model()->removeRows(0, ui->treeBuilds->model()->rowCount());
+    }
 }
 
 void MainWindow::filterRadioButtonClicked(bool)
 {
     qDebug() << "MainWindow::filterRadioButtonClicked()";
-    QString projectItem, buildItem;
 
-    if (!ui->lineEditFilter->text().isEmpty() && ui->radioButtonPackages->isChecked()) {
-        buildItem = ui->lineEditFilter->text();
-    } else if (!ui->lineEditFilter->text().isEmpty() && ui->radioButtonProject->isChecked()) {
-        projectItem = ui->lineEditFilter->text();
+    // Clear project filter on radio button click
+    // if there were no matches for the project name
+    if (proxyModelProjects->rowCount()==0 && ui->radioButtonPackages->isChecked()) {
+        filterProjects("");
     }
 
-    filterProjects(projectItem);
-    filterBuilds(buildItem);
+    // Clear line edit text on radio button click
+    // and set focus on line edit
+    ui->lineEditFilter->clear();
+    ui->lineEditFilter->setFocus();
+
+    filterResults(ui->lineEditFilter->text());
+}
+
+void MainWindow::refreshProjectFilter()
+{
+    qDebug() << "MainWindow::refreshProjectFilter()";
+    if (ui->radioButtonProject->isChecked()) {
+        filterProjects(ui->lineEditFilter->text());
+    }
+}
+
+void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
+{
+    qDebug() << "MainWindow::projectSelectionChanged()";
+    getPackages(ui->treeProjects->currentIndex());
+    filterBuilds("");
+}
+
+void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
+{
+    qDebug() << "MainWindow::buildSelectionChanged()";
+    getPackageFiles(ui->treeBuilds->currentIndex());
 }
 
 void MainWindow::getPackages(QModelIndex index)
 {
     QString project = index.data().toString();
     qDebug() << "MainWindow::getPackages()" << project;
-    emit updateStatusBar(tr("Getting packages..."), false);
-    obs->getPackages(project);
+    if (!project.isEmpty()) {
+        emit updateStatusBar(tr("Getting packages..."), false);
+        obs->getPackages(project);
+    }
 }
 
 void MainWindow::getPackageFiles(QModelIndex index)
@@ -347,7 +394,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
 void MainWindow::getBuildResults()
 {
     qDebug() << "MainWindow::getBuildResults()";
-       emit updateStatusBar(tr("Getting build results..."), false);
+    emit updateStatusBar(tr("Getting build results..."), false);
 
     QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
     sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
@@ -915,6 +962,10 @@ void MainWindow::writeSettings()
         }
     }
     settings.endArray();
+
+    settings.beginGroup("Browser");
+    settings.setValue("IncludeHomeProjects", configureDialog->isIncludeHomeProjects());
+    settings.endGroup();
 }
 
 void MainWindow::readSettings()
@@ -943,7 +994,7 @@ void MainWindow::readSettings()
     configureDialog->setApiUrl(settings.value("ApiUrl").toString());
     loginDialog->setUsername(settings.value("Username").toString());
     loginDialog->setAutoLoginEnabled(settings.value("AutoLogin").toBool());
-    settings.endGroup();   
+    settings.endGroup();
 
     int size = settings.beginReadArray("Packages");
     for (int i=0; i<size; ++i)
@@ -957,6 +1008,10 @@ void MainWindow::readSettings()
             ui->treePackages->insertTopLevelItem(i, item);
         }
         settings.endArray();
+
+        settings.beginGroup("Browser");
+        configureDialog->setIncludeHomeProjects(settings.value("IncludeHomeProjects").toBool());
+        settings.endGroup();
 }
 
 void MainWindow::readSettingsTimer()
