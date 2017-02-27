@@ -674,20 +674,22 @@ void MainWindow::insertResult(OBSResult *obsResult)
 
     } else {
         QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
-        QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
-        QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
-        QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
-        itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
+        if (model) {
+            QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
+            QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
+            QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
+            itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
 
-        if (!obsResult->getPackage()->getDetails().isEmpty()) {
-            QString details = obsResult->getPackage()->getDetails();
-            details = Utils::breakLine(details, 250);
-            itemBuildResult->setToolTip(details);
+            if (!obsResult->getPackage()->getDetails().isEmpty()) {
+                QString details = obsResult->getPackage()->getDetails();
+                details = Utils::breakLine(details, 250);
+                itemBuildResult->setToolTip(details);
+            }
+
+            QList<QStandardItem*> items;
+            items << itemRepository << itemArch << itemBuildResult;
+            model->appendRow(items);
         }
-
-        QList<QStandardItem*> items;
-        items << itemRepository << itemArch << itemBuildResult;
-        model->appendRow(items);
         delete obsResult;
     }
 }
