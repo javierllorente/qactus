@@ -652,13 +652,15 @@ void MainWindow::insertFile(OBSFile *obsFile)
 {
     qDebug() << "MainWindow::insertFile()";
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
-    QStandardItem *itemName = new QStandardItem(obsFile->getName());
-    QStandardItem *itemSize = new QStandardItem(Utils::fileSizeHuman(obsFile->getSize().toInt()));
-    QString lastModified = Utils::unixTimeToDate(obsFile->getLastModified());
-    QStandardItem *itemLastModified = new QStandardItem(lastModified);
-    QList<QStandardItem*> items;
-    items << itemName << itemSize << itemLastModified;
-    model->appendRow(items);
+    if (model) {
+        QStandardItem *itemName = new QStandardItem(obsFile->getName());
+        QStandardItem *itemSize = new QStandardItem(Utils::fileSizeHuman(obsFile->getSize().toInt()));
+        QString lastModified = Utils::unixTimeToDate(obsFile->getLastModified());
+        QStandardItem *itemLastModified = new QStandardItem(lastModified);
+        QList<QStandardItem*> items;
+        items << itemName << itemSize << itemLastModified;
+        model->appendRow(items);
+    }
     delete obsFile;
 }
 
@@ -704,26 +706,30 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
     }
 
     QTreeWidgetItem *item = ui->treePackages->topLevelItem(row);
-    QString oldStatus = item->text(4);
-    item->setText(4, status);
-    QString newStatus = item->text(4);
-    item->setToolTip(4, details);
-    item->setForeground(4, Utils::getColorForStatus(status));
+    if (item) {
+        QString oldStatus = item->text(4);
+        item->setText(4, status);
+        QString newStatus = item->text(4);
+        item->setToolTip(4, details);
+        item->setForeground(4, Utils::getColorForStatus(status));
 
-    qDebug() << "Build status" << status << "inserted in" << row
-             << "(Total rows:" << ui->treePackages->topLevelItemCount() << ")";
+        qDebug() << "Build status" << status << "inserted in" << row
+                 << "(Total rows:" << ui->treePackages->topLevelItemCount() << ")";
 
-//    If the old status is not empty and it is different from latest one,
-//    change the tray icon
-    if ((oldStatus != "") && (oldStatus != newStatus)) {
-        qDebug() << "Build status has changed!";
-        trayIcon->notify();
-        Utils::setItemBoldFont(item, true);
-    }
-    qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
+        //    If the old status is not empty and it is different from latest one,
+        //    change the tray icon
+        if ((oldStatus != "") && (oldStatus != newStatus)) {
+            qDebug() << "Build status has changed!";
+            trayIcon->notify();
+            Utils::setItemBoldFont(item, true);
+        }
+        qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
 
-    if (row == ui->treePackages->topLevelItemCount()-1) {
-        emit updateStatusBar(tr("Done"), true);
+        if (row == ui->treePackages->topLevelItemCount()-1) {
+            emit updateStatusBar(tr("Done"), true);
+        }
+    } else {
+        emit updateStatusBar(details, true);
     }
 }
 
