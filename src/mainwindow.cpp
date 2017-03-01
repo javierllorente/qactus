@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createToolbar();
     trayIcon = new TrayIcon(this);
+    m_notify = false;
     createActions();
     createTreePackages();
     createTreeRequests();
@@ -562,9 +563,8 @@ void MainWindow::markRead(QTreeWidgetItem* item, int)
             Utils::setItemBoldFont(item, false);
         }
     }
-    if (trayIcon->hasChangedIcon()) {
-        trayIcon->normal();
-    }
+
+    setNotify(false);
 }
 
 void MainWindow::markAllRead()
@@ -575,9 +575,8 @@ void MainWindow::markAllRead()
             Utils::setItemBoldFont(ui->treePackages->topLevelItem(i), false);
         }
     }
-    if (trayIcon->hasChangedIcon()) {
-        trayIcon->normal();
-    }
+
+    setNotify(false);
 }
 
 void MainWindow::createTreePackages()
@@ -711,7 +710,6 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
     if (item) {
         QString oldStatus = item->text(4);
         item->setText(4, status);
-        QString newStatus = item->text(4);
         item->setToolTip(4, details);
         item->setForeground(4, Utils::getColorForStatus(status));
 
@@ -720,12 +718,9 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
 
         //    If the old status is not empty and it is different from latest one,
         //    change the tray icon
-        if ((oldStatus != "") && (oldStatus != newStatus)) {
-            qDebug() << "Build status has changed!";
-            trayIcon->notify();
+        if (hasBuildStatusChanged(oldStatus, status)) {
             Utils::setItemBoldFont(item, true);
         }
-        qDebug() << "Old status:" << oldStatus << "New status:" << newStatus;
 
         if (row == ui->treePackages->topLevelItemCount()-1) {
             emit updateStatusBar(tr("Done"), true);
@@ -733,6 +728,19 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
     } else {
         emit updateStatusBar(details, true);
     }
+}
+
+bool MainWindow::hasBuildStatusChanged(const QString &oldStatus, const QString &newStatus)
+{
+    qDebug() << "MainWindow::hasBuildStatusChanged()"
+             << "Old status:" << oldStatus << "New status:" << newStatus;
+    bool change = false;
+    if (!oldStatus.isEmpty() && oldStatus != newStatus) {
+        change = true;
+        qDebug() << "MainWindow::hasBuildStatusChanged()" << change;
+        setNotify(change);
+    }
+    return change;
 }
 
 void MainWindow::insertRequest(OBSRequest* obsRequest)
@@ -775,6 +783,15 @@ void MainWindow::getRequestDescription(QTreeWidgetItem* item, int)
                 + QString::number(ui->treeRequests->indexOfTopLevelItem(item));
     qDebug() << "Request description: " + requestDescription;
     ui->textBrowser->setText(requestDescription);
+}
+
+void MainWindow::setNotify(bool notify)
+{
+    qDebug() << "MainWindow::setNotify()" << notify;
+    if (notify != m_notify) {
+        m_notify = notify;
+        emit notifyChanged(notify);
+    }
 }
 
 void MainWindow::updateStatusBarSlot(const QString &message, bool progressBarHidden)
@@ -916,9 +933,7 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason==QSystemTrayIcon::Trigger) {
         toggleVisibility();
-        if (trayIcon->hasChangedIcon()) {
-            trayIcon->normal();
-        }
+        setNotify(false);
     }
 
     qDebug() << "MainWindow::trayIconClicked()";
@@ -1071,9 +1086,7 @@ bool MainWindow::event(QEvent *event)
     switch(event->type()) {
     case QEvent::WindowActivate:
         qDebug() << "Window activated";
-        if (trayIcon->hasChangedIcon()) {
-            trayIcon->normal();
-        }
+        setNotify(false);
         break;
     default:
         break;

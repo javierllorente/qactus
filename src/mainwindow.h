@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2017 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -73,6 +73,7 @@ private:
     QAction *action_aboutQt;
 
     TrayIcon *trayIcon;
+    bool m_notify;
     void createActions();
     QAction *action_About;
     QAction *action_Quit;
@@ -105,9 +106,11 @@ private:
     Configure *configureDialog;
     QItemSelectionModel *projectsSelectionModel;
     QItemSelectionModel *buildsSelectionModel;
+    bool hasBuildStatusChanged(const QString &oldStatus, const QString &newStatus);
 
 signals:
     void updateStatusBar(QString message, bool progressBarHidden);
+    void notifyChanged(bool notify);
 
 private slots:
     void showNetworkError(const QString &networkError);
@@ -121,6 +124,7 @@ private slots:
     void filterResults(const QString &item);
     void filterRadioButtonClicked(bool);
     void getRequestDescription(QTreeWidgetItem*, int);
+    void setNotify(bool notify);
     void addRow();
     void finishedResultListSlot();
     void editRow(QTreeWidgetItem*, int);
