@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -89,6 +89,26 @@ void OBSXmlReader::parseFileList(const QString &data)
     fileListToFile(data);
 }
 
+void OBSXmlReader::parseStatus(const QXmlStreamReader &xml, OBSPackage *obsPackage)
+{
+    qDebug() << "OBSXmlReader::parseStatus()";
+
+    if (xml.name()=="status") {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+
+            if (attrib.value("code").toString() == "unregistered_ichain_user") {
+                qDebug() << "Unregistered username!";
+            } else {
+                obsPackage->setName(attrib.value("package").toString());
+                obsPackage->setStatus(attrib.value("code").toString());
+                qDebug() << "Package:" << obsPackage->getName() << "Status:" << obsPackage->getStatus();
+            }
+        }
+    } // end status
+}
+
+
 void OBSXmlReader::parsePackage(const QString &data)
 {
     QXmlStreamReader xml(data);
@@ -97,21 +117,7 @@ void OBSXmlReader::parsePackage(const QString &data)
     while (!xml.atEnd() && !xml.hasError()) {
 
         xml.readNext();
-
-        if (xml.name()=="status") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-
-                if (attrib.value("code").toString() == "unregistered_ichain_user") {
-                    qDebug() << "Unregistered username!";
-                }
-                else {
-                    obsPackage->setName(attrib.value("package").toString());
-                    obsPackage->setStatus(attrib.value("code").toString());
-                    qDebug() << "Package:" << obsPackage->getName() << "Status:" << obsPackage->getStatus();
-                }
-            }
-        } // end status
+        parseStatus(xml, obsPackage);
 
         if (xml.name()=="details") {
             if (xml.tokenType() != QXmlStreamReader::StartElement) {
@@ -160,6 +166,7 @@ void OBSXmlReader::parseResultList(const QString &data)
     qDebug() << "OBSXmlReader::parseResultList()";
     QXmlStreamReader xml(data);
     OBSResult *obsResult = NULL;
+    obsPackage = new OBSPackage();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -184,12 +191,8 @@ void OBSXmlReader::parseResultList(const QString &data)
                          << obsResult->getState();
             }
 
-            if (xml.name()=="status") {
-                QXmlStreamAttributes attrib = xml.attributes();
-                obsResult->getPackage()->setName(attrib.value("package").toString());
-                obsResult->getPackage()->setStatus(attrib.value("code").toString());
-                qDebug() <<  obsResult->getPackage()->getName() << obsResult->getPackage()->getStatus();
-            }
+            parseStatus(xml, obsPackage);
+            obsResult->setPackage(obsPackage);
 
             if (xml.name()=="details") {
                 xml.readNext();
@@ -206,6 +209,24 @@ void OBSXmlReader::parseResultList(const QString &data)
             emit finishedParsingResultList();
         }
     }
+}
+
+void OBSXmlReader::parseSubmitRequest(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    obsPackage = new OBSPackage();
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseStatus(xml, obsPackage);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingSR(obsPackage);
 }
 
 void OBSXmlReader::parseRevisionList(const QString &data)
