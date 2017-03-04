@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -122,19 +122,22 @@ void OBSAccess::request(const QString &urlStr, const int &row)
     reply->setProperty("row", row);
 }
 
-void OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
+QNetworkReply *OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(urlStr));
     qDebug() << "User-Agent:" << userAgent;
     request.setRawHeader("User-Agent", userAgent.toLatin1());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    manager->post(request, data);
+    QNetworkReply *reply = manager->post(request, data);
 
-//    Make it a synchronous call
-    QEventLoop *loop = new QEventLoop;
-    connect(manager, SIGNAL(finished(QNetworkReply *)),loop, SLOT(quit()));
-    loop->exec();
+    return reply;
+}
+
+void OBSAccess::changeSubmitRequest(const QString &urlStr, const QByteArray &data)
+{
+    QNetworkReply *reply = postRequest(urlStr, data);
+    reply->setProperty("reqtype", OBSAccess::SubmitRequest);
 }
 
 void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
@@ -198,11 +201,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
 
     case QNetworkReply::NoError:
         qDebug() << "OBSAccess::replyFinished() Request succeeded! Status code:" << httpStatusCode;
-        if(data.startsWith("Index")) {
-            // Don't process diffs
-            requestDiff = data;
-            return;
-        }
+
         if (reply->property("reqtype").isValid()) {
             QString reqType = "RequestType";
 
@@ -232,11 +231,21 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 qDebug() << reqType << "BuildStatusList";
                 xmlReader->parseResultList(data);
                 break;
+
+            case OBSAccess::SubmitRequest:
+                qDebug() << reqType << "SubmitRequest";
+                xmlReader->parseSubmitRequest(data);
+                break;
+
+            case OBSAccess::SRDiff:
+                qDebug() << reqType << "SRDiff";
+                emit srDiffFetched(data);
+                break;
             }
             return;
         }
         xmlReader->addData(data);
-        break;
+        break; // end of case QNetworkReply::NoError
 
     case QNetworkReply::ContentNotFoundError: // 404
         // Package/Project not found
@@ -258,9 +267,10 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-QString OBSAccess::getRequestDiff()
+void OBSAccess::getSRDiff(const QString &urlStr)
 {
-    return requestDiff;
+    QNetworkReply *reply = postRequest(urlStr, "");
+    reply->setProperty("reqtype", OBSAccess::SRDiff);
 }
 
 void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)

@@ -153,6 +153,7 @@ private slots:
     void refreshProjectFilter();
     void projectSelectionChanged(const QItemSelection &, const QItemSelection &);
     void buildSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void srStatusSlot(const QString &status);
 };
 
 

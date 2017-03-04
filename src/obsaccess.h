@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -44,23 +44,24 @@ public:
     bool isAuthenticated();
     QString getUsername();
     void request(const QString &urlStr);
+    QNetworkReply *postRequest(const QString &urlStr, const QByteArray &data);
     void getProjects(const QString &urlStr);
     void getProjectMetadata(const QString &urlStr);
     void getPackages(const QString &urlStr);
     void getFiles(const QString &urlStr);
     void getAllBuildStatus(const QString &urlStr);
+    void changeSubmitRequest(const QString &urlStr, const QByteArray &data);
     void request(const QString &urlStr, const int &row);
-
-    QString getRequestDiff();
+    void getSRDiff(const QString &urlStr);
 
 signals:
     void isAuthenticated(bool authenticated);
     void selfSignedCertificate(QNetworkReply *reply);
     void networkError(const QString &error);
+    void srDiffFetched(const QString &diff);
 
 public slots:
     void setCredentials(const QString&, const QString&);
-    void postRequest(const QString &urlStr, const QByteArray &data);
 
 private slots:
     void provideAuthentication(QNetworkReply* reply, QAuthenticator* ator);
@@ -82,9 +83,16 @@ private:
     QString curUsername;
     QString curPassword;
     QNetworkReply *browseRequest(const QString &urlStr);
-    enum RequestType { ProjectList, ProjectMetadata, PackageList, FileList, BuildStatusList };
+    enum RequestType {
+        ProjectList,
+        ProjectMetadata,
+        PackageList,
+        FileList,
+        BuildStatusList,
+        SubmitRequest,
+        SRDiff
+    };
     static const QString userAgent;
-    QString requestDiff;
     bool authenticated;
     OBSXmlReader *xmlReader;
 };

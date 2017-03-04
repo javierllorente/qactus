@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2017 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -38,28 +38,27 @@ public:
     QString getApiUrl() const;
     void request(const QString& urlStr);
     void request(const QString &urlStr, const int &row);
-    void postRequest(const QString &urlStr, const QByteArray &data);
     bool isAuthenticated();
     void login();
     void getBuildStatus(const QStringList &stringList, const int &row);
     void getRevisions(const QString &project, const QString &package);
     void getRequests();
     int getRequestCount();
-    QString acceptRequest(const QString &id, const QString &comments);
-    QString declineRequest(const QString &id, const QString &comments);
-    QString getRequestDiff(const QString &source);
+    void getRequestDiff(const QString &source);
     void getProjects();
     void getPackages(const QString &project);
     void getProjectMetadata(const QString &project);
     void getFiles(const QString &project, const QString &package);
     QStringList getRepositoryArchs(const QString &repository);
     QStringList readXmlFile(const QString &xmlFile);
+    void changeSubmitRequest(const QString &urlStr, const QByteArray &data);
     OBSXmlReader* getXmlReader();   
 
 private:
     OBSAccess *obsAccess;
     OBSXmlReader *xmlReader;
     QString apiUrl;
+    void postRequest(const QString &urlStr, const QByteArray &data);
 
 signals:
     void isAuthenticated(bool);
@@ -76,9 +75,13 @@ signals:
     void packageListIsReady();
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);
+    void srStatus(const QString &);
+    void srDiffFetched(const QString &);
 
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);
+    void changeSubmitRequestSlot(const QString &id, const QString &comments, bool accepted);
+    void srChangeResult(OBSPackage *obsPackage);
 };
 
 #endif // OBS_H

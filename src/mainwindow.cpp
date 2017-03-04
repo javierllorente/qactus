@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(insertRequest(OBSRequest*)));
     connect(obs, SIGNAL(removeRequest(const QString&)),
             this, SLOT(removeRequest(const QString&)));
+    connect(obs, SIGNAL(srStatus(QString)), this, SLOT(srStatusSlot(QString)));
 
     readSettings();
     readSettingsTimer();
@@ -444,19 +445,22 @@ void MainWindow::changeRequestState()
         QProgressDialog progress(tr("Getting diff..."), 0, 0, 0, this);
         progress.setWindowModality(Qt::WindowModal);
         progress.show();
-        QString diff = obs->getRequestDiff(item->text(2));
-        reqStateEditor->setDiff(diff);
-        qDebug() << "diff";
-        qDebug() << diff;
+        obs->getRequestDiff(item->text(2));
     } else {
         reqStateEditor->setDiff(item->text(5) + " " + item->text(3));
     }
 
     reqStateEditor->exec();
-    if (reqStateEditor->getResult()=="ok") {
+    delete reqStateEditor;
+}
+
+void MainWindow::srStatusSlot(const QString &status)
+{
+    qDebug() << "MainWindow::srStatusSlot()";
+    if (status=="ok") {
+        QTreeWidgetItem *item = ui->treeRequests->currentItem();
         item->setHidden(true);
     }
-    delete reqStateEditor;
 }
 
 void MainWindow::addRow()

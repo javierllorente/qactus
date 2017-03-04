@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2017 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +29,10 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs) :
     ui->setupUi(this);
     ui->commentsTextBrowser->setFocus();
     ui->diffTextBrowser->setFocusPolicy(Qt::NoFocus);
+
+    connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), mOBS, SLOT(changeSubmitRequestSlot(QString,QString,bool)));
+    connect(mOBS, SIGNAL(srStatus(QString)), this, SLOT(srStatusSlot(QString)));
+    connect(mOBS, SIGNAL(srDiffFetched(QString)), this, SLOT(srDiffFetchedSlot(QString)));
 }
 
 RequestStateEditor::~RequestStateEditor()
@@ -74,13 +78,8 @@ void RequestStateEditor::on_acceptPushButton_clicked()
     QProgressDialog progress(tr("Accepting request..."), 0, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    result = mOBS->acceptRequest(id, ui->commentsTextBrowser->toPlainText());
-    if (result=="ok") {
-        close();
-    } else {
-        QMessageBox::critical(this, tr("Error accepting request!"), result, QMessageBox::Ok );
-    }
-    qDebug() << "Accepting result:" << result;
+
+    emit changeSubmitRequest(id, ui->commentsTextBrowser->toPlainText(), true);
 }
 
 void RequestStateEditor::on_declinePushButton_clicked()
@@ -89,16 +88,23 @@ void RequestStateEditor::on_declinePushButton_clicked()
     QProgressDialog progress(tr("Declining request..."), 0, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    result = mOBS->declineRequest(id, ui->commentsTextBrowser->toPlainText());
-    if (result=="ok") {
-        close();
-    } else {
-        QMessageBox::critical(this, tr("Error declining request!"), result, QMessageBox::Ok );
-    }
-    qDebug() << "Declining result:" << result;
+
+    emit changeSubmitRequest(id, ui->commentsTextBrowser->toPlainText(), false);
 }
 
-QString RequestStateEditor::getResult()
+void RequestStateEditor::srStatusSlot(const QString &status)
 {
-    return result;
+   qDebug() << "RequestStateEditor::srStatusSlot()" << status;
+   QString errorStr = tr("Error changing SR!");
+   if (status == "ok") {
+       close();
+   } else {
+       QMessageBox::critical(this, errorStr, status, QMessageBox::Ok);
+   }
+}
+
+void RequestStateEditor::srDiffFetchedSlot(const QString &diff)
+{
+    qDebug() << "RequestStateEditor::srDiffFetchedSlot()\n" << diff;
+    setDiff(diff);
 }

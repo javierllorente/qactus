@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2017 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -54,6 +54,10 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingFile(OBSFile*)),
             this, SIGNAL(finishedParsingFile(OBSFile*)));
+    connect(xmlReader, SIGNAL(finishedParsingSR(OBSPackage *)),
+            this, SLOT(srChangeResult(OBSPackage *)));
+    connect(obsAccess, SIGNAL(srDiffFetched(QString)),
+            this, SIGNAL(srDiffFetched(QString)));
 }
 
 void OBS::setCredentials(const QString &username, const QString &password)
@@ -139,27 +143,29 @@ int OBS::getRequestCount()
     return xmlReader->getRequestNumber();
 }
 
-QString OBS::acceptRequest(const QString &id, const QString &comments)
+void OBS::changeSubmitRequestSlot(const QString &id, const QString &comments, bool accepted)
 {
+    qDebug() << "OBS::changeSubmitRequest() id:" << id << " comments:" << comments << " accept:" << accepted;
+    QString newState = accepted ? "accepted" : "declined";
+    QString urlStr = QString("%1/request/%2?cmd=changestate&newstate=%3").arg(apiUrl, id, newState);
     QByteArray data;
     data.append(comments);
-    postRequest(apiUrl + "/request/" + id + "?cmd=changestate&newstate=accepted", data);
-    return xmlReader->getPackage()->getStatus();
+    changeSubmitRequest(urlStr, data);
 }
 
-QString OBS::declineRequest(const QString &id, const QString &comments)
+void OBS::srChangeResult(OBSPackage *obsPackage)
 {
-    QByteArray data;
-    data.append(comments);
-    postRequest(apiUrl + "/request/" + id + "?cmd=changestate&newstate=declined", data);
-    return xmlReader->getPackage()->getStatus();
+    QString status = obsPackage->getStatus();
+    delete obsPackage;
+    emit srStatus(status);
 }
 
-QString OBS::getRequestDiff(const QString &source)
+void OBS::getRequestDiff(const QString &source)
 {
-    postRequest(apiUrl + "/source/" + source +
-                "?unified=1&tarlimit=0&cmd=diff&filelimit=0&expand=1", "");
-    return obsAccess->getRequestDiff();
+    qDebug() << "OBS::getRequestDiff()";
+    QString urlStr = QString("%1/source/%2?unified=1&tarlimit=0&cmd=diff&filelimit=0&expand=1")
+            .arg(apiUrl, source);
+    obsAccess->getSRDiff(urlStr);
 }
 
 void OBS::getProjects()
@@ -190,6 +196,11 @@ QStringList OBS::getRepositoryArchs(const QString &repository)
 {
     xmlReader->getRepositoryArchs(repository);
     return xmlReader->getList();
+}
+
+void OBS::changeSubmitRequest(const QString &urlStr, const QByteArray &data)
+{
+    obsAccess->changeSubmitRequest(urlStr, data);
 }
 
 QStringList OBS::readXmlFile(const QString &xmlFile)
