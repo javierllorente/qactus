@@ -24,7 +24,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QTreeWidgetItem>
 #include <QtWidgets/QSystemTrayIcon>
-#include <qt5keychain/keychain.h>
 #include <QMessageBox>
 #include <QNetworkReply>
 #include <QStringListModel>
@@ -32,6 +31,7 @@
 #include <QStandardItemModel>
 #include <QProgressBar>
 #include "utils.h"
+#include "credentials.h"
 
 namespace Ui {
     class MainWindow;
@@ -60,6 +60,7 @@ protected:
 private:
     Ui::MainWindow *ui;
 
+    Credentials *credentials;
     OBS *obs;
 
     QToolBar *toolBar;
@@ -79,7 +80,6 @@ private:
     QAction *action_Quit;
     QAction *action_Restore;
 
-    void readPassword();
     void setupBrowser();
     QStringListModel *sourceModelProjects;
     QStringListModel *sourceModelBuilds;
@@ -116,6 +116,8 @@ private slots:
     void showNetworkError(const QString &networkError);
     void handleSelfSignedCertificates(QNetworkReply*);
     void apiChanged();
+    void errorReadingPasswordSlot(const QString &error);
+    void credentialsRestoredSlot(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
     void showContextMenu(const QPoint&);
     void changeRequestState();

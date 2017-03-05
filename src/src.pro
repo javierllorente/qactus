@@ -39,7 +39,8 @@ SOURCES += main.cpp \
     obsfile.cpp \
     obsresult.cpp \
     obsrevision.cpp \
-    utils.cpp
+    utils.cpp \
+    credentials.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -57,7 +58,8 @@ HEADERS += mainwindow.h \
     obsfile.h \
     obsresult.h \
     obsrevision.h \
-    utils.h
+    utils.h \
+    credentials.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \

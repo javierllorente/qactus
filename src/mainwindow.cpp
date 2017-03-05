@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    credentials = new Credentials(this);
     obs = new OBS();
 
     createToolbar();
@@ -55,6 +56,10 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(showContextMenu(const QPoint&)));
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    connect(credentials, SIGNAL(errorReadingPassword(QString)),
+            this, SLOT(errorReadingPasswordSlot(QString)));
+    connect(credentials, SIGNAL(credentialsRestored(QString,QString)),
+            this, SLOT(credentialsRestoredSlot(QString,QString)));
     connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(isAuthenticated(bool)));
     connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
             this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
@@ -79,7 +84,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     readSettings();
     readSettingsTimer();
-    readPassword();
+    credentials->readPassword(loginDialog->getUsername());
 }
 
 MainWindow::~MainWindow()
@@ -100,27 +105,18 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::readPassword()
+void MainWindow::errorReadingPasswordSlot(const QString &error)
 {
-    qDebug() << "MainWindow::readPassword()";
-    QKeychain::ReadPasswordJob job(QLatin1String("Qactus"));
-    job.setAutoDelete(false);
-    job.setKey(loginDialog->getUsername());
-    QEventLoop loop;
-    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
-    job.start();
-    loop.exec();
-    const QString pw = job.textData();
-    if (job.error()) {
-        qDebug() << "Restoring password failed: " << qPrintable(job.errorString());
-        loginDialog->show();
-    } else {
-        qDebug() << "Password restored successfully";
-        obs->setCredentials(job.key(), pw);
-        emit updateStatusBar(tr("Logging in..."), false);
+    qDebug() << "MainWindow::errorReadingPasswordSlot()" << error;
+    loginDialog->show();
+}
 
-        obs->login();
-    }
+void MainWindow::credentialsRestoredSlot(const QString &username, const QString &password)
+{
+    qDebug() << "MainWindow::credentialsRestored()";
+    obs->setCredentials(username, password);
+    emit updateStatusBar(tr("Logging in..."), false);
+    obs->login();
 }
 
 void MainWindow::showNetworkError(const QString &networkError)
@@ -819,33 +815,9 @@ void MainWindow::pushButton_Login_clicked()
         progress.show();
         obs->login();
 
-        if (loginDialog->isAutoLoginEnabled()) {
-            QKeychain::WritePasswordJob job(QLatin1String("Qactus"));
-            job.setAutoDelete(false);
-            job.setKey(loginDialog->getUsername());
-            job.setTextData(loginDialog->getPassword());
-            QEventLoop loop;
-            job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
-            job.start();
-            loop.exec();
-            if (job.error()) {
-                qDebug() << "Storing password failed: " << qPrintable(job.errorString());
-            } else {
-                qDebug() << "Password stored successfully";
-            }
-        } else {
-            QKeychain::DeletePasswordJob job(QLatin1String("Qactus"));
-            job.setAutoDelete(false);
-            job.setKey(loginDialog->getUsername());
-            QEventLoop loop;
-            job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
-            job.start();
-            loop.exec();
-            if (job.error()) {
-                qDebug() << "Deleting password failed: " << qPrintable(job.errorString());
-            }
-            qDebug() << "Password deleted successfully";
-        }
+        loginDialog->isAutoLoginEnabled() ?
+                    credentials->writeCredentials(loginDialog->getUsername(), loginDialog->getPassword()) :
+                    credentials->deletePassword(loginDialog->getUsername());
     }
 }
 
