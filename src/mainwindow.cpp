@@ -200,10 +200,12 @@ void MainWindow::apiChanged()
 
 void MainWindow::isAuthenticated(bool authenticated)
 {
+    qDebug() << "MainWindow::isAuthenticated()" << authenticated;
     action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         setupBrowser();
     } else {
+        emit updateStatusBar(tr("Authentication is required"), true);
         loginDialog->show();
     }
 }
@@ -818,6 +820,8 @@ void MainWindow::pushButton_Login_clicked()
         loginDialog->isAutoLoginEnabled() ?
                     credentials->writeCredentials(loginDialog->getUsername(), loginDialog->getPassword()) :
                     credentials->deletePassword(loginDialog->getUsername());
+
+        emit updateStatusBar(tr("Logging in..."), false);
     }
 }
 
