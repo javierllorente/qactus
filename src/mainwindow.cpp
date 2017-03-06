@@ -924,6 +924,7 @@ void MainWindow::writeSettings()
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("MainWindow");
     settings.setValue("pos", pos());
+    settings.setValue("geometry", saveGeometry());
     settings.endGroup();
 
     settings.beginGroup("Proxy");
@@ -977,6 +978,7 @@ void MainWindow::readSettings()
     QSettings settings("Qactus","Qactus");
     settings.beginGroup("MainWindow");
     move(settings.value("pos", QPoint(200, 200)).toPoint());
+    restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();
 
     settings.beginGroup("Proxy");
