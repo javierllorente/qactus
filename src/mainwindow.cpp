@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     trayIcon = new TrayIcon(this);
     m_notify = false;
     createActions();
+    setupIconBar();
     createTreePackages();
     createTreeRequests();
     createStatusBar();
@@ -629,7 +630,7 @@ void MainWindow::insertProjectList()
 
 void MainWindow::insertPackageList()
 {
-    if (ui->tabWidget->currentIndex()==0) {
+    if (ui->iconBar->currentRow()==0) {
         // Browser tab
         qDebug() << "MainWindow::insertPackageList()";
 
@@ -669,7 +670,7 @@ void MainWindow::insertResult(OBSResult *obsResult)
 {
     qDebug() << "MainWindow::insertResult()";
 
-    if (ui->tabWidget->currentIndex()==1) {
+    if (ui->iconBar->currentRow()==1) {
         // Monitor tab
         ui->treePackages->insertDroppedPackage(obsResult);
 
@@ -884,6 +885,23 @@ void MainWindow::createActions()
     trayIcon->trayIconMenu->addAction(action_Quit);
 }
 
+void MainWindow::setupIconBar()
+{
+    ui->iconBar->setMaximumWidth(ui->iconBar->sizeHintForColumn(0)+4);
+
+    QListWidgetItem *browserItem = ui->iconBar->item(0);
+    QIcon browserIcon(":/icons/32x32/browser.png");
+    browserItem->setIcon(browserIcon);
+
+    QListWidgetItem *monitorItem = ui->iconBar->item(1);
+    QIcon monitorIcon(":/icons/32x32/monitor.png");
+    monitorItem->setIcon(monitorIcon);
+
+    QListWidgetItem *requestsItem = ui->iconBar->item(2);
+    QIcon requestsIcon(":/icons/32x32/requests.png");
+    requestsItem->setIcon(requestsIcon);
+}
+
 void MainWindow::createStatusBar()
 {
     connect(this, SIGNAL(updateStatusBar(QString,bool)), this, SLOT(updateStatusBarSlot(QString,bool)));
@@ -1045,13 +1063,10 @@ void MainWindow::on_actionLogin_triggered()
     loginDialog->show();
 }
 
-void MainWindow::on_tabWidget_currentChanged(const int& index)
+void MainWindow::on_iconBar_currentRowChanged(int index)
 {
     // Enable add and remove for the monitor tab
-    bool enabled = false;
-    if(index==1) {
-        enabled = true;
-    }
+    bool enabled = (index==1);
     action_Add->setEnabled(enabled);
     action_Remove->setEnabled(enabled);
     action_MarkRead->setEnabled(enabled);

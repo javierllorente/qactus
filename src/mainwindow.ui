@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>520</height>
+    <width>1018</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,14 +20,81 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
+     <widget class="QListWidget" name="iconBar">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>75</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(239, 240, 241);</string>
+      </property>
+      <property name="flow">
+       <enum>QListView::TopToBottom</enum>
+      </property>
+      <property name="isWrapping" stdset="0">
+       <bool>true</bool>
+      </property>
+      <property name="viewMode">
+       <enum>QListView::IconMode</enum>
+      </property>
+      <property name="uniformItemSizes">
+       <bool>true</bool>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
+      <property name="currentRow">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tabBrowser">
-       <attribute name="title">
+      <item>
+       <property name="text">
         <string>Browser</string>
-       </attribute>
+       </property>
+       <property name="flags">
+        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Monitor</string>
+       </property>
+       <property name="flags">
+        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Requests</string>
+       </property>
+       <property name="flags">
+        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <widget class="QWidget" name="browserPage">
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
@@ -191,10 +258,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabMonitor">
-       <attribute name="title">
-        <string>Monitor</string>
-       </attribute>
+      <widget class="QWidget" name="monitorPage">
        <layout class="QGridLayout" name="gridLayout_tabMonitor">
         <item row="0" column="0">
          <widget class="PackageTreeWidget" name="treePackages">
@@ -251,16 +315,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabRequests">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <attribute name="title">
-        <string>Requests</string>
-       </attribute>
+      <widget class="QWidget" name="requestsPage">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QSplitter" name="splitter">
@@ -358,7 +413,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1018</width>
      <height>30</height>
     </rect>
    </property>
@@ -456,5 +511,22 @@
  <resources>
   <include location="../application.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>iconBar</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>133</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>619</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

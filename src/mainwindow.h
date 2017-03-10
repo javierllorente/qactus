@@ -76,6 +76,7 @@ private:
     TrayIcon *trayIcon;
     bool m_notify;
     void createActions();
+    void setupIconBar();
     QAction *action_About;
     QAction *action_Quit;
     QAction *action_Restore;
@@ -143,7 +144,7 @@ private slots:
     void about();
     void on_actionConfigure_Qactus_triggered();
     void on_actionLogin_triggered();
-    void on_tabWidget_currentChanged(const int&);
+    void on_iconBar_currentRowChanged(int index);
     void insertProjectList();
     void insertPackageList();
     void insertFile(OBSFile*);
