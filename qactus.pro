@@ -4,7 +4,8 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += src
+src_lib.subdir = src/qobs
+src_gui.subdir = src/gui
+src_gui.depends = src_lib
 
-RESOURCES += \
-    application.qrc
+SUBDIRS += src_lib src_gui

@@ -26,7 +26,13 @@
 #include "obsxmlreader.h"
 #include "obspackage.h"
 
-class OBS : public QObject
+#if defined(QOBS_LIBRARY)
+#  define QOBS_EXPORT Q_DECL_EXPORT
+#else
+#  define QOBS_EXPORT Q_DECL_IMPORT
+#endif
+
+class QOBS_EXPORT OBS : public QObject
 {
     Q_OBJECT
 

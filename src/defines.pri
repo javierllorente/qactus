@@ -1,0 +1,2 @@
+VERSION = 0.7.1
+DEFINES *= QACTUS_VERSION=\\\"""$$VERSION"\\\""
