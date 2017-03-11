@@ -61,6 +61,7 @@ make INSTALL_ROOT=%{buildroot} install
 %defattr(-,root,root)
 %doc COPYING README.md
 %{_bindir}/%{name}
+%{_libdir}/libqobs.so*
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/128x128/apps/%{name}.png
 
