@@ -14,7 +14,7 @@
    <string>Qactus</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../application.qrc">
+   <iconset resource="../../application.qrc">
     <normaloff>:/obs.png</normaloff>:/obs.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -455,7 +455,7 @@
   </widget>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="../application.qrc">
+    <iconset resource="../../application.qrc">
      <normaloff>:/icons/help-about.png</normaloff>:/icons/help-about.png</iconset>
    </property>
    <property name="text">
@@ -469,7 +469,7 @@
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset resource="../application.qrc">
+    <iconset resource="../../application.qrc">
      <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
    </property>
    <property name="text">
@@ -484,7 +484,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../application.qrc">
+    <iconset resource="../../application.qrc">
      <normaloff>:/icons/configure.png</normaloff>:/icons/configure.png</iconset>
    </property>
    <property name="text">
@@ -493,7 +493,7 @@
   </action>
   <action name="actionLogin">
    <property name="icon">
-    <iconset resource="../application.qrc">
+    <iconset resource="../../application.qrc">
      <normaloff>:/icons/dialog-password.png</normaloff>:/icons/dialog-password.png</iconset>
    </property>
    <property name="text">
@@ -509,7 +509,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../application.qrc"/>
+  <include location="../../application.qrc"/>
  </resources>
  <connections>
   <connection>
