@@ -20,3 +20,13 @@ HEADERS += obspackage.h \
     obsfile.h \
     obsresult.h \
     obsrevision.h
+
+unix {
+    contains(QMAKE_HOST.arch, x86_64) {
+        target.path = $$PREFIX/lib64
+    } else {
+        target.path = $$PREFIX/lib
+    }
+}
+INSTALLS += target
+
