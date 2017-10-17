@@ -24,7 +24,6 @@ OBSPackage::OBSPackage()
 {
 }
 
-
 OBSPackage::OBSPackage(const OBSPackage &other)
 {
     *this = other;

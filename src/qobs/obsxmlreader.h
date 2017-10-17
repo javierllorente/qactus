@@ -48,7 +48,6 @@ public:
     void parseFileList(const QString &data);
     void parseResultList(const QString &data);
     void parseSubmitRequest(const QString &data);
-    OBSPackage* getPackage();
     int getRequestNumber();
     QStringList getList();
     void readList();
@@ -69,7 +68,6 @@ private:
     void parseRequest(QXmlStreamReader &xml);
     void parseList(QXmlStreamReader &xml);
     void parseFileList(QXmlStreamReader &xml);
-    OBSPackage *obsPackage;
     OBSRequest *obsRequest;
     QString requestNumber;
     QStringList list;

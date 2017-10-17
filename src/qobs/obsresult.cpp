@@ -28,6 +28,7 @@ OBSResult::OBSResult()
 OBSResult::~OBSResult()
 {
     delete package;
+    package = NULL;
 }
 
 QString OBSResult::getProject() const
@@ -83,9 +84,4 @@ void OBSResult::setState(const QString &value)
 OBSPackage *OBSResult::getPackage() const
 {
     return package;
-}
-
-void OBSResult::setPackage(OBSPackage *value)
-{
-    package = value;
 }

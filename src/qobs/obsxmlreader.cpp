@@ -55,7 +55,6 @@ void OBSXmlReader::addData(const QString &data)
         } else if (xml.name()=="status" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: status tag found";
             parsePackage(data);
-            obsPackage = getPackage();
         } else if (xml.name()=="collection" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: collection tag found";
             parseRequests(data);
@@ -112,7 +111,7 @@ void OBSXmlReader::parseStatus(const QXmlStreamReader &xml, OBSPackage *obsPacka
 void OBSXmlReader::parsePackage(const QString &data)
 {
     QXmlStreamReader xml(data);
-    obsPackage = new OBSPackage();
+    OBSPackage *obsPackage = new OBSPackage();
 
     while (!xml.atEnd() && !xml.hasError()) {
 
@@ -156,17 +155,12 @@ void OBSXmlReader::setPackageRow(const int &row)
     this->row = row;
 }
 
-OBSPackage* OBSXmlReader::getPackage()
-{
-    return obsPackage;
-}
-
 void OBSXmlReader::parseResultList(const QString &data)
 {
     qDebug() << "OBSXmlReader::parseResultList()";
     QXmlStreamReader xml(data);
     OBSResult *obsResult = NULL;
-    obsPackage = new OBSPackage();
+    OBSPackage *obsPackage = NULL;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -178,6 +172,7 @@ void OBSXmlReader::parseResultList(const QString &data)
 
             if (xml.name()=="result") {
                 obsResult = new OBSResult();
+                obsPackage = obsResult->getPackage();
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsResult->setProject(attrib.value("project").toString());
                 obsResult->setRepository(attrib.value("repository").toString());
@@ -192,7 +187,6 @@ void OBSXmlReader::parseResultList(const QString &data)
             }
 
             parseStatus(xml, obsPackage);
-            obsResult->setPackage(obsPackage);
 
             if (xml.name()=="details") {
                 xml.readNext();
@@ -214,7 +208,7 @@ void OBSXmlReader::parseResultList(const QString &data)
 void OBSXmlReader::parseSubmitRequest(const QString &data)
 {
     QXmlStreamReader xml(data);
-    obsPackage = new OBSPackage();
+    OBSPackage *obsPackage = new OBSPackage();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();

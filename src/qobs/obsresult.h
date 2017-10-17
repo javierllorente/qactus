@@ -46,7 +46,6 @@ public:
     void setState(const QString &value);
 
     OBSPackage *getPackage() const;
-    void setPackage(OBSPackage *value);
 
 private:
     QString project;
