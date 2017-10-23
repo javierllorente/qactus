@@ -128,14 +128,15 @@ void MainWindow::showNetworkError(const QString &networkError)
     // repeated errors (queued requests, probably same error)
     if(!errorBox) {
         errorBox = new QMessageBox(this);
-    } else if(!errorBox->isVisible()) {
+    }
+
+    if (!errorBox->isVisible()) {
         errorBox->setWindowTitle(tr("Network Error"));
         errorBox->setText(networkError);
         errorBox->setIcon(QMessageBox::Critical);
+        emit updateStatusBar(tr("Network error"), true);
         int ret = errorBox->exec();
         if (ret) {
-            // Not very elegant.
-            // Other options: fix code, use smart pointers?
             delete errorBox;
             errorBox = NULL;
         }
