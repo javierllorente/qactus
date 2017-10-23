@@ -246,6 +246,7 @@ void MainWindow::createToolbar()
 
     action_Configure = new QAction(tr("&Configure"), this);
     action_Configure->setIcon(QIcon(":/icons/configure.png"));
+    action_Configure->setText(tr("Configure"));
     action_Configure->setStatusTip(tr("Configure Qactus"));
     ui->toolBar->addAction(action_Configure);
     connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
@@ -255,9 +256,9 @@ void MainWindow::setupBrowser()
 {
     qDebug() << "MainWindow::setupBrowser()";
 
-    action_Add->setEnabled(false);
-    action_Remove->setEnabled(false);
-    action_MarkRead->setEnabled(false);
+    action_Add->setVisible(false);
+    action_Remove->setVisible(false);
+    action_MarkRead->setVisible(false);
     ui->lineEditFilter->setFocus();
 
     connect(ui->lineEditFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
@@ -1067,9 +1068,9 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
 {
     // Enable add and remove for the monitor tab
     bool enabled = (index==1);
-    action_Add->setEnabled(enabled);
-    action_Remove->setEnabled(enabled);
-    action_MarkRead->setEnabled(enabled);
+    action_Add->setVisible(enabled);
+    action_Remove->setVisible(enabled);
+    action_MarkRead->setVisible(enabled);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
