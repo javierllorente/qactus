@@ -28,11 +28,12 @@ OBSAccess::OBSAccess()
 {
     authenticated = false;
     xmlReader = OBSXmlReader::getInstance();
-    createManager();
+    manager = nullptr;
 }
 
 void OBSAccess::createManager()
 {
+    qDebug() << "OBSAccess::createManager()";
     manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
             SLOT(provideAuthentication(QNetworkReply*,QAuthenticator*)));
@@ -51,8 +52,12 @@ OBSAccess *OBSAccess::getInstance()
 
 void OBSAccess::setCredentials(const QString& username, const QString& password)
 {
+    qDebug() << "OBSAccess::setCredentials()";
 //    Allow login with another username/password
-    delete manager;
+    if (manager!=nullptr) {
+        delete manager;
+        manager = nullptr;
+    }
     createManager();
 
     curUsername = username;
