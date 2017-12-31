@@ -263,6 +263,10 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
         qDebug() << "OBSAccess::replyFinished() Access denied!";
         break;
 
+    case QNetworkReply::AuthenticationRequiredError:
+        qDebug() << "OBSAccess::replyFinished() Credentials provided not accepted!";
+        break;
+
     default: // Other errors
         qDebug() << "OBSAccess::replyFinished() Request failed! Error:" << reply->errorString();
         emit networkError(reply->errorString());
