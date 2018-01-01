@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setApplicationName("Qactus");
+    a.setOrganizationName(ORG_NAME);
+    a.setApplicationName(APP_NAME);
     a.setApplicationVersion(QACTUS_VERSION);
     MainWindow w;
     w.show();

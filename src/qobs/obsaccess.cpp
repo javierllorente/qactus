@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 #include "obsaccess.h"
 
 OBSAccess *OBSAccess::instance = NULL;
-const QString OBSAccess::userAgent = QString("Qactus") + " " + QACTUS_VERSION;
+const QString OBSAccess::userAgent = APP_NAME + QString(" ") + QACTUS_VERSION;
 
 OBSAccess::OBSAccess()
 {
