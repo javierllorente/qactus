@@ -17,6 +17,48 @@
    <string>Configure Qactus</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <item row="1" column="0">
+    <widget class="QListWidget" name="listWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>130</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>115</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <item>
+      <property name="text">
+       <string>General</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normalon>:/icons/32x32/configure.png</normalon>
+       </iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Network</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normalon>:/icons/32x32/preferences-system-network.png</normalon>
+       </iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
    <item row="2" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
@@ -318,48 +360,6 @@
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QListWidget" name="listWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>115</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>115</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <item>
-      <property name="text">
-       <string>General</string>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normalon>:/icons/32x32/configure.png</normalon>
-       </iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Network</string>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normalon>:/icons/32x32/preferences-system-network.png</normalon>
-       </iconset>
-      </property>
-     </item>
     </widget>
    </item>
   </layout>

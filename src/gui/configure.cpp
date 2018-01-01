@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,14 +28,32 @@ Configure::Configure(QWidget *parent, OBS *obs) :
 {
     ui->setupUi(this);
 
-    createTimer();
-    connect(timer, SIGNAL(timeout()), parent, SLOT(refreshView()));
+    ui->spinBoxTimer->setMinimum(5);
+    ui->spinBoxTimer->setMaximum(1440);
+    ui->spinBoxTimer->setDisabled(true);
+    connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));
+
     ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
     proxySettingsSetup();
+
+//    loginDialog = new Login(ui->authPage);
+//    ui->stackedWidget->insertWidget(0, loginDialog);
+
+    login = new Login();
+    login->configureMode();
+    QListWidgetItem *loginItem = new QListWidgetItem();
+    loginItem->setText("Authentication");
+    loginItem->setIcon(QIcon(":/icons/dialog-password.png"));
+
+    // Note: Ownership of widget is passed onto the stacked/list widget
+    ui->stackedWidget->insertWidget(0, login);
+    ui->listWidget->insertItem(0, loginItem);
 
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
     ui->listWidget->setCurrentRow(0);
 
+    readSettings();
+    readTimerSettings();
 }
 
 Configure::~Configure()
@@ -57,19 +75,6 @@ void Configure::setApiUrl(QString apiUrlStr)
     ui->lineEditApiUrl->setText(apiUrlStr + "/");
 }
 
-void Configure::createTimer()
-{
-    interval = 0;
-    timer = new QTimer(this);
-
-    ui->spinBoxTimer->setMinimum(5);
-    ui->spinBoxTimer->setMaximum(1440);
-    ui->spinBoxTimer->setDisabled(true);
-
-    connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));
-    connect(mOBS, SIGNAL(isAuthenticated(bool)), this, SLOT(startTimer(bool)));
-}
-
 void Configure::proxySettingsSetup()
 {
     connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->comboBoxProxyType, SLOT(setEnabled(bool)));
@@ -82,25 +87,68 @@ void Configure::proxySettingsSetup()
     ui->comboBoxProxyType->addItem("HTTP");
 }
 
-void Configure::setTimerInterval(int interval)
+void Configure::writeSettings()
 {
-    qDebug() << "Configure::setTimerInterval()" << interval;
-        if (interval >= 5) {
-//            Convert mins into msecs
-            this->interval = interval;
-        } else {
-            qDebug() << "Error starting timer: Wrong timer interval (smaller than 5)";
-        }
+    qDebug() << "Configure::writeSettings()";
+    QSettings settings;
+
+    settings.beginGroup("Proxy");
+    settings.setValue("Enabled", isProxyEnabled());
+    settings.setValue("Type", getProxyType());
+    settings.setValue("Server", getProxyServer());
+    settings.setValue("Port", getProxyPort());
+    settings.setValue("Username", getProxyUsername());
+    settings.setValue("Password", getProxyPassword());
+    settings.endGroup();
+
+    settings.beginGroup("Auth");
+    settings.setValue("ApiUrl", mOBS->getApiUrl());
+    settings.endGroup();
+
+    settings.beginGroup("Timer");
+    settings.setValue("Active", ui->checkBoxTimer->isChecked());
+    settings.setValue("Value", ui->spinBoxTimer->value());
+    settings.endGroup();
+
+    settings.beginGroup("Browser");
+    settings.setValue("IncludeHomeProjects", isIncludeHomeProjects());
+    settings.endGroup();
 }
 
-void Configure::startTimer(bool authenticated)
+void Configure::readSettings()
 {
-    if (authenticated && ui->checkBoxTimer->isChecked() && !timer->isActive()) {
-        qDebug() << "Configure::startTimer()" << interval;
-        timer->start(interval*60000);
-    } else {
-        timer->stop();
+    qDebug() << "Configure::readSettings()";
+    QSettings settings;
+
+    settings.beginGroup("Proxy");
+    if (settings.value("Enabled").toBool()) {
+        setCheckedProxyCheckbox(true);
+        setProxyType(settings.value("Type").toInt());
+        setProxyServer(settings.value("Server").toString());
+        setProxyPort(settings.value("Port").toInt());
+        setProxyUsername(settings.value("Username").toString());
+        setProxyPassword(settings.value("Password").toString());
+        // FIX-ME: If proxy is enabled on a non-proxy environment you have
+        // to edit Qactus.conf and set Enabled=false to get Qactus to log in
     }
+    settings.endGroup();
+
+    settings.beginGroup("Auth");
+    setApiUrl(settings.value("ApiUrl").toString());
+    settings.endGroup();
+
+    settings.beginGroup("Browser");
+    setIncludeHomeProjects(settings.value("IncludeHomeProjects").toBool());
+    settings.endGroup();
+}
+
+void Configure::readTimerSettings()
+{
+    QSettings settings;
+    settings.beginGroup("Timer");
+    ui->checkBoxTimer->setChecked(settings.value("Active").toBool());
+    ui->spinBoxTimer->setValue(settings.value("Value").toInt());
+    settings.endGroup();
 }
 
 void Configure::on_buttonBox_accepted()
@@ -111,29 +159,22 @@ void Configure::on_buttonBox_accepted()
     }
     setApiUrl(ui->lineEditApiUrl->text());
 
-    if (ui->checkBoxTimer->isChecked()) {
-//      Start the timer if the checkbox is checked
-        setTimerInterval(ui->spinBoxTimer->value());
-        startTimer(mOBS->isAuthenticated());
-        qDebug() << "Timer set to" << ui->spinBoxTimer->value() << "minutes";
-
-    } else if (timer->isActive()) {
-        timer->stop();
-        qDebug() << "The timer has been stopped";
-    }
-
     toggleProxy(ui->checkBoxProxy->isChecked());
 
+    if (includeHomeProjects!=ui->checkBoxHomeProjects->isChecked()) {
+        emit includeHomeProjectsChanged();
+    }
     includeHomeProjects = ui->checkBoxHomeProjects->isChecked();
-    emit includeHomeProjectsChanged();
+
+    writeSettings();
+    login->writeSettings();
+    emit timerChanged();
 }
 
 void Configure::on_buttonBox_rejected()
 {
     ui->lineEditApiUrl->setText(mOBS->getApiUrl() + "/");
-
-    ui->checkBoxTimer->setChecked(timer->isActive());
-    ui->spinBoxTimer->setValue(timer->interval()/60000);
+    readTimerSettings();
 
     bool check = proxy.applicationProxy() != QNetworkProxy::NoProxy;
     ui->checkBoxProxy->setChecked(check);
@@ -156,29 +197,9 @@ void Configure::setOBSApiUrl(const QString &apiUrlStr)
     mOBS->setApiUrl(apiUrlStr);
 }
 
-bool Configure::isTimerActive()
-{
-    return timer->isActive();
-}
-
-int Configure::getTimerValue()
-{
-    return ui->spinBoxTimer->value();
-}
-
-void Configure::setTimerValue(const int& value)
-{
-    ui->spinBoxTimer->setValue(value);
-    qDebug() << "Configure::setTimerValue()" << ui->spinBoxTimer->value() << "minutes";
-}
-
-void Configure::setCheckedTimerCheckbox(bool check)
-{
-    ui->checkBoxTimer->setChecked(check);
-}
-
 void Configure::toggleProxy(bool enableProxy)
 {
+    qDebug() << "Configure::toggleProxy()" << enableProxy;
     if (enableProxy) {
         qDebug() << "Proxy has been enabled";
         QNetworkProxy::ProxyType proxyType = ui->comboBoxProxyType->currentIndex() == 0 ?

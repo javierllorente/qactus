@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,7 +27,9 @@
 #include <QTimer>
 #include <QSpinBox>
 #include <QNetworkProxy>
+#include <QSettings>
 #include "obs.h"
+#include "login.h"
 
 namespace Ui {
     class Configure;
@@ -42,11 +44,6 @@ public:
     ~Configure();
 
     void setApiUrl(QString apiUrlStr);
-    void setTimerInterval(int);
-    void setTimerValue(const int&);
-    int getTimerValue();
-    bool isTimerActive();
-    void setCheckedTimerCheckbox(bool check);
     void toggleProxy(bool enableProxy);
     bool isProxyEnabled();
     void setCheckedProxyCheckbox(bool check);
@@ -62,13 +59,14 @@ public:
     QString getProxyPassword() const;
     bool isIncludeHomeProjects();
     void setIncludeHomeProjects(bool check);
+    void readSettings();
 
 signals:
     void apiChanged();
     void includeHomeProjectsChanged();
+    void timerChanged();
 
 private slots:
-    void startTimer(bool authenticated);
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
 
@@ -76,12 +74,12 @@ private:
     Ui::Configure *ui;
     OBS *mOBS;
     void setOBSApiUrl(const QString &apiUrlStr);
-    int interval;
-    QTimer *timer;
-    void createTimer();
+    void readTimerSettings();
+    Login *login;
     void proxySettingsSetup();
     QNetworkProxy proxy;
     bool includeHomeProjects;
+    void writeSettings();
 };
 
 #endif // CONFIGURE_H
