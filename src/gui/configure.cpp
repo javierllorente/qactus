@@ -173,23 +173,7 @@ void Configure::on_buttonBox_accepted()
 
 void Configure::on_buttonBox_rejected()
 {
-    ui->lineEditApiUrl->setText(mOBS->getApiUrl() + "/");
-    readTimerSettings();
-
-    bool check = proxy.applicationProxy() != QNetworkProxy::NoProxy;
-    ui->checkBoxProxy->setChecked(check);
-
-    // Restore previous values only if checkBoxProxy is checked
-    if (check) {
-        int index = proxy.type() == QNetworkProxy::Socks5Proxy ? 0 : 1;
-        ui->comboBoxProxyType->setCurrentIndex(index);
-        ui->spinBoxProxyPort->setValue(proxy.port());
-        ui->lineEditProxyServer->setText(proxy.hostName());
-        ui->lineEditProxyUsername->setText(proxy.user());
-        ui->lineEditProxyPassword->setText(proxy.password());
-    }
-
-    ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
+    // Don't do anything
 }
 
 void Configure::setOBSApiUrl(const QString &apiUrlStr)
