@@ -26,7 +26,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="1" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label_Password">
        <property name="text">
         <string>Password:</string>
@@ -35,6 +35,9 @@
      </item>
      <item row="1" column="1">
       <widget class="QLineEdit" name="lineEdit_Password">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
        <property name="inputMethodHints">
         <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
        </property>
@@ -43,7 +46,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
+     <item row="0" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label_Username">
        <property name="text">
         <string>Username:</string>
@@ -75,7 +78,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../application.qrc">:/icons/dialog-password.png</pixmap>
+      <pixmap resource="../../application.qrc">:/icons/dialog-password.png</pixmap>
      </property>
     </widget>
    </item>
@@ -105,7 +108,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../application.qrc"/>
+  <include location="../../application.qrc"/>
  </resources>
  <connections/>
 </ui>

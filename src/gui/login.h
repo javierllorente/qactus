@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2015 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,11 @@
 #include <QDialog>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSettings>
+#include <QCloseEvent>
+#include <QDebug>
+#include <QMessageBox>
+#include "credentials.h"
 
 namespace Ui {
     class Login;
@@ -36,18 +41,27 @@ class Login : public QDialog
 public:
     explicit Login(QWidget *parent = 0);
     ~Login();
+    void closeEvent(QCloseEvent *event);
+    void configureMode();
+    void writeSettings();
 
+public slots:
+    void clearCredentials();
+
+private slots:
+    void on_pushButton_Login_clicked();
+
+signals:
+    void login(const QString &username, const QString &password);
+
+private:
+    Ui::Login *ui;
     QString getUsername();
     void setUsername(const QString&);
     QString getPassword();
     bool isAutoLoginEnabled();
     void setAutoLoginEnabled(bool check);
-
-public slots:
-    void clearCredentials();
-
-private:
-    Ui::Login *ui;
+    void readSettings();
 
 };
 
