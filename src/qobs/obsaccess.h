@@ -30,7 +30,6 @@
 #include <QSslError>
 #include <QDebug>
 #include <QEventLoop>
-#include <QCoreApplication>
 #include "obsxmlreader.h"
 
 class OBSXmlReader;
