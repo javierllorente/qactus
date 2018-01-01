@@ -50,6 +50,7 @@ public slots:
 
 private slots:
     void on_pushButton_Login_clicked();
+    void credentialsRestoredSlot(const QString &username, const QString &password);
 
 signals:
     void login(const QString &username, const QString &password);

@@ -79,7 +79,13 @@ void Login::readSettings()
     qDebug() << "Login::readSettings()";
     QSettings settings;
     settings.beginGroup("Auth");
-    setUsername(settings.value("Username").toString());
+    QString username = settings.value("Username").toString();
+    setUsername(username);
+    Credentials *credentials = new Credentials();
+    connect(credentials, SIGNAL(credentialsRestored(QString, QString)),
+            this, SLOT(credentialsRestoredSlot(QString, QString)));
+    credentials->readPassword(username);
+    delete credentials;
     qDebug() << "Login::readSettings() AutoLogin:" << settings.value("AutoLogin").toBool();
     setAutoLoginEnabled(settings.value("AutoLogin").toBool());
     settings.endGroup();
@@ -120,4 +126,10 @@ void Login::on_pushButton_Login_clicked()
         writeSettings();
         emit login(getUsername(), getPassword());
     }
+}
+
+void Login::credentialsRestoredSlot(const QString &/*username*/, const QString &password)
+{
+    qDebug() << "Login::credentialsRestoredSlot()";
+    ui->lineEdit_Password->setText(password);
 }
