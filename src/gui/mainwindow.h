@@ -30,6 +30,7 @@
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
 #include <QProgressBar>
+#include <QTimer>
 #include "utils.h"
 #include "credentials.h"
 
@@ -60,7 +61,6 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    Credentials *credentials;
     OBS *obs;
 
     QToolBar *toolBar;
@@ -95,16 +95,28 @@ private:
     void createTreeRequests();
 
     void createStatusBar();
+
+    QTimer *timer;
+    void createTimer();
+    void setTimerInterval(int interval);
+    int interval;
+
     void writeSettings();
     void readSettings();
-    void readSettingsTimer();
+    void readMWSettings();
+    void readMonitorSettings();
+    void readAuthSettings();
+    void readBrowserSettings();
+    bool includeHomeProjects;
+    void readProxySettings();
+
     QMessageBox *errorBox;
 
     void closeEvent(QCloseEvent*);
     bool event(QEvent *event);
 
     Login *loginDialog;
-    Configure *configureDialog;
+    void showLoginDialog();
     QItemSelectionModel *projectsSelectionModel;
     QItemSelectionModel *buildsSelectionModel;
     bool hasBuildStatusChanged(const QString &oldStatus, const QString &newStatus);
@@ -114,9 +126,11 @@ signals:
     void notifyChanged(bool notify);
 
 private slots:
+    void startTimer(bool authenticated);
+    void readTimerSettings();
     void showNetworkError(const QString &networkError);
     void handleSelfSignedCertificates(QNetworkReply*);
-    void apiChanged();
+    void apiChangedSlot();
     void errorReadingPasswordSlot(const QString &error);
     void credentialsRestoredSlot(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
@@ -135,8 +149,7 @@ private slots:
     void refreshView();
     void markAllRead();
     void markRead(QTreeWidgetItem*, int);
-    void lineEdit_Password_returnPressed();
-    void pushButton_Login_clicked();
+    void loginSlot(const QString &username, const QString &password);
     void on_actionAbout_triggered(bool);
     void on_actionQuit_triggered(bool);
     void trayIconClicked(QSystemTrayIcon::ActivationReason);

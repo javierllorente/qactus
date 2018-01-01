@@ -36,7 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    credentials = new Credentials(this);
     obs = new OBS();
 
     createToolbar();
@@ -48,26 +47,21 @@ MainWindow::MainWindow(QWidget *parent) :
     createTreeRequests();
     createStatusBar();
 
-    loginDialog = new Login(this);
-    errorBox = NULL;
-    configureDialog = new Configure(this, obs);
+    loginDialog = nullptr;
+    errorBox = nullptr;
+
+    createTimer();
+
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
     connect(ui->treeRequests, SIGNAL(customContextMenuRequested(const QPoint&)),this,
             SLOT(showContextMenu(const QPoint&)));
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(credentials, SIGNAL(errorReadingPassword(QString)),
-            this, SLOT(errorReadingPasswordSlot(QString)));
-    connect(credentials, SIGNAL(credentialsRestored(QString,QString)),
-            this, SLOT(credentialsRestoredSlot(QString,QString)));
     connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(isAuthenticated(bool)));
     connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
             this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
-    connect(configureDialog, SIGNAL(apiChanged()), this, SLOT(apiChanged()));
-    connect(configureDialog, SIGNAL(apiChanged()), loginDialog, SLOT(clearCredentials()));
-
     connect(obs, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
     connect(obs, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(insertFile(OBSFile*)));
@@ -84,8 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(srStatus(QString)), this, SLOT(srStatusSlot(QString)));
 
     readSettings();
-    readSettingsTimer();
-    credentials->readPassword(loginDialog->getUsername());
+    readTimerSettings();
 }
 
 MainWindow::~MainWindow()
@@ -109,15 +102,17 @@ void MainWindow::changeEvent(QEvent *e)
 void MainWindow::errorReadingPasswordSlot(const QString &error)
 {
     qDebug() << "MainWindow::errorReadingPasswordSlot()" << error;
-    loginDialog->show();
+    showLoginDialog();
 }
 
 void MainWindow::credentialsRestoredSlot(const QString &username, const QString &password)
 {
     qDebug() << "MainWindow::credentialsRestored()";
-    obs->setCredentials(username, password);
+    loginSlot(username, password);
+    QProgressDialog progress(tr("Logging in..."), 0, 0, 0, this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.show();
     emit updateStatusBar(tr("Logging in..."), false);
-    obs->login();
 }
 
 void MainWindow::showNetworkError(const QString &networkError)
@@ -195,9 +190,10 @@ void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
     }
 }
 
-void MainWindow::apiChanged()
+void MainWindow::apiChangedSlot()
 {
-    loginDialog->show();
+    qDebug() << "MainWindow::apiChangedSlot()";
+    showLoginDialog();
 }
 
 void MainWindow::isAuthenticated(bool authenticated)
@@ -206,9 +202,11 @@ void MainWindow::isAuthenticated(bool authenticated)
     action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         setupBrowser();
+        delete loginDialog;
+        loginDialog = nullptr;
     } else {
         emit updateStatusBar(tr("Authentication is required"), true);
-        loginDialog->show();
+        showLoginDialog();
     }
 }
 
@@ -265,7 +263,6 @@ void MainWindow::setupBrowser()
     connect(ui->lineEditFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
     connect(ui->radioButtonPackages, SIGNAL(clicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
     connect(ui->radioButtonProject, SIGNAL(clicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
-    connect(configureDialog, SIGNAL(includeHomeProjectsChanged()), this, SLOT(refreshProjectFilter()));
 
     sourceModelProjects = new QStringListModel(ui->treeProjects);
     proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
@@ -296,8 +293,7 @@ void MainWindow::setupBrowser()
 
 void MainWindow::filterProjects(const QString &item)
 {
-    bool homeProjects = configureDialog->isIncludeHomeProjects();
-    QString regExp = !homeProjects ? "^(?!home)(.*" + item + ")" : item;
+    QString regExp = !includeHomeProjects ? "^(?!home)(.*" + item + ")" : item;
     proxyModelProjects->setFilterRegExp(QRegExp(regExp, Qt::CaseInsensitive));
     proxyModelProjects->setFilterKeyColumn(0);
 
@@ -806,31 +802,11 @@ void MainWindow::updateStatusBarSlot(const QString &message, bool progressBarHid
     progressBar->setHidden(progressBarHidden);
 }
 
-void MainWindow::pushButton_Login_clicked()
+void MainWindow::loginSlot(const QString &username, const QString &password)
 {
-    obs->setCredentials(loginDialog->getUsername(), loginDialog->getPassword());
-
-//    Display a warning if the username/password is empty.
-    if (loginDialog->getUsername().isEmpty() || loginDialog->getPassword().isEmpty()) {
-        QMessageBox::warning(this,tr("Error"), tr("Empty username/password"), QMessageBox::Ok );
-    } else {
-        loginDialog->close();
-        QProgressDialog progress(tr("Logging in..."), 0, 0, 0, this);
-        progress.setWindowModality(Qt::WindowModal);
-        progress.show();
-        obs->login();
-
-        loginDialog->isAutoLoginEnabled() ?
-                    credentials->writeCredentials(loginDialog->getUsername(), loginDialog->getPassword()) :
-                    credentials->deletePassword(loginDialog->getUsername());
-
-        emit updateStatusBar(tr("Logging in..."), false);
-    }
-}
-
-void MainWindow::lineEdit_Password_returnPressed()
-{
-    pushButton_Login_clicked();
+    qDebug() << "MainWindow::loginSlot()";
+    obs->setCredentials(username, password);
+    obs->login();
 }
 
 void MainWindow::on_actionQuit_triggered(bool)
@@ -918,6 +894,39 @@ void MainWindow::createStatusBar()
     ui->statusbar->addPermanentWidget(progressBar, 10);
 }
 
+void MainWindow::createTimer()
+{
+    timer = new QTimer(this);
+    interval = 0;
+    connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(startTimer(bool)));
+    connect(timer, SIGNAL(timeout()), this, SLOT(refreshView()));
+}
+
+void MainWindow::setTimerInterval(int interval)
+{
+    qDebug() << "MainWindow::setTimerInterval()" << interval;
+    if (interval >= 5) {
+        this->interval = interval;
+    } else {
+        qDebug() << "Error starting timer: Wrong timer interval (smaller than 5)";
+    }
+}
+
+void MainWindow::startTimer(bool authenticated)
+{
+    QSettings settings;
+    settings.beginGroup("Timer");
+    bool enableTimer = settings.value("Active").toBool();
+    settings.endGroup();
+
+    if (authenticated && enableTimer && !timer->isActive()) {
+        qDebug() << "MainWindow::startTimer()" << interval;
+        timer->start(interval*60000);
+    } else {
+        timer->stop();
+    }
+}
+
 void MainWindow::toggleVisibility()
 {
     if (this->isVisible()) {
@@ -941,30 +950,10 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::writeSettings()
 {
-    QSettings settings("Qactus","Qactus");
+    QSettings settings;
     settings.beginGroup("MainWindow");
     settings.setValue("pos", pos());
     settings.setValue("geometry", saveGeometry());
-    settings.endGroup();
-
-    settings.beginGroup("Proxy");
-    settings.setValue("Enabled", configureDialog->isProxyEnabled());
-    settings.setValue("Type", configureDialog->getProxyType());
-    settings.setValue("Server", configureDialog->getProxyServer());
-    settings.setValue("Port", configureDialog->getProxyPort());
-    settings.setValue("Username", configureDialog->getProxyUsername());
-    settings.setValue("Password", configureDialog->getProxyPassword());
-    settings.endGroup();
-
-    settings.beginGroup("Auth");
-    settings.setValue("ApiUrl", obs->getApiUrl() + "/");
-    settings.setValue("Username", obs->getUsername());
-    settings.setValue("AutoLogin", loginDialog->isAutoLoginEnabled());
-    settings.endGroup();
-
-    settings.beginGroup("Timer");
-    settings.setValue("Active", configureDialog->isTimerActive());
-    settings.setValue("Value", configureDialog->getTimerValue());
     settings.endGroup();
 
     int rows = ui->treePackages->topLevelItemCount();
@@ -986,83 +975,142 @@ void MainWindow::writeSettings()
         }
     }
     settings.endArray();
-
-    settings.beginGroup("Browser");
-    settings.setValue("IncludeHomeProjects", configureDialog->isIncludeHomeProjects());
-    settings.endGroup();
 }
 
 void MainWindow::readSettings()
 {
     qDebug() << "MainWindow::readSettings()";
-    QSettings settings("Qactus","Qactus");
+    readMWSettings();
+    readProxySettings();
+    readAuthSettings();
+    readBrowserSettings();
+    readMonitorSettings();
+}
+
+void MainWindow::readMWSettings()
+{
+    QSettings settings;
     settings.beginGroup("MainWindow");
     move(settings.value("pos", QPoint(200, 200)).toPoint());
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();
-
-    settings.beginGroup("Proxy");
-    if (settings.value("Enabled").toBool()) {
-        configureDialog->setCheckedProxyCheckbox(true);
-        configureDialog->setProxyType(settings.value("Type").toInt());
-        configureDialog->setProxyServer(settings.value("Server").toString());
-        configureDialog->setProxyPort(settings.value("Port").toInt());
-        configureDialog->setProxyUsername(settings.value("Username").toString());
-        configureDialog->setProxyPassword(settings.value("Password").toString());
-        // FIX-ME: If proxy is enabled on a non-proxy environment you have
-        // to edit Qactus.conf and set Enabled=false to get Qactus to log in
-        configureDialog->toggleProxy(true);
-    }
-    settings.endGroup();
-
-    settings.beginGroup("Auth");
-    configureDialog->setApiUrl(settings.value("ApiUrl").toString());
-    loginDialog->setUsername(settings.value("Username").toString());
-    loginDialog->setAutoLoginEnabled(settings.value("AutoLogin").toBool());
-    settings.endGroup();
-
-    int size = settings.beginReadArray("Packages");
-    for (int i=0; i<size; ++i)
-        {
-            settings.setArrayIndex(i);
-            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
-            item->setText(0, settings.value("Project").toString());
-            item->setText(1, settings.value("Package").toString());
-            item->setText(2, settings.value("Repository").toString());
-            item->setText(3, settings.value("Arch").toString());
-            ui->treePackages->insertTopLevelItem(i, item);
-        }
-        settings.endArray();
-
-        settings.beginGroup("Browser");
-        configureDialog->setIncludeHomeProjects(settings.value("IncludeHomeProjects").toBool());
-        settings.endGroup();
 }
 
-void MainWindow::readSettingsTimer()
+void MainWindow::readMonitorSettings()
 {
-    QSettings settings("Qactus","Qactus");
+    QSettings settings;
+    int size = settings.beginReadArray("Packages");
+    for (int i=0; i<size; ++i)
+    {
+        settings.setArrayIndex(i);
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
+        item->setText(0, settings.value("Project").toString());
+        item->setText(1, settings.value("Package").toString());
+        item->setText(2, settings.value("Repository").toString());
+        item->setText(3, settings.value("Arch").toString());
+        ui->treePackages->insertTopLevelItem(i, item);
+    }
+    settings.endArray();
+}
+
+void MainWindow::readAuthSettings()
+{
+    qDebug() << "MainWindow::readAuthSettings()";
+    QSettings settings;
+    settings.beginGroup("Auth");
+    obs->setApiUrl(settings.value("ApiUrl").toString());
+    if (settings.value("AutoLogin").toBool()) {
+        Credentials *credentials = new Credentials(this);
+        connect(credentials, SIGNAL(errorReadingPassword(QString)),
+                this, SLOT(errorReadingPasswordSlot(QString)));
+        connect(credentials, SIGNAL(credentialsRestored(QString, QString)),
+                this, SLOT(credentialsRestoredSlot(QString, QString)));
+        credentials->readPassword(settings.value("Username").toString());
+        delete credentials;
+    }
+    settings.endGroup();
+}
+
+void MainWindow::readBrowserSettings()
+{
+    QSettings settings;
+    settings.beginGroup("Browser");
+    includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
+    settings.endGroup();
+}
+
+void MainWindow::readProxySettings()
+{
+    qDebug() << "MainWindow::readProxySettings()";
+    QNetworkProxy proxy;
+    QSettings settings;
+    settings.beginGroup("Proxy");
+    if (settings.value("Enabled").toBool()) {
+        qDebug() << "Proxy has been enabled";
+        QNetworkProxy::ProxyType type = static_cast<QNetworkProxy::ProxyType>(settings.value("Type").toInt());
+        proxy.setType(type);
+        proxy.setHostName(settings.value("Server").toString());
+        proxy.setPort(settings.value("Port").toInt());
+        proxy.setUser(settings.value("Username").toString());
+        proxy.setPassword(settings.value("Password").toString());
+        // FIX-ME: If proxy is enabled on a non-proxy environment you have
+        // to edit Qactus.conf and set Enabled=false to get Qactus to log in
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else {
+        qDebug() << "Proxy has been disabled";
+        QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
+    }
+    settings.endGroup();
+}
+
+void MainWindow::readTimerSettings()
+{
+    QSettings settings;
     settings.beginGroup("Timer");
     if (settings.value("Active").toBool()) {
         qDebug() << "MainWindow::readSettingsTimer() Timer Active = true";
-        configureDialog->setCheckedTimerCheckbox(true);
         qDebug() << "MainWindow::readSettingsTimer() Interval:" << settings.value("Value").toString() << "minutes";
-        configureDialog->setTimerInterval(settings.value("Value").toInt());
+        setTimerInterval(settings.value("Value").toInt());
+        startTimer(obs->isAuthenticated());
     } else {
         qDebug() << "MainWindow::readSettingsTimer() Timer Active = false";
-        configureDialog->setTimerValue(settings.value("Value").toInt());
+        if (timer->isActive()) {
+            timer->stop();
+            qDebug() << "MainWindow::readSettingsTimer() Timer has been stopped";
+        }
     }
     settings.endGroup();
+}
+
+void MainWindow::showLoginDialog()
+{
+    qDebug() << "MainWindow::showLoginDialog()";
+    if (loginDialog==nullptr) {
+        loginDialog = new Login(this);
+        connect(loginDialog, SIGNAL(login(QString,QString)), this, SLOT(loginSlot(QString,QString)));
+        loginDialog->exec();
+//        delete loginDialog;
+//        loginDialog = nullptr;
+    } else {
+        loginDialog->show();
+    }
+
 }
 
 void MainWindow::on_actionConfigure_Qactus_triggered()
 {
-    configureDialog->show();
+    qDebug() << "MainWindow Launching Configure...";
+    Configure *configure = new Configure(this, obs);
+    connect(configure, SIGNAL(apiChanged()), this, SLOT(apiChangedSlot()));
+    connect(configure, SIGNAL(includeHomeProjectsChanged()), this, SLOT(refreshProjectFilter()));
+    connect(configure, SIGNAL(timerChanged()), this, SLOT(readTimerSettings()));
+    configure->exec();
+    delete configure;
 }
 
 void MainWindow::on_actionLogin_triggered()
 {
-    loginDialog->show();
+    showLoginDialog();
 }
 
 void MainWindow::on_iconBar_currentRowChanged(int index)
