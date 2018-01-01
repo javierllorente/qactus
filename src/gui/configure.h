@@ -24,7 +24,6 @@
 #include <QDialog>
 #include <QDebug>
 #include <QCheckBox>
-#include <QTimer>
 #include <QSpinBox>
 #include <QNetworkProxy>
 #include <QSettings>
