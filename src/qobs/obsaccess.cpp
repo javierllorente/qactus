@@ -22,7 +22,7 @@
 #include "obsaccess.h"
 
 OBSAccess *OBSAccess::instance = NULL;
-const QString OBSAccess::userAgent = APP_NAME + QString(" ") + QACTUS_VERSION;
+const QString userAgent = APP_NAME + QString(" ") + QACTUS_VERSION;
 
 OBSAccess::OBSAccess()
 {
