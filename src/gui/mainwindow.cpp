@@ -954,6 +954,7 @@ void MainWindow::writeSettings()
     settings.beginGroup("MainWindow");
     settings.setValue("pos", pos());
     settings.setValue("geometry", saveGeometry());
+    settings.setValue("Row", ui->iconBar->currentRow());
     settings.endGroup();
 
     int rows = ui->treePackages->topLevelItemCount();
@@ -993,6 +994,7 @@ void MainWindow::readMWSettings()
     settings.beginGroup("MainWindow");
     move(settings.value("pos", QPoint(200, 200)).toPoint());
     restoreGeometry(settings.value("geometry").toByteArray());
+    ui->iconBar->setCurrentRow(settings.value("Row").toInt());
     settings.endGroup();
 }
 
