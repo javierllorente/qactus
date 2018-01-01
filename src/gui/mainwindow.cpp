@@ -216,6 +216,7 @@ void MainWindow::createToolbar()
     action_Add->setIcon(QIcon(":/icons/list-add.png"));
     action_Add->setStatusTip(tr("Add a new row"));
     action_Add->setShortcut(QKeySequence("Ctrl+A"));
+    action_Add->setVisible(false);
     ui->toolBar->addAction(action_Add);
     connect(action_Add, SIGNAL(triggered()), this, SLOT(addRow()));
 
@@ -223,6 +224,7 @@ void MainWindow::createToolbar()
     action_Remove->setIcon(QIcon(":/icons/list-remove.png"));
     action_Remove->setStatusTip(tr("Remove selected row"));
     action_Remove->setShortcut(QKeySequence::Delete);
+    action_Remove->setVisible(false);
     ui->toolBar->addAction(action_Remove);
     connect(action_Remove, SIGNAL(triggered()), this, SLOT(removeRow()));
 
@@ -238,6 +240,7 @@ void MainWindow::createToolbar()
     action_MarkRead->setIcon(QIcon(":/icons/view-task.png"));
     action_MarkRead->setStatusTip(tr("Mark all as read"));
     action_MarkRead->setShortcut(QKeySequence("Ctrl+M"));
+    action_MarkRead->setVisible(false);
     ui->toolBar->addAction(action_MarkRead);
     connect(action_MarkRead, SIGNAL(triggered()), this, SLOT(markAllRead()));
 
@@ -255,9 +258,6 @@ void MainWindow::setupBrowser()
 {
     qDebug() << "MainWindow::setupBrowser()";
 
-    action_Add->setVisible(false);
-    action_Remove->setVisible(false);
-    action_MarkRead->setVisible(false);
     ui->lineEditFilter->setFocus();
 
     connect(ui->lineEditFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
@@ -994,8 +994,14 @@ void MainWindow::readMWSettings()
     settings.beginGroup("MainWindow");
     move(settings.value("pos", QPoint(200, 200)).toPoint());
     restoreGeometry(settings.value("geometry").toByteArray());
-    ui->iconBar->setCurrentRow(settings.value("Row").toInt());
+    int row = settings.value("Row").toInt();
+    ui->iconBar->setCurrentRow(row);
     settings.endGroup();
+
+    bool visible = (row==1);
+    action_Add->setVisible(visible);
+    action_Remove->setVisible(visible);
+    action_MarkRead->setVisible(visible);
 }
 
 void MainWindow::readMonitorSettings()
