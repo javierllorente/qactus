@@ -33,6 +33,7 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     ui->spinBoxTimer->setDisabled(true);
     connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));
 
+    includeHomeProjects = false;
     ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
     proxySettingsSetup();
 
@@ -270,4 +271,5 @@ bool Configure::isIncludeHomeProjects()
 void Configure::setIncludeHomeProjects(bool check)
 {
     includeHomeProjects = check;
+    ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
 }
