@@ -81,6 +81,8 @@ private:
     static OBSAccess* instance;
     QString curUsername;
     QString curPassword;
+    QString prevPassword;
+    QString prevUsername;
     QNetworkReply *browseRequest(const QString &urlStr);
     enum RequestType {
         ProjectList,

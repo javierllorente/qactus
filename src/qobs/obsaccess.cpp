@@ -148,22 +148,24 @@ void OBSAccess::changeSubmitRequest(const QString &urlStr, const QByteArray &dat
 void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
 {
     qDebug() << "OBSAccess::provideAuthentication() for" << reply->request().url().toString();
-    static QString prevPassword = "";
-    static QString prevUsername = "";
 //    qDebug() << reply->readAll();
-
 
     if ((curPassword != prevPassword) || (curUsername != prevUsername)) {
         prevPassword = curPassword;
         prevUsername = curUsername;
         ator->setUser(curUsername);
-        ator->setPassword(curPassword);;
-        //            statusBar()->showMessage(tr("Authenticating..."), 5000);
+        ator->setPassword(curPassword);
     } else {
-        prevPassword = "";
+        qDebug() << "OBSAccess::provideAuthentication() same credentials provided!";
+        // FIXME: Workaround to accept the same credentials
+        // Not calling ator->setUser() or ator->setPassword() results in a signal
+        // being emitted with a QNetworkReply with error AuthenticationRequiredError.
+        // So, first time auth with same credentials fails, second time doesn't.
+        // If we call ator->setUser()/ator->setPassword() directly (no if) with the
+        // correct username and wrong password, it ends up in an infinite loop and
+        // probably a blocked openSUSE account :-(
         prevUsername = "";
-        //            authenticated = false;
-        //            emit isAuthenticated(authenticated);
+        prevPassword = "";
     }
 }
 
