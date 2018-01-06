@@ -50,6 +50,13 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     ui->stackedWidget->insertWidget(0, login);
     ui->listWidget->insertItem(0, loginItem);
 
+    for (int i = 0; i < ui->listWidget->count(); ++i) {
+        ui->listWidget->item(i)->setSizeHint(QSize(97,60));
+    }
+
+    ui->listWidget->setMaximumWidth(ui->listWidget->sizeHintForColumn(0)+4);
+    ui->listWidget->setDragEnabled(false);
+
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
     ui->listWidget->setCurrentRow(0);
 
