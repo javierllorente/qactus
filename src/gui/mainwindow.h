@@ -82,6 +82,7 @@ private:
     QAction *action_Restore;
 
     void setupBrowser();
+    void loadProjects();
     QStringListModel *sourceModelProjects;
     QStringListModel *sourceModelBuilds;
     QSortFilterProxyModel *proxyModelProjects;

@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupIconBar();
     createTreePackages();
     createTreeRequests();
+    setupBrowser();
     createStatusBar();
 
     loginDialog = nullptr;
@@ -201,7 +202,7 @@ void MainWindow::isAuthenticated(bool authenticated)
     qDebug() << "MainWindow::isAuthenticated()" << authenticated;
     action_Refresh->setEnabled(authenticated);
     if (authenticated) {
-        setupBrowser();
+        loadProjects();
         delete loginDialog;
         loginDialog = nullptr;
     } else {
@@ -268,8 +269,31 @@ void MainWindow::setupBrowser()
     proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
     sourceModelBuilds = new QStringListModel(ui->treeBuilds);
     proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
-    sourceModelFiles = NULL;
-    sourceModelBuildResults = NULL;
+    sourceModelFiles = nullptr;
+    sourceModelBuildResults = nullptr;
+
+}
+
+void MainWindow::loadProjects()
+{
+    qDebug() << "MainWindow::loadProjects()";
+
+    // Clean up package list, files and results
+    if (proxyModelBuilds!=nullptr) {
+        QSortFilterProxyModel *oldModel = static_cast<QSortFilterProxyModel *>(ui->treeBuilds->model());
+        delete oldModel;
+        proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
+    }
+
+    if (sourceModelFiles!=nullptr) {
+        QStandardItemModel *oldModel = static_cast<QStandardItemModel *>(ui->treeFiles->model());
+        delete oldModel;
+    }
+
+    if (sourceModelBuildResults!=nullptr) {
+        QStandardItemModel *oldModel = static_cast<QStandardItemModel *>(ui->treeBuildResults->model());
+        delete oldModel;
+    }
 
     ui->treeProjects->setModel(proxyModelProjects);
     projectsSelectionModel = ui->treeProjects->selectionModel();
@@ -289,6 +313,7 @@ void MainWindow::setupBrowser()
 
     emit updateStatusBar(tr("Getting projects..."), false);
     obs->getProjects();
+
 }
 
 void MainWindow::filterProjects(const QString &item)
@@ -348,6 +373,18 @@ void MainWindow::refreshProjectFilter()
 void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
 {
     qDebug() << "MainWindow::projectSelectionChanged()";
+
+    // Clean up files and build results on project click
+    if (sourceModelFiles!=nullptr) {
+        delete sourceModelFiles;
+        sourceModelFiles = nullptr;
+    }
+
+    if (sourceModelBuildResults!=nullptr) {
+        delete sourceModelBuildResults;
+        sourceModelBuildResults = nullptr;
+    }
+
     getPackages(ui->treeProjects->currentIndex());
     filterBuilds("");
 }
@@ -638,12 +675,6 @@ void MainWindow::insertPackageList()
         sourceModelBuilds->setStringList(reader->getList());
         proxyModelBuilds->setSourceModel(sourceModelBuilds);
         ui->treeBuilds->setModel(proxyModelBuilds);
-
-        delete sourceModelFiles;
-        sourceModelFiles = NULL;
-
-        delete sourceModelBuildResults;
-        sourceModelBuildResults = NULL;
     }
     emit updateStatusBar(tr("Done"), true);
 }
