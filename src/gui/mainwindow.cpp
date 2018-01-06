@@ -268,7 +268,7 @@ void MainWindow::setupBrowser()
     sourceModelProjects = new QStringListModel(ui->treeProjects);
     proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
     sourceModelBuilds = new QStringListModel(ui->treeBuilds);
-    proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
+    proxyModelBuilds = nullptr;
     sourceModelFiles = nullptr;
     sourceModelBuildResults = nullptr;
 
@@ -280,23 +280,24 @@ void MainWindow::loadProjects()
 
     // Clean up package list, files and results
     if (proxyModelBuilds!=nullptr) {
-        QSortFilterProxyModel *oldModel = static_cast<QSortFilterProxyModel *>(ui->treeBuilds->model());
-        delete oldModel;
-        proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
+        delete proxyModelBuilds;
+        proxyModelBuilds = nullptr;
     }
 
     if (sourceModelFiles!=nullptr) {
-        QStandardItemModel *oldModel = static_cast<QStandardItemModel *>(ui->treeFiles->model());
-        delete oldModel;
+        delete sourceModelFiles;
+        sourceModelFiles = nullptr;
     }
 
     if (sourceModelBuildResults!=nullptr) {
-        QStandardItemModel *oldModel = static_cast<QStandardItemModel *>(ui->treeBuildResults->model());
-        delete oldModel;
+        delete sourceModelBuildResults;
+        sourceModelBuildResults = nullptr;
     }
 
     ui->treeProjects->setModel(proxyModelProjects);
     projectsSelectionModel = ui->treeProjects->selectionModel();
+
+    proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
     ui->treeBuilds->setModel(proxyModelBuilds);
     buildsSelectionModel = ui->treeBuilds->selectionModel();
 
