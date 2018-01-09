@@ -27,13 +27,13 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
 
     QColor green(34, 153, 34);
     addedLineFormat.setForeground(green);
-    rule.pattern = QRegularExpression("^(\\+.*)$");
+    rule.pattern = QRegularExpression("^(\\+.*)$|^(.*added)$");
     rule.format = addedLineFormat;
     highlightingRules.append(rule);
 
     QColor red(221, 68, 68);
     removedLineFormat.setForeground(red);
-    rule.pattern = QRegularExpression("^(-.*)$");
+    rule.pattern = QRegularExpression("^(-.*)$|^(.*deleted)$");
     rule.format = removedLineFormat;
     highlightingRules.append(rule);
 
