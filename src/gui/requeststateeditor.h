@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include "obs.h"
+#include "syntaxhighlighter.h"
 
 namespace Ui {
 class RequestStateEditor;
@@ -59,6 +60,8 @@ private:
     Ui::RequestStateEditor *ui;
     OBS *mOBS;
     QString id;
+    QTextDocument *textDocument;
+    SyntaxHighlighter *syntaxHighlighter;
 };
 
 #endif // REQUESTSTATEEDITOR_H

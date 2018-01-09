@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     packagetreewidget.cpp \
     requesttreewidgetitem.cpp \
     utils.cpp \
-    credentials.cpp
+    credentials.cpp \
+    syntaxhighlighter.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -39,7 +40,8 @@ HEADERS += mainwindow.h \
     packagetreewidget.h \
     requesttreewidgetitem.h \
     utils.h \
-    credentials.h
+    credentials.h \
+    syntaxhighlighter.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \

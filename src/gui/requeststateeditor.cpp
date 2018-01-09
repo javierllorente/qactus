@@ -66,10 +66,12 @@ void RequestStateEditor::setDate(const QString& date)
     ui->dateLabelText->setText(date);
 }
 
-void RequestStateEditor::setDiff(const QString& diff)
+void RequestStateEditor::setDiff(const QString &diff)
 {
-    ui->diffTextBrowser->setText(diff);
-
+    textDocument = new QTextDocument(this);
+    textDocument->setPlainText(diff);
+    syntaxHighlighter = new SyntaxHighlighter(textDocument);
+    ui->diffTextBrowser->setDocument(textDocument);
 }
 
 void RequestStateEditor::on_acceptPushButton_clicked()
