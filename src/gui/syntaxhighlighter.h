@@ -44,6 +44,7 @@ private:
     QVector<HighlightingRule> highlightingRules;
     QTextCharFormat addedLineFormat;
     QTextCharFormat removedLineFormat;
+    QTextCharFormat atLineFormat;
 };
 
 #endif // SYNTAXHIGHLIGHTER_H

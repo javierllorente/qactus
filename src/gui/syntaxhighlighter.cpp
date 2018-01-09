@@ -36,6 +36,12 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
     rule.pattern = QRegularExpression("^(-.*)$");
     rule.format = removedLineFormat;
     highlightingRules.append(rule);
+
+    QColor gray(88, 90, 90);
+    atLineFormat.setForeground(gray);
+    rule.pattern = QRegularExpression("^(@.*)$");
+    rule.format = atLineFormat;
+    highlightingRules.append(rule);
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
