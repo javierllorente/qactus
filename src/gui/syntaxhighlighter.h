@@ -34,6 +34,16 @@ public:
 
 protected:
     void highlightBlock(const QString &text);
+
+private:
+    struct HighlightingRule
+    {
+        QRegularExpression pattern;
+        QTextCharFormat format;
+    };
+    QVector<HighlightingRule> highlightingRules;
+    QTextCharFormat addedLineFormat;
+    QTextCharFormat removedLineFormat;
 };
 
 #endif // SYNTAXHIGHLIGHTER_H

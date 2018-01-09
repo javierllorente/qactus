@@ -23,24 +23,28 @@
 SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)
 {
+    HighlightingRule rule;
 
+    QColor green(34, 153, 34);
+    addedLineFormat.setForeground(green);
+    rule.pattern = QRegularExpression("^(\\+.*)$");
+    rule.format = addedLineFormat;
+    highlightingRules.append(rule);
+
+    QColor red(221, 68, 68);
+    removedLineFormat.setForeground(red);
+    rule.pattern = QRegularExpression("^(-.*)$");
+    rule.format = removedLineFormat;
+    highlightingRules.append(rule);
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
-    QTextCharFormat addedFormat;
-    QColor green(34, 153, 34);
-    addedFormat.setForeground(green);
-
-    QTextCharFormat removedFormat;
-    QColor red(221, 68, 68);
-    removedFormat.setForeground(red);
-
-    QRegularExpression expression("^(-.*)$|^(\\+.*)$");
-    QRegularExpressionMatchIterator i = expression.globalMatch(text);
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        setFormat(match.capturedStart(0), match.capturedLength(0), addedFormat);
-        setFormat(match.capturedStart(1), match.capturedLength(1), removedFormat);
+    foreach (const HighlightingRule &rule, highlightingRules) {
+        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
+        while (matchIterator.hasNext()) {
+            QRegularExpressionMatch match = matchIterator.next();
+            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
+        }
     }
 }
