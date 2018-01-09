@@ -33,7 +33,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
 
     QColor red(221, 68, 68);
     removedLineFormat.setForeground(red);
-    rule.pattern = QRegularExpression("^(-.*)$|^(.*deleted)$");
+    rule.pattern = QRegularExpression("^(-.*)$|^(.*deleted)$|^(delete.*)$");
     rule.format = removedLineFormat;
     highlightingRules.append(rule);
 
