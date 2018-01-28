@@ -1,6 +1,37 @@
 Qactus ChangeLog
 ================
 
+v0.9.XX (2018-XX-XX)
+- New feature: system proxy support
+- Enhancement: coloured SR diffs
+- Code clean up on provideAuthentication()
+- Fix crash: set proxyModelBuilds, sourceModelFiles and sourceModelBuildResults to
+nullptr after deletion
+- Clean up package list, files and results on loadProjects() if necessary
+- Save/restore current icon bar's row
+- Restore password on Login::readSettings()
+- Define and use APP_NAME, ORG_NAME
+- Change Toolbar style to ToolButtonTextBesideIcon
+- Refactor Login and Configure classes
+- Do not treat authentication required as an error so that only the log in dialog is shown
+- Optimise creation/deletion of qnam
+- Rework toolbar; actions are now hidden instead of disabled
+- Fix double free (OBSPackage)
+- Split GUI code; libqobs is born
+- Convert tab widget into an icon bar
+- Save/restore main window's size
+- Fixes, optimisations and code clean up
+- Update the status bar message on logging in/asking for credentials
+- Refactoring: new class Credentials
+- Fix crash on accept/decline a SR
+- Fix crash: check that the model is ready
+- Show progress bar on http requests
+- Fix: start timer only if we are authenticated
+- Make OBSAccess: make getProjectMetadata() async
+- Make OBSAccess:request() async
+- Enhancement: improve configure dialog
+- New feature: a basic OBS browser
+
 v0.7.0 (2015-08-16)
 - New feature: you can now add packages by dropping OBS package URLs
 on the packages' tab
