@@ -60,6 +60,7 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
     ui->listWidget->setCurrentRow(0);
 
+    readProxySettings();
     readSettings();
     readTimerSettings();
 }
@@ -85,12 +86,15 @@ void Configure::setApiUrl(QString apiUrlStr)
 
 void Configure::proxySettingsSetup()
 {
-    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->comboBoxProxyType, SLOT(setEnabled(bool)));
-    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->lineEditProxyServer, SLOT(setEnabled(bool)));
-    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->spinBoxProxyPort, SLOT(setEnabled(bool)));
-    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->lineEditProxyUsername, SLOT(setEnabled(bool)));
-    connect(ui->checkBoxProxy, SIGNAL(toggled(bool)), ui->lineEditProxyPassword, SLOT(setEnabled(bool)));
+    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->comboBoxProxyType, SLOT(setEnabled(bool)));
+    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->lineEditProxyServer, SLOT(setEnabled(bool)));
+    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->spinBoxProxyPort, SLOT(setEnabled(bool)));
+    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->lineEditProxyUsername, SLOT(setEnabled(bool)));
+    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->lineEditProxyPassword, SLOT(setEnabled(bool)));
 
+    ui->buttonGroupProxyType->setId(ui->radioButtonNoProxy, 0);
+    ui->buttonGroupProxyType->setId(ui->radioButtonSystemProxy, 1);
+    ui->buttonGroupProxyType->setId(ui->radioButtonManualProxy, 2);
     ui->comboBoxProxyType->addItem("Socks 5");
     ui->comboBoxProxyType->addItem("HTTP");
 }
@@ -100,14 +104,7 @@ void Configure::writeSettings()
     qDebug() << "Configure::writeSettings()";
     QSettings settings;
 
-    settings.beginGroup("Proxy");
-    settings.setValue("Enabled", isProxyEnabled());
-    settings.setValue("Type", getProxyType());
-    settings.setValue("Server", getProxyServer());
-    settings.setValue("Port", getProxyPort());
-    settings.setValue("Username", getProxyUsername());
-    settings.setValue("Password", getProxyPassword());
-    settings.endGroup();
+    writeProxySettings();
 
     settings.beginGroup("Auth");
     settings.setValue("ApiUrl", mOBS->getApiUrl());
@@ -123,23 +120,43 @@ void Configure::writeSettings()
     settings.endGroup();
 }
 
+void Configure::writeProxySettings()
+{
+    qDebug() << "Configure::writeProxySettings()";
+
+    QSettings settings;
+    settings.beginGroup("Proxy");
+
+    int checkedId = ui->buttonGroupProxyType->checkedId();
+
+    switch (checkedId) {
+    case NoProxy:
+        settings.setValue("Type", QNetworkProxy::NoProxy);
+        break;
+    case SystemProxy:
+        settings.setValue("Type", QNetworkProxy::DefaultProxy);
+        break;
+    case ManualProxy: {
+        int proxyType = ui->comboBoxProxyType->currentIndex() == 0 ?
+                    QNetworkProxy::Socks5Proxy : QNetworkProxy::HttpProxy;
+        settings.setValue("Type", proxyType);
+        settings.setValue("Server", ui->lineEditProxyServer->text());
+        settings.setValue("Port", ui->spinBoxProxyPort->text());
+        settings.setValue("Username", ui->lineEditProxyUsername->text());
+        settings.setValue("Password", ui->lineEditProxyPassword->text());
+        break;
+    }
+    default:
+        break;
+    }
+
+    settings.endGroup();
+}
+
 void Configure::readSettings()
 {
     qDebug() << "Configure::readSettings()";
     QSettings settings;
-
-    settings.beginGroup("Proxy");
-    if (settings.value("Enabled").toBool()) {
-        setCheckedProxyCheckbox(true);
-        setProxyType(settings.value("Type").toInt());
-        setProxyServer(settings.value("Server").toString());
-        setProxyPort(settings.value("Port").toInt());
-        setProxyUsername(settings.value("Username").toString());
-        setProxyPassword(settings.value("Password").toString());
-        // FIX-ME: If proxy is enabled on a non-proxy environment you have
-        // to edit Qactus.conf and set Enabled=false to get Qactus to log in
-    }
-    settings.endGroup();
 
     settings.beginGroup("Auth");
     setApiUrl(settings.value("ApiUrl").toString());
@@ -148,6 +165,43 @@ void Configure::readSettings()
     settings.beginGroup("Browser");
     setIncludeHomeProjects(settings.value("IncludeHomeProjects").toBool());
     settings.endGroup();
+}
+
+void Configure::readProxySettings()
+{
+    qDebug() << "Configure::readProxySettings()";
+
+    QSettings settings;
+    settings.beginGroup("Proxy");
+
+    int proxyType = settings.value("Type").toInt();
+    bool manualProxy = false;
+
+    switch (proxyType) {
+    case QNetworkProxy::NoProxy:
+        ui->buttonGroupProxyType->button(ProxyType::NoProxy)->setChecked(true);
+        break;
+    case QNetworkProxy::DefaultProxy:
+        ui->buttonGroupProxyType->button(ProxyType::SystemProxy)->setChecked(true);
+        break;
+    case QNetworkProxy::Socks5Proxy:
+        ui->comboBoxProxyType->setCurrentIndex(0);
+        manualProxy = true;
+        break;
+    case QNetworkProxy::HttpProxy:
+        ui->comboBoxProxyType->setCurrentIndex(1);
+        manualProxy = true;
+        break;
+    default:
+        break;
+    }
+
+    ui->buttonGroupProxyType->button(ProxyType::ManualProxy)->setChecked(manualProxy);
+    ui->comboBoxProxyType->setEnabled(manualProxy);
+    ui->lineEditProxyServer->setText(settings.value("Server").toString());
+    ui->spinBoxProxyPort->setValue(settings.value("Port").toInt());
+    ui->lineEditProxyUsername->setText(settings.value("Username").toString());
+    ui->lineEditProxyPassword->setText(settings.value("Password").toString());
 }
 
 void Configure::readTimerSettings()
@@ -167,14 +221,14 @@ void Configure::on_buttonBox_accepted()
     }
     setApiUrl(ui->lineEditApiUrl->text());
 
-    toggleProxy(ui->checkBoxProxy->isChecked());
+    writeSettings();
+    emit proxyChanged();
 
     if (includeHomeProjects!=ui->checkBoxHomeProjects->isChecked()) {
         emit includeHomeProjectsChanged();
     }
     includeHomeProjects = ui->checkBoxHomeProjects->isChecked();
 
-    writeSettings();
     login->writeSettings();
     emit timerChanged();
 }
@@ -187,87 +241,6 @@ void Configure::on_buttonBox_rejected()
 void Configure::setOBSApiUrl(const QString &apiUrlStr)
 {
     mOBS->setApiUrl(apiUrlStr);
-}
-
-void Configure::toggleProxy(bool enableProxy)
-{
-    qDebug() << "Configure::toggleProxy()" << enableProxy;
-    if (enableProxy) {
-        qDebug() << "Proxy has been enabled";
-        QNetworkProxy::ProxyType proxyType = ui->comboBoxProxyType->currentIndex() == 0 ?
-                    QNetworkProxy::Socks5Proxy : QNetworkProxy::HttpProxy;
-        proxy.setType(proxyType);
-        proxy.setHostName(ui->lineEditProxyServer->text());
-        proxy.setPort(ui->spinBoxProxyPort->text().toInt());
-        proxy.setUser(ui->lineEditProxyUsername->text());
-        proxy.setPassword(ui->lineEditProxyPassword->text());
-        QNetworkProxy::setApplicationProxy(proxy);
-    } else {
-        qDebug() << "Proxy has been disabled";
-        proxy.setApplicationProxy(QNetworkProxy::NoProxy);
-    }
-}
-
-bool Configure::isProxyEnabled()
-{
-    return ui->checkBoxProxy->isChecked();
-}
-
-void Configure::setCheckedProxyCheckbox(bool check)
-{
-    ui->checkBoxProxy->setChecked(check);
-}
-
-void Configure::setProxyType(const int &proxyType)
-{
-    ui->comboBoxProxyType->setCurrentIndex(proxyType == 1 ? 0 : 1);
-}
-
-int Configure::getProxyType() const
-{
-    QNetworkProxy::ProxyType proxyType = ui->comboBoxProxyType->currentIndex() == 0 ?
-                QNetworkProxy::Socks5Proxy : QNetworkProxy::HttpProxy;
-    return proxyType;
-}
-
-void Configure::setProxyServer(const QString &proxyServer)
-{
-    ui->lineEditProxyServer->setText(proxyServer);
-}
-
-QString Configure::getProxyServer() const
-{
-    return ui->lineEditProxyServer->text();
-}
-
-void Configure::setProxyPort(const int &proxyPort)
-{
-    ui->spinBoxProxyPort->setValue(proxyPort);
-}
-
-int Configure::getProxyPort() const
-{
-    return ui->spinBoxProxyPort->value();
-}
-
-void Configure::setProxyUsername(const QString &proxyUsername)
-{
-    ui->lineEditProxyUsername->setText(proxyUsername);
-}
-
-QString Configure::getProxyUsername() const
-{
-    return ui->lineEditProxyUsername->text();
-}
-
-void Configure::setProxyPassword(const QString &proxyPassword)
-{
-    ui->lineEditProxyPassword->setText(proxyPassword);
-}
-
-QString Configure::getProxyPassword() const
-{
-    return ui->lineEditProxyPassword->text();
 }
 
 bool Configure::isIncludeHomeProjects()

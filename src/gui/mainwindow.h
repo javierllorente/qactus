@@ -109,7 +109,6 @@ private:
     void readAuthSettings();
     void readBrowserSettings();
     bool includeHomeProjects;
-    void readProxySettings();
 
     QMessageBox *errorBox;
 
@@ -127,6 +126,7 @@ signals:
     void notifyChanged(bool notify);
 
 private slots:
+    void readProxySettings();
     void startTimer(bool authenticated);
     void readTimerSettings();
     void showNetworkError(const QString &networkError);

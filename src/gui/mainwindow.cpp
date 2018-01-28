@@ -1082,24 +1082,27 @@ void MainWindow::readBrowserSettings()
 void MainWindow::readProxySettings()
 {
     qDebug() << "MainWindow::readProxySettings()";
-    QNetworkProxy proxy;
+
     QSettings settings;
     settings.beginGroup("Proxy");
-    if (settings.value("Enabled").toBool()) {
-        qDebug() << "Proxy has been enabled";
-        QNetworkProxy::ProxyType type = static_cast<QNetworkProxy::ProxyType>(settings.value("Type").toInt());
-        proxy.setType(type);
-        proxy.setHostName(settings.value("Server").toString());
-        proxy.setPort(settings.value("Port").toInt());
-        proxy.setUser(settings.value("Username").toString());
-        proxy.setPassword(settings.value("Password").toString());
-        // FIX-ME: If proxy is enabled on a non-proxy environment you have
-        // to edit Qactus.conf and set Enabled=false to get Qactus to log in
+    QNetworkProxy::ProxyType proxyType = static_cast<QNetworkProxy::ProxyType>(settings.value("Type").toInt());
+    bool systemProxy = (proxyType == QNetworkProxy::DefaultProxy);
+    bool manualProxy = (proxyType == QNetworkProxy::Socks5Proxy || proxyType == QNetworkProxy::HttpProxy);
+
+    QNetworkProxyFactory::setUseSystemConfiguration(systemProxy);
+
+    if (!systemProxy) {
+        QNetworkProxy proxy;
+        proxy.setType(proxyType);
+        if (manualProxy) {
+            proxy.setHostName(settings.value("Server").toString());
+            proxy.setPort(settings.value("Port").toInt());
+            proxy.setUser(settings.value("Username").toString());
+            proxy.setPassword(settings.value("Password").toString());
+        }
         QNetworkProxy::setApplicationProxy(proxy);
-    } else {
-        qDebug() << "Proxy has been disabled";
-        QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
     }
+
     settings.endGroup();
 }
 
@@ -1142,6 +1145,7 @@ void MainWindow::on_actionConfigure_Qactus_triggered()
     qDebug() << "MainWindow Launching Configure...";
     Configure *configure = new Configure(this, obs);
     connect(configure, SIGNAL(apiChanged()), this, SLOT(apiChangedSlot()));
+    connect(configure, SIGNAL(proxyChanged()), this, SLOT(readProxySettings()));
     connect(configure, SIGNAL(includeHomeProjectsChanged()), this, SLOT(refreshProjectFilter()));
     connect(configure, SIGNAL(timerChanged()), this, SLOT(readTimerSettings()));
     configure->exec();

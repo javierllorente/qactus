@@ -46,22 +46,13 @@ public:
     void toggleProxy(bool enableProxy);
     bool isProxyEnabled();
     void setCheckedProxyCheckbox(bool check);
-    void setProxyType(const int &proxyType);
-    int getProxyType() const;
-    void setProxyServer(const QString &proxyServer);
-    QString getProxyServer() const;
-    void setProxyPort(const int &proxyPort);
-    int getProxyPort() const;
-    void setProxyUsername(const QString &proxyUsername);
-    QString getProxyUsername() const;
-    void setProxyPassword(const QString &proxyPassword);
-    QString getProxyPassword() const;
     bool isIncludeHomeProjects();
     void setIncludeHomeProjects(bool check);
     void readSettings();
 
 signals:
     void apiChanged();
+    void proxyChanged();
     void includeHomeProjectsChanged();
     void timerChanged();
 
@@ -73,12 +64,15 @@ private:
     Ui::Configure *ui;
     OBS *mOBS;
     void setOBSApiUrl(const QString &apiUrlStr);
+    void readProxySettings();
     void readTimerSettings();
     Login *login;
     void proxySettingsSetup();
     QNetworkProxy proxy;
     bool includeHomeProjects;
+    enum ProxyType { NoProxy, SystemProxy, ManualProxy };
     void writeSettings();
+    void writeProxySettings();
 };
 
 #endif // CONFIGURE_H

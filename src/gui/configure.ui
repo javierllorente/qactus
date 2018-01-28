@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>491</width>
-    <height>363</height>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -242,18 +242,35 @@
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <layout class="QVBoxLayout" name="verticalLayoutNetwork">
+        <layout class="QVBoxLayout" name="verticalLayoutProxyRadioGroup">
          <item>
-          <widget class="QCheckBox" name="checkBoxProxy">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QRadioButton" name="radioButtonNoProxy">
            <property name="text">
-            <string>Enable proxy</string>
+            <string>N&amp;o proxy</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroupProxyType</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButtonSystemProxy">
+           <property name="text">
+            <string>Use &amp;system proxy configuration</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroupProxyType</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButtonManualProxy">
+           <property name="text">
+            <string>Use m&amp;anually specified proxy configuration</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroupProxyType</string>
+           </attribute>
           </widget>
          </item>
         </layout>
@@ -411,4 +428,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroupProxyType"/>
+ </buttongroups>
 </ui>
