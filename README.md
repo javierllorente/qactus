@@ -1,16 +1,13 @@
 qactus
 ======
 
-Qactus is a Qt-based OBS notifier application
+Qactus is a Qt-based OBS client
 
-Copyright (C) 2010-2017 Javier Llorente <javier@opensuse.org>
+Copyright (C) 2010-2018 Javier Llorente <javier@opensuse.org>
 
-Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
-
-
-Qactus enables desktop and mobile users to retrieve status and control various aspects of their builds on the OBS, 
-Open Build Service. 
-The name Qactus sprung into existence when the two authors were discussing the name and scope of the project 
+Qactus enables desktop users to browse an OBS server's builds, be notified on builds' status changes and
+manage submit requests as email messages.
+The name Qactus sprung into existence when Javier and Sivan were discussing the name and scope of the project
 (will it just provide status?) which through Sivan's IRC winter typing turned out as "staqtus" which sounded like 
 Qactus to Javier.
 
@@ -18,7 +15,7 @@ This project was originally hosted on Nokia Developer Projects until 2013, when 
 
 Installation
 ------------
-openSUSE packages are available at http://software.opensuse.org/package/qactus
+RPM packages are available at http://software.opensuse.org/package/qactus
 
 Dependencies
 ------------
@@ -32,6 +29,10 @@ cd qactus
 qmake-qt5 qactus.pro DESTDIR=/install/dir
 make
 ```
+
+Former contributors
+-------
+Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
 
 License
 -------
