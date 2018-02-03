@@ -548,23 +548,11 @@ void MainWindow::editRow(QTreeWidgetItem* item, int)
 
 void MainWindow::removeRow()
 {
-//    Check if the tree is not empty to avoid "deleting nothing"
-    if (ui->treePackages->topLevelItemCount()!=0) {
-//    Remove selected row
-    QTreeWidgetItem *item = ui->treePackages->currentItem();
-    int index = ui->treePackages->indexOfTopLevelItem(item);
-
-//    Remove statusList for selected row
-//    -1 means that there is no row selected
-        if (index!=-1) {
-            ui->treePackages->takeTopLevelItem(index);
-            qDebug() << "Row removed:" << index;
-        } else {
-            qDebug () << "No row selected";
-        }
-    } else {
-//        If the tree is empty, do nothing
-    }    
+    qDebug () << "MainWindow::removeRow()";
+    QList<QTreeWidgetItem *> items = ui->treePackages->selectedItems();
+    foreach (QTreeWidgetItem *item, items) {
+        delete item;
+    }
 }
 
 void MainWindow::refreshView()
