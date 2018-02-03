@@ -2,6 +2,7 @@ Qactus ChangeLog
 ================
 
 v0.9.XX (2018-XX-XX)
+- Enhancenment: enable deleting multiple builds from the monitor tab at once
 - New feature: system proxy support
 - Enhancement: coloured SR diffs
 - Code clean up on provideAuthentication()
