@@ -59,6 +59,7 @@ public:
     QStringList readXmlFile(const QString &xmlFile);
     void changeSubmitRequest(const QString &urlStr, const QByteArray &data);
     OBSXmlReader* getXmlReader();   
+    void branchPackage(const QString &project, const QString &package);
 
 private:
     OBSAccess *obsAccess;

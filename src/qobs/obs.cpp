@@ -214,3 +214,8 @@ OBSXmlReader* OBS::getXmlReader()
 {
     return xmlReader;
 }
+
+void OBS::branchPackage(const QString &project, const QString &package)
+{
+    postRequest(apiUrl + "/source/" + project + "/" + package + "?cmd=branch", "");
+}
