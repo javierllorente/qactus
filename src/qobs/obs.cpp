@@ -95,6 +95,11 @@ void OBS::postRequest(const QString &urlStr, const QByteArray &data)
     obsAccess->postRequest(urlStr, data);
 }
 
+void OBS::deleteRequest(const QString &urlStr)
+{
+    obsAccess->deleteRequest(urlStr);
+}
+
 bool OBS::isAuthenticated()
 {
     return obsAccess->isAuthenticated();
@@ -218,4 +223,9 @@ OBSXmlReader* OBS::getXmlReader()
 void OBS::branchPackage(const QString &project, const QString &package)
 {
     postRequest(apiUrl + "/source/" + project + "/" + package + "?cmd=branch", "");
+}
+
+void OBS::deletePackage(const QString &project, const QString &package)
+{
+    deleteRequest(apiUrl + "/source/" + project + "/" + package);
 }

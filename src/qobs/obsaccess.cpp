@@ -139,6 +139,16 @@ QNetworkReply *OBSAccess::postRequest(const QString &urlStr, const QByteArray &d
     return reply;
 }
 
+QNetworkReply *OBSAccess::deleteRequest(const QString &urlStr)
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl(urlStr));
+    request.setRawHeader("User-Agent", userAgent.toLatin1());
+    QNetworkReply *reply = manager->deleteResource(request);
+
+    return reply;
+}
+
 void OBSAccess::changeSubmitRequest(const QString &urlStr, const QByteArray &data)
 {
     QNetworkReply *reply = postRequest(urlStr, data);

@@ -44,6 +44,7 @@ public:
     QString getUsername();
     void request(const QString &urlStr);
     QNetworkReply *postRequest(const QString &urlStr, const QByteArray &data);
+    QNetworkReply *deleteRequest(const QString &urlStr);
     void getProjects(const QString &urlStr);
     void getProjectMetadata(const QString &urlStr);
     void getPackages(const QString &urlStr);

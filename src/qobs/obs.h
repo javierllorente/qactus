@@ -60,12 +60,14 @@ public:
     void changeSubmitRequest(const QString &urlStr, const QByteArray &data);
     OBSXmlReader* getXmlReader();   
     void branchPackage(const QString &project, const QString &package);
+    void deletePackage(const QString &project, const QString &package);
 
 private:
     OBSAccess *obsAccess;
     OBSXmlReader *xmlReader;
     QString apiUrl;
     void postRequest(const QString &urlStr, const QByteArray &data);
+    void deleteRequest(const QString &urlStr);
 
 signals:
     void isAuthenticated(bool);
