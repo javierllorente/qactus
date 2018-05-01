@@ -215,7 +215,6 @@ void MainWindow::createToolbar()
 {
     action_Add = new QAction(tr("&Add"), this);
     action_Add->setIcon(QIcon(":/icons/list-add.png"));
-    action_Add->setStatusTip(tr("Add a new row"));
     action_Add->setShortcut(QKeySequence("Ctrl+A"));
     action_Add->setVisible(false);
     ui->toolBar->addAction(action_Add);
@@ -223,7 +222,6 @@ void MainWindow::createToolbar()
 
     action_Remove = new QAction(tr("&Remove"), this);
     action_Remove->setIcon(QIcon(":/icons/list-remove.png"));
-    action_Remove->setStatusTip(tr("Remove selected row"));
     action_Remove->setShortcut(QKeySequence::Delete);
     action_Remove->setVisible(false);
     ui->toolBar->addAction(action_Remove);
@@ -231,7 +229,6 @@ void MainWindow::createToolbar()
 
     action_Refresh = new QAction(tr("&Refresh"), this);
     action_Refresh->setIcon(QIcon(":/icons/view-refresh.png"));
-    action_Refresh->setStatusTip(tr("Refresh view"));
     action_Refresh->setShortcut(QKeySequence::Refresh);
     action_Refresh->setEnabled(false);
     ui->toolBar->addAction(action_Refresh);
@@ -239,7 +236,6 @@ void MainWindow::createToolbar()
 
     action_MarkRead = new QAction(tr("&Mark all as read"), this);
     action_MarkRead->setIcon(QIcon(":/icons/view-task.png"));
-    action_MarkRead->setStatusTip(tr("Mark all as read"));
     action_MarkRead->setShortcut(QKeySequence("Ctrl+M"));
     action_MarkRead->setVisible(false);
     ui->toolBar->addAction(action_MarkRead);
@@ -250,7 +246,6 @@ void MainWindow::createToolbar()
     action_Configure = new QAction(tr("&Configure"), this);
     action_Configure->setIcon(QIcon(":/icons/configure.png"));
     action_Configure->setText(tr("Configure"));
-    action_Configure->setStatusTip(tr("Configure Qactus"));
     ui->toolBar->addAction(action_Configure);
     connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
 }
