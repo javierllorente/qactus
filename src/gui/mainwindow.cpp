@@ -645,6 +645,7 @@ void MainWindow::insertProjectList()
     sourceModelProjects->setStringList(reader->getList());
     proxyModelProjects->setSourceModel(sourceModelProjects);
     ui->treeProjects->setModel(proxyModelProjects);
+    filterProjects("");
     emit updateStatusBar(tr("Done"), true);
 }
 
