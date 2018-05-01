@@ -361,6 +361,7 @@ void MainWindow::filterRadioButtonClicked(bool)
 void MainWindow::refreshProjectFilter()
 {
     qDebug() << "MainWindow::refreshProjectFilter()";
+    readBrowserSettings();
     if (ui->radioButtonProject->isChecked()) {
         filterProjects(ui->lineEditFilter->text());
     }
