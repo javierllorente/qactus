@@ -46,8 +46,6 @@ public:
     void toggleProxy(bool enableProxy);
     bool isProxyEnabled();
     void setCheckedProxyCheckbox(bool check);
-    bool isIncludeHomeProjects();
-    void setIncludeHomeProjects(bool check);
     void readSettings();
 
 signals:

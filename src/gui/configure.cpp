@@ -116,7 +116,7 @@ void Configure::writeSettings()
     settings.endGroup();
 
     settings.beginGroup("Browser");
-    settings.setValue("IncludeHomeProjects", isIncludeHomeProjects());
+    settings.setValue("IncludeHomeProjects", ui->checkBoxHomeProjects->isChecked());
     settings.endGroup();
 }
 
@@ -163,7 +163,7 @@ void Configure::readSettings()
     settings.endGroup();
 
     settings.beginGroup("Browser");
-    setIncludeHomeProjects(settings.value("IncludeHomeProjects").toBool());
+    ui->checkBoxHomeProjects->setChecked(settings.value("IncludeHomeProjects").toBool());
     settings.endGroup();
 }
 
@@ -241,15 +241,4 @@ void Configure::on_buttonBox_rejected()
 void Configure::setOBSApiUrl(const QString &apiUrlStr)
 {
     mOBS->setApiUrl(apiUrlStr);
-}
-
-bool Configure::isIncludeHomeProjects()
-{
-    return includeHomeProjects;
-}
-
-void Configure::setIncludeHomeProjects(bool check)
-{
-    includeHomeProjects = check;
-    ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
 }
