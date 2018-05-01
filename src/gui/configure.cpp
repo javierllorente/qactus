@@ -33,7 +33,6 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     ui->spinBoxTimer->setDisabled(true);
     connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));
 
-    includeHomeProjects = false;
     ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
     proxySettingsSetup();
 
@@ -163,7 +162,8 @@ void Configure::readSettings()
     settings.endGroup();
 
     settings.beginGroup("Browser");
-    ui->checkBoxHomeProjects->setChecked(settings.value("IncludeHomeProjects").toBool());
+    includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
+    ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
     settings.endGroup();
 }
 
