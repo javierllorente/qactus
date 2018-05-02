@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2010-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -800,7 +800,7 @@ void MainWindow::on_action_About_triggered()
                        "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a>" +
                        "<div align=\"left\">" +
                           "<p>" +
-                          "&copy; 2010-2017 Javier Llorente (Main developer)<br>"
+                          "&copy; 2010-2018 Javier Llorente (Main developer)<br>"
                           "&copy; 2010-2011 Sivan Greenberg (Former contributor)  &nbsp; <br><br>"
                           + tr("Icons by the Oxygen Team") + "<br>"
                           + tr("Tray icon by the Open Build Service") + /*"<br>"*/
