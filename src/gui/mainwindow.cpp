@@ -786,12 +786,12 @@ void MainWindow::loginSlot(const QString &username, const QString &password)
     obs->login();
 }
 
-void MainWindow::on_action_Quit_triggered(bool)
+void MainWindow::on_action_Quit_triggered()
 {
     qApp->quit();
 }
 
-void MainWindow::on_action_About_triggered(bool)
+void MainWindow::on_action_About_triggered()
 {
     QMessageBox::about(this,tr("About") + " " + QCoreApplication::applicationName(),
                        "<h2 align=\"left\">" + QCoreApplication::applicationName() + "</h2>" +

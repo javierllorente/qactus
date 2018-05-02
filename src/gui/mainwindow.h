@@ -144,8 +144,8 @@ private slots:
     void on_action_Mark_all_as_read_triggered();
     void markRead(QTreeWidgetItem*, int);
     void loginSlot(const QString &username, const QString &password);
-    void on_action_About_triggered(bool);
-    void on_action_Quit_triggered(bool);
+    void on_action_About_triggered();
+    void on_action_Quit_triggered();
     void trayIconClicked(QSystemTrayIcon::ActivationReason);
     void toggleVisibility();
     void on_action_Configure_Qactus_triggered();
