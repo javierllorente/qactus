@@ -520,6 +520,9 @@
    </property>
   </action>
   <action name="action_Remove">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../../application.qrc">
      <normaloff>:/icons/list-remove.png</normaloff>:/icons/list-remove.png</iconset>

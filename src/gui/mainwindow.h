@@ -139,6 +139,7 @@ private slots:
     void on_action_Add_triggered();
     void finishedResultListSlot();
     void editRow(QTreeWidgetItem*, int);
+    void slotEnableRemoveRow();
     void on_action_Remove_triggered();
     void on_action_Refresh_triggered();
     void on_action_Mark_all_as_read_triggered();

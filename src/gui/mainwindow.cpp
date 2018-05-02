@@ -502,12 +502,32 @@ void MainWindow::editRow(QTreeWidgetItem* item, int)
     delete rowEditor;
 }
 
+void MainWindow::slotEnableRemoveRow()
+{
+    QList<QModelIndex> list = ui->treePackages->selectionModel()->selectedIndexes();
+
+    if (list.isEmpty()) {
+        ui->action_Remove->setEnabled(false);
+    } else if (!ui->action_Remove->isEnabled()) {
+        ui->action_Remove->setEnabled(true);
+    }
+
+}
+
 void MainWindow::on_action_Remove_triggered()
 {
     qDebug () << "MainWindow::removeRow()";
     QList<QTreeWidgetItem *> items = ui->treePackages->selectedItems();
+    QList<QModelIndex> list = ui->treePackages->selectionModel()->selectedIndexes();
     foreach (QTreeWidgetItem *item, items) {
         delete item;
+    }
+
+    if (!list.isEmpty()) {
+        QTreeWidgetItem *currentItem = ui->treePackages->currentItem();
+        if (currentItem) {
+            currentItem->setSelected(true);
+        }
     }
 }
 
@@ -578,6 +598,7 @@ void MainWindow::createTreePackages()
             this, SLOT(markRead(QTreeWidgetItem*, int)));
 
     ui->treePackages->setItemDelegate(new AutoToolTipDelegate(ui->treePackages));
+    connect(ui->treePackages, SIGNAL(itemSelectionChanged()), this, SLOT(slotEnableRemoveRow()));
 }
 
 void MainWindow::createTreeRequests()
