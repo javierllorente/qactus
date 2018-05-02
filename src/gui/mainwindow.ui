@@ -421,21 +421,21 @@
     <property name="title">
      <string>Fi&amp;le</string>
     </property>
-    <addaction name="actionLogin"/>
-    <addaction name="actionQuit"/>
+    <addaction name="action_Login"/>
+    <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout"/>
-    <addaction name="action_aboutQt"/>
+    <addaction name="action_About"/>
+    <addaction name="action_About_Qt"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
      <string>Setti&amp;ngs</string>
     </property>
-    <addaction name="actionConfigure_Qactus"/>
+    <addaction name="action_Configure_Qactus"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -455,8 +455,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_Add"/>
+   <addaction name="action_Remove"/>
+   <addaction name="action_Refresh"/>
+   <addaction name="action_Mark_all_as_read"/>
   </widget>
-  <action name="actionAbout">
+  <action name="action_About">
    <property name="icon">
     <iconset resource="../../application.qrc">
      <normaloff>:/icons/help-about.png</normaloff>:/icons/help-about.png</iconset>
@@ -465,12 +469,12 @@
     <string>&amp;About</string>
    </property>
   </action>
-  <action name="action_aboutQt">
+  <action name="action_About_Qt">
    <property name="text">
     <string>About &amp;Qt</string>
    </property>
   </action>
-  <action name="actionQuit">
+  <action name="action_Quit">
    <property name="icon">
     <iconset resource="../../application.qrc">
      <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
@@ -482,7 +486,7 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionConfigure_Qactus">
+  <action name="action_Configure_Qactus">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -494,13 +498,61 @@
     <string>&amp;Configure Qactus</string>
    </property>
   </action>
-  <action name="actionLogin">
+  <action name="action_Login">
    <property name="icon">
     <iconset resource="../../application.qrc">
      <normaloff>:/icons/dialog-password.png</normaloff>:/icons/dialog-password.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Login</string>
+   </property>
+  </action>
+  <action name="action_Add">
+   <property name="icon">
+    <iconset resource="../../application.qrc">
+     <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="action_Remove">
+   <property name="icon">
+    <iconset resource="../../application.qrc">
+     <normaloff>:/icons/list-remove.png</normaloff>:/icons/list-remove.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Remove</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="action_Refresh">
+   <property name="icon">
+    <iconset resource="../../application.qrc">
+     <normaloff>:/icons/view-refresh.png</normaloff>:/icons/view-refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Refresh</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="action_Mark_all_as_read">
+   <property name="icon">
+    <iconset resource="../../application.qrc">
+     <normaloff>:/icons/view-task.png</normaloff>:/icons/view-task.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Mark all as read</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>

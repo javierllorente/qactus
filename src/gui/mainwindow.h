@@ -65,13 +65,6 @@ private:
 
     QToolBar *toolBar;
     QProgressBar *progressBar;
-    void createToolbar();
-    QAction *action_Add;
-    QAction *action_Remove;
-    QAction *action_Refresh;
-    QAction *action_MarkRead;
-    QAction *action_Configure;
-    QAction *action_aboutQt;
 
     TrayIcon *trayIcon;
     bool m_notify;
@@ -143,21 +136,20 @@ private slots:
     void filterRadioButtonClicked(bool);
     void getRequestDescription(QTreeWidgetItem*, int);
     void setNotify(bool notify);
-    void addRow();
+    void on_action_Add_triggered();
     void finishedResultListSlot();
     void editRow(QTreeWidgetItem*, int);
-    void removeRow();
-    void refreshView();
-    void markAllRead();
+    void on_action_Remove_triggered();
+    void on_action_Refresh_triggered();
+    void on_action_Mark_all_as_read_triggered();
     void markRead(QTreeWidgetItem*, int);
     void loginSlot(const QString &username, const QString &password);
-    void on_actionAbout_triggered(bool);
-    void on_actionQuit_triggered(bool);
+    void on_action_About_triggered(bool);
+    void on_action_Quit_triggered(bool);
     void trayIconClicked(QSystemTrayIcon::ActivationReason);
     void toggleVisibility();
-    void about();
-    void on_actionConfigure_Qactus_triggered();
-    void on_actionLogin_triggered();
+    void on_action_Configure_Qactus_triggered();
+    void on_action_Login_triggered();
     void on_iconBar_currentRowChanged(int index);
     void insertProjectList();
     void insertPackageList();

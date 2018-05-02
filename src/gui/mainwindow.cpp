@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     obs = new OBS();
 
-    createToolbar();
     trayIcon = new TrayIcon(this);
     m_notify = false;
     createActions();
@@ -200,7 +199,7 @@ void MainWindow::apiChangedSlot()
 void MainWindow::isAuthenticated(bool authenticated)
 {
     qDebug() << "MainWindow::isAuthenticated()" << authenticated;
-    action_Refresh->setEnabled(authenticated);
+    ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         loadProjects();
         delete loginDialog;
@@ -209,45 +208,6 @@ void MainWindow::isAuthenticated(bool authenticated)
         emit updateStatusBar(tr("Authentication is required"), true);
         showLoginDialog();
     }
-}
-
-void MainWindow::createToolbar()
-{
-    action_Add = new QAction(tr("&Add"), this);
-    action_Add->setIcon(QIcon(":/icons/list-add.png"));
-    action_Add->setShortcut(QKeySequence("Ctrl+A"));
-    action_Add->setVisible(false);
-    ui->toolBar->addAction(action_Add);
-    connect(action_Add, SIGNAL(triggered()), this, SLOT(addRow()));
-
-    action_Remove = new QAction(tr("&Remove"), this);
-    action_Remove->setIcon(QIcon(":/icons/list-remove.png"));
-    action_Remove->setShortcut(QKeySequence::Delete);
-    action_Remove->setVisible(false);
-    ui->toolBar->addAction(action_Remove);
-    connect(action_Remove, SIGNAL(triggered()), this, SLOT(removeRow()));
-
-    action_Refresh = new QAction(tr("&Refresh"), this);
-    action_Refresh->setIcon(QIcon(":/icons/view-refresh.png"));
-    action_Refresh->setShortcut(QKeySequence::Refresh);
-    action_Refresh->setEnabled(false);
-    ui->toolBar->addAction(action_Refresh);
-    connect(action_Refresh, SIGNAL(triggered()), this, SLOT(refreshView()));
-
-    action_MarkRead = new QAction(tr("&Mark all as read"), this);
-    action_MarkRead->setIcon(QIcon(":/icons/view-task.png"));
-    action_MarkRead->setShortcut(QKeySequence("Ctrl+M"));
-    action_MarkRead->setVisible(false);
-    ui->toolBar->addAction(action_MarkRead);
-    connect(action_MarkRead, SIGNAL(triggered()), this, SLOT(markAllRead()));
-
-    ui->toolBar->addSeparator();
-
-    action_Configure = new QAction(tr("&Configure"), this);
-    action_Configure->setIcon(QIcon(":/icons/configure.png"));
-    action_Configure->setText(tr("Configure"));
-    ui->toolBar->addAction(action_Configure);
-    connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
 }
 
 void MainWindow::setupBrowser()
@@ -494,7 +454,7 @@ void MainWindow::srStatusSlot(const QString &status)
     }
 }
 
-void MainWindow::addRow()
+void MainWindow::on_action_Add_triggered()
 {
     qDebug() << "Launching RowEditor...";
     RowEditor *rowEditor = new RowEditor(this, obs);
@@ -542,7 +502,7 @@ void MainWindow::editRow(QTreeWidgetItem* item, int)
     delete rowEditor;
 }
 
-void MainWindow::removeRow()
+void MainWindow::on_action_Remove_triggered()
 {
     qDebug () << "MainWindow::removeRow()";
     QList<QTreeWidgetItem *> items = ui->treePackages->selectedItems();
@@ -551,7 +511,7 @@ void MainWindow::removeRow()
     }
 }
 
-void MainWindow::refreshView()
+void MainWindow::on_action_Refresh_triggered()
 {
     qDebug() << "MainWindow::refreshView()";
     int rows = ui->treePackages->topLevelItemCount();
@@ -590,7 +550,7 @@ void MainWindow::markRead(QTreeWidgetItem* item, int)
     setNotify(false);
 }
 
-void MainWindow::markAllRead()
+void MainWindow::on_action_Mark_all_as_read_triggered()
 {
     qDebug() << "MainWindow::markAllRead()";
     for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
@@ -826,17 +786,12 @@ void MainWindow::loginSlot(const QString &username, const QString &password)
     obs->login();
 }
 
-void MainWindow::on_actionQuit_triggered(bool)
+void MainWindow::on_action_Quit_triggered(bool)
 {
     qApp->quit();
 }
 
-void MainWindow::on_actionAbout_triggered(bool)
-{
-    about();
-}
-
-void MainWindow::about()
+void MainWindow::on_action_About_triggered(bool)
 {
     QMessageBox::about(this,tr("About") + " " + QCoreApplication::applicationName(),
                        "<h2 align=\"left\">" + QCoreApplication::applicationName() + "</h2>" +
@@ -860,15 +815,7 @@ void MainWindow::about()
 
 void MainWindow::createActions()
 {
-    action_aboutQt = new QAction(tr("About &Qt"), this);
-    connect(ui->action_aboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
-//    action_Configure = new QAction(tr("&Configure"), trayIcon);
-//    action_Configure->setIcon(QIcon(":/icons/configure.png"));
-//    connect(action_Configure, SIGNAL(triggered()), this, SLOT(on_actionConfigure_Qactus_triggered()));
-//    trayIcon->trayIconMenu->addAction(action_Configure);
-
-    trayIcon->trayIconMenu->addSeparator();
+    connect(ui->action_About_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
     connect(action_Restore, SIGNAL(triggered()), this, SLOT(toggleVisibility()));
@@ -916,7 +863,7 @@ void MainWindow::createTimer()
     timer = new QTimer(this);
     interval = 0;
     connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(startTimer(bool)));
-    connect(timer, SIGNAL(timeout()), this, SLOT(refreshView()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(on_action_Refresh_triggered()));
 }
 
 void MainWindow::setTimerInterval(int interval)
@@ -1016,9 +963,9 @@ void MainWindow::readMWSettings()
     settings.endGroup();
 
     bool visible = (row==1);
-    action_Add->setVisible(visible);
-    action_Remove->setVisible(visible);
-    action_MarkRead->setVisible(visible);
+    ui->action_Add->setVisible(visible);
+    ui->action_Remove->setVisible(visible);
+    ui->action_Mark_all_as_read->setVisible(visible);
 }
 
 void MainWindow::readMonitorSettings()
@@ -1125,7 +1072,7 @@ void MainWindow::showLoginDialog()
 
 }
 
-void MainWindow::on_actionConfigure_Qactus_triggered()
+void MainWindow::on_action_Configure_Qactus_triggered()
 {
     qDebug() << "MainWindow Launching Configure...";
     Configure *configure = new Configure(this, obs);
@@ -1137,7 +1084,7 @@ void MainWindow::on_actionConfigure_Qactus_triggered()
     delete configure;
 }
 
-void MainWindow::on_actionLogin_triggered()
+void MainWindow::on_action_Login_triggered()
 {
     showLoginDialog();
 }
@@ -1146,9 +1093,9 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
 {
     // Enable add and remove for the monitor tab
     bool enabled = (index==1);
-    action_Add->setVisible(enabled);
-    action_Remove->setVisible(enabled);
-    action_MarkRead->setVisible(enabled);
+    ui->action_Add->setVisible(enabled);
+    ui->action_Remove->setVisible(enabled);
+    ui->action_Mark_all_as_read->setVisible(enabled);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
