@@ -223,8 +223,7 @@
         <string>Accept</string>
        </property>
        <property name="icon">
-        <iconset resource="../../application.qrc">
-         <normaloff>:/icons/dialog-ok-apply.png</normaloff>:/icons/dialog-ok-apply.png</iconset>
+        <iconset theme="dialog-ok-apply"/>
        </property>
       </widget>
      </item>
@@ -240,8 +239,7 @@
         <string>Decline</string>
        </property>
        <property name="icon">
-        <iconset resource="../../application.qrc">
-         <normaloff>:/icons/dialog-cancel.png</normaloff>:/icons/dialog-cancel.png</iconset>
+        <iconset theme="dialog-cancel"/>
        </property>
       </widget>
      </item>
@@ -251,8 +249,7 @@
         <string>Close</string>
        </property>
        <property name="icon">
-        <iconset resource="../../application.qrc">
-         <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
+        <iconset theme="application-exit"/>
        </property>
       </widget>
      </item>
@@ -260,9 +257,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../application.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>closePushButton</sender>

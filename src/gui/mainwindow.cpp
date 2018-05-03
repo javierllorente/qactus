@@ -413,7 +413,7 @@ void MainWindow::showContextMenu(const QPoint& point)
     QMenu *treeRequestsMenu = new QMenu(ui->treeRequests);
 
     QAction *actionChangeRequestState =  new QAction(tr("Change &State"), this);
-    actionChangeRequestState->setIcon(QIcon(":/icons/system-switch-user.png"));
+    actionChangeRequestState->setIcon(QIcon::fromTheme("mail-reply-sender"));
     actionChangeRequestState->setText("Change State");
     connect(actionChangeRequestState, SIGNAL(triggered()), this, SLOT(changeRequestState()));
 
