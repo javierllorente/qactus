@@ -1024,10 +1024,7 @@ void MainWindow::readMWSettings()
     ui->iconBar->setCurrentRow(row);
     settings.endGroup();
 
-    bool visible = (row==1);
-    ui->action_Add->setVisible(visible);
-    ui->action_Remove->setVisible(visible);
-    ui->action_Mark_all_as_read->setVisible(visible);
+    on_iconBar_currentRowChanged(row);
 }
 
 void MainWindow::readMonitorSettings()
