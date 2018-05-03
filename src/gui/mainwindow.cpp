@@ -884,7 +884,7 @@ void MainWindow::createActions()
     trayIcon->trayIconMenu->addAction(action_Restore);
 
     action_Quit = new QAction(tr("&Quit"), trayIcon);
-    action_Quit->setIcon(QIcon(":/icons/application-exit.png"));
+    action_Quit->setIcon(QIcon::fromTheme("application-exit"));
     connect(action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     trayIcon->trayIconMenu->addAction(action_Quit);
 }
