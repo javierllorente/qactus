@@ -639,6 +639,7 @@ void MainWindow::createTreeRequests()
     ui->treeRequests->setColumnWidth(6, 60); // State
 
     connect(ui->treeRequests, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(changeRequestState()));
+    connect(ui->actionChange_request_state, SIGNAL(triggered()), this, SLOT(changeRequestState()));
     connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getRequestDescription(QTreeWidgetItem*, int)));
 
     ui->treeRequests->setItemDelegate(new AutoToolTipDelegate(ui->treeRequests));
@@ -823,6 +824,7 @@ void MainWindow::getRequestDescription(QTreeWidgetItem* item, int)
                 + QString::number(ui->treeRequests->indexOfTopLevelItem(item));
     qDebug() << "Request description: " + requestDescription;
     ui->textBrowser->setText(requestDescription);
+    ui->actionChange_request_state->setEnabled(true);
 }
 
 void MainWindow::setNotify(bool notify)
@@ -1166,6 +1168,9 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     ui->action_Add->setVisible(monitorTabVisible);
     ui->action_Remove->setVisible(monitorTabVisible);
     ui->action_Mark_all_as_read->setVisible(monitorTabVisible);
+
+    bool requestsTabVisible = (index==2);
+    ui->actionChange_request_state->setVisible(requestsTabVisible);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
