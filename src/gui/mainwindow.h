@@ -45,6 +45,7 @@ class Configure;
 class OBSFile;
 class OBSResult;
 class OBSPackage;
+class OBSStatus;
 class OBSRequest;
 
 class MainWindow : public QMainWindow
@@ -142,6 +143,7 @@ private slots:
     void slotEnableRemoveRow();
     void on_action_Remove_triggered();
     void on_action_Refresh_triggered();
+    void on_action_Branch_package_triggered();
     void on_action_Mark_all_as_read_triggered();
     void markRead(QTreeWidgetItem*, int);
     void loginSlot(const QString &username, const QString &password);
@@ -157,6 +159,7 @@ private slots:
     void insertFile(OBSFile*);
     void insertResult(OBSResult*);
     void insertBuildStatus(OBSPackage*, const int&);
+    void slotReceivedStatus(OBSStatus *obsStatus);
     void insertRequest(OBSRequest*);
     void removeRequest(const QString& id);
     void updateStatusBarSlot(const QString &message, bool progressBarHidden);

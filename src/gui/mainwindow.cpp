@@ -27,6 +27,7 @@
 #include "roweditor.h"
 #include "requeststateeditor.h"
 #include "obspackage.h"
+#include "obsstatus.h"
 #include "autotooltipdelegate.h"
 #include "requesttreewidgetitem.h"
 
@@ -67,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(insertFile(OBSFile*)));
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
+    connect(obs, SIGNAL(finishedParsingStatus(OBSStatus*)),
+            this, SLOT(slotReceivedStatus(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SLOT(insertResult(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResultList()),
@@ -344,12 +347,14 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
 
     getPackages(ui->treeProjects->currentIndex());
     filterBuilds("");
+    ui->action_Branch_package->setEnabled(false);
 }
 
 void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
 {
     qDebug() << "MainWindow::buildSelectionChanged()";
     getPackageFiles(ui->treeBuilds->currentIndex());
+    ui->action_Branch_package->setEnabled(true);
 }
 
 void MainWindow::getPackages(QModelIndex index)
@@ -528,6 +533,27 @@ void MainWindow::on_action_Remove_triggered()
         if (currentItem) {
             currentItem->setSelected(true);
         }
+    }
+}
+
+void MainWindow::on_action_Branch_package_triggered()
+{
+    QModelIndex prjIndex = ui->treeProjects->currentIndex();
+    QString project = prjIndex.data().toString();
+    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
+    QString build = pkgIndex.data().toString();
+
+    const QString title = tr("Branch confirmation");
+    const QString text = tr("<b>Source</b><br> %1/%2<br><b>Destination</b><br> home:%3:branches:%4")
+                           .arg(project, build, obs->getUsername(), project);
+
+    QMessageBox::StandardButton result = QMessageBox::question(this, title, text,
+                                                              QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (result == QMessageBox::Ok) {
+        qDebug() << "Branching package..." << project << "/" << build;
+        obs->branchPackage(project, build);
+        const QString statusText = tr("Branching %1/%2...").arg(project, build);
+        emit updateStatusBar(statusText, false);
     }
 }
 
@@ -727,6 +753,21 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
     } else {
         emit updateStatusBar(details, true);
     }
+}
+
+void MainWindow::slotReceivedStatus(OBSStatus *obsStatus)
+{
+    qDebug() << "MainWindow::slotReceivedStatus()";
+
+    if (obsStatus->getCode()!="ok") {
+        const QString title = tr("Warning");
+        const QString text = obsStatus->getSummary() + "<br>" + obsStatus->getDetails();
+        QMessageBox::warning(this, title, text);
+    }
+    delete obsStatus;
+    obsStatus = nullptr;
+
+    emit updateStatusBar(tr("Done"), true);
 }
 
 bool MainWindow::hasBuildStatusChanged(const QString &oldStatus, const QString &newStatus)
@@ -1112,11 +1153,22 @@ void MainWindow::on_action_Login_triggered()
 
 void MainWindow::on_iconBar_currentRowChanged(int index)
 {
-    // Enable add and remove for the monitor tab
-    bool enabled = (index==1);
-    ui->action_Add->setVisible(enabled);
-    ui->action_Remove->setVisible(enabled);
-    ui->action_Mark_all_as_read->setVisible(enabled);
+    // Enable/Disable the branch package button if there is a build selected
+    QItemSelectionModel *treeBuildsSelectionModel = ui->treeBuilds->selectionModel();
+    if (treeBuildsSelectionModel) {
+        QList<QModelIndex> selectedBuilds = treeBuildsSelectionModel->selectedIndexes();
+        ui->action_Branch_package->setEnabled(!selectedBuilds.isEmpty());
+    } else {
+        ui->action_Branch_package->setEnabled(false);
+    }
+
+    bool browserTabVisible = (index==0);
+    ui->action_Branch_package->setVisible(browserTabVisible);
+
+    bool monitorTabVisible = (index==1);
+    ui->action_Add->setVisible(monitorTabVisible);
+    ui->action_Remove->setVisible(monitorTabVisible);
+    ui->action_Mark_all_as_read->setVisible(monitorTabVisible);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

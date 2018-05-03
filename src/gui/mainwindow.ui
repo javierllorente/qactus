@@ -455,6 +455,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_Branch_package"/>
    <addaction name="action_Add"/>
    <addaction name="action_Remove"/>
    <addaction name="action_Refresh"/>
@@ -556,6 +557,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="action_Branch_package">
+   <property name="text">
+    <string>&amp;Branch package</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
  </widget>
