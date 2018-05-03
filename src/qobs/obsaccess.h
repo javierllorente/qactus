@@ -53,6 +53,7 @@ public:
     void changeSubmitRequest(const QString &urlStr, const QByteArray &data);
     void request(const QString &urlStr, const int &row);
     void getSRDiff(const QString &urlStr);
+    void branchPackage(const QString &urlStr);
 
 signals:
     void isAuthenticated(bool authenticated);
@@ -92,7 +93,8 @@ private:
         FileList,
         BuildStatusList,
         SubmitRequest,
-        SRDiff
+        SRDiff,
+        BranchPackage
     };
     bool authenticated;
     OBSXmlReader *xmlReader;

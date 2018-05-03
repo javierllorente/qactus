@@ -33,6 +33,7 @@
 #include "obsfile.h"
 #include "obsresult.h"
 #include "obsrevision.h"
+#include "obsstatus.h"
 
 class OBSXmlReader : public QObject
 {
@@ -48,6 +49,7 @@ public:
     void parseFileList(const QString &data);
     void parseResultList(const QString &data);
     void parseSubmitRequest(const QString &data);
+    void parseBranchPackage(const QString &data);
     int getRequestNumber();
     QStringList getList();
     void readList();
@@ -59,6 +61,7 @@ private:
     static OBSXmlReader* instance;
     OBSXmlReader();
     void parseStatus(const QXmlStreamReader &xml, OBSPackage *obsPackage);
+    void parseBranchStatus(QXmlStreamReader &xml, OBSStatus *obsStatus);
     void parsePackage(const QString &data);
     int row;
     void parseRevisionList(const QString &data);
@@ -81,6 +84,7 @@ private:
 
 signals:
     void finishedParsingPackage(OBSPackage*, const int&);
+    void finishedParsingStatus(OBSStatus*);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);

@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(networkError(QString)));
     connect(xmlReader, SIGNAL(finishedParsingPackage(OBSPackage*, const int)),
             this, SIGNAL(finishedParsingPackage(OBSPackage*,int)));
+    connect(xmlReader, SIGNAL(finishedParsingStatus(OBSStatus*)),
+            this, SIGNAL(finishedParsingStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SIGNAL(finishedParsingResult(OBSResult*)));
     connect(xmlReader, SIGNAL(finishedParsingResultList()),
@@ -222,7 +224,7 @@ OBSXmlReader* OBS::getXmlReader()
 
 void OBS::branchPackage(const QString &project, const QString &package)
 {
-    postRequest(apiUrl + "/source/" + project + "/" + package + "?cmd=branch", "");
+    obsAccess->branchPackage(apiUrl + "/source/" + project + "/" + package + "?cmd=branch");
 }
 
 void OBS::deletePackage(const QString &project, const QString &package)

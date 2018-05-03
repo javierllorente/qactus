@@ -258,6 +258,11 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 qDebug() << reqType << "SRDiff";
                 emit srDiffFetched(data);
                 break;
+
+            case OBSAccess::BranchPackage:
+                qDebug() << reqType << "BranchPackage";
+                xmlReader->parseBranchPackage(data);
+                break;
             }
             return;
         }
@@ -292,6 +297,12 @@ void OBSAccess::getSRDiff(const QString &urlStr)
 {
     QNetworkReply *reply = postRequest(urlStr, "");
     reply->setProperty("reqtype", OBSAccess::SRDiff);
+}
+
+void OBSAccess::branchPackage(const QString &urlStr)
+{
+    QNetworkReply *reply = postRequest(urlStr, "");
+    reply->setProperty("reqtype", OBSAccess::BranchPackage);
 }
 
 void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)

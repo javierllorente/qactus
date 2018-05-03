@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "obsaccess.h"
 #include "obsxmlreader.h"
 #include "obspackage.h"
+#include "obsstatus.h"
 
 #if defined(QOBS_LIBRARY)
 #  define QOBS_EXPORT Q_DECL_EXPORT
@@ -74,6 +75,7 @@ signals:
     void selfSignedCertificate(QNetworkReply*);
     void networkError(const QString&);
     void finishedParsingPackage(OBSPackage*, const int&);
+    void finishedParsingStatus(OBSStatus*);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);

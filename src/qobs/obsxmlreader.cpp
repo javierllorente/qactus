@@ -107,6 +107,36 @@ void OBSXmlReader::parseStatus(const QXmlStreamReader &xml, OBSPackage *obsPacka
     } // end status
 }
 
+void OBSXmlReader::parseBranchStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
+{
+    qDebug() << "OBSXmlReader::parseBranchStatus()";
+
+    if (xml.name()=="status") {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            obsStatus->setCode(attrib.value("code").toString());
+            qDebug() << "Status code:" << obsStatus->getCode();
+
+        }
+    } // end status
+
+    if (xml.name()=="summary" && xml.isStartElement()) {
+        xml.readNext();
+        obsStatus->setSummary(xml.text().toString());
+        qDebug() << "Status summary:" << obsStatus->getSummary();
+        // If user doesn't exist, return
+        if (xml.text().toString().startsWith("Couldn't find User with login")) {
+            return;
+        }
+    } // end summary
+
+    if (xml.name()=="details") {
+        xml.readNext();
+        obsStatus->setDetails(xml.text().toString());
+        qDebug() << "Status details:" << obsStatus->getDetails();
+    } // end details
+
+}
 
 void OBSXmlReader::parsePackage(const QString &data)
 {
@@ -221,6 +251,25 @@ void OBSXmlReader::parseSubmitRequest(const QString &data)
     }
 
     emit finishedParsingSR(obsPackage);
+}
+
+void OBSXmlReader::parseBranchPackage(const QString &data)
+{
+    qDebug() << "OBSXmlReader::parseBranchPackage()";
+    QXmlStreamReader xml(data);
+    OBSStatus *obsStatus = new OBSStatus();
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseBranchStatus(xml, obsStatus);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingStatus(obsStatus);
 }
 
 void OBSXmlReader::parseRevisionList(const QString &data)
