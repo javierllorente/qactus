@@ -542,6 +542,9 @@
    </property>
   </action>
   <action name="action_Mark_all_as_read">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="mail-mark-task"/>
    </property>

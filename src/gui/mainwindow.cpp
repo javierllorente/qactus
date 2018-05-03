@@ -743,9 +743,10 @@ void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
                  << "(Total rows:" << ui->treePackages->topLevelItemCount() << ")";
 
         //    If the old status is not empty and it is different from latest one,
-        //    change the tray icon
+        //    change the tray icon and enable the "Mark all as read" button
         if (hasBuildStatusChanged(oldStatus, status)) {
             Utils::setItemBoldFont(item, true);
+            ui->action_Mark_all_as_read->setEnabled(true);
         }
 
         if (row == ui->treePackages->topLevelItemCount()-1) {
