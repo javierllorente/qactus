@@ -70,6 +70,10 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
     connect(obs, SIGNAL(finishedParsingStatus(OBSStatus*)),
             this, SLOT(slotReceivedStatus(OBSStatus*)));
+    connect(obs, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
+            this, SLOT(slotDeleteProject(OBSStatus*)));
+    connect(obs, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
+            this, SLOT(slotDeletePackage(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SLOT(insertResult(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResultList()),
@@ -347,14 +351,21 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
 
     getPackages(ui->treeProjects->currentIndex());
     filterBuilds("");
+
     ui->action_Branch_package->setEnabled(false);
+    actionDelete_package->setEnabled(false);
+    actionDelete_project->setEnabled(true);
+    actionDelete->setEnabled(true);
 }
 
 void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
 {
     qDebug() << "MainWindow::buildSelectionChanged()";
     getPackageFiles(ui->treeBuilds->currentIndex());
+
     ui->action_Branch_package->setEnabled(true);
+    actionDelete_package->setEnabled(true);
+    actionDelete->setEnabled(true);
 }
 
 void MainWindow::getPackages(QModelIndex index)
@@ -553,6 +564,50 @@ void MainWindow::on_action_Branch_package_triggered()
         qDebug() << "Branching package..." << project << "/" << build;
         obs->branchPackage(project, build);
         const QString statusText = tr("Branching %1/%2...").arg(project, build);
+        emit updateStatusBar(statusText, false);
+    }
+}
+
+void MainWindow::deleteProject()
+{
+    qDebug() << "MainWindow:deleteProject()";
+
+    QModelIndex prjIndex = ui->treeProjects->currentIndex();
+    QString project = prjIndex.data().toString();
+
+    const QString title = tr("Delete confirmation");
+    const QString text = tr("Do you really want to delete project<br> %1?")
+                           .arg(project);
+
+    QMessageBox::StandardButton result = QMessageBox::question(this, title, text,
+                                                              QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (result == QMessageBox::Ok) {
+        qDebug() << "Deleting project" << project << "...";
+        obs->deleteProject(project);
+        const QString statusText = tr("Deleting %1...").arg(project);
+        emit updateStatusBar(statusText, false);
+    }
+}
+
+void MainWindow::deletePackage()
+{
+    qDebug() << "MainWindow:deletePackage()";
+
+    QModelIndex prjIndex = ui->treeProjects->currentIndex();
+    QString project = prjIndex.data().toString();
+    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
+    QString package = pkgIndex.data().toString();
+
+    const QString title = tr("Delete confirmation");
+    const QString text = tr("Do you really want to delete package<br> %1/%2?")
+                           .arg(project, package);
+
+    QMessageBox::StandardButton result = QMessageBox::question(this, title, text,
+                                                              QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (result == QMessageBox::Ok) {
+        qDebug() << "Deleting package" << package << "...";
+        obs->deletePackage(project, package);
+        const QString statusText = tr("Deleting %1...").arg(package);
         emit updateStatusBar(statusText, false);
     }
 }
@@ -768,6 +823,59 @@ void MainWindow::slotReceivedStatus(OBSStatus *obsStatus)
     }
     delete obsStatus;
     obsStatus = nullptr;
+    loadProjects();
+
+    emit updateStatusBar(tr("Done"), true);
+}
+
+void MainWindow::slotDeleteProject(OBSStatus *obsStatus)
+{
+    qDebug() << "MainWindow::slotDeleteProject()";
+
+    if (obsStatus->getCode()!="ok") {
+        const QString title = tr("Warning");
+        const QString text = obsStatus->getSummary() + "<br>" + obsStatus->getDetails();
+        QMessageBox::warning(this, title, text);
+    }
+
+    QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
+                                                                Qt::DisplayRole, QVariant::fromValue(QString(obsStatus->getProject())),
+                                                                1, Qt::MatchExactly);
+    if(!itemList.isEmpty()) {
+        auto item = itemList.at(0);
+        ui->treeProjects->model()->removeRow(item.row(), item.parent());
+    }
+
+    delete obsStatus;
+    obsStatus = nullptr;
+
+    emit updateStatusBar(tr("Done"), true);
+}
+
+void MainWindow::slotDeletePackage(OBSStatus *obsStatus)
+{
+    qDebug() << "MainWindow::slotDeletePackage()";
+
+    if (obsStatus->getCode()!="ok") {
+        const QString title = tr("Warning");
+        const QString text = obsStatus->getSummary() + "<br>" + obsStatus->getDetails();
+        QMessageBox::warning(this, title, text);
+    }
+
+    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+
+    if (obsStatus->getProject()==currentProject) {
+        QModelIndexList itemList = ui->treeBuilds->model()->match(ui->treeBuilds->model()->index(0, 0),
+                                                                  Qt::DisplayRole, QVariant::fromValue(QString(obsStatus->getPackage())),
+                                                                  1, Qt::MatchExactly);
+        if(!itemList.isEmpty()) {
+            auto itemIndex = itemList.at(0);
+            ui->treeBuilds->model()->removeRow(itemIndex.row(), itemIndex.parent());
+        }
+    }
+
+    delete obsStatus;
+    obsStatus = nullptr;
 
     emit updateStatusBar(tr("Done"), true);
 }
@@ -881,6 +989,28 @@ void MainWindow::on_action_About_triggered()
 void MainWindow::createActions()
 {
     connect(ui->action_About_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+    deleteButton = new QToolButton(this);
+    deleteButton->setPopupMode(QToolButton::InstantPopup);
+    deleteButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    deleteButton->setText(tr("&Delete"));
+    deleteButton->setIcon(QIcon::fromTheme("trash-empty"));
+
+    deleteMenu = new QMenu(deleteButton);
+    actionDelete_project = new QAction(tr("Pro&ject"), this);
+    actionDelete_project->setIcon(QIcon::fromTheme("project-development"));
+    connect(actionDelete_project, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
+
+    actionDelete_package = new QAction(tr("Pac&kage"), this);
+    actionDelete_package->setIcon(QIcon::fromTheme("application-x-source-rpm"));
+    connect(actionDelete_package, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
+
+    deleteMenu->addAction(actionDelete_project);
+    deleteMenu->addAction(actionDelete_package);
+    deleteButton->setMenu(deleteMenu);
+
+    actionDelete = ui->toolBar->addWidget(deleteButton);
+    actionDelete->setVisible(false);
 
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
     connect(action_Restore, SIGNAL(triggered()), this, SLOT(toggleVisibility()));
@@ -1157,13 +1287,29 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     QItemSelectionModel *treeBuildsSelectionModel = ui->treeBuilds->selectionModel();
     if (treeBuildsSelectionModel) {
         QList<QModelIndex> selectedBuilds = treeBuildsSelectionModel->selectedIndexes();
-        ui->action_Branch_package->setEnabled(!selectedBuilds.isEmpty());
+        bool enable = !selectedBuilds.isEmpty();
+        ui->action_Branch_package->setEnabled(enable);
+        actionDelete_package->setEnabled(enable);
     } else {
         ui->action_Branch_package->setEnabled(false);
+        actionDelete_package->setEnabled(false);
     }
+
+    QItemSelectionModel *treeProjectsSelectionModel = ui->treeProjects->selectionModel();
+    if (treeProjectsSelectionModel) {
+        QList<QModelIndex> selectedProjects = treeProjectsSelectionModel->selectedIndexes();
+        bool enable = !selectedProjects.isEmpty();
+        actionDelete_project->setEnabled(enable);
+    } else {
+        actionDelete_project->setEnabled(false);
+    }
+
+    bool enableactionDelete = actionDelete_project->isEnabled() || actionDelete_package->isEnabled();
+    actionDelete->setEnabled(enableactionDelete);
 
     bool browserTabVisible = (index==0);
     ui->action_Branch_package->setVisible(browserTabVisible);
+    actionDelete->setVisible(browserTabVisible);
 
     bool monitorTabVisible = (index==1);
     ui->action_Add->setVisible(monitorTabVisible);
