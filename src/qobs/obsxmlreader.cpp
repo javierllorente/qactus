@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -270,6 +270,47 @@ void OBSXmlReader::parseBranchPackage(const QString &data)
     }
 
     emit finishedParsingStatus(obsStatus);
+}
+
+void OBSXmlReader::parseDeleteProject(const QString &data, const QString &project)
+{
+    qDebug() << "OBSXmlReader::parseDeleteProject()";
+    QXmlStreamReader xml(data);
+    OBSStatus *obsStatus = new OBSStatus();
+    obsStatus->setProject(project);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseOBSStatus(xml, obsStatus);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingDeletePrjStatus(obsStatus);
+}
+
+void OBSXmlReader::parseDeletePackage(const QString &data, const QString &project, const QString &package)
+{
+    qDebug() << "OBSXmlReader::parseDeletePackage()";
+    QXmlStreamReader xml(data);
+    OBSStatus *obsStatus = new OBSStatus();
+    obsStatus->setProject(project);
+    obsStatus->setPackage(package);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseOBSStatus(xml, obsStatus);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingDeletePkgStatus(obsStatus);
 }
 
 void OBSXmlReader::parseRevisionList(const QString &data)

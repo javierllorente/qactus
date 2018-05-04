@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ public:
     void parseResultList(const QString &data);
     void parseSubmitRequest(const QString &data);
     void parseBranchPackage(const QString &data);
+    void parseDeleteProject(const QString &data, const QString &project);
+    void parseDeletePackage(const QString &data, const QString &project, const QString &package);
     int getRequestNumber();
     QStringList getList();
     void readList();
@@ -85,6 +87,8 @@ private:
 signals:
     void finishedParsingPackage(OBSPackage*, const int&);
     void finishedParsingStatus(OBSStatus*);
+    void finishedParsingDeletePrjStatus(OBSStatus*);
+    void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);
