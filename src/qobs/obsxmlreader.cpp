@@ -107,9 +107,9 @@ void OBSXmlReader::parseStatus(const QXmlStreamReader &xml, OBSPackage *obsPacka
     } // end status
 }
 
-void OBSXmlReader::parseBranchStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
+void OBSXmlReader::parseOBSStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
 {
-    qDebug() << "OBSXmlReader::parseBranchStatus()";
+    qDebug() << "OBSXmlReader::parseOBSStatus()";
 
     if (xml.name()=="status") {
         if (xml.isStartElement()) {
@@ -261,7 +261,7 @@ void OBSXmlReader::parseBranchPackage(const QString &data)
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseBranchStatus(xml, obsStatus);
+        parseOBSStatus(xml, obsStatus);
     } // end while
 
     if (xml.hasError()) {

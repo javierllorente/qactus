@@ -61,7 +61,7 @@ private:
     static OBSXmlReader* instance;
     OBSXmlReader();
     void parseStatus(const QXmlStreamReader &xml, OBSPackage *obsPackage);
-    void parseBranchStatus(QXmlStreamReader &xml, OBSStatus *obsStatus);
+    void parseOBSStatus(QXmlStreamReader &xml, OBSStatus *obsStatus);
     void parsePackage(const QString &data);
     int row;
     void parseRevisionList(const QString &data);
