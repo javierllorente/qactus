@@ -281,6 +281,30 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 qDebug() << reqType << "BranchPackage";
                 xmlReader->parseBranchPackage(data);
                 break;
+
+            case OBSAccess::DeleteProject: {
+                qDebug() << reqType << "DeleteProject";
+                QString project;
+                if (reply->property("deleteprj").isValid()) {
+                    project = reply->property("deleteprj").toString();
+                }
+                xmlReader->parseDeleteProject(data, project);
+                break;
+            }
+
+            case OBSAccess::DeletePackage: {
+                qDebug() << reqType << "DeletePackage";
+                QString project;
+                QString package;
+                if (reply->property("deleteprj").isValid()) {
+                    project = reply->property("deleteprj").toString();
+                }
+                if (reply->property("deletepkg").isValid()) {
+                    package = reply->property("deletepkg").toString();
+                }
+                xmlReader->parseDeletePackage(data, project, package);
+                break;
+            }
             }
             return;
         }
@@ -321,6 +345,23 @@ void OBSAccess::branchPackage(const QString &resource)
 {
     QNetworkReply *reply = postRequest(resource, "");
     reply->setProperty("reqtype", OBSAccess::BranchPackage);
+}
+
+void OBSAccess::deleteProject(const QString &project)
+{
+    QString resource = QString("/source/%1").arg(project);
+    QNetworkReply *reply = deleteRequest(resource);
+    reply->setProperty("reqtype", OBSAccess::DeleteProject);
+    reply->setProperty("deleteprj", project);
+}
+
+void OBSAccess::deletePackage(const QString &project, const QString &package)
+{
+    QString resource = QString("/source/%1/%2").arg(project, package);
+    QNetworkReply *reply = deleteRequest(resource);
+    reply->setProperty("reqtype", OBSAccess::DeletePackage);
+    reply->setProperty("deleteprj", project);
+    reply->setProperty("deletepkg", package);
 }
 
 void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)

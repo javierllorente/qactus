@@ -60,6 +60,8 @@ public:
     void request(const QString &resource, int row);
     void getSRDiff(const QString &resource);
     void branchPackage(const QString &resource);
+    void deleteProject(const QString &project);
+    void deletePackage(const QString &project, const QString &package);
 
 signals:
     void isAuthenticated(bool authenticated);
@@ -100,7 +102,9 @@ private:
         BuildStatusList,
         SubmitRequest,
         SRDiff,
-        BranchPackage
+        BranchPackage,
+        DeleteProject,
+        DeletePackage
     };
     bool authenticated;
     OBSXmlReader *xmlReader;
