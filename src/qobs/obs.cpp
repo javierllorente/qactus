@@ -74,32 +74,32 @@ QString OBS::getUsername()
 
 void OBS::setApiUrl(const QString &apiUrl)
 {
-    this->apiUrl = apiUrl;
+    obsAccess->setApiUrl(apiUrl);
 }
 
 QString OBS::getApiUrl() const
 {
-    return apiUrl;
+    return obsAccess->getApiUrl();
 }
 
-void OBS::request(const QString &urlStr)
+void OBS::request(const QString &resource)
 {
-    obsAccess->request(urlStr);
+    obsAccess->request(resource);
 }
 
-void OBS::request(const QString &urlStr, const int &row)
+void OBS::request(const QString &resource, int row)
 {
-    obsAccess->request(urlStr, row);
+    obsAccess->request(resource, row);
 }
 
-void OBS::postRequest(const QString &urlStr, const QByteArray &data)
+void OBS::postRequest(const QString &resource, const QByteArray &data)
 {
-    obsAccess->postRequest(urlStr, data);
+    obsAccess->postRequest(resource, data);
 }
 
-void OBS::deleteRequest(const QString &urlStr)
+void OBS::deleteRequest(const QString &resource)
 {
-    obsAccess->deleteRequest(urlStr);
+    obsAccess->deleteRequest(resource);
 }
 
 bool OBS::isAuthenticated()
@@ -109,40 +109,34 @@ bool OBS::isAuthenticated()
 
 void OBS::login()
 {
-    request(apiUrl + "/");
+    request("/");
 }
 
 void OBS::getBuildStatus(const QStringList &stringList, const int &row)
 {
-    //    URL format: https://api.opensuse.org/build/KDE:Extra/openSUSE_13.2/x86_64/qrae/_status
-    request(apiUrl + "/build/"
-            + stringList[0] + "/"
-            + stringList[1] + "/"
-            + stringList[2] + "/"
-            + stringList[3] + "/_status", row);
+    //    URL format: https://api.opensuse.org/build/<project>/<repository>/<arch>/<package>/_status
+    QString resource = QString("%1/%2/%3/%4/_status").arg(stringList[0], stringList[1], stringList[2], stringList[3]);
+    obsAccess->requestBuild(resource, row);
 }
 
 void OBS::getAllBuildStatus(const QString &project, const QString &package)
 {
-    //    URL format: https://api.opensuse.org/build/KDE:Extra/_result?package=qactus
-    obsAccess->getAllBuildStatus(apiUrl + "/build/"
-                                 + project + "/"
-                                 + "_result?package="
-                                 + package);
+    //    URL format: https://api.opensuse.org/build/<project>/_result?package=<package>
+    QString resource = QString("%1/%2%3").arg(project, "_result?package=", package);
+    obsAccess->getAllBuildStatus(resource);
 }
 
 void OBS::getRevisions(const QString &project, const QString &package)
 {
-    //    URL format: https://api.opensuse.org/source/KDE:Extra/qactus/_history
-    request(apiUrl + "/source/"
-            + project + "/"
-            + package + "/"
-            + "_history");
+    //    URL format: https://api.opensuse.org/source/<project>/<package>/_history
+    QString resource = QString("%1/%2/_history").arg(project, package);
+    obsAccess->requestSource(resource);
 }
 
 void OBS::getRequests()
 {
-    request(apiUrl + "/request?view=collection&states=new&roles=maintainer&user=" + getUsername());
+    QString resource = QString("?view=collection&states=new&roles=maintainer&user=%1").arg(getUsername());
+    obsAccess->requestRequest(resource);
 }
 
 int OBS::getRequestCount()
@@ -154,10 +148,10 @@ void OBS::changeSubmitRequestSlot(const QString &id, const QString &comments, bo
 {
     qDebug() << "OBS::changeSubmitRequest() id:" << id << " comments:" << comments << " accept:" << accepted;
     QString newState = accepted ? "accepted" : "declined";
-    QString urlStr = QString("%1/request/%2?cmd=changestate&newstate=%3").arg(apiUrl, id, newState);
+    QString resource = QString("/request/%1?cmd=changestate&newstate=%2").arg(id, newState);
     QByteArray data;
     data.append(comments);
-    changeSubmitRequest(urlStr, data);
+    changeSubmitRequest(resource, data);
 }
 
 void OBS::srChangeResult(OBSPackage *obsPackage)
@@ -170,33 +164,35 @@ void OBS::srChangeResult(OBSPackage *obsPackage)
 void OBS::getRequestDiff(const QString &source)
 {
     qDebug() << "OBS::getRequestDiff()";
-    QString urlStr = QString("%1/source/%2?unified=1&tarlimit=0&cmd=diff&filelimit=0&expand=1")
-            .arg(apiUrl, source);
-    obsAccess->getSRDiff(urlStr);
+    QString resource = QString("/source/%1?unified=1&tarlimit=0&cmd=diff&filelimit=0&expand=1")
+            .arg(source);
+    obsAccess->getSRDiff(resource);
 }
 
 void OBS::getProjects()
 {
     xmlReader->setFileName("projects.xml");
-    obsAccess->getProjects(apiUrl + "/source");
+    obsAccess->getProjects();
 }
 
 void OBS::getPackages(const QString &project)
 {
     xmlReader->setFileName(project + ".xml");
-    obsAccess->getPackages(apiUrl + "/source/" + project);
+    obsAccess->getPackages("/" + project);
 }
 
 void OBS::getProjectMetadata(const QString &project)
 {
     xmlReader->setFileName(project + "_meta.xml");
-    obsAccess->getProjectMetadata(apiUrl + "/source/" + project + "/_meta");
+    obsAccess->getProjectMetadata("/" + project + "/_meta");
 }
 
 void OBS::getFiles(const QString &project, const QString &package)
 {
-    xmlReader->setFileName(project + "_" + package + ".xml");
-    obsAccess->getFiles(apiUrl + "/source/" + project + "/" + package);
+    QString fileName = QString("%1_%2.xml").arg(project, package);
+    xmlReader->setFileName(fileName);
+    QString resource = QString("/%1/%2").arg(project, package);
+    obsAccess->getFiles(resource);
 }
 
 QStringList OBS::getRepositoryArchs(const QString &repository)
@@ -205,9 +201,9 @@ QStringList OBS::getRepositoryArchs(const QString &repository)
     return xmlReader->getList();
 }
 
-void OBS::changeSubmitRequest(const QString &urlStr, const QByteArray &data)
+void OBS::changeSubmitRequest(const QString &resource, const QByteArray &data)
 {
-    obsAccess->changeSubmitRequest(urlStr, data);
+    obsAccess->changeSubmitRequest(resource, data);
 }
 
 QStringList OBS::readXmlFile(const QString &xmlFile)
@@ -224,10 +220,12 @@ OBSXmlReader* OBS::getXmlReader()
 
 void OBS::branchPackage(const QString &project, const QString &package)
 {
-    obsAccess->branchPackage(apiUrl + "/source/" + project + "/" + package + "?cmd=branch");
+    QString resource = QString("/source/%1/%2?cmd=branch").arg(project, package);
+    obsAccess->branchPackage(resource);
 }
 
 void OBS::deletePackage(const QString &project, const QString &package)
 {
-    deleteRequest(apiUrl + "/source/" + project + "/" + package);
+    QString resource = QString("/source/%1/%2").arg(project, package);
+    deleteRequest(resource);
 }

@@ -42,18 +42,24 @@ public:
     static OBSAccess* getInstance();
     bool isAuthenticated();
     QString getUsername();
-    void request(const QString &urlStr);
-    QNetworkReply *postRequest(const QString &urlStr, const QByteArray &data);
-    QNetworkReply *deleteRequest(const QString &urlStr);
-    void getProjects(const QString &urlStr);
-    void getProjectMetadata(const QString &urlStr);
-    void getPackages(const QString &urlStr);
-    void getFiles(const QString &urlStr);
-    void getAllBuildStatus(const QString &urlStr);
-    void changeSubmitRequest(const QString &urlStr, const QByteArray &data);
-    void request(const QString &urlStr, const int &row);
-    void getSRDiff(const QString &urlStr);
-    void branchPackage(const QString &urlStr);
+    void setApiUrl(const QString &apiUrl);
+    QString getApiUrl() const;
+    QNetworkReply *request(const QString &resource);
+    QNetworkReply *requestBuild(const QString &resource);
+    void requestBuild(const QString &resource, int row);
+    QNetworkReply *requestSource(const QString &resource);
+    void requestRequest(const QString &resource);
+    QNetworkReply *postRequest(const QString &resource, const QByteArray &data);
+    QNetworkReply *deleteRequest(const QString &resource);
+    void getProjects();
+    void getProjectMetadata(const QString &resource);
+    void getPackages(const QString &resource);
+    void getFiles(const QString &resource);
+    void getAllBuildStatus(const QString &resource);
+    void changeSubmitRequest(const QString &resource, const QByteArray &data);
+    void request(const QString &resource, int row);
+    void getSRDiff(const QString &resource);
+    void branchPackage(const QString &resource);
 
 signals:
     void isAuthenticated(bool authenticated);
@@ -85,7 +91,7 @@ private:
     QString curPassword;
     QString prevPassword;
     QString prevUsername;
-    QNetworkReply *browseRequest(const QString &urlStr);
+    QString apiUrl;
     enum RequestType {
         ProjectList,
         ProjectMetadata,

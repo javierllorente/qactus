@@ -69,68 +69,86 @@ QString OBSAccess::getUsername()
     return curUsername;
 }
 
-void OBSAccess::request(const QString &urlStr)
+void OBSAccess::setApiUrl(const QString &apiUrl)
 {
-    QNetworkRequest request;
-    request.setUrl(QUrl(urlStr));
-    qDebug() << "User-Agent:" << userAgent;
-    request.setRawHeader("User-Agent", userAgent.toLatin1());  
-    manager->get(request);
+    this->apiUrl = apiUrl;
 }
 
-QNetworkReply *OBSAccess::browseRequest(const QString &urlStr)
+QString OBSAccess::getApiUrl() const
+{
+    return apiUrl;
+}
+
+QNetworkReply *OBSAccess::request(const QString &resource)
 {
     QNetworkRequest request;
-    request.setUrl(QUrl(urlStr));
+    request.setUrl(QUrl(apiUrl + resource));
     qDebug() << "User-Agent:" << userAgent;
-    request.setRawHeader("User-Agent", userAgent.toLatin1());
+    request.setRawHeader("User-Agent", userAgent.toLatin1());  
     QNetworkReply *reply = manager->get(request);
     return reply;
 }
 
-void OBSAccess::getProjects(const QString &urlStr)
+QNetworkReply *OBSAccess::requestBuild(const QString &resource)
 {
-    QNetworkReply *reply = browseRequest(urlStr);
+    return request("/build/" + resource);
+}
+
+void OBSAccess::requestBuild(const QString &resource, int row)
+{
+    request("/build/" + resource, row);
+}
+
+QNetworkReply *OBSAccess::requestSource(const QString &resource)
+{
+    return request("/source/" + resource);
+}
+
+void OBSAccess::requestRequest(const QString &resource)
+{
+    request("/request/" + resource);
+}
+
+void OBSAccess::getProjects()
+{
+    QNetworkReply *reply = requestSource("");
     reply->setProperty("reqtype", OBSAccess::ProjectList);
 }
 
-void OBSAccess::getProjectMetadata(const QString &urlStr)
+void OBSAccess::getProjectMetadata(const QString &resource)
 {
-    QNetworkReply *reply = browseRequest(urlStr);
+    QNetworkReply *reply = requestSource(resource);
     reply->setProperty("reqtype", OBSAccess::ProjectMetadata);
 }
 
-void OBSAccess::getPackages(const QString &urlStr)
+void OBSAccess::getPackages(const QString &resource)
 {
-    QNetworkReply *reply = browseRequest(urlStr);
+    QNetworkReply *reply = requestSource(resource);
     reply->setProperty("reqtype", OBSAccess::PackageList);
 }
 
-void OBSAccess::getFiles(const QString &urlStr)
+void OBSAccess::getFiles(const QString &resource)
 {
-    QNetworkReply *reply = browseRequest(urlStr);
+    QNetworkReply *reply = requestSource(resource);
     reply->setProperty("reqtype", OBSAccess::FileList);
 }
 
-void OBSAccess::getAllBuildStatus(const QString &urlStr)
+void OBSAccess::getAllBuildStatus(const QString &resource)
 {
-    QNetworkReply *reply = browseRequest(urlStr);
+    QNetworkReply *reply = requestBuild(resource);
     reply->setProperty("reqtype", OBSAccess::BuildStatusList);
 }
 
-void OBSAccess::request(const QString &urlStr, const int &row)
+void OBSAccess::request(const QString &resource, int row)
 {
-    QNetworkRequest request;
-    request.setUrl(QUrl(urlStr));
-    request.setRawHeader("User-Agent", userAgent.toLatin1());
-    QNetworkReply *reply = manager->get(request);
+    QNetworkReply *reply = request(resource);
     reply->setProperty("row", row);
 }
 
-QNetworkReply *OBSAccess::postRequest(const QString &urlStr, const QByteArray &data)
+QNetworkReply *OBSAccess::postRequest(const QString &resource, const QByteArray &data)
 {
     QNetworkRequest request;
-    request.setUrl(QUrl(urlStr));
+    request.setUrl(QUrl(apiUrl + resource));
     qDebug() << "User-Agent:" << userAgent;
     request.setRawHeader("User-Agent", userAgent.toLatin1());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
@@ -139,19 +157,19 @@ QNetworkReply *OBSAccess::postRequest(const QString &urlStr, const QByteArray &d
     return reply;
 }
 
-QNetworkReply *OBSAccess::deleteRequest(const QString &urlStr)
+QNetworkReply *OBSAccess::deleteRequest(const QString &resource)
 {
     QNetworkRequest request;
-    request.setUrl(QUrl(urlStr));
+    request.setUrl(QUrl(apiUrl + resource));
     request.setRawHeader("User-Agent", userAgent.toLatin1());
     QNetworkReply *reply = manager->deleteResource(request);
 
     return reply;
 }
 
-void OBSAccess::changeSubmitRequest(const QString &urlStr, const QByteArray &data)
+void OBSAccess::changeSubmitRequest(const QString &resource, const QByteArray &data)
 {
-    QNetworkReply *reply = postRequest(urlStr, data);
+    QNetworkReply *reply = postRequest(resource, data);
     reply->setProperty("reqtype", OBSAccess::SubmitRequest);
 }
 
@@ -293,15 +311,15 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-void OBSAccess::getSRDiff(const QString &urlStr)
+void OBSAccess::getSRDiff(const QString &resource)
 {
-    QNetworkReply *reply = postRequest(urlStr, "");
+    QNetworkReply *reply = postRequest(resource, "");
     reply->setProperty("reqtype", OBSAccess::SRDiff);
 }
 
-void OBSAccess::branchPackage(const QString &urlStr)
+void OBSAccess::branchPackage(const QString &resource)
 {
-    QNetworkReply *reply = postRequest(urlStr, "");
+    QNetworkReply *reply = postRequest(resource, "");
     reply->setProperty("reqtype", OBSAccess::BranchPackage);
 }
 

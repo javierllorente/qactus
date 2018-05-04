@@ -43,8 +43,8 @@ public:
     QString getUsername();
     void setApiUrl(const QString &apiUrl);
     QString getApiUrl() const;
-    void request(const QString& urlStr);
-    void request(const QString &urlStr, const int &row);
+    void request(const QString& resource);
+    void request(const QString &resource, int row);
     bool isAuthenticated();
     void login();
     void getBuildStatus(const QStringList &stringList, const int &row);
@@ -58,7 +58,7 @@ public:
     void getFiles(const QString &project, const QString &package);
     QStringList getRepositoryArchs(const QString &repository);
     QStringList readXmlFile(const QString &xmlFile);
-    void changeSubmitRequest(const QString &urlStr, const QByteArray &data);
+    void changeSubmitRequest(const QString &resource, const QByteArray &data);
     OBSXmlReader* getXmlReader();   
     void branchPackage(const QString &project, const QString &package);
     void deletePackage(const QString &project, const QString &package);
@@ -66,9 +66,8 @@ public:
 private:
     OBSAccess *obsAccess;
     OBSXmlReader *xmlReader;
-    QString apiUrl;
-    void postRequest(const QString &urlStr, const QByteArray &data);
-    void deleteRequest(const QString &urlStr);
+    void postRequest(const QString &resource, const QByteArray &data);
+    void deleteRequest(const QString &resource);
 
 signals:
     void isAuthenticated(bool);
