@@ -28,6 +28,12 @@ class OBSStatus
 public:
     OBSStatus();
 
+    QString getProject() const;
+    void setProject(const QString &value);
+
+    QString getPackage() const;
+    void setPackage(const QString &value);
+
     QString getCode() const;
     void setCode(const QString &value);
 
@@ -38,6 +44,8 @@ public:
     void setDetails(const QString &value);
 
 private:
+    QString project;
+    QString package;
     QString code;
     QString summary;
     QString details;
