@@ -61,6 +61,7 @@ public:
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     OBSXmlReader* getXmlReader();   
     void branchPackage(const QString &project, const QString &package);
+    void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
 
 private:
@@ -75,6 +76,8 @@ signals:
     void networkError(const QString&);
     void finishedParsingPackage(OBSPackage*, const int&);
     void finishedParsingStatus(OBSStatus*);
+    void finishedParsingDeletePrjStatus(OBSStatus*);
+    void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);
