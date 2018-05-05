@@ -65,7 +65,6 @@ private:
 
     OBS *obs;
 
-    QToolBar *toolBar;
     QProgressBar *progressBar;
 
     TrayIcon *trayIcon;
