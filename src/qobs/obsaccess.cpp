@@ -320,6 +320,44 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
 
     case QNetworkReply::ContentAccessDenied: // 401
         qDebug() << "OBSAccess::replyFinished() Access denied!";
+        if (reply->property("reqtype").isValid()) {
+            switch(reply->property("reqtype").toInt()) {
+            OBSStatus *obsStatus;
+            case OBSAccess::DeleteProject: {
+                obsStatus = new OBSStatus();
+                QString project;
+                if (reply->property("deleteprj").isValid()) {
+                    project = reply->property("deleteprj").toString();
+                }
+                obsStatus->setProject(project);
+                obsStatus->setCode("error");
+                obsStatus->setSummary("Cannot delete");
+                obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1")
+                                      .arg(obsStatus->getProject()));
+                emit cannotDeleteProject(obsStatus);
+                break;
+            }
+            case OBSAccess::DeletePackage: {
+                obsStatus = new OBSStatus();
+                QString project;
+                QString package;
+                if (reply->property("deleteprj").isValid()) {
+                    project = reply->property("deleteprj").toString();
+                }
+                if (reply->property("deletepkg").isValid()) {
+                    package = reply->property("deletepkg").toString();
+                }
+                obsStatus->setProject(project);
+                obsStatus->setPackage(package);
+                obsStatus->setCode("error");
+                obsStatus->setSummary("Cannot delete");
+                obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1/%2")
+                                      .arg(obsStatus->getProject(), obsStatus->getPackage()));
+                emit cannotDeletePackage(obsStatus);
+                break;
+            }
+            }
+        }
         break;
 
     case QNetworkReply::AuthenticationRequiredError:

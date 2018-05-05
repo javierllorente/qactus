@@ -78,6 +78,8 @@ signals:
     void finishedParsingStatus(OBSStatus*);
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
+    void cannotDeleteProject(OBSStatus *obsStatus);
+    void cannotDeletePackage(OBSStatus *obsStatus);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);

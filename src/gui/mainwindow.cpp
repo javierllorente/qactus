@@ -58,12 +58,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(insertFile(OBSFile*)));
     connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
             this, SLOT(insertBuildStatus(OBSPackage*, const int)));
+
     connect(obs, SIGNAL(finishedParsingStatus(OBSStatus*)),
             this, SLOT(slotReceivedStatus(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
             this, SLOT(slotDeletePackage(OBSStatus*)));
+
+    connect(obs, SIGNAL(cannotDeleteProject(OBSStatus*)),
+            this, SLOT(slotDeleteProject(OBSStatus*)));
+    connect(obs, SIGNAL(cannotDeletePackage(OBSStatus*)),
+            this, SLOT(slotDeletePackage(OBSStatus*)));
+
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SLOT(insertResult(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResultList()),
@@ -835,18 +842,18 @@ void MainWindow::slotDeleteProject(OBSStatus *obsStatus)
 {
     qDebug() << "MainWindow::slotDeleteProject()";
 
-    if (obsStatus->getCode()!="ok") {
+    if (obsStatus->getCode()=="ok") {
+        QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
+                                                                    Qt::DisplayRole, QVariant::fromValue(QString(obsStatus->getProject())),
+                                                                    1, Qt::MatchExactly);
+        if(!itemList.isEmpty()) {
+            auto item = itemList.at(0);
+            ui->treeProjects->model()->removeRow(item.row(), item.parent());
+        }
+    } else {
         const QString title = tr("Warning");
-        const QString text = obsStatus->getSummary() + "<br>" + obsStatus->getDetails();
+        const QString text = QString("<b>%1</b><br>%2").arg(obsStatus->getSummary(), obsStatus->getDetails());
         QMessageBox::warning(this, title, text);
-    }
-
-    QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
-                                                                Qt::DisplayRole, QVariant::fromValue(QString(obsStatus->getProject())),
-                                                                1, Qt::MatchExactly);
-    if(!itemList.isEmpty()) {
-        auto item = itemList.at(0);
-        ui->treeProjects->model()->removeRow(item.row(), item.parent());
     }
 
     delete obsStatus;
@@ -859,22 +866,22 @@ void MainWindow::slotDeletePackage(OBSStatus *obsStatus)
 {
     qDebug() << "MainWindow::slotDeletePackage()";
 
-    if (obsStatus->getCode()!="ok") {
-        const QString title = tr("Warning");
-        const QString text = obsStatus->getSummary() + "<br>" + obsStatus->getDetails();
-        QMessageBox::warning(this, title, text);
-    }
+    if (obsStatus->getCode()=="ok") {
+        QString currentProject = ui->treeProjects->currentIndex().data().toString();
 
-    QString currentProject = ui->treeProjects->currentIndex().data().toString();
-
-    if (obsStatus->getProject()==currentProject) {
-        QModelIndexList itemList = ui->treeBuilds->model()->match(ui->treeBuilds->model()->index(0, 0),
-                                                                  Qt::DisplayRole, QVariant::fromValue(QString(obsStatus->getPackage())),
-                                                                  1, Qt::MatchExactly);
-        if(!itemList.isEmpty()) {
-            auto itemIndex = itemList.at(0);
-            ui->treeBuilds->model()->removeRow(itemIndex.row(), itemIndex.parent());
+        if (obsStatus->getProject()==currentProject) {
+            QModelIndexList itemList = ui->treeBuilds->model()->match(ui->treeBuilds->model()->index(0, 0),
+                                                                      Qt::DisplayRole, QVariant::fromValue(QString(obsStatus->getPackage())),
+                                                                      1, Qt::MatchExactly);
+            if(!itemList.isEmpty()) {
+                auto itemIndex = itemList.at(0);
+                ui->treeBuilds->model()->removeRow(itemIndex.row(), itemIndex.parent());
+            }
         }
+    } else {
+        const QString title = tr("Warning");
+        const QString text = QString("<b>%1</b><br>%2").arg(obsStatus->getSummary(), obsStatus->getDetails());
+        QMessageBox::warning(this, title, text);
     }
 
     delete obsStatus;

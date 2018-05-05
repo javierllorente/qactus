@@ -68,6 +68,8 @@ signals:
     void selfSignedCertificate(QNetworkReply *reply);
     void networkError(const QString &error);
     void srDiffFetched(const QString &diff);
+    void cannotDeleteProject(OBSStatus *obsStatus);
+    void cannotDeletePackage(OBSStatus *obsStatus);
 
 public slots:
     void setCredentials(const QString&, const QString&);
