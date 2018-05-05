@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     requesttreewidgetitem.cpp \
     utils.cpp \
     credentials.cpp \
-    syntaxhighlighter.cpp
+    syntaxhighlighter.cpp \
+    browserfilter.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -41,12 +42,14 @@ HEADERS += mainwindow.h \
     requesttreewidgetitem.h \
     utils.h \
     credentials.h \
-    syntaxhighlighter.h
+    syntaxhighlighter.h \
+    browserfilter.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \
     roweditor.ui \
-    requeststateeditor.ui
+    requeststateeditor.ui \
+    browserfilter.ui
 OTHER_FILES += ../README.md \
     ../LICENSE
 INSTALLS += target \
