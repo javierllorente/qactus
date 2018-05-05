@@ -31,24 +31,24 @@
 #include <QStandardItemModel>
 #include <QProgressBar>
 #include <QTimer>
+#include <QToolButton>
+#include "obs.h"
+#include "trayicon.h"
+#include "configure.h"
+#include "login.h"
+#include "roweditor.h"
+#include "requeststateeditor.h"
+#include "obspackage.h"
+#include "obsstatus.h"
+#include "autotooltipdelegate.h"
+#include "requesttreewidgetitem.h"
 #include "utils.h"
 #include "credentials.h"
-#include <QToolButton>
 #include "browserfilter.h"
 
 namespace Ui {
     class MainWindow;
 }
-
-class OBS;
-class Login;
-class TrayIcon;
-class Configure;
-class OBSFile;
-class OBSResult;
-class OBSPackage;
-class OBSStatus;
-class OBSRequest;
 
 class MainWindow : public QMainWindow
 {

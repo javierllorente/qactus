@@ -20,16 +20,6 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "obs.h"
-#include "trayicon.h"
-#include "configure.h"
-#include "login.h"
-#include "roweditor.h"
-#include "requeststateeditor.h"
-#include "obspackage.h"
-#include "obsstatus.h"
-#include "autotooltipdelegate.h"
-#include "requesttreewidgetitem.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
