@@ -457,6 +457,7 @@ void MainWindow::srStatusSlot(const QString &status)
     if (status=="ok") {
         QTreeWidgetItem *item = ui->treeRequests->currentItem();
         item->setHidden(true);
+        ui->textBrowser->clear();
     }
 }
 
