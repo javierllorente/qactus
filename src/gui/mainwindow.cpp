@@ -221,11 +221,11 @@ void MainWindow::setupBrowser()
 {
     qDebug() << "MainWindow::setupBrowser()";
 
-    ui->lineEditFilter->setFocus();
+    browserFilter->setFocus();
 
-    connect(ui->lineEditFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
-    connect(ui->radioButtonPackages, SIGNAL(clicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
-    connect(ui->radioButtonProject, SIGNAL(clicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
+    connect(browserFilter, SIGNAL(textChanged(QString)), this, SLOT(filterResults(QString)));
+    connect(browserFilter, SIGNAL(projectClicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
+    connect(browserFilter, SIGNAL(packageClicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
 
     sourceModelProjects = new QStringListModel(ui->treeProjects);
     proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
@@ -299,7 +299,7 @@ void MainWindow::filterBuilds(const QString &item)
 void MainWindow::filterResults(const QString &item)
 {
     qDebug() << "MainWindow::filterResults())";
-    ui->radioButtonProject->isChecked() ? filterProjects(item) : filterBuilds(item);
+    browserFilter->isProjectChecked() ? filterProjects(item) : filterBuilds(item);
 
     // Delete  treeBuilds' model rows when filter doesn't match a project
     if (proxyModelProjects->rowCount()==0 && ui->treeBuilds->model()->hasChildren()) {
@@ -313,24 +313,24 @@ void MainWindow::filterRadioButtonClicked(bool)
 
     // Clear project filter on radio button click
     // if there were no matches for the project name
-    if (proxyModelProjects->rowCount()==0 && ui->radioButtonPackages->isChecked()) {
+    if (proxyModelProjects->rowCount()==0 && browserFilter->isPackageChecked()) {
         filterProjects("");
     }
 
     // Clear line edit text on radio button click
     // and set focus on line edit
-    ui->lineEditFilter->clear();
-    ui->lineEditFilter->setFocus();
+    browserFilter->clear();
+    browserFilter->setFocus();
 
-    filterResults(ui->lineEditFilter->text());
+    filterResults(browserFilter->getText());
 }
 
 void MainWindow::refreshProjectFilter()
 {
     qDebug() << "MainWindow::refreshProjectFilter()";
     readBrowserSettings();
-    if (ui->radioButtonProject->isChecked()) {
-        filterProjects(ui->lineEditFilter->text());
+    if (browserFilter->isProjectChecked()) {
+        filterProjects(browserFilter->getText());
     }
 }
 
@@ -1002,6 +1002,7 @@ void MainWindow::createActions()
 {
     connect(ui->action_About_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
+    // Delete button actions
     deleteButton = new QToolButton(this);
     deleteButton->setPopupMode(QToolButton::InstantPopup);
     deleteButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -1024,6 +1025,16 @@ void MainWindow::createActions()
     actionDelete = ui->toolBar->addWidget(deleteButton);
     actionDelete->setVisible(false);
 
+    // Browser filter actions
+    QWidget *filterSpacer = new QWidget(this);
+    filterSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    filterSpacer->setVisible(true);
+    actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
+
+    browserFilter = new BrowserFilter(this);
+    actionFilter = ui->toolBar->addWidget(browserFilter);
+
+    // Tray icon actions
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
     connect(action_Restore, SIGNAL(triggered()), this, SLOT(toggleVisibility()));
     trayIcon->trayIconMenu->addAction(action_Restore);
@@ -1322,6 +1333,8 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     bool browserTabVisible = (index==0);
     ui->action_Branch_package->setVisible(browserTabVisible);
     actionDelete->setVisible(browserTabVisible);
+    actionFilterSpacer->setVisible(browserTabVisible);
+    actionFilter->setVisible(browserTabVisible);
 
     bool monitorTabVisible = (index==1);
     ui->action_Add->setVisible(monitorTabVisible);

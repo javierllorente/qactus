@@ -34,6 +34,7 @@
 #include "utils.h"
 #include "credentials.h"
 #include <QToolButton>
+#include "browserfilter.h"
 
 namespace Ui {
     class MainWindow;
@@ -74,6 +75,9 @@ private:
     QAction *actionDelete_project;
     QAction *actionDelete_package;
     QAction *actionDelete;
+    BrowserFilter *browserFilter;
+    QAction *actionFilter;
+    QAction *actionFilterSpacer;
     void createActions();
     void setupIconBar();
     QAction *action_About;

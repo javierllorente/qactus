@@ -97,71 +97,6 @@
       <widget class="QWidget" name="browserPage">
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButtonProject">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Pro&amp;ject</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButtonPackages">
-            <property name="text">
-             <string>Pac&amp;kage</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEditFilter">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>175</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-            <property name="placeholderText">
-             <string>Filter</string>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
          <widget class="QSplitter" name="hSplitterBrowser">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -464,7 +399,8 @@
   </widget>
   <action name="action_About">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset theme="help-about">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;About</string>
@@ -477,7 +413,8 @@
   </action>
   <action name="action_Quit">
    <property name="icon">
-    <iconset theme="application-exit"/>
+    <iconset theme="application-exit">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Quit</string>
@@ -491,7 +428,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="configure"/>
+    <iconset theme="configure">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Configure Qactus</string>
@@ -499,7 +437,8 @@
   </action>
   <action name="action_Login">
    <property name="icon">
-    <iconset theme="unlock"/>
+    <iconset theme="unlock">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Login</string>
@@ -507,7 +446,8 @@
   </action>
   <action name="action_Add">
    <property name="icon">
-    <iconset theme="list-add"/>
+    <iconset theme="list-add">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Add</string>
@@ -521,7 +461,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="trash-empty"/>
+    <iconset theme="trash-empty">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Remove</string>
@@ -532,7 +473,8 @@
   </action>
   <action name="action_Refresh">
    <property name="icon">
-    <iconset theme="view-refresh"/>
+    <iconset theme="view-refresh">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Refresh</string>
@@ -546,7 +488,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="mail-mark-task"/>
+    <iconset theme="mail-mark-task">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Mark all as read</string>
@@ -557,7 +500,8 @@
   </action>
   <action name="action_Branch_package">
    <property name="icon">
-    <iconset theme="branch"/>
+    <iconset theme="branch">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Branch package</string>
@@ -574,7 +518,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="mail-reply-sender"/>
+    <iconset theme="mail-reply-sender">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Change request &amp;state</string>
