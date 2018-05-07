@@ -63,6 +63,7 @@ public:
     void branchPackage(const QString &project, const QString &package);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
+    void about();
 
 private:
     OBSAccess *obsAccess;
@@ -92,6 +93,7 @@ signals:
     void finishedParsingFile(OBSFile*);
     void srStatus(const QString &);
     void srDiffFetched(const QString &);
+    void finishedParsingAbout(OBSAbout *obsAbout);
 
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);

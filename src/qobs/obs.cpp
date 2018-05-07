@@ -70,6 +70,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SLOT(srChangeResult(OBSPackage *)));
     connect(obsAccess, SIGNAL(srDiffFetched(QString)),
             this, SIGNAL(srDiffFetched(QString)));
+    connect(xmlReader, SIGNAL(finishedParsingAbout(OBSAbout*)),
+            SIGNAL(finishedParsingAbout(OBSAbout*)));
 }
 
 void OBS::setCredentials(const QString &username, const QString &password)
@@ -242,4 +244,9 @@ void OBS::deleteProject(const QString &project)
 void OBS::deletePackage(const QString &project, const QString &package)
 {
     obsAccess->deletePackage(project, package);
+}
+
+void OBS::about()
+{
+    obsAccess->about();
 }

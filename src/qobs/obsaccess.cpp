@@ -305,6 +305,10 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 xmlReader->parseDeletePackage(data, project, package);
                 break;
             }
+            case OBSAccess::About:
+                qDebug() << reqType << "About";
+                xmlReader->parseAbout(data);
+                break;
             }
             return;
         }
@@ -400,6 +404,13 @@ void OBSAccess::deletePackage(const QString &project, const QString &package)
     reply->setProperty("reqtype", OBSAccess::DeletePackage);
     reply->setProperty("deleteprj", project);
     reply->setProperty("deletepkg", package);
+}
+
+void OBSAccess::about()
+{
+    QString resource = "/about";
+    QNetworkReply *reply = request(resource);
+    reply->setProperty("reqtype", OBSAccess::About);
 }
 
 void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
