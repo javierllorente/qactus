@@ -164,6 +164,8 @@ private slots:
     void toggleVisibility();
     void on_action_Configure_Qactus_triggered();
     void on_action_Login_triggered();
+    void on_actionAPI_information_triggered();
+    void slotAbout(OBSAbout *obsAbout);
     void on_iconBar_currentRowChanged(int index);
     void insertProjectList();
     void insertPackageList();

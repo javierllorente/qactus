@@ -53,6 +53,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
             this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
+
+    connect(obs, SIGNAL(finishedParsingAbout(OBSAbout*)), this, SLOT(slotAbout(OBSAbout*)));
+
     connect(obs, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
     connect(obs, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(insertFile(OBSFile*)));
@@ -206,6 +209,7 @@ void MainWindow::isAuthenticated(bool authenticated)
     ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         loadProjects();
+        ui->actionAPI_information->setEnabled(true);
         delete loginDialog;
         loginDialog = nullptr;
     } else {
@@ -1300,6 +1304,22 @@ void MainWindow::on_action_Configure_Qactus_triggered()
 void MainWindow::on_action_Login_triggered()
 {
     showLoginDialog();
+}
+
+void MainWindow::on_actionAPI_information_triggered()
+{
+    obs->about();
+}
+
+void MainWindow::slotAbout(OBSAbout *obsAbout)
+{
+    const QString title = obsAbout->getTitle();
+    const QString text = QString("%1<br>Revision: %2<br>Last deployment: %3").arg(obsAbout->getDescription(),
+                                         obsAbout->getRevision(), obsAbout->getLastDeployment());
+    QMessageBox::information(this, title, text);
+
+    delete obsAbout;
+    obsAbout = nullptr;
 }
 
 void MainWindow::on_iconBar_currentRowChanged(int index)

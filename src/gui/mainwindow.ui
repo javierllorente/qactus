@@ -357,6 +357,7 @@
      <string>Fi&amp;le</string>
     </property>
     <addaction name="action_Login"/>
+    <addaction name="actionAPI_information"/>
     <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -526,6 +527,18 @@
    </property>
    <property name="visible">
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionAPI_information">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="help-about">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;API information</string>
    </property>
   </action>
  </widget>
