@@ -664,6 +664,45 @@ void OBSXmlReader::getRepositoryArchs(const QString &repository)
     }
 }
 
+void OBSXmlReader::parseAbout(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSAbout *obsAbout = new OBSAbout();
+
+    while (!xml.atEnd() && !xml.hasError()) {
+
+        xml.readNext();
+
+        if (xml.name()=="title" && xml.isStartElement()) {
+            xml.readNext();
+            obsAbout->setTitle(xml.text().toString());
+        }
+
+        if (xml.name()=="description" && xml.isStartElement()) {
+            xml.readNext();
+            obsAbout->setDescription(xml.text().toString());
+        }
+
+        if (xml.name()=="revision" && xml.isStartElement()) {
+            xml.readNext();
+            obsAbout->setRevision(xml.text().toString());
+        }
+
+        if (xml.name()=="last_deployment" && xml.isStartElement()) {
+            xml.readNext();
+            obsAbout->setLastDeployment(xml.text().toString());
+        }
+
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingAbout(obsAbout);
+}
+
 int OBSXmlReader::getRequestNumber()
 {
     return requestNumber.toInt();
