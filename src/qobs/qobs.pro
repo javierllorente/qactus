@@ -12,7 +12,8 @@ SOURCES += obspackage.cpp \
     obsfile.cpp \
     obsresult.cpp \
     obsrevision.cpp \
-    obsstatus.cpp
+    obsstatus.cpp \
+    obsabout.cpp
 HEADERS += obspackage.h \
     obsaccess.h \
     obsxmlreader.h \
@@ -21,7 +22,8 @@ HEADERS += obspackage.h \
     obsfile.h \
     obsresult.h \
     obsrevision.h \
-    obsstatus.h
+    obsstatus.h \
+    obsabout.h
 
 unix {
     contains(QMAKE_HOST.arch, x86_64) {
