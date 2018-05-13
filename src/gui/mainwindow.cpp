@@ -173,14 +173,10 @@ void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
 //        qDebug() << sslCertificate.toText();
 
         QStringList certInfo = sslCertificate.subjectInfo("CN");
-        QMessageBox::StandardButton result = QMessageBox::warning(this,
-                                                                  QString(tr("Warning")),
-                                                                  QString(tr(
-                                                                              "Do you want to accept this "
-                                                                              "self-signed certificate from "
-                                                                              )
-                                                                          + certInfo.at(0)
-                                                                          ),
+        const QString title = QString(tr("Warning"));
+        const QString text = QString(tr("Do you want to accept this self-signed certificate from %1?")
+                                     .arg(certInfo.at(0)));
+        QMessageBox::StandardButton result = QMessageBox::warning(this, title, text,
                                                                   QMessageBox::Yes | QMessageBox::No);
         if (result == QMessageBox::Yes)  {
             qDebug() << "Saving self-signed certificate as" << filename;
