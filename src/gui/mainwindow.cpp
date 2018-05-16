@@ -205,6 +205,7 @@ void MainWindow::isAuthenticated(bool authenticated)
     ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         loadProjects();
+        on_action_Refresh_triggered();
         ui->actionAPI_information->setEnabled(true);
         delete loginDialog;
         loginDialog = nullptr;
