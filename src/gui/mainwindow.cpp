@@ -948,10 +948,17 @@ void MainWindow::slotDeleteFile(OBSStatus *obsStatus)
             QModelIndexList itemList = ui->treeFiles->model()->match(ui->treeFiles->model()->index(0, 0),
                                                                       Qt::DisplayRole, QVariant::fromValue(QString(fileName)),
                                                                       1, Qt::MatchExactly);
-            if(!itemList.isEmpty()) {
+            if (!itemList.isEmpty()) {
                 auto itemIndex = itemList.at(0);
                 ui->treeFiles->model()->removeRow(itemIndex.row(), itemIndex.parent());
+
+                // Disable the delete file action if there are no files after a deletion
+                QItemSelectionModel *treeFilesSelectionModel = ui->treeFiles->selectionModel();
+                QList<QModelIndex> selectedFiles = treeFilesSelectionModel->selectedIndexes();
+                bool enable = !selectedFiles.isEmpty();
+                actionDelete_file->setEnabled(enable);
             }
+
         }
     } else {
         const QString title = tr("Warning");
