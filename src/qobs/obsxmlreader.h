@@ -53,6 +53,7 @@ public:
     void parseBranchPackage(const QString &data);
     void parseDeleteProject(const QString &data, const QString &project);
     void parseDeletePackage(const QString &data, const QString &project, const QString &package);
+    void parseDeleteFile(const QString &data, const QString &project, const QString &package, const QString &fileName);
     int getRequestNumber();
     QStringList getList();
     void readList();
@@ -91,6 +92,7 @@ signals:
     void finishedParsingStatus(OBSStatus*);
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
+    void finishedParsingDeleteFileStatus(OBSStatus*);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);

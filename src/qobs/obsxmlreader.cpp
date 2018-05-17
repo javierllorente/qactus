@@ -313,6 +313,28 @@ void OBSXmlReader::parseDeletePackage(const QString &data, const QString &projec
     emit finishedParsingDeletePkgStatus(obsStatus);
 }
 
+void OBSXmlReader::parseDeleteFile(const QString &data, const QString &project, const QString &package, const QString &fileName)
+{
+    qDebug() << "OBSXmlReader::parseDeleteFile()";
+    QXmlStreamReader xml(data);
+    OBSStatus *obsStatus = new OBSStatus();
+    obsStatus->setProject(project);
+    obsStatus->setPackage(package);
+    obsStatus->setDetails(fileName);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseOBSStatus(xml, obsStatus);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingDeleteFileStatus(obsStatus);
+}
+
 void OBSXmlReader::parseRevisionList(const QString &data)
 {
     QXmlStreamReader xml(data);
