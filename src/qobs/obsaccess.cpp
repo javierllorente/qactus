@@ -305,6 +305,25 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 xmlReader->parseDeletePackage(data, project, package);
                 break;
             }
+
+            case OBSAccess::DeleteFile: {
+                qDebug() << reqType << "DeleteFile";
+                QString project;
+                QString package;
+                QString fileName;
+                if (reply->property("deleteprj").isValid()) {
+                    project = reply->property("deleteprj").toString();
+                }
+                if (reply->property("deletepkg").isValid()) {
+                    package = reply->property("deletepkg").toString();
+                }
+                if (reply->property("deletefile").isValid()) {
+                    fileName = reply->property("deletefile").toString();
+                }
+                xmlReader->parseDeleteFile(data, project, package, fileName);
+                break;
+            }
+
             case OBSAccess::About:
                 qDebug() << reqType << "About";
                 xmlReader->parseAbout(data);
@@ -327,6 +346,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
         if (reply->property("reqtype").isValid()) {
             switch(reply->property("reqtype").toInt()) {
             OBSStatus *obsStatus;
+
             case OBSAccess::DeleteProject: {
                 obsStatus = new OBSStatus();
                 QString project;
@@ -341,6 +361,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 emit cannotDeleteProject(obsStatus);
                 break;
             }
+
             case OBSAccess::DeletePackage: {
                 obsStatus = new OBSStatus();
                 QString project;
@@ -360,6 +381,31 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 emit cannotDeletePackage(obsStatus);
                 break;
             }
+
+            case OBSAccess::DeleteFile: {
+                obsStatus = new OBSStatus();
+                QString project;
+                QString package;
+                QString fileName;
+                if (reply->property("deleteprj").isValid()) {
+                    project = reply->property("deleteprj").toString();
+                }
+                if (reply->property("deletepkg").isValid()) {
+                    package = reply->property("deletepkg").toString();
+                }
+                if (reply->property("deletefile").isValid()) {
+                    fileName = reply->property("deletefile").toString();
+                }
+                obsStatus->setProject(project);
+                obsStatus->setPackage(package);
+                obsStatus->setCode("error");
+                obsStatus->setSummary("Cannot delete");
+                obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1/%2/%3")
+                                      .arg(obsStatus->getProject(), obsStatus->getPackage(), fileName));
+                emit cannotDeleteFile(obsStatus);
+                break;
+            }
+
             }
         }
         break;
@@ -404,6 +450,16 @@ void OBSAccess::deletePackage(const QString &project, const QString &package)
     reply->setProperty("reqtype", OBSAccess::DeletePackage);
     reply->setProperty("deleteprj", project);
     reply->setProperty("deletepkg", package);
+}
+
+void OBSAccess::deleteFile(const QString &project, const QString &package, const QString &fileName)
+{
+    QString resource = QString("/source/%1/%2/%3").arg(project, package, fileName);
+    QNetworkReply *reply = deleteRequest(resource);
+    reply->setProperty("reqtype", OBSAccess::DeleteFile);
+    reply->setProperty("deleteprj", project);
+    reply->setProperty("deletepkg", package);
+    reply->setProperty("deletefile", fileName);
 }
 
 void OBSAccess::about()

@@ -62,6 +62,7 @@ public:
     void branchPackage(const QString &resource);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
+    void deleteFile(const QString &project, const QString &package, const QString &fileName);
     void about();
 
 signals:
@@ -71,6 +72,7 @@ signals:
     void srDiffFetched(const QString &diff);
     void cannotDeleteProject(OBSStatus *obsStatus);
     void cannotDeletePackage(OBSStatus *obsStatus);
+    void cannotDeleteFile(OBSStatus *obsStatus);
 
 public slots:
     void setCredentials(const QString&, const QString&);
@@ -108,6 +110,7 @@ private:
         BranchPackage,
         DeleteProject,
         DeletePackage,
+        DeleteFile,
         About
     };
     bool authenticated;
