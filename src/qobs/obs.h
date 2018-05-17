@@ -63,6 +63,7 @@ public:
     void branchPackage(const QString &project, const QString &package);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
+    void deleteFile(const QString &project, const QString &package, const QString &fileName);
     void about();
 
 private:
@@ -79,8 +80,10 @@ signals:
     void finishedParsingStatus(OBSStatus*);
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
+    void finishedParsingDeleteFileStatus(OBSStatus*);
     void cannotDeleteProject(OBSStatus *obsStatus);
     void cannotDeletePackage(OBSStatus *obsStatus);
+    void cannotDeleteFile(OBSStatus *obsStatus);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);

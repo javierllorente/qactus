@@ -41,10 +41,14 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)));
+    connect(xmlReader, SIGNAL(finishedParsingDeleteFileStatus(OBSStatus*)),
+            this, SIGNAL(finishedParsingDeleteFileStatus(OBSStatus*)));
     connect(obsAccess, SIGNAL(cannotDeleteProject(OBSStatus*)),
             this, SIGNAL(cannotDeleteProject(OBSStatus*)));
     connect(obsAccess, SIGNAL(cannotDeletePackage(OBSStatus*)),
             this, SIGNAL(cannotDeletePackage(OBSStatus*)));
+    connect(obsAccess, SIGNAL(cannotDeleteFile(OBSStatus*)),
+            this, SIGNAL(cannotDeleteFile(OBSStatus*)));
 
     connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SIGNAL(finishedParsingResult(OBSResult*)));
@@ -244,6 +248,11 @@ void OBS::deleteProject(const QString &project)
 void OBS::deletePackage(const QString &project, const QString &package)
 {
     obsAccess->deletePackage(project, package);
+}
+
+void OBS::deleteFile(const QString &project, const QString &package, const QString &fileName)
+{
+    obsAccess->deleteFile(project, package, fileName);
 }
 
 void OBS::about()
