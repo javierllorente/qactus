@@ -74,6 +74,7 @@ private:
     QMenu *deleteMenu;
     QAction *actionDelete_project;
     QAction *actionDelete_package;
+    QAction *actionDelete_file;
     QAction *actionDelete;
     BrowserFilter *browserFilter;
     QAction *actionFilter;
@@ -122,6 +123,7 @@ private:
     void showLoginDialog();
     QItemSelectionModel *projectsSelectionModel;
     QItemSelectionModel *buildsSelectionModel;
+    QItemSelectionModel *filesSelectionModel;
     bool hasBuildStatusChanged(const QString &oldStatus, const QString &newStatus);
 
 signals:
@@ -155,6 +157,7 @@ private slots:
     void on_action_Branch_package_triggered();
     void deleteProject();
     void deletePackage();
+    void deleteFile();
     void on_action_Mark_all_as_read_triggered();
     void markRead(QTreeWidgetItem*, int);
     void loginSlot(const QString &username, const QString &password);
@@ -175,12 +178,14 @@ private slots:
     void slotReceivedStatus(OBSStatus *obsStatus);
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
+    void slotDeleteFile(OBSStatus *obsStatus);
     void insertRequest(OBSRequest*);
     void removeRequest(const QString& id);
     void updateStatusBarSlot(const QString &message, bool progressBarHidden);
     void refreshProjectFilter();
     void projectSelectionChanged(const QItemSelection &, const QItemSelection &);
     void buildSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void fileSelectionChanged(const QItemSelection &, const QItemSelection &);
     void srStatusSlot(const QString &status);
 };
 

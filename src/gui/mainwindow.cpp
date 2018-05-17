@@ -68,11 +68,15 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(slotDeleteProject(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
             this, SLOT(slotDeletePackage(OBSStatus*)));
+    connect(obs, SIGNAL(finishedParsingDeleteFileStatus(OBSStatus*)),
+            this, SLOT(slotDeleteFile(OBSStatus*)));
 
     connect(obs, SIGNAL(cannotDeleteProject(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
     connect(obs, SIGNAL(cannotDeletePackage(OBSStatus*)),
             this, SLOT(slotDeletePackage(OBSStatus*)));
+    connect(obs, SIGNAL(cannotDeleteFile(OBSStatus*)),
+            this, SLOT(slotDeleteFile(OBSStatus*)));
 
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SLOT(insertResult(OBSResult*)));
@@ -351,6 +355,7 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
     filterBuilds("");
 
     ui->action_Branch_package->setEnabled(false);
+    actionDelete_file->setEnabled(false);
     actionDelete_package->setEnabled(false);
     actionDelete_project->setEnabled(true);
     actionDelete->setEnabled(true);
@@ -362,8 +367,15 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
     getPackageFiles(ui->treeBuilds->currentIndex());
 
     ui->action_Branch_package->setEnabled(true);
+    actionDelete_file->setEnabled(false);
     actionDelete_package->setEnabled(true);
     actionDelete->setEnabled(true);
+}
+
+void MainWindow::fileSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
+{
+    qDebug() << "MainWindow::fileSelectionChanged()";
+    actionDelete_file->setEnabled(true);
 }
 
 void MainWindow::getPackages(QModelIndex index)
@@ -390,10 +402,17 @@ void MainWindow::getPackageFiles(QModelIndex index)
     ui->treeFiles->setColumnWidth(0, 200);
     delete oldModel;
 
+    filesSelectionModel = ui->treeFiles->selectionModel();
+    connect(filesSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
+            SLOT(fileSelectionChanged(QItemSelection,QItemSelection)));
+
     QString currentProject = ui->treeProjects->currentIndex().data().toString();
     QString currentPackage = index.data().toString();
     obs->getFiles(currentProject, currentPackage);
     emit updateStatusBar(tr("Getting package data..."), false);
+
+    actionDelete_file->setEnabled(true);
+    actionDelete->setEnabled(true);
 
     getBuildResults();
 }
@@ -607,6 +626,31 @@ void MainWindow::deletePackage()
         qDebug() << "Deleting package" << package << "...";
         obs->deletePackage(project, package);
         const QString statusText = tr("Deleting %1...").arg(package);
+        emit updateStatusBar(statusText, false);
+    }
+}
+
+void MainWindow::deleteFile()
+{
+    qDebug() << "MainWindow:deleteFile()";
+
+    QModelIndex prjIndex = ui->treeProjects->currentIndex();
+    QString project = prjIndex.data().toString();
+    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
+    QString package = pkgIndex.data().toString();
+    QModelIndex fileIndex = ui->treeFiles->currentIndex();
+    QString fileName = fileIndex.data().toString();
+
+    const QString title = tr("Delete confirmation");
+    const QString text = tr("Do you really want to delete file<br> %1/%2/%3?")
+                           .arg(project, package, fileName);
+
+    QMessageBox::StandardButton result = QMessageBox::question(this, title, text,
+                                                              QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (result == QMessageBox::Ok) {
+        qDebug() << "Deleting file" << fileName << "...";
+        obs->deleteFile(project, package, fileName);
+        const QString statusText = tr("Deleting %1...").arg(fileName);
         emit updateStatusBar(statusText, false);
     }
 }
@@ -891,6 +935,36 @@ void MainWindow::slotDeletePackage(OBSStatus *obsStatus)
     emit updateStatusBar(tr("Done"), true);
 }
 
+void MainWindow::slotDeleteFile(OBSStatus *obsStatus)
+{
+    qDebug() << "MainWindow::slotDeleteFile()";
+
+    if (obsStatus->getCode()=="ok") {
+        QString currentProject = ui->treeProjects->currentIndex().data().toString();
+        QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+        QString fileName = obsStatus->getDetails();
+
+        if (obsStatus->getProject()==currentProject && obsStatus->getPackage()==currentPackage) {
+            QModelIndexList itemList = ui->treeFiles->model()->match(ui->treeFiles->model()->index(0, 0),
+                                                                      Qt::DisplayRole, QVariant::fromValue(QString(fileName)),
+                                                                      1, Qt::MatchExactly);
+            if(!itemList.isEmpty()) {
+                auto itemIndex = itemList.at(0);
+                ui->treeFiles->model()->removeRow(itemIndex.row(), itemIndex.parent());
+            }
+        }
+    } else {
+        const QString title = tr("Warning");
+        const QString text = QString("<b>%1</b><br>%2").arg(obsStatus->getSummary(), obsStatus->getDetails());
+        QMessageBox::warning(this, title, text);
+    }
+
+    delete obsStatus;
+    obsStatus = nullptr;
+
+    emit updateStatusBar(tr("Done"), true);
+}
+
 bool MainWindow::hasBuildStatusChanged(const QString &oldStatus, const QString &newStatus)
 {
     qDebug() << "MainWindow::hasBuildStatusChanged()"
@@ -1017,8 +1091,13 @@ void MainWindow::createActions()
     actionDelete_package->setIcon(QIcon::fromTheme("application-x-source-rpm"));
     connect(actionDelete_package, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
 
+    actionDelete_file = new QAction(tr("&File"), this);
+    actionDelete_file->setIcon(QIcon::fromTheme("none"));
+    connect(actionDelete_file, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+
     deleteMenu->addAction(actionDelete_project);
     deleteMenu->addAction(actionDelete_package);
+    deleteMenu->addAction(actionDelete_file);
     deleteButton->setMenu(deleteMenu);
 
     actionDelete = ui->toolBar->addWidget(deleteButton);
@@ -1321,7 +1400,16 @@ void MainWindow::slotAbout(OBSAbout *obsAbout)
 
 void MainWindow::on_iconBar_currentRowChanged(int index)
 {
-    // Enable/Disable the branch package button if there is a build selected
+    // Enable/disable the branch/delete button if there is a file/package/project selected
+    QItemSelectionModel *treeFilesSelectionModel = ui->treeFiles->selectionModel();
+    if (treeFilesSelectionModel) {
+        QList<QModelIndex> selectedFiles = treeFilesSelectionModel->selectedIndexes();
+        bool enable = !selectedFiles.isEmpty();
+        actionDelete_file->setEnabled(enable);
+    } else {
+        actionDelete_file->setEnabled(false);
+    }
+
     QItemSelectionModel *treeBuildsSelectionModel = ui->treeBuilds->selectionModel();
     if (treeBuildsSelectionModel) {
         QList<QModelIndex> selectedBuilds = treeBuildsSelectionModel->selectedIndexes();
