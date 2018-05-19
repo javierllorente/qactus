@@ -465,17 +465,26 @@ void MainWindow::changeRequestState()
     reqStateEditor->setTarget(item->text(3));
     reqStateEditor->setRequester(item->text(4));
 
-    if(item->text(5)=="submit") {
+    if (item->text(5)=="submit") {
         QProgressDialog progress(tr("Getting diff..."), 0, 0, 0, this);
         progress.setWindowModality(Qt::WindowModal);
         progress.show();
+
+        // Get SR diff
         obs->getRequestDiff(item->text(2));
+
+        // Get build results
+        QStringList source = item->text(2).split("/");
+        QString project = source.at(0);
+        QString package = source.at(1);
+        obs->getAllBuildStatus(project, package);
     } else {
         reqStateEditor->setDiff(item->text(5) + " " + item->text(3));
     }
 
     reqStateEditor->exec();
     delete reqStateEditor;
+    reqStateEditor = nullptr;
 }
 
 void MainWindow::srStatusSlot(const QString &status)
@@ -791,11 +800,14 @@ void MainWindow::insertResult(OBSResult *obsResult)
 {
     qDebug() << "MainWindow::insertResult()";
 
+    // FIXME: data should be added based on origin, not on where you are
     if (ui->iconBar->currentRow()==1) {
         // Monitor tab
         ui->treePackages->insertDroppedPackage(obsResult);
-
-    } else {
+        delete obsResult;
+        obsResult = nullptr;
+    } else if (ui->iconBar->currentRow()==0) {
+        // Browser tab
         QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
         if (model) {
             QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
@@ -814,6 +826,7 @@ void MainWindow::insertResult(OBSResult *obsResult)
             model->appendRow(items);
         }
         delete obsResult;
+        obsResult = nullptr;
     }
 }
 
