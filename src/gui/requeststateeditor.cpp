@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,9 +30,18 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs) :
     ui->commentsTextBrowser->setFocus();
     ui->diffTextBrowser->setFocusPolicy(Qt::NoFocus);
 
+    // Setup build results tree view
+    QStandardItemModel *sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
+    QStringList treeBuildResultsHeaders;
+    treeBuildResultsHeaders << tr("Repository") << tr("Arch") << tr("Status");
+    sourceModelBuildResults->setHorizontalHeaderLabels(treeBuildResultsHeaders);
+    ui->treeBuildResults->setModel(sourceModelBuildResults);
+    ui->treeBuildResults->setColumnWidth(0, 250);
+
     connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), mOBS, SLOT(changeSubmitRequestSlot(QString,QString,bool)));
     connect(mOBS, SIGNAL(srStatus(QString)), this, SLOT(srStatusSlot(QString)));
     connect(mOBS, SIGNAL(srDiffFetched(QString)), this, SLOT(srDiffFetchedSlot(QString)));
+    connect(mOBS, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(slotAddBuildResults(OBSResult*)));
 }
 
 RequestStateEditor::~RequestStateEditor()
@@ -109,4 +118,27 @@ void RequestStateEditor::srDiffFetchedSlot(const QString &diff)
 {
     qDebug() << "RequestStateEditor::srDiffFetchedSlot()\n" << diff;
     setDiff(diff);
+}
+
+void RequestStateEditor::slotAddBuildResults(OBSResult *obsResult)
+{
+    QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
+    if (model) {
+        QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
+        QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
+        QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
+        itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
+
+        if (!obsResult->getPackage()->getDetails().isEmpty()) {
+            QString details = obsResult->getPackage()->getDetails();
+            details = Utils::breakLine(details, 250);
+            itemBuildResult->setToolTip(details);
+        }
+
+        QList<QStandardItem*> items;
+        items << itemRepository << itemArch << itemBuildResult;
+        model->appendRow(items);
+    }
+    delete obsResult;
+    obsResult = nullptr;
 }

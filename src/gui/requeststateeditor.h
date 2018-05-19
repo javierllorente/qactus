@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2017 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,8 +25,10 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QStandardItemModel>
 #include "obs.h"
 #include "syntaxhighlighter.h"
+#include "utils.h"
 
 namespace Ui {
 class RequestStateEditor;
@@ -55,6 +57,7 @@ private slots:
     void on_declinePushButton_clicked();
     void srStatusSlot(const QString &status);
     void srDiffFetchedSlot(const QString &diff);
+    void slotAddBuildResults(OBSResult *obsResult);
 
 private:
     Ui::RequestStateEditor *ui;
