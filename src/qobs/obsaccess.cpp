@@ -157,6 +157,18 @@ QNetworkReply *OBSAccess::postRequest(const QString &resource, const QByteArray 
     return reply;
 }
 
+QNetworkReply *OBSAccess::putRequest(const QString &resource, const QByteArray &data)
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl(apiUrl + resource));
+    qDebug() << "User-Agent:" << userAgent;
+    request.setRawHeader("User-Agent", userAgent.toLatin1());
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/xml");
+    QNetworkReply *reply = manager->put(request, data);
+
+    return reply;
+}
+
 QNetworkReply *OBSAccess::deleteRequest(const QString &resource)
 {
     QNetworkRequest request;
@@ -281,6 +293,20 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 qDebug() << reqType << "BranchPackage";
                 xmlReader->parseBranchPackage(data);
                 break;
+
+            case OBSAccess::CreatePackage: {
+                qDebug() << reqType << "CreatePackage";
+                QString project;
+                QString package;
+                if (reply->property("createprj").isValid()) {
+                    project = reply->property("createprj").toString();
+                }
+                if (reply->property("createpkg").isValid()) {
+                    package = reply->property("createpkg").toString();
+                }
+                xmlReader->parseCreatePackage(data, project, package);
+                break;
+            }
 
             case OBSAccess::DeleteProject: {
                 qDebug() << reqType << "DeleteProject";
@@ -433,6 +459,14 @@ void OBSAccess::branchPackage(const QString &resource)
 {
     QNetworkReply *reply = postRequest(resource, "");
     reply->setProperty("reqtype", OBSAccess::BranchPackage);
+}
+
+void OBSAccess::createPackage(const QString &project, const QString &package, const QByteArray &data)
+{
+    QString resource = QString("/source/%1/%2/_meta").arg(project, package);
+    QNetworkReply *reply = putRequest(resource, data);
+    reply->setProperty("reqtype", OBSAccess::CreatePackage);
+    reply->setProperty("createpkg", package);
 }
 
 void OBSAccess::deleteProject(const QString &project)

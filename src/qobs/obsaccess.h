@@ -50,6 +50,7 @@ public:
     QNetworkReply *requestSource(const QString &resource);
     void requestRequest(const QString &resource);
     QNetworkReply *postRequest(const QString &resource, const QByteArray &data);
+    QNetworkReply *putRequest(const QString &resource, const QByteArray &data);
     QNetworkReply *deleteRequest(const QString &resource);
     void getProjects();
     void getProjectMetadata(const QString &resource);
@@ -60,6 +61,7 @@ public:
     void request(const QString &resource, int row);
     void getSRDiff(const QString &resource);
     void branchPackage(const QString &resource);
+    void createPackage(const QString &project, const QString &package, const QByteArray &data);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
     void deleteFile(const QString &project, const QString &package, const QString &fileName);
@@ -108,6 +110,7 @@ private:
         SubmitRequest,
         SRDiff,
         BranchPackage,
+        CreatePackage,
         DeleteProject,
         DeletePackage,
         DeleteFile,
