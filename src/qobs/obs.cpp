@@ -37,6 +37,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
 
     connect(xmlReader, SIGNAL(finishedParsingStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingStatus(OBSStatus*)));
+    connect(xmlReader, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)),
+            this, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
@@ -238,6 +240,11 @@ void OBS::branchPackage(const QString &project, const QString &package)
 {
     QString resource = QString("/source/%1/%2?cmd=branch").arg(project, package);
     obsAccess->branchPackage(resource);
+}
+
+void OBS::createPackage(const QString &project, const QString &package, const QByteArray &data)
+{
+    obsAccess->createPackage(project, package, data);
 }
 
 void OBS::deleteProject(const QString &project)
