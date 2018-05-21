@@ -484,6 +484,7 @@ void OBSAccess::createPackage(const QString &project, const QString &package, co
     QString resource = QString("/source/%1/%2/_meta").arg(project, package);
     QNetworkReply *reply = putRequest(resource, data);
     reply->setProperty("reqtype", OBSAccess::CreatePackage);
+    reply->setProperty("createprj", project);
     reply->setProperty("createpkg", package);
 }
 
