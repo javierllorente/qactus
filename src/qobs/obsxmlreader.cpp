@@ -272,6 +272,26 @@ void OBSXmlReader::parseBranchPackage(const QString &data)
     emit finishedParsingStatus(obsStatus);
 }
 
+void OBSXmlReader::parseCreateProject(const QString &data, const QString &project)
+{
+    qDebug() << "OBSXmlReader::parseCreateProject()";
+    QXmlStreamReader xml(data);
+    OBSStatus *obsStatus = new OBSStatus();
+    obsStatus->setProject(project);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseOBSStatus(xml, obsStatus);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingCreatePrjStatus(obsStatus);
+}
+
 void OBSXmlReader::parseCreatePackage(const QString &data, const QString &project, const QString &package)
 {
     qDebug() << "OBSXmlReader::parseCreatePackage()";
