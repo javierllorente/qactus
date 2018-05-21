@@ -294,6 +294,16 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 xmlReader->parseBranchPackage(data);
                 break;
 
+            case OBSAccess::CreateProject: {
+                qDebug() << reqType << "CreateProject";
+                QString project;
+                if (reply->property("createprj").isValid()) {
+                    project = reply->property("createprj").toString();
+                }
+                xmlReader->parseCreateProject(data, project);
+                break;
+            }
+
             case OBSAccess::CreatePackage: {
                 qDebug() << reqType << "CreatePackage";
                 QString project;
@@ -459,6 +469,14 @@ void OBSAccess::branchPackage(const QString &resource)
 {
     QNetworkReply *reply = postRequest(resource, "");
     reply->setProperty("reqtype", OBSAccess::BranchPackage);
+}
+
+void OBSAccess::createProject(const QString &project, const QByteArray &data)
+{
+    QString resource = QString("/source/%1/_meta").arg(project);
+    QNetworkReply *reply = putRequest(resource, data);
+    reply->setProperty("reqtype", OBSAccess::CreateProject);
+    reply->setProperty("createprj", project);
 }
 
 void OBSAccess::createPackage(const QString &project, const QString &package, const QByteArray &data)
