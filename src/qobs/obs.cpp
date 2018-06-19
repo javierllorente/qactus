@@ -41,6 +41,10 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingCreatePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)));
+    connect(obsAccess, SIGNAL(cannotCreateProject(OBSStatus*)),
+            this, SIGNAL(cannotCreateProject(OBSStatus*)));
+    connect(obsAccess, SIGNAL(cannotCreatePackage(OBSStatus*)),
+            this, SIGNAL(cannotCreatePackage(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),

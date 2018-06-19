@@ -61,8 +61,6 @@ public:
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     OBSXmlReader* getXmlReader();   
     void branchPackage(const QString &project, const QString &package);
-    void createProject(const QString &project, const QByteArray &data);
-    void createPackage(const QString &project, const QString &package, const QByteArray &data);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
     void deleteFile(const QString &project, const QString &package, const QString &fileName);
@@ -82,6 +80,8 @@ signals:
     void finishedParsingStatus(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
+    void cannotCreateProject(OBSStatus *obsStatus);
+    void cannotCreatePackage(OBSStatus *obsStatus);
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingDeleteFileStatus(OBSStatus*);
@@ -106,6 +106,8 @@ public slots:
     void getAllBuildStatus(const QString &project, const QString &package);
     void changeSubmitRequestSlot(const QString &id, const QString &comments, bool accepted);
     void srChangeResult(OBSPackage *obsPackage);
+    void createProject(const QString &project, const QByteArray &data);
+    void createPackage(const QString &project, const QString &package, const QByteArray &data);
 };
 
 #endif // OBS_H
