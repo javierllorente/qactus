@@ -45,6 +45,7 @@
 #include "utils.h"
 #include "credentials.h"
 #include "browserfilter.h"
+#include "createdialog.h"
 
 namespace Ui {
     class MainWindow;
@@ -70,12 +71,20 @@ private:
 
     TrayIcon *trayIcon;
     bool m_notify;
+
+    QToolButton *newButton;
+    QMenu *newMenu;
+    QAction *actionNew_package;
+    QAction *actionNew_project;
+    QAction *actionNew;
+
     QToolButton *deleteButton;
     QMenu *deleteMenu;
     QAction *actionDelete_project;
     QAction *actionDelete_package;
     QAction *actionDelete_file;
     QAction *actionDelete;
+
     BrowserFilter *browserFilter;
     QAction *actionFilter;
     QAction *actionFilterSpacer;
@@ -155,6 +164,8 @@ private slots:
     void on_action_Remove_triggered();
     void on_action_Refresh_triggered();
     void on_action_Branch_package_triggered();
+    void newProject();
+    void newPackage();
     void deleteProject();
     void deletePackage();
     void deleteFile();

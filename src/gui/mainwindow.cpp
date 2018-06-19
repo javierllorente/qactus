@@ -595,6 +595,34 @@ void MainWindow::on_action_Branch_package_triggered()
     }
 }
 
+void MainWindow::newProject()
+{
+    qDebug() << "MainWindow:newProject()";
+
+    QModelIndex prjIndex = ui->treeProjects->currentIndex();
+    QString project = prjIndex.data().toString();
+
+    CreateDialog *createDialog = new CreateDialog(obs, this);
+    createDialog->setProjectMode(true);
+    createDialog->exec();
+    delete createDialog;
+    createDialog = nullptr;
+}
+
+void MainWindow::newPackage()
+{
+    qDebug() << "MainWindow:newPackage()";
+
+    QModelIndex prjIndex = ui->treeProjects->currentIndex();
+    QString project = prjIndex.data().toString();
+
+    CreateDialog *createDialog = new CreateDialog(obs, this);
+    createDialog->setProject(project);
+    createDialog->exec();
+    delete createDialog;
+    createDialog = nullptr;
+}
+
 void MainWindow::deleteProject()
 {
     qDebug() << "MainWindow:deleteProject()";
@@ -1094,6 +1122,30 @@ void MainWindow::on_action_About_triggered()
 void MainWindow::createActions()
 {
     connect(ui->action_About_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+    // New button actions
+    newButton = new QToolButton(this);
+    newButton->setPopupMode(QToolButton::MenuButtonPopup);
+    newButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    newButton->setText(tr("&New"));
+    newButton->setIcon(QIcon::fromTheme("document-new"));
+
+    newMenu = new QMenu(newButton);
+    actionNew_package = new QAction(tr("P&ackage"), this);
+    actionNew_package->setIcon(QIcon::fromTheme("application-x-source-rpm"));
+    connect(actionNew_package, SIGNAL(triggered(bool)), this, SLOT(newPackage()));
+
+    actionNew_project = new QAction(tr("Pr&oject"), this);
+    actionNew_project->setIcon(QIcon::fromTheme("project-development"));
+    connect(actionNew_project, SIGNAL(triggered(bool)), this, SLOT(newProject()));
+
+    newMenu->addAction(actionNew_package);
+    newMenu->addAction(actionNew_project);
+    newButton->setMenu(newMenu);
+
+    actionNew = ui->toolBar->insertWidget(ui->action_Branch_package, newButton);
+    connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newPackage()));
+
 
     // Delete button actions
     deleteButton = new QToolButton(this);
