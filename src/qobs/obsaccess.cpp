@@ -383,6 +383,41 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
             switch(reply->property("reqtype").toInt()) {
             OBSStatus *obsStatus;
 
+            case OBSAccess::CreateProject: {
+                obsStatus = new OBSStatus();
+                QString project;
+                if (reply->property("createprj").isValid()) {
+                    project = reply->property("createprj").toString();
+                }
+                obsStatus->setProject(project);
+                obsStatus->setCode("error");
+                obsStatus->setSummary("Cannot create");
+                obsStatus->setDetails(tr("You don't have the appropriate permissions to create<br>%1")
+                                      .arg(obsStatus->getProject()));
+                emit cannotCreateProject(obsStatus);
+                break;
+            }
+
+            case OBSAccess::CreatePackage: {
+                obsStatus = new OBSStatus();
+                QString project;
+                QString package;
+                if (reply->property("createprj").isValid()) {
+                    project = reply->property("createprj").toString();
+                }
+                if (reply->property("createpkg").isValid()) {
+                    package = reply->property("createpkg").toString();
+                }
+                obsStatus->setProject(project);
+                obsStatus->setPackage(package);
+                obsStatus->setCode("error");
+                obsStatus->setSummary("Cannot create");
+                obsStatus->setDetails(tr("You don't have the appropriate permissions to create<br>%1/%2")
+                                      .arg(obsStatus->getProject(), obsStatus->getPackage()));
+                emit cannotCreatePackage(obsStatus);
+                break;
+            }
+
             case OBSAccess::DeleteProject: {
                 obsStatus = new OBSStatus();
                 QString project;

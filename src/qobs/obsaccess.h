@@ -73,6 +73,8 @@ signals:
     void selfSignedCertificate(QNetworkReply *reply);
     void networkError(const QString &error);
     void srDiffFetched(const QString &diff);
+    void cannotCreateProject(OBSStatus *obsStatus);
+    void cannotCreatePackage(OBSStatus *obsStatus);
     void cannotDeleteProject(OBSStatus *obsStatus);
     void cannotDeletePackage(OBSStatus *obsStatus);
     void cannotDeleteFile(OBSStatus *obsStatus);
