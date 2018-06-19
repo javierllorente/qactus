@@ -1507,6 +1507,7 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     actionDelete->setEnabled(enableactionDelete);
 
     bool browserTabVisible = (index==0);
+    actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
     actionDelete->setVisible(browserTabVisible);
     actionFilterSpacer->setVisible(browserTabVisible);
