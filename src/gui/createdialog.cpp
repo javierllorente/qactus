@@ -57,7 +57,7 @@ void CreateDialog::setProjectMode(bool projectMode)
 void CreateDialog::setProject(const QString &project)
 {
    ui->projectLineEdit->setText(project);
-   if (!project.isEmpty()) {
+   if (!projectMode && !project.isEmpty()) {
        ui->packageLineEdit->setFocus();
        ui->projectLineEdit->setDisabled(true);
    }

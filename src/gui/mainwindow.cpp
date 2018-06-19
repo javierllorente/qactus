@@ -604,6 +604,7 @@ void MainWindow::newProject()
 
     CreateDialog *createDialog = new CreateDialog(obs, this);
     createDialog->setProjectMode(true);
+    createDialog->setProject(project);
     createDialog->exec();
     delete createDialog;
     createDialog = nullptr;
