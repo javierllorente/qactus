@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     utils.cpp \
     credentials.cpp \
     syntaxhighlighter.cpp \
-    browserfilter.cpp
+    browserfilter.cpp \
+    createdialog.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -43,13 +44,15 @@ HEADERS += mainwindow.h \
     utils.h \
     credentials.h \
     syntaxhighlighter.h \
-    browserfilter.h
+    browserfilter.h \
+    createdialog.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \
     roweditor.ui \
     requeststateeditor.ui \
-    browserfilter.ui
+    browserfilter.ui \
+    createdialog.ui
 OTHER_FILES += ../README.md \
     ../LICENSE
 INSTALLS += target \
