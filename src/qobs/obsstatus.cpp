@@ -25,6 +25,21 @@ OBSStatus::OBSStatus()
 
 }
 
+OBSStatus::OBSStatus(const OBSStatus &other)
+{
+    *this = other;
+}
+
+OBSStatus& OBSStatus::operator=(const OBSStatus &other)
+{
+    this->setProject(other.getProject());
+    this->setPackage(other.getPackage());
+    this->setCode(other.getCode());
+    this->setSummary(other.getSummary());
+    this->setDetails(other.getDetails());
+    return *this;
+}
+
 QString OBSStatus::getProject() const
 {
     return project;

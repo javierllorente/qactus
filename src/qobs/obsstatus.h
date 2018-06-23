@@ -27,6 +27,13 @@ class OBSStatus
 {
 public:
     OBSStatus();
+    OBSStatus(const OBSStatus &other);
+    OBSStatus &operator=(const OBSStatus &other);
+    inline bool operator==(const OBSStatus &rhs)
+    {
+        return this->getProject()==rhs.getProject() && this->getPackage()==rhs.getPackage() &&
+                this->getCode()==rhs.getCode();
+    }
 
     QString getProject() const;
     void setProject(const QString &value);
