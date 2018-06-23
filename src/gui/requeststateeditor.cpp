@@ -126,11 +126,11 @@ void RequestStateEditor::slotAddBuildResults(OBSResult *obsResult)
     if (model) {
         QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
         QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
-        QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
+        QStandardItem *itemBuildResult = new QStandardItem(obsResult->getStatus()->getCode());
         itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
 
-        if (!obsResult->getPackage()->getDetails().isEmpty()) {
-            QString details = obsResult->getPackage()->getDetails();
+        if (!obsResult->getStatus()->getDetails().isEmpty()) {
+            QString details = obsResult->getStatus()->getDetails();
             details = Utils::breakLine(details, 250);
             itemBuildResult->setToolTip(details);
         }

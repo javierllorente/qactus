@@ -59,8 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
     connect(obs, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(insertFile(OBSFile*)));
-    connect(obs, SIGNAL(finishedParsingPackage(OBSPackage*,int)),
-            this, SLOT(insertBuildStatus(OBSPackage*, const int)));
+    connect(obs, SIGNAL(finishedParsingPackage(OBSStatus*,int)),
+            this, SLOT(insertBuildStatus(OBSStatus*,int)));
 
     connect(obs, SIGNAL(finishedParsingStatus(OBSStatus*)),
             this, SLOT(slotReceivedStatus(OBSStatus*)));
@@ -841,11 +841,11 @@ void MainWindow::insertResult(OBSResult *obsResult)
         if (model) {
             QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
             QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
-            QStandardItem *itemBuildResult = new QStandardItem(obsResult->getPackage()->getStatus());
+            QStandardItem *itemBuildResult = new QStandardItem(obsResult->getStatus()->getCode());
             itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
 
-            if (!obsResult->getPackage()->getDetails().isEmpty()) {
-                QString details = obsResult->getPackage()->getDetails();
+            if (!obsResult->getStatus()->getDetails().isEmpty()) {
+                QString details = obsResult->getStatus()->getDetails();
                 details = Utils::breakLine(details, 250);
                 itemBuildResult->setToolTip(details);
             }
@@ -859,12 +859,13 @@ void MainWindow::insertResult(OBSResult *obsResult)
     }
 }
 
-void MainWindow::insertBuildStatus(OBSPackage* obsPackage, const int& row)
+void MainWindow::insertBuildStatus(OBSStatus *obsStatus, int row)
 {
     qDebug() << "MainWindow::insertBuildStatus()";
-    QString details = obsPackage->getDetails();
-    QString status = obsPackage->getStatus();
-    delete obsPackage;
+    QString details = obsStatus->getDetails();
+    QString status = obsStatus->getCode();
+    delete obsStatus;
+    obsStatus = nullptr;
 
 //    If the line is too long (>250), break it
     details = Utils::breakLine(details, 250);

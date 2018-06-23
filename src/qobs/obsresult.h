@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2016-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #define OBSRESULT_H
 
 #include <QString>
-#include "obspackage.h"
+#include "obsstatus.h"
 
 class OBSResult
 {
@@ -45,7 +45,7 @@ public:
     QString getState() const;
     void setState(const QString &value);
 
-    OBSPackage *getPackage() const;
+    OBSStatus *getStatus() const;
 
 private:
     QString project;
@@ -53,7 +53,7 @@ private:
     QString arch;
     QString code;
     QString state;
-    OBSPackage *package;
+    OBSStatus *status;
 };
 
 #endif // OBSRESULT_H

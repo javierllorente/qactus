@@ -28,7 +28,6 @@
 #include <QDir>
 #include <QDesktopServices>
 #include <QCoreApplication>
-#include "obspackage.h"
 #include "obsrequest.h"
 #include "obsfile.h"
 #include "obsresult.h"
@@ -43,7 +42,7 @@ class OBSXmlReader : public QObject
 public:
     static OBSXmlReader* getInstance();
     void addData(const QString &data);
-    void setPackageRow(const int &row);
+    void setPackageRow(int row);
     void parseProjectList(const QString &data);
     void parseProjectMetadata(const QString &data);
     void parsePackageList(const QString &data);
@@ -67,8 +66,7 @@ public:
 private:
     static OBSXmlReader* instance;
     OBSXmlReader();
-    void parseStatus(const QXmlStreamReader &xml, OBSPackage *obsPackage);
-    void parseOBSStatus(QXmlStreamReader &xml, OBSStatus *obsStatus);
+    void parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus);
     void parsePackage(const QString &data);
     int row;
     void parseRevisionList(const QString &data);
@@ -90,7 +88,7 @@ private:
     QFile* openFile();
 
 signals:
-    void finishedParsingPackage(OBSPackage*, const int&);
+    void finishedParsingPackage(OBSStatus*, int);
     void finishedParsingStatus(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
@@ -107,7 +105,7 @@ signals:
     void projectMetadataIsReady();
     void packageListIsReady();
     void finishedParsingFile(OBSFile*);
-    void finishedParsingSR(OBSPackage *obsPackage);
+    void finishedParsingSR(OBSStatus *obsStatus);
     void finishedParsingAbout(OBSAbout *obsAbout);
 };
 

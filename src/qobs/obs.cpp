@@ -32,8 +32,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(selfSignedCertificate(QNetworkReply*)));
     connect(obsAccess, SIGNAL(networkError(QString)),
             this, SIGNAL(networkError(QString)));
-    connect(xmlReader, SIGNAL(finishedParsingPackage(OBSPackage*, const int)),
-            this, SIGNAL(finishedParsingPackage(OBSPackage*,int)));
+    connect(xmlReader, SIGNAL(finishedParsingPackage(OBSStatus*,int)),
+            this, SIGNAL(finishedParsingPackage(OBSStatus*,int)));
 
     connect(xmlReader, SIGNAL(finishedParsingStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingStatus(OBSStatus*)));
@@ -78,8 +78,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingFile(OBSFile*)),
             this, SIGNAL(finishedParsingFile(OBSFile*)));
-    connect(xmlReader, SIGNAL(finishedParsingSR(OBSPackage *)),
-            this, SLOT(srChangeResult(OBSPackage *)));
+    connect(xmlReader, SIGNAL(finishedParsingSR(OBSStatus *)),
+            this, SLOT(srChangeResult(OBSStatus *)));
     connect(obsAccess, SIGNAL(srDiffFetched(QString)),
             this, SIGNAL(srDiffFetched(QString)));
     connect(xmlReader, SIGNAL(finishedParsingAbout(OBSAbout*)),
@@ -136,7 +136,7 @@ void OBS::login()
     request("/");
 }
 
-void OBS::getBuildStatus(const QStringList &stringList, const int &row)
+void OBS::getBuildStatus(const QStringList &stringList, int row)
 {
     //    URL format: https://api.opensuse.org/build/<project>/<repository>/<arch>/<package>/_status
     QString resource = QString("%1/%2/%3/%4/_status").arg(stringList[0], stringList[1], stringList[2], stringList[3]);
@@ -178,11 +178,12 @@ void OBS::changeSubmitRequestSlot(const QString &id, const QString &comments, bo
     changeSubmitRequest(resource, data);
 }
 
-void OBS::srChangeResult(OBSPackage *obsPackage)
+void OBS::srChangeResult(OBSStatus *obsStatus)
 {
-    QString status = obsPackage->getStatus();
-    delete obsPackage;
-    emit srStatus(status);
+    QString code = obsStatus->getCode();
+    delete obsStatus;
+    obsStatus = nullptr;
+    emit srStatus(code);
 }
 
 void OBS::getRequestDiff(const QString &source)

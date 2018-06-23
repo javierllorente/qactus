@@ -24,7 +24,6 @@
 #include <QObject>
 #include "obsaccess.h"
 #include "obsxmlreader.h"
-#include "obspackage.h"
 #include "obsstatus.h"
 
 #if defined(QOBS_LIBRARY)
@@ -47,7 +46,7 @@ public:
     void request(const QString &resource, int row);
     bool isAuthenticated();
     void login();
-    void getBuildStatus(const QStringList &stringList, const int &row);
+    void getBuildStatus(const QStringList &stringList, int row);
     void getRevisions(const QString &project, const QString &package);
     void getRequests();
     int getRequestCount();
@@ -76,7 +75,7 @@ signals:
     void isAuthenticated(bool);
     void selfSignedCertificate(QNetworkReply*);
     void networkError(const QString&);
-    void finishedParsingPackage(OBSPackage*, const int&);
+    void finishedParsingPackage(OBSStatus*, int);
     void finishedParsingStatus(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
@@ -105,7 +104,7 @@ signals:
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);
     void changeSubmitRequestSlot(const QString &id, const QString &comments, bool accepted);
-    void srChangeResult(OBSPackage *obsPackage);
+    void srChangeResult(OBSStatus *obsStatus);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
 };

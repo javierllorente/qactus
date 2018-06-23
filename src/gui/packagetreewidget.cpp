@@ -68,13 +68,13 @@ void PackageTreeWidget::insertDroppedPackage(OBSResult *result)
 
     QTreeWidgetItem *item = new QTreeWidgetItem(this);
     item->setText(0, result->getProject());
-    item->setText(1, result->getPackage()->getName());
+    item->setText(1, result->getStatus()->getPackage());
     item->setText(2, result->getRepository());
     item->setText(3, result->getArch());
-    QString status = result->getPackage()->getStatus();
+    QString status = result->getStatus()->getCode();
     item->setText(4, status);
-    if (!result->getPackage()->getDetails().isEmpty()) {
-        QString details = result->getPackage()->getDetails();
+    if (!result->getStatus()->getDetails().isEmpty()) {
+        QString details = result->getStatus()->getDetails();
         details = Utils::breakLine(details, 250);
         item->setToolTip(4, details);
     }

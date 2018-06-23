@@ -4,8 +4,7 @@ TEMPLATE = lib
 DEFINES += QOBS_LIBRARY
 include(../defines.pri)
 
-SOURCES += obspackage.cpp \
-    obsaccess.cpp \
+SOURCES += obsaccess.cpp \
     obsxmlreader.cpp \
     obsrequest.cpp \
     obs.cpp \
@@ -15,8 +14,7 @@ SOURCES += obspackage.cpp \
     obsstatus.cpp \
     obsabout.cpp \
     obsxmlwriter.cpp
-HEADERS += obspackage.h \
-    obsaccess.h \
+HEADERS += obsaccess.h \
     obsxmlreader.h \
     obsrequest.h \
     obs.h \

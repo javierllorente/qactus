@@ -38,7 +38,6 @@
 #include "login.h"
 #include "roweditor.h"
 #include "requeststateeditor.h"
-#include "obspackage.h"
 #include "obsstatus.h"
 #include "autotooltipdelegate.h"
 #include "requesttreewidgetitem.h"
@@ -185,7 +184,7 @@ private slots:
     void insertPackageList();
     void insertFile(OBSFile*);
     void insertResult(OBSResult*);
-    void insertBuildStatus(OBSPackage*, const int&);
+    void insertBuildStatus(OBSStatus *obsStatus, int row);
     void slotReceivedStatus(OBSStatus *obsStatus);
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
