@@ -76,7 +76,7 @@ signals:
     void selfSignedCertificate(QNetworkReply*);
     void networkError(const QString&);
     void finishedParsingPackage(OBSStatus*, int);
-    void finishedParsingStatus(OBSStatus*);
+    void finishedParsingBranchPackage(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
     void cannotCreateProject(OBSStatus *obsStatus);

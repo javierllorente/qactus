@@ -226,7 +226,7 @@ void OBSXmlReader::parseBranchPackage(const QString &data)
         return;
     }
 
-    emit finishedParsingStatus(obsStatus);
+    emit finishedParsingBranchPackage(obsStatus);
 }
 
 void OBSXmlReader::parseCreateProject(const QString &data, const QString &project)

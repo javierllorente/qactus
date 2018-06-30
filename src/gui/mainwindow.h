@@ -185,7 +185,7 @@ private slots:
     void insertFile(OBSFile*);
     void insertResult(OBSResult*);
     void insertBuildStatus(OBSStatus *obsStatus, int row);
-    void slotReceivedStatus(OBSStatus *obsStatus);
+    void slotBranchPackage(OBSStatus *obsStatus);
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
     void slotDeleteFile(OBSStatus *obsStatus);

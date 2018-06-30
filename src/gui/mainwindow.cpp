@@ -62,8 +62,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(finishedParsingPackage(OBSStatus*,int)),
             this, SLOT(insertBuildStatus(OBSStatus*,int)));
 
-    connect(obs, SIGNAL(finishedParsingStatus(OBSStatus*)),
-            this, SLOT(slotReceivedStatus(OBSStatus*)));
+    connect(obs, SIGNAL(finishedParsingBranchPackage(OBSStatus*)),
+            this, SLOT(slotBranchPackage(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
@@ -898,9 +898,9 @@ void MainWindow::insertBuildStatus(OBSStatus *obsStatus, int row)
     }
 }
 
-void MainWindow::slotReceivedStatus(OBSStatus *obsStatus)
+void MainWindow::slotBranchPackage(OBSStatus *obsStatus)
 {
-    qDebug() << "MainWindow::slotReceivedStatus()";
+    qDebug() << "MainWindow::slotBranchPackage()";
 
     if (obsStatus->getCode()!="ok") {
         const QString title = tr("Warning");

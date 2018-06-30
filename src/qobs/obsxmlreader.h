@@ -89,7 +89,7 @@ private:
 
 signals:
     void finishedParsingPackage(OBSStatus*, int);
-    void finishedParsingStatus(OBSStatus*);
+    void finishedParsingBranchPackage(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
     void finishedParsingDeletePrjStatus(OBSStatus*);
