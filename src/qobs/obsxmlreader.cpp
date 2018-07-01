@@ -270,6 +270,28 @@ void OBSXmlReader::parseCreatePackage(const QString &data, const QString &projec
     emit finishedParsingCreatePkgStatus(obsStatus);
 }
 
+void OBSXmlReader::parseUploadFile(const QString &data, const QString &project, const QString &package)
+{
+    qDebug() << "OBSXmlReader::parseUploadFile()";
+    QXmlStreamReader xml(data);
+    OBSRevision *obsRevision = new OBSRevision();
+    // FIXME: Not implemented
+//    obsRevision->setProject(project);
+//    obsRevision->setPackage(package);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseRevision(xml, obsRevision);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingUploadFileRevision(obsRevision);
+}
+
 void OBSXmlReader::parseDeleteProject(const QString &data, const QString &project)
 {
     qDebug() << "OBSXmlReader::parseDeleteProject()";
@@ -333,6 +355,30 @@ void OBSXmlReader::parseDeleteFile(const QString &data, const QString &project, 
     emit finishedParsingDeleteFileStatus(obsStatus);
 }
 
+void OBSXmlReader::parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision)
+{
+    if (xml.name()=="revision") {
+        QXmlStreamAttributes attrib = xml.attributes();
+        obsRevision->setRev(attrib.value("rev").toUInt());
+    }
+    if (xml.name()==("version")) {
+        xml.readNext();
+        obsRevision->setVersion(xml.text().toString());
+    }
+    if (xml.name()==("time")) {
+        xml.readNext();
+        obsRevision->setTime(xml.text().toUInt());
+    }
+    if (xml.name()==("user")) {
+        xml.readNext();
+        obsRevision->setUser(xml.text().toString());
+    }
+    if (xml.name()==("comment")) {
+        xml.readNext();
+        obsRevision->setComment(xml.text().toString());
+    }
+}
+
 void OBSXmlReader::parseRevisionList(const QString &data)
 {
     QXmlStreamReader xml(data);
@@ -345,28 +391,12 @@ void OBSXmlReader::parseRevisionList(const QString &data)
             if (xml.name()=="revisionlist") {
                 xml.readNextStartElement();
             }
-            if (xml.name()=="revision") {
-                obsRevision = new OBSRevision();
-                QXmlStreamAttributes attrib = xml.attributes();
-                obsRevision->setRev(attrib.value("rev").toUInt());
-            }
-            if (xml.name()==("version")) {
-                xml.readNext();
-                obsRevision->setVersion(xml.text().toString());
-            }
-            if (xml.name()==("time")) {
-                xml.readNext();
-                obsRevision->setTime(xml.text().toUInt());
-            }
-            if (xml.name()==("user")) {
-                xml.readNext();
-                obsRevision->setUser(xml.text().toString());
-            }
-            if (xml.name()==("comment")) {
-                xml.readNext();
-                obsRevision->setComment(xml.text().toString());
-            }
+
+            obsRevision = new OBSRevision();
+            parseRevision(xml, obsRevision);
+
         }
+
         if (xml.name()=="revision" && xml.isEndElement()) {
             emit finishedParsingRevision(obsRevision);
         }

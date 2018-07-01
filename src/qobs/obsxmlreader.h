@@ -52,6 +52,7 @@ public:
     void parseBranchPackage(const QString &data);
     void parseCreateProject(const QString &data, const QString &project);
     void parseCreatePackage(const QString &data, const QString &project, const QString &package);
+    void parseUploadFile(const QString &data, const QString &project, const QString &package);
     void parseDeleteProject(const QString &data, const QString &project);
     void parseDeletePackage(const QString &data, const QString &project, const QString &package);
     void parseDeleteFile(const QString &data, const QString &project, const QString &package, const QString &fileName);
@@ -69,6 +70,7 @@ private:
     void parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus);
     void parsePackage(const QString &data);
     int row;
+    void parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision);
     void parseRevisionList(const QString &data);
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
@@ -92,6 +94,7 @@ signals:
     void finishedParsingBranchPackage(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
+    void finishedParsingUploadFileRevision(OBSRevision*);
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingDeleteFileStatus(OBSStatus*);
