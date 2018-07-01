@@ -318,6 +318,20 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
+            case OBSAccess::UploadFile: {
+                qDebug() << reqType << "UploadFile";
+                QString project;
+                QString package;
+                if (reply->property("uploadprj").isValid()) {
+                    project = reply->property("uploadprj").toString();
+                }
+                if (reply->property("uploadpkg").isValid()) {
+                    package = reply->property("uploadpkg").toString();
+                }
+                xmlReader->parseUploadFile(data, project, package);
+                break;
+            }
+
             case OBSAccess::DeleteProject: {
                 qDebug() << reqType << "DeleteProject";
                 QString project;
@@ -415,6 +429,26 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 obsStatus->setDetails(tr("You don't have the appropriate permissions to create<br>%1/%2")
                                       .arg(obsStatus->getProject(), obsStatus->getPackage()));
                 emit cannotCreatePackage(obsStatus);
+                break;
+            }
+
+            case OBSAccess::UploadFile: {
+                obsStatus = new OBSStatus();
+                QString project;
+                QString package;
+                if (reply->property("uploadprj").isValid()) {
+                    project = reply->property("uploadprj").toString();
+                }
+                if (reply->property("uploadpkg").isValid()) {
+                    package = reply->property("uploadpkg").toString();
+                }
+                obsStatus->setProject(project);
+                obsStatus->setPackage(package);
+                obsStatus->setCode("error");
+                obsStatus->setSummary("Cannot upload file");
+                obsStatus->setDetails(tr("You don't have the appropriate permissions to upload to <br>%1/%2")
+                                      .arg(obsStatus->getProject(), obsStatus->getPackage()));
+                emit cannotUploadFile(obsStatus);
                 break;
             }
 
@@ -521,6 +555,15 @@ void OBSAccess::createPackage(const QString &project, const QString &package, co
     reply->setProperty("reqtype", OBSAccess::CreatePackage);
     reply->setProperty("createprj", project);
     reply->setProperty("createpkg", package);
+}
+
+void OBSAccess::uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data)
+{
+    QString resource = QString("/source/%1/%2/%3").arg(project, package, fileName);
+    QNetworkReply *reply = putRequest(resource, data);
+    reply->setProperty("reqtype", OBSAccess::UploadFile);
+    reply->setProperty("uploadprj", project);
+    reply->setProperty("uploadpkg", package);
 }
 
 void OBSAccess::deleteProject(const QString &project)

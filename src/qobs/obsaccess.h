@@ -63,6 +63,7 @@ public:
     void branchPackage(const QString &resource);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
+    void uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
     void deleteFile(const QString &project, const QString &package, const QString &fileName);
@@ -75,6 +76,7 @@ signals:
     void srDiffFetched(const QString &diff);
     void cannotCreateProject(OBSStatus *obsStatus);
     void cannotCreatePackage(OBSStatus *obsStatus);
+    void cannotUploadFile(OBSStatus *obsStatus);
     void cannotDeleteProject(OBSStatus *obsStatus);
     void cannotDeletePackage(OBSStatus *obsStatus);
     void cannotDeleteFile(OBSStatus *obsStatus);
@@ -115,6 +117,7 @@ private:
         BranchPackage,
         CreateProject,
         CreatePackage,
+        UploadFile,
         DeleteProject,
         DeletePackage,
         DeleteFile,
