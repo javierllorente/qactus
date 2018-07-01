@@ -396,6 +396,7 @@
    <addaction name="action_Remove"/>
    <addaction name="actionChange_request_state"/>
    <addaction name="action_Refresh"/>
+   <addaction name="action_Upload_file"/>
    <addaction name="action_Mark_all_as_read"/>
   </widget>
   <action name="action_About">
@@ -539,6 +540,20 @@
    </property>
    <property name="text">
     <string>&amp;API information</string>
+   </property>
+  </action>
+  <action name="action_Upload_file">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="cloud-upload"/>
+   </property>
+   <property name="text">
+    <string>&amp;Upload file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
    </property>
   </action>
  </widget>

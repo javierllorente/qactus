@@ -32,6 +32,7 @@
 #include <QProgressBar>
 #include <QTimer>
 #include <QToolButton>
+#include <QFileDialog>
 #include "obs.h"
 #include "trayicon.h"
 #include "configure.h"
@@ -163,6 +164,7 @@ private slots:
     void on_action_Remove_triggered();
     void on_action_Refresh_triggered();
     void on_action_Branch_package_triggered();
+    void on_action_Upload_file_triggered();
     void newProject();
     void newPackage();
     void deleteProject();
@@ -186,6 +188,8 @@ private slots:
     void insertResult(OBSResult*);
     void insertBuildStatus(OBSStatus *obsStatus, int row);
     void slotBranchPackage(OBSStatus *obsStatus);
+    void slotUploadFile(OBSRevision *obsRevision);
+    void slotUploadFileError(OBSStatus *obsStatus);
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
     void slotDeleteFile(OBSStatus *obsStatus);

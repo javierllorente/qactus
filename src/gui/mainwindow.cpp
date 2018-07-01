@@ -64,13 +64,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(obs, SIGNAL(finishedParsingBranchPackage(OBSStatus*)),
             this, SLOT(slotBranchPackage(OBSStatus*)));
+
+    connect(obs, SIGNAL(finishedParsingUploadFileRevision(OBSRevision*)),
+            this, SLOT(slotUploadFile(OBSRevision*)));
+    connect(obs, SIGNAL(cannotUploadFile(OBSStatus*)),
+            this, SLOT(slotUploadFileError(OBSStatus*)));
+
     connect(obs, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
             this, SLOT(slotDeletePackage(OBSStatus*)));
     connect(obs, SIGNAL(finishedParsingDeleteFileStatus(OBSStatus*)),
             this, SLOT(slotDeleteFile(OBSStatus*)));
-
     connect(obs, SIGNAL(cannotDeleteProject(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
     connect(obs, SIGNAL(cannotDeletePackage(OBSStatus*)),
@@ -355,6 +360,7 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
     filterBuilds("");
 
     ui->action_Branch_package->setEnabled(false);
+    ui->action_Upload_file->setEnabled(false);
     actionDelete_file->setEnabled(false);
     actionDelete_package->setEnabled(false);
     actionDelete_project->setEnabled(true);
@@ -367,6 +373,7 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
     getPackageFiles(ui->treeBuilds->currentIndex());
 
     ui->action_Branch_package->setEnabled(true);
+    ui->action_Upload_file->setEnabled(true);
     actionDelete_file->setEnabled(false);
     actionDelete_package->setEnabled(true);
     actionDelete->setEnabled(true);
@@ -593,6 +600,34 @@ void MainWindow::on_action_Branch_package_triggered()
         const QString statusText = tr("Branching %1/%2...").arg(project, build);
         emit updateStatusBar(statusText, false);
     }
+}
+
+void MainWindow::on_action_Upload_file_triggered()
+{
+    QString path = QFileDialog::getOpenFileName(this, tr("Upload file"));
+    qDebug() << "MainWindow::on_action_Upload_file_triggered() path:" << path;
+
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    qDebug() << "MainWindow::on_action_Upload_file_triggered() data.size()" << data.size();
+
+    QModelIndex prjIndex = ui->treeProjects->currentIndex();
+    QString project = prjIndex.data().toString();
+
+    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
+    QString build = pkgIndex.data().toString();
+
+    QFileInfo fi(file.fileName());
+    QString fileName = fi.fileName();
+
+    obs->uploadFile(project, build, fileName, data);
+
+    QString statusText = tr("Uploading %1 to %2/%3...").arg(fileName, project, build);
+    emit updateStatusBar(statusText, false);
 }
 
 void MainWindow::newProject()
@@ -924,6 +959,31 @@ void MainWindow::slotBranchPackage(OBSStatus *obsStatus)
     obsStatus = nullptr;
 
     emit updateStatusBar(tr("Done"), true);
+}
+
+void MainWindow::slotUploadFile(OBSRevision *obsRevision)
+{
+    qDebug() << "MainWindow::slotUploadFile()";
+//    obs->getFiles(obsRevision->getProject(), obsRevision->getPackage());
+
+    delete obsRevision;
+    obsRevision = nullptr;
+
+    emit updateStatusBar(tr("Done"), true);
+}
+
+void MainWindow::slotUploadFileError(OBSStatus *obsStatus)
+{
+    qDebug() << "MainWindow::slotUploadFileError()" << obsStatus->getCode();
+    QString title = tr("Warning");
+    QString text = obsStatus->getSummary() + "<br>" + obsStatus->getDetails();
+    QMessageBox::warning(this, title, text);
+    QString statusText = tr("Error uploading to %1/%2").arg(obsStatus->getProject(), obsStatus->getPackage());
+
+    delete obsStatus;
+    obsStatus = nullptr;
+
+    emit updateStatusBar(statusText, true);
 }
 
 void MainWindow::slotDeleteProject(OBSStatus *obsStatus)
@@ -1489,9 +1549,11 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
         QList<QModelIndex> selectedBuilds = treeBuildsSelectionModel->selectedIndexes();
         bool enable = !selectedBuilds.isEmpty();
         ui->action_Branch_package->setEnabled(enable);
+        ui->action_Upload_file->setEnabled(enable);
         actionDelete_package->setEnabled(enable);
     } else {
         ui->action_Branch_package->setEnabled(false);
+        ui->action_Upload_file->setEnabled(false);
         actionDelete_package->setEnabled(false);
     }
 
@@ -1510,6 +1572,7 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     bool browserTabVisible = (index==0);
     actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
+    ui->action_Upload_file->setVisible(browserTabVisible);
     actionDelete->setVisible(browserTabVisible);
     actionFilterSpacer->setVisible(browserTabVisible);
     actionFilter->setVisible(browserTabVisible);
