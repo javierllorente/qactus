@@ -45,6 +45,10 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(cannotCreateProject(OBSStatus*)));
     connect(obsAccess, SIGNAL(cannotCreatePackage(OBSStatus*)),
             this, SIGNAL(cannotCreatePackage(OBSStatus*)));
+    connect(xmlReader, SIGNAL(finishedParsingUploadFileRevision(OBSRevision*)),
+            this, SIGNAL(finishedParsingUploadFileRevision(OBSRevision*)));
+    connect(obsAccess, SIGNAL(cannotUploadFile(OBSStatus*)),
+            this, SIGNAL(cannotUploadFile(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
@@ -257,6 +261,11 @@ void OBS::createProject(const QString &project, const QByteArray &data)
 void OBS::createPackage(const QString &project, const QString &package, const QByteArray &data)
 {
     obsAccess->createPackage(project, package, data);
+}
+
+void OBS::uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data)
+{
+    obsAccess->uploadFile(project, package, fileName, data);
 }
 
 void OBS::deleteProject(const QString &project)

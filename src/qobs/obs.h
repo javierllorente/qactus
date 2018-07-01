@@ -81,6 +81,8 @@ signals:
     void finishedParsingCreatePkgStatus(OBSStatus*);
     void cannotCreateProject(OBSStatus *obsStatus);
     void cannotCreatePackage(OBSStatus *obsStatus);
+    void finishedParsingUploadFileRevision(OBSRevision*);
+    void cannotUploadFile(OBSStatus *obsStatus);
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingDeleteFileStatus(OBSStatus*);
@@ -107,6 +109,7 @@ public slots:
     void srChangeResult(OBSStatus *obsStatus);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
+    void uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data);
 };
 
 #endif // OBS_H
