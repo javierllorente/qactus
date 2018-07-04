@@ -19,21 +19,21 @@
  *
  */
 
-#include "obsaccess.h"
+#include "obscore.h"
 
-OBSAccess *OBSAccess::instance = NULL;
+OBSCore *OBSCore::instance = NULL;
 const QString userAgent = APP_NAME + QString(" ") + QACTUS_VERSION;
 
-OBSAccess::OBSAccess()
+OBSCore::OBSCore()
 {
     authenticated = false;
     xmlReader = OBSXmlReader::getInstance();
     manager = nullptr;
 }
 
-void OBSAccess::createManager()
+void OBSCore::createManager()
 {
-    qDebug() << "OBSAccess::createManager()";
+    qDebug() << "OBSCore::createManager()";
     manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
             SLOT(provideAuthentication(QNetworkReply*,QAuthenticator*)));
@@ -42,17 +42,17 @@ void OBSAccess::createManager()
             this, SLOT(onSslErrors(QNetworkReply*, const QList<QSslError> &)));
 }
 
-OBSAccess *OBSAccess::getInstance()
+OBSCore *OBSCore::getInstance()
 {
     if (!instance) {
-        instance = new OBSAccess();
+        instance = new OBSCore();
     }
     return instance;
 }
 
-void OBSAccess::setCredentials(const QString& username, const QString& password)
+void OBSCore::setCredentials(const QString& username, const QString& password)
 {
-    qDebug() << "OBSAccess::setCredentials()";
+    qDebug() << "OBSCore::setCredentials()";
 //    Allow login with another username/password
     if (manager!=nullptr) {
         delete manager;
@@ -64,22 +64,22 @@ void OBSAccess::setCredentials(const QString& username, const QString& password)
     curPassword = password;
 }
 
-QString OBSAccess::getUsername()
+QString OBSCore::getUsername()
 {
     return curUsername;
 }
 
-void OBSAccess::setApiUrl(const QString &apiUrl)
+void OBSCore::setApiUrl(const QString &apiUrl)
 {
     this->apiUrl = apiUrl;
 }
 
-QString OBSAccess::getApiUrl() const
+QString OBSCore::getApiUrl() const
 {
     return apiUrl;
 }
 
-QNetworkReply *OBSAccess::request(const QString &resource)
+QNetworkReply *OBSCore::request(const QString &resource)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(apiUrl + resource));
@@ -89,63 +89,63 @@ QNetworkReply *OBSAccess::request(const QString &resource)
     return reply;
 }
 
-QNetworkReply *OBSAccess::requestBuild(const QString &resource)
+QNetworkReply *OBSCore::requestBuild(const QString &resource)
 {
     return request("/build/" + resource);
 }
 
-void OBSAccess::requestBuild(const QString &resource, int row)
+void OBSCore::requestBuild(const QString &resource, int row)
 {
     request("/build/" + resource, row);
 }
 
-QNetworkReply *OBSAccess::requestSource(const QString &resource)
+QNetworkReply *OBSCore::requestSource(const QString &resource)
 {
     return request("/source/" + resource);
 }
 
-void OBSAccess::requestRequest(const QString &resource)
+void OBSCore::requestRequest(const QString &resource)
 {
     request("/request/" + resource);
 }
 
-void OBSAccess::getProjects()
+void OBSCore::getProjects()
 {
     QNetworkReply *reply = requestSource("");
-    reply->setProperty("reqtype", OBSAccess::ProjectList);
+    reply->setProperty("reqtype", OBSCore::ProjectList);
 }
 
-void OBSAccess::getProjectMetadata(const QString &resource)
+void OBSCore::getProjectMetadata(const QString &resource)
 {
     QNetworkReply *reply = requestSource(resource);
-    reply->setProperty("reqtype", OBSAccess::ProjectMetadata);
+    reply->setProperty("reqtype", OBSCore::ProjectMetadata);
 }
 
-void OBSAccess::getPackages(const QString &resource)
+void OBSCore::getPackages(const QString &resource)
 {
     QNetworkReply *reply = requestSource(resource);
-    reply->setProperty("reqtype", OBSAccess::PackageList);
+    reply->setProperty("reqtype", OBSCore::PackageList);
 }
 
-void OBSAccess::getFiles(const QString &resource)
+void OBSCore::getFiles(const QString &resource)
 {
     QNetworkReply *reply = requestSource(resource);
-    reply->setProperty("reqtype", OBSAccess::FileList);
+    reply->setProperty("reqtype", OBSCore::FileList);
 }
 
-void OBSAccess::getAllBuildStatus(const QString &resource)
+void OBSCore::getAllBuildStatus(const QString &resource)
 {
     QNetworkReply *reply = requestBuild(resource);
-    reply->setProperty("reqtype", OBSAccess::BuildStatusList);
+    reply->setProperty("reqtype", OBSCore::BuildStatusList);
 }
 
-void OBSAccess::request(const QString &resource, int row)
+void OBSCore::request(const QString &resource, int row)
 {
     QNetworkReply *reply = request(resource);
     reply->setProperty("row", row);
 }
 
-QNetworkReply *OBSAccess::postRequest(const QString &resource, const QByteArray &data)
+QNetworkReply *OBSCore::postRequest(const QString &resource, const QByteArray &data)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(apiUrl + resource));
@@ -157,7 +157,7 @@ QNetworkReply *OBSAccess::postRequest(const QString &resource, const QByteArray 
     return reply;
 }
 
-QNetworkReply *OBSAccess::putRequest(const QString &resource, const QByteArray &data)
+QNetworkReply *OBSCore::putRequest(const QString &resource, const QByteArray &data)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(apiUrl + resource));
@@ -169,7 +169,7 @@ QNetworkReply *OBSAccess::putRequest(const QString &resource, const QByteArray &
     return reply;
 }
 
-QNetworkReply *OBSAccess::deleteRequest(const QString &resource)
+QNetworkReply *OBSCore::deleteRequest(const QString &resource)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(apiUrl + resource));
@@ -179,15 +179,15 @@ QNetworkReply *OBSAccess::deleteRequest(const QString &resource)
     return reply;
 }
 
-void OBSAccess::changeSubmitRequest(const QString &resource, const QByteArray &data)
+void OBSCore::changeSubmitRequest(const QString &resource, const QByteArray &data)
 {
     QNetworkReply *reply = postRequest(resource, data);
-    reply->setProperty("reqtype", OBSAccess::SubmitRequest);
+    reply->setProperty("reqtype", OBSCore::SubmitRequest);
 }
 
-void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
+void OBSCore::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
 {
-    qDebug() << "OBSAccess::provideAuthentication() for" << reply->request().url().toString();
+    qDebug() << "OBSCore::provideAuthentication() for" << reply->request().url().toString();
 //    qDebug() << reply->readAll();
 
     if ((curPassword != prevPassword) || (curUsername != prevUsername)) {
@@ -196,7 +196,7 @@ void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator
         ator->setUser(curUsername);
         ator->setPassword(curPassword);
     } else {
-        qDebug() << "OBSAccess::provideAuthentication() same credentials provided!";
+        qDebug() << "OBSCore::provideAuthentication() same credentials provided!";
         // FIXME: Workaround to accept the same credentials
         // Not calling ator->setUser() or ator->setPassword() results in a signal
         // being emitted with a QNetworkReply with error AuthenticationRequiredError.
@@ -209,12 +209,12 @@ void OBSAccess::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator
     }
 }
 
-bool OBSAccess::isAuthenticated()
+bool OBSCore::isAuthenticated()
 {
     return authenticated;
 }
 
-void OBSAccess::replyFinished(QNetworkReply *reply)
+void OBSCore::replyFinished(QNetworkReply *reply)
 {
     // QNetworkReply is a sequential-access QIODevice, which means that
     // once data is read from the object, it no longer kept by the device.
@@ -222,9 +222,9 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     // See http://doc.qt.nokia.com/latest/qnetworkreply.html for more info
 
     QString data = QString::fromUtf8(reply->readAll());
-    qDebug() << "OBSAccess::replyFinished()" << reply->url().toString();
+    qDebug() << "OBSCore::replyFinished()" << reply->url().toString();
     int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug() << "OBSAccess::replyFinished() HTTP status code:" << httpStatusCode;
+    qDebug() << "OBSCore::replyFinished() HTTP status code:" << httpStatusCode;
 //    qDebug() << "Network Reply: " << data;
 
     if (httpStatusCode==302) {
@@ -247,54 +247,54 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     switch (reply->error()) {
 
     case QNetworkReply::NoError:
-        qDebug() << "OBSAccess::replyFinished() Request succeeded! Status code:" << httpStatusCode;
+        qDebug() << "OBSCore::replyFinished() Request succeeded! Status code:" << httpStatusCode;
 
         if (reply->property("reqtype").isValid()) {
             QString reqType = "RequestType";
 
             switch(reply->property("reqtype").toInt()) {
 
-            case OBSAccess::ProjectList: // <directory>
+            case OBSCore::ProjectList: // <directory>
                 qDebug() << reqType << "ProjectList";
                 xmlReader->parseProjectList(data);
                 break;
 
-            case OBSAccess::ProjectMetadata: // <project>
+            case OBSCore::ProjectMetadata: // <project>
                 qDebug() << reqType << "ProjectList";
                 xmlReader->parseProjectMetadata(data);
                 break;
 
-            case OBSAccess::PackageList: // <directory>
+            case OBSCore::PackageList: // <directory>
                 qDebug() << reqType << "PackageList";
                 xmlReader->parsePackageList(data);
                 break;
 
-            case OBSAccess::FileList: // <directory>
+            case OBSCore::FileList: // <directory>
                 qDebug() << reqType << "FileList";
                 xmlReader->parseFileList(data);
                 break;
 
-            case OBSAccess::BuildStatusList: // <resultlist>
+            case OBSCore::BuildStatusList: // <resultlist>
                 qDebug() << reqType << "BuildStatusList";
                 xmlReader->parseResultList(data);
                 break;
 
-            case OBSAccess::SubmitRequest:
+            case OBSCore::SubmitRequest:
                 qDebug() << reqType << "SubmitRequest";
                 xmlReader->parseSubmitRequest(data);
                 break;
 
-            case OBSAccess::SRDiff:
+            case OBSCore::SRDiff:
                 qDebug() << reqType << "SRDiff";
                 emit srDiffFetched(data);
                 break;
 
-            case OBSAccess::BranchPackage:
+            case OBSCore::BranchPackage:
                 qDebug() << reqType << "BranchPackage";
                 xmlReader->parseBranchPackage(data);
                 break;
 
-            case OBSAccess::CreateProject: {
+            case OBSCore::CreateProject: {
                 qDebug() << reqType << "CreateProject";
                 QString project;
                 if (reply->property("createprj").isValid()) {
@@ -304,7 +304,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::CreatePackage: {
+            case OBSCore::CreatePackage: {
                 qDebug() << reqType << "CreatePackage";
                 QString project;
                 QString package;
@@ -318,7 +318,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::UploadFile: {
+            case OBSCore::UploadFile: {
                 qDebug() << reqType << "UploadFile";
                 QString project;
                 QString package;
@@ -336,7 +336,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::DeleteProject: {
+            case OBSCore::DeleteProject: {
                 qDebug() << reqType << "DeleteProject";
                 QString project;
                 if (reply->property("deleteprj").isValid()) {
@@ -346,7 +346,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::DeletePackage: {
+            case OBSCore::DeletePackage: {
                 qDebug() << reqType << "DeletePackage";
                 QString project;
                 QString package;
@@ -360,7 +360,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::DeleteFile: {
+            case OBSCore::DeleteFile: {
                 qDebug() << reqType << "DeleteFile";
                 QString project;
                 QString package;
@@ -378,7 +378,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::About:
+            case OBSCore::About:
                 qDebug() << reqType << "About";
                 xmlReader->parseAbout(data);
                 break;
@@ -396,12 +396,12 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
         break;
 
     case QNetworkReply::ContentAccessDenied: // 401
-        qDebug() << "OBSAccess::replyFinished() Access denied!";
+        qDebug() << "OBSCore::replyFinished() Access denied!";
         if (reply->property("reqtype").isValid()) {
             switch(reply->property("reqtype").toInt()) {
             OBSStatus *obsStatus;
 
-            case OBSAccess::CreateProject: {
+            case OBSCore::CreateProject: {
                 obsStatus = new OBSStatus();
                 QString project;
                 if (reply->property("createprj").isValid()) {
@@ -416,7 +416,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::CreatePackage: {
+            case OBSCore::CreatePackage: {
                 obsStatus = new OBSStatus();
                 QString project;
                 QString package;
@@ -436,7 +436,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::UploadFile: {
+            case OBSCore::UploadFile: {
                 obsStatus = new OBSStatus();
                 QString project;
                 QString package;
@@ -456,7 +456,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::DeleteProject: {
+            case OBSCore::DeleteProject: {
                 obsStatus = new OBSStatus();
                 QString project;
                 if (reply->property("deleteprj").isValid()) {
@@ -471,7 +471,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::DeletePackage: {
+            case OBSCore::DeletePackage: {
                 obsStatus = new OBSStatus();
                 QString project;
                 QString package;
@@ -491,7 +491,7 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSAccess::DeleteFile: {
+            case OBSCore::DeleteFile: {
                 obsStatus = new OBSStatus();
                 QString project;
                 QString package;
@@ -520,11 +520,11 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
         break;
 
     case QNetworkReply::AuthenticationRequiredError:
-        qDebug() << "OBSAccess::replyFinished() Credentials provided not accepted!";
+        qDebug() << "OBSCore::replyFinished() Credentials provided not accepted!";
         break;
 
     default: // Other errors
-        qDebug() << "OBSAccess::replyFinished() Request failed! Error:" << reply->errorString();
+        qDebug() << "OBSCore::replyFinished() Request failed! Error:" << reply->errorString();
         emit networkError(reply->errorString());
         break;
     }
@@ -532,80 +532,80 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-void OBSAccess::getSRDiff(const QString &resource)
+void OBSCore::getSRDiff(const QString &resource)
 {
     QNetworkReply *reply = postRequest(resource, "");
-    reply->setProperty("reqtype", OBSAccess::SRDiff);
+    reply->setProperty("reqtype", OBSCore::SRDiff);
 }
 
-void OBSAccess::branchPackage(const QString &resource)
+void OBSCore::branchPackage(const QString &resource)
 {
     QNetworkReply *reply = postRequest(resource, "");
-    reply->setProperty("reqtype", OBSAccess::BranchPackage);
+    reply->setProperty("reqtype", OBSCore::BranchPackage);
 }
 
-void OBSAccess::createProject(const QString &project, const QByteArray &data)
+void OBSCore::createProject(const QString &project, const QByteArray &data)
 {
     QString resource = QString("/source/%1/_meta").arg(project);
     QNetworkReply *reply = putRequest(resource, data);
-    reply->setProperty("reqtype", OBSAccess::CreateProject);
+    reply->setProperty("reqtype", OBSCore::CreateProject);
     reply->setProperty("createprj", project);
 }
 
-void OBSAccess::createPackage(const QString &project, const QString &package, const QByteArray &data)
+void OBSCore::createPackage(const QString &project, const QString &package, const QByteArray &data)
 {
     QString resource = QString("/source/%1/%2/_meta").arg(project, package);
     QNetworkReply *reply = putRequest(resource, data);
-    reply->setProperty("reqtype", OBSAccess::CreatePackage);
+    reply->setProperty("reqtype", OBSCore::CreatePackage);
     reply->setProperty("createprj", project);
     reply->setProperty("createpkg", package);
 }
 
-void OBSAccess::uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data)
+void OBSCore::uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data)
 {
     QString resource = QString("/source/%1/%2/%3").arg(project, package, fileName);
     QNetworkReply *reply = putRequest(resource, data);
-    reply->setProperty("reqtype", OBSAccess::UploadFile);
+    reply->setProperty("reqtype", OBSCore::UploadFile);
     reply->setProperty("uploadprj", project);
     reply->setProperty("uploadpkg", package);
     reply->setProperty("uploadfile", fileName);
 }
 
-void OBSAccess::deleteProject(const QString &project)
+void OBSCore::deleteProject(const QString &project)
 {
     QString resource = QString("/source/%1").arg(project);
     QNetworkReply *reply = deleteRequest(resource);
-    reply->setProperty("reqtype", OBSAccess::DeleteProject);
+    reply->setProperty("reqtype", OBSCore::DeleteProject);
     reply->setProperty("deleteprj", project);
 }
 
-void OBSAccess::deletePackage(const QString &project, const QString &package)
+void OBSCore::deletePackage(const QString &project, const QString &package)
 {
     QString resource = QString("/source/%1/%2").arg(project, package);
     QNetworkReply *reply = deleteRequest(resource);
-    reply->setProperty("reqtype", OBSAccess::DeletePackage);
+    reply->setProperty("reqtype", OBSCore::DeletePackage);
     reply->setProperty("deleteprj", project);
     reply->setProperty("deletepkg", package);
 }
 
-void OBSAccess::deleteFile(const QString &project, const QString &package, const QString &fileName)
+void OBSCore::deleteFile(const QString &project, const QString &package, const QString &fileName)
 {
     QString resource = QString("/source/%1/%2/%3").arg(project, package, fileName);
     QNetworkReply *reply = deleteRequest(resource);
-    reply->setProperty("reqtype", OBSAccess::DeleteFile);
+    reply->setProperty("reqtype", OBSCore::DeleteFile);
     reply->setProperty("deleteprj", project);
     reply->setProperty("deletepkg", package);
     reply->setProperty("deletefile", fileName);
 }
 
-void OBSAccess::about()
+void OBSCore::about()
 {
     QString resource = "/about";
     QNetworkReply *reply = request(resource);
-    reply->setProperty("reqtype", OBSAccess::About);
+    reply->setProperty("reqtype", OBSCore::About);
 }
 
-void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
+void OBSCore::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
 {
     QString errorString;
     QString message;
@@ -615,12 +615,12 @@ void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
             errorString += ", ";
             errorString = sslError.errorString();
             if (sslError.error() == QSslError::SelfSignedCertificateInChain) {
-                qDebug() << "OBSAccess::onSslErrors() Self signed certificate!";
+                qDebug() << "OBSCore::onSslErrors() Self signed certificate!";
                 emit selfSignedCertificate(reply);
             }
         }
     }
-    qDebug() << "OBSAccess::onSslErrors() SSL Errors:" << errorString;
+    qDebug() << "OBSCore::onSslErrors() SSL Errors:" << errorString;
 
     if (list.count() == 1) {
         message=tr("An SSL error has occured: %1");
@@ -628,5 +628,5 @@ void OBSAccess::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
         message=list.count()+tr(" SSL errors have occured: %1");
     }
 
-   qDebug() << "OBSAccess::onSslErrors() url:" << reply->url() << "row:" << reply->property("row").toInt();
+   qDebug() << "OBSCore::onSslErrors() url:" << reply->url() << "row:" << reply->property("row").toInt();
 }

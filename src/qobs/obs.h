@@ -22,7 +22,7 @@
 #define OBS_H
 
 #include <QObject>
-#include "obsaccess.h"
+#include "obscore.h"
 #include "obsxmlreader.h"
 #include "obsstatus.h"
 
@@ -66,7 +66,7 @@ public:
     void about();
 
 private:
-    OBSAccess *obsAccess;
+    OBSCore *obsCore;
     OBSXmlReader *xmlReader;
     void postRequest(const QString &resource, const QByteArray &data);
     void deleteRequest(const QString &resource);

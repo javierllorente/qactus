@@ -22,15 +22,15 @@
 
 OBS::OBS(QObject *parent) : QObject(parent)
 {
-    obsAccess = OBSAccess::getInstance();
+    obsCore = OBSCore::getInstance();
     xmlReader = OBSXmlReader::getInstance();
 
     // Forward signals
-    connect(obsAccess, SIGNAL(isAuthenticated(bool)),
+    connect(obsCore, SIGNAL(isAuthenticated(bool)),
             this, SIGNAL(isAuthenticated(bool)));
-    connect(obsAccess, SIGNAL(selfSignedCertificate(QNetworkReply*)),
+    connect(obsCore, SIGNAL(selfSignedCertificate(QNetworkReply*)),
             this, SIGNAL(selfSignedCertificate(QNetworkReply*)));
-    connect(obsAccess, SIGNAL(networkError(QString)),
+    connect(obsCore, SIGNAL(networkError(QString)),
             this, SIGNAL(networkError(QString)));
     connect(xmlReader, SIGNAL(finishedParsingPackage(OBSStatus*,int)),
             this, SIGNAL(finishedParsingPackage(OBSStatus*,int)));
@@ -41,13 +41,13 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingCreatePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)));
-    connect(obsAccess, SIGNAL(cannotCreateProject(OBSStatus*)),
+    connect(obsCore, SIGNAL(cannotCreateProject(OBSStatus*)),
             this, SIGNAL(cannotCreateProject(OBSStatus*)));
-    connect(obsAccess, SIGNAL(cannotCreatePackage(OBSStatus*)),
+    connect(obsCore, SIGNAL(cannotCreatePackage(OBSStatus*)),
             this, SIGNAL(cannotCreatePackage(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingUploadFileRevision(OBSRevision*)),
             this, SIGNAL(finishedParsingUploadFileRevision(OBSRevision*)));
-    connect(obsAccess, SIGNAL(cannotUploadFile(OBSStatus*)),
+    connect(obsCore, SIGNAL(cannotUploadFile(OBSStatus*)),
             this, SIGNAL(cannotUploadFile(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)));
@@ -55,11 +55,11 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeleteFileStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingDeleteFileStatus(OBSStatus*)));
-    connect(obsAccess, SIGNAL(cannotDeleteProject(OBSStatus*)),
+    connect(obsCore, SIGNAL(cannotDeleteProject(OBSStatus*)),
             this, SIGNAL(cannotDeleteProject(OBSStatus*)));
-    connect(obsAccess, SIGNAL(cannotDeletePackage(OBSStatus*)),
+    connect(obsCore, SIGNAL(cannotDeletePackage(OBSStatus*)),
             this, SIGNAL(cannotDeletePackage(OBSStatus*)));
-    connect(obsAccess, SIGNAL(cannotDeleteFile(OBSStatus*)),
+    connect(obsCore, SIGNAL(cannotDeleteFile(OBSStatus*)),
             this, SIGNAL(cannotDeleteFile(OBSStatus*)));
 
     connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
@@ -84,7 +84,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingFile(OBSFile*)));
     connect(xmlReader, SIGNAL(finishedParsingSR(OBSStatus *)),
             this, SLOT(srChangeResult(OBSStatus *)));
-    connect(obsAccess, SIGNAL(srDiffFetched(QString)),
+    connect(obsCore, SIGNAL(srDiffFetched(QString)),
             this, SIGNAL(srDiffFetched(QString)));
     connect(xmlReader, SIGNAL(finishedParsingAbout(OBSAbout*)),
             SIGNAL(finishedParsingAbout(OBSAbout*)));
@@ -92,47 +92,47 @@ OBS::OBS(QObject *parent) : QObject(parent)
 
 void OBS::setCredentials(const QString &username, const QString &password)
 {
-    obsAccess->setCredentials(username, password);
+    obsCore->setCredentials(username, password);
 }
 
 QString OBS::getUsername()
 {
-    return obsAccess->getUsername();
+    return obsCore->getUsername();
 }
 
 void OBS::setApiUrl(const QString &apiUrl)
 {
-    obsAccess->setApiUrl(apiUrl);
+    obsCore->setApiUrl(apiUrl);
 }
 
 QString OBS::getApiUrl() const
 {
-    return obsAccess->getApiUrl();
+    return obsCore->getApiUrl();
 }
 
 void OBS::request(const QString &resource)
 {
-    obsAccess->request(resource);
+    obsCore->request(resource);
 }
 
 void OBS::request(const QString &resource, int row)
 {
-    obsAccess->request(resource, row);
+    obsCore->request(resource, row);
 }
 
 void OBS::postRequest(const QString &resource, const QByteArray &data)
 {
-    obsAccess->postRequest(resource, data);
+    obsCore->postRequest(resource, data);
 }
 
 void OBS::deleteRequest(const QString &resource)
 {
-    obsAccess->deleteRequest(resource);
+    obsCore->deleteRequest(resource);
 }
 
 bool OBS::isAuthenticated()
 {
-    return obsAccess->isAuthenticated();
+    return obsCore->isAuthenticated();
 }
 
 void OBS::login()
@@ -144,27 +144,27 @@ void OBS::getBuildStatus(const QStringList &stringList, int row)
 {
     //    URL format: https://api.opensuse.org/build/<project>/<repository>/<arch>/<package>/_status
     QString resource = QString("%1/%2/%3/%4/_status").arg(stringList[0], stringList[1], stringList[2], stringList[3]);
-    obsAccess->requestBuild(resource, row);
+    obsCore->requestBuild(resource, row);
 }
 
 void OBS::getAllBuildStatus(const QString &project, const QString &package)
 {
     //    URL format: https://api.opensuse.org/build/<project>/_result?package=<package>
     QString resource = QString("%1/%2%3").arg(project, "_result?package=", package);
-    obsAccess->getAllBuildStatus(resource);
+    obsCore->getAllBuildStatus(resource);
 }
 
 void OBS::getRevisions(const QString &project, const QString &package)
 {
     //    URL format: https://api.opensuse.org/source/<project>/<package>/_history
     QString resource = QString("%1/%2/_history").arg(project, package);
-    obsAccess->requestSource(resource);
+    obsCore->requestSource(resource);
 }
 
 void OBS::getRequests()
 {
     QString resource = QString("?view=collection&states=new&roles=maintainer&user=%1").arg(getUsername());
-    obsAccess->requestRequest(resource);
+    obsCore->requestRequest(resource);
 }
 
 int OBS::getRequestCount()
@@ -195,25 +195,25 @@ void OBS::getRequestDiff(const QString &source)
     qDebug() << "OBS::getRequestDiff()";
     QString resource = QString("/source/%1?unified=1&tarlimit=0&cmd=diff&filelimit=0&expand=1")
             .arg(source);
-    obsAccess->getSRDiff(resource);
+    obsCore->getSRDiff(resource);
 }
 
 void OBS::getProjects()
 {
     xmlReader->setFileName("projects.xml");
-    obsAccess->getProjects();
+    obsCore->getProjects();
 }
 
 void OBS::getPackages(const QString &project)
 {
     xmlReader->setFileName(project + ".xml");
-    obsAccess->getPackages("/" + project);
+    obsCore->getPackages("/" + project);
 }
 
 void OBS::getProjectMetadata(const QString &project)
 {
     xmlReader->setFileName(project + "_meta.xml");
-    obsAccess->getProjectMetadata("/" + project + "/_meta");
+    obsCore->getProjectMetadata("/" + project + "/_meta");
 }
 
 void OBS::getFiles(const QString &project, const QString &package)
@@ -221,7 +221,7 @@ void OBS::getFiles(const QString &project, const QString &package)
     QString fileName = QString("%1_%2.xml").arg(project, package);
     xmlReader->setFileName(fileName);
     QString resource = QString("/%1/%2").arg(project, package);
-    obsAccess->getFiles(resource);
+    obsCore->getFiles(resource);
 }
 
 QStringList OBS::getRepositoryArchs(const QString &repository)
@@ -232,7 +232,7 @@ QStringList OBS::getRepositoryArchs(const QString &repository)
 
 void OBS::changeSubmitRequest(const QString &resource, const QByteArray &data)
 {
-    obsAccess->changeSubmitRequest(resource, data);
+    obsCore->changeSubmitRequest(resource, data);
 }
 
 QStringList OBS::readXmlFile(const QString &xmlFile)
@@ -250,40 +250,40 @@ OBSXmlReader* OBS::getXmlReader()
 void OBS::branchPackage(const QString &project, const QString &package)
 {
     QString resource = QString("/source/%1/%2?cmd=branch").arg(project, package);
-    obsAccess->branchPackage(resource);
+    obsCore->branchPackage(resource);
 }
 
 void OBS::createProject(const QString &project, const QByteArray &data)
 {
-    obsAccess->createProject(project, data);
+    obsCore->createProject(project, data);
 }
 
 void OBS::createPackage(const QString &project, const QString &package, const QByteArray &data)
 {
-    obsAccess->createPackage(project, package, data);
+    obsCore->createPackage(project, package, data);
 }
 
 void OBS::uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data)
 {
-    obsAccess->uploadFile(project, package, fileName, data);
+    obsCore->uploadFile(project, package, fileName, data);
 }
 
 void OBS::deleteProject(const QString &project)
 {
-    obsAccess->deleteProject(project);
+    obsCore->deleteProject(project);
 }
 
 void OBS::deletePackage(const QString &project, const QString &package)
 {
-    obsAccess->deletePackage(project, package);
+    obsCore->deletePackage(project, package);
 }
 
 void OBS::deleteFile(const QString &project, const QString &package, const QString &fileName)
 {
-    obsAccess->deleteFile(project, package, fileName);
+    obsCore->deleteFile(project, package, fileName);
 }
 
 void OBS::about()
 {
-    obsAccess->about();
+    obsCore->about();
 }

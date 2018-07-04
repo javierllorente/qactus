@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef OBSACCESS_H
-#define OBSACCESS_H
+#ifndef OBSCORE_H
+#define OBSCORE_H
 
 #include <QObject>
 #include <QNetworkAccessManager>
@@ -34,12 +34,12 @@
 
 class OBSXmlReader;
 
-class OBSAccess : public QObject
+class OBSCore : public QObject
 {
      Q_OBJECT
 
 public:
-    static OBSAccess* getInstance();
+    static OBSCore* getInstance();
     bool isAuthenticated();
     QString getUsername();
     void setApiUrl(const QString &apiUrl);
@@ -93,14 +93,14 @@ private:
 /*
  * We need to instantiate QNAM only once, as it should be used as
  * as singleton or a utility instead of recreating it for each
- * request. This class (OBSAccess) uses the singleton pattern to
+ * request. This class (OBSCore) uses the singleton pattern to
  * achieve this.
  *
  */
-    QNetworkAccessManager* manager;
+    QNetworkAccessManager *manager;
     void createManager();
-    OBSAccess();
-    static OBSAccess* instance;
+    OBSCore();
+    static OBSCore *instance;
     QString curUsername;
     QString curPassword;
     QString prevPassword;
@@ -127,4 +127,4 @@ private:
     OBSXmlReader *xmlReader;
 };
 
-#endif // OBSACCESS_H
+#endif // OBSCORE_H
