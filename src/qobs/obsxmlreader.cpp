@@ -270,14 +270,14 @@ void OBSXmlReader::parseCreatePackage(const QString &data, const QString &projec
     emit finishedParsingCreatePkgStatus(obsStatus);
 }
 
-void OBSXmlReader::parseUploadFile(const QString &data, const QString &project, const QString &package)
+void OBSXmlReader::parseUploadFile(const QString &data, const QString &project, const QString &package, const QString &file)
 {
     qDebug() << "OBSXmlReader::parseUploadFile()";
     QXmlStreamReader xml(data);
     OBSRevision *obsRevision = new OBSRevision();
-    // FIXME: Not implemented
-//    obsRevision->setProject(project);
-//    obsRevision->setPackage(package);
+    obsRevision->setProject(project);
+    obsRevision->setPackage(package);
+    obsRevision->setFile(file);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();

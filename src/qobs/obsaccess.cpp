@@ -322,13 +322,17 @@ void OBSAccess::replyFinished(QNetworkReply *reply)
                 qDebug() << reqType << "UploadFile";
                 QString project;
                 QString package;
+                QString file;
                 if (reply->property("uploadprj").isValid()) {
                     project = reply->property("uploadprj").toString();
                 }
                 if (reply->property("uploadpkg").isValid()) {
                     package = reply->property("uploadpkg").toString();
                 }
-                xmlReader->parseUploadFile(data, project, package);
+                if (reply->property("uploadfile").isValid()) {
+                    file = reply->property("uploadfile").toString();
+                }
+                xmlReader->parseUploadFile(data, project, package, file);
                 break;
             }
 
@@ -564,6 +568,7 @@ void OBSAccess::uploadFile(const QString &project, const QString &package, const
     reply->setProperty("reqtype", OBSAccess::UploadFile);
     reply->setProperty("uploadprj", project);
     reply->setProperty("uploadpkg", package);
+    reply->setProperty("uploadfile", fileName);
 }
 
 void OBSAccess::deleteProject(const QString &project)

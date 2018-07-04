@@ -52,7 +52,7 @@ public:
     void parseBranchPackage(const QString &data);
     void parseCreateProject(const QString &data, const QString &project);
     void parseCreatePackage(const QString &data, const QString &project, const QString &package);
-    void parseUploadFile(const QString &data, const QString &project, const QString &package);
+    void parseUploadFile(const QString &data, const QString &project, const QString &package, const QString &file);
     void parseDeleteProject(const QString &data, const QString &project);
     void parseDeletePackage(const QString &data, const QString &project, const QString &package);
     void parseDeleteFile(const QString &data, const QString &project, const QString &package, const QString &fileName);
