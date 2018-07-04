@@ -43,12 +43,24 @@ public:
     QString getComment() const;
     void setComment(const QString &value);
 
+    QString getProject() const;
+    void setProject(const QString &value);
+
+    QString getPackage() const;
+    void setPackage(const QString &value);
+
+    QString getFile() const;
+    void setFile(const QString &value);
+
 private:
     uint rev;
     QString version;
     uint time;
     QString user;
     QString comment;
+    QString project;
+    QString package;
+    QString file;
 };
 
 #endif // OBSREVISION_H
