@@ -95,7 +95,9 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
     if (xml.name()=="status") {
         if (xml.isStartElement()) {
             QXmlStreamAttributes attrib = xml.attributes();
-            obsStatus->setPackage(attrib.value("package").toString());
+            if (attrib.hasAttribute("package")) {
+                obsStatus->setPackage(attrib.value("package").toString());
+            }
             obsStatus->setCode(attrib.value("code").toString());
             qDebug() << "Package:" << obsStatus->getPackage() << "Status code:" << obsStatus->getCode();
 
