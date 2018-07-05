@@ -964,7 +964,13 @@ void MainWindow::slotBranchPackage(OBSStatus *obsStatus)
 void MainWindow::slotUploadFile(OBSRevision *obsRevision)
 {
     qDebug() << "MainWindow::slotUploadFile()";
-//    obs->getFiles(obsRevision->getProject(), obsRevision->getPackage());
+    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+
+    // Refresh file list
+    if (currentProject == obsRevision->getProject() && currentPackage == obsRevision->getPackage()) {
+        getPackageFiles(ui->treeBuilds->currentIndex());
+    }
 
     delete obsRevision;
     obsRevision = nullptr;
