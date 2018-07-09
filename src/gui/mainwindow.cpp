@@ -958,6 +958,8 @@ void MainWindow::slotBranchPackage(OBSStatus *obsStatus)
     delete obsStatus;
     obsStatus = nullptr;
 
+    trayIcon->showMessage(APP_NAME, tr("The package %1 has been branched").arg(obsStatus->getPackage()));
+
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -971,6 +973,7 @@ void MainWindow::slotUploadFile(OBSRevision *obsRevision)
     if (currentProject == obsRevision->getProject() && currentPackage == obsRevision->getPackage()) {
         getPackageFiles(ui->treeBuilds->currentIndex());
     }
+    trayIcon->showMessage(APP_NAME, tr("The file %1 has been uploaded").arg(obsRevision->getFile()));
 
     delete obsRevision;
     obsRevision = nullptr;
@@ -1004,6 +1007,7 @@ void MainWindow::slotDeleteProject(OBSStatus *obsStatus)
             auto item = itemList.at(0);
             ui->treeProjects->model()->removeRow(item.row(), item.parent());
         }
+        trayIcon->showMessage(APP_NAME, tr("The project %1 has been deleted").arg(obsStatus->getProject()));
     } else {
         const QString title = tr("Warning");
         const QString text = QString("<b>%1</b><br>%2").arg(obsStatus->getSummary(), obsStatus->getDetails());
@@ -1032,6 +1036,7 @@ void MainWindow::slotDeletePackage(OBSStatus *obsStatus)
                 ui->treeBuilds->model()->removeRow(itemIndex.row(), itemIndex.parent());
             }
         }
+        trayIcon->showMessage(APP_NAME, tr("The package %1 has been deleted").arg(obsStatus->getPackage()));
     } else {
         const QString title = tr("Warning");
         const QString text = QString("<b>%1</b><br>%2").arg(obsStatus->getSummary(), obsStatus->getDetails());
@@ -1069,6 +1074,7 @@ void MainWindow::slotDeleteFile(OBSStatus *obsStatus)
             }
 
         }
+        trayIcon->showMessage(APP_NAME, tr("The file %1 has been deleted").arg(obsStatus->getDetails()));
     } else {
         const QString title = tr("Warning");
         const QString text = QString("<b>%1</b><br>%2").arg(obsStatus->getSummary(), obsStatus->getDetails());
