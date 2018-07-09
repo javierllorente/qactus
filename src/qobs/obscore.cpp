@@ -289,10 +289,19 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 emit srDiffFetched(data);
                 break;
 
-            case OBSCore::BranchPackage:
+            case OBSCore::BranchPackage: {
                 qDebug() << reqType << "BranchPackage";
-                xmlReader->parseBranchPackage(data);
+                QString project;
+                QString package;
+                if (reply->property("branchprj").isValid()) {
+                    project = reply->property("branchprj").toString();
+                }
+                if (reply->property("branchpkg").isValid()) {
+                    package = reply->property("branchpkg").toString();
+                }
+                xmlReader->parseBranchPackage(project, package, data);
                 break;
+            }
 
             case OBSCore::CreateProject: {
                 qDebug() << reqType << "CreateProject";
@@ -538,10 +547,13 @@ void OBSCore::getSRDiff(const QString &resource)
     reply->setProperty("reqtype", OBSCore::SRDiff);
 }
 
-void OBSCore::branchPackage(const QString &resource)
+void OBSCore::branchPackage(const QString &project, const QString &package)
 {
+    QString resource = QString("/source/%1/%2?cmd=branch").arg(project, package);
     QNetworkReply *reply = postRequest(resource, "");
     reply->setProperty("reqtype", OBSCore::BranchPackage);
+    reply->setProperty("branchprj", project);
+    reply->setProperty("branchpkg", package);
 }
 
 void OBSCore::createProject(const QString &project, const QByteArray &data)

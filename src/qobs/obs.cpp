@@ -249,8 +249,7 @@ OBSXmlReader* OBS::getXmlReader()
 
 void OBS::branchPackage(const QString &project, const QString &package)
 {
-    QString resource = QString("/source/%1/%2?cmd=branch").arg(project, package);
-    obsCore->branchPackage(resource);
+    obsCore->branchPackage(project, package);
 }
 
 void OBS::createProject(const QString &project, const QByteArray &data)

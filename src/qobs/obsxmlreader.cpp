@@ -212,11 +212,13 @@ void OBSXmlReader::parseSubmitRequest(const QString &data)
     emit finishedParsingSR(obsStatus );
 }
 
-void OBSXmlReader::parseBranchPackage(const QString &data)
+void OBSXmlReader::parseBranchPackage(const QString &project, const QString &package, const QString &data)
 {
     qDebug() << "OBSXmlReader::parseBranchPackage()";
     QXmlStreamReader xml(data);
     OBSStatus *obsStatus = new OBSStatus();
+    obsStatus->setProject(project);
+    obsStatus->setPackage(package);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();

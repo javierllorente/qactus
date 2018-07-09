@@ -60,7 +60,7 @@ public:
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     void request(const QString &resource, int row);
     void getSRDiff(const QString &resource);
-    void branchPackage(const QString &resource);
+    void branchPackage(const QString &project, const QString &package);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
     void uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data);
