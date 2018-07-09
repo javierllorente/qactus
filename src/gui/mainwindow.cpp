@@ -937,28 +937,29 @@ void MainWindow::slotBranchPackage(OBSStatus *obsStatus)
 {
     qDebug() << "MainWindow::slotBranchPackage()";
 
-    if (obsStatus->getCode()!="ok") {
+    if (obsStatus->getCode()=="ok") {
+        loadProjects();
+        trayIcon->showMessage(APP_NAME, tr("The package %1 has been branched").arg(obsStatus->getPackage()));
+
+        // FIXME: Select and scroll to branch after branching. This doesn't work as loading the project list takes some time
+    //    QString newBranch = QString("home:%1:branches:%2").arg(obs->getUsername(), obsStatus->getProject());
+    //    QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
+    //                                                                Qt::DisplayRole, QVariant::fromValue(QString(newBranch)),
+    //                                                                1, Qt::MatchExactly);
+    //    if (!itemList.isEmpty()) {
+    //        auto itemIndex = itemList.at(0);
+    //        ui->treeProjects->selectionModel()->select(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    //        ui->treeProjects->scrollTo(itemIndex, QAbstractItemView::PositionAtTop);
+    //    }
+
+    } else {
         const QString title = tr("Warning");
         const QString text = obsStatus->getSummary() + "<br>" + obsStatus->getDetails();
         QMessageBox::warning(this, title, text);
     }
 
-    loadProjects();
-    // FIXME: Select and scroll to branch after branching. This doesn't work as loading the project list takes some time
-//    QString newBranch = QString("home:%1:branches:%2").arg(obs->getUsername(), obsStatus->getProject());
-//    QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
-//                                                                Qt::DisplayRole, QVariant::fromValue(QString(newBranch)),
-//                                                                1, Qt::MatchExactly);
-//    if (!itemList.isEmpty()) {
-//        auto itemIndex = itemList.at(0);
-//        ui->treeProjects->selectionModel()->select(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-//        ui->treeProjects->scrollTo(itemIndex, QAbstractItemView::PositionAtTop);
-//    }
-
     delete obsStatus;
     obsStatus = nullptr;
-
-    trayIcon->showMessage(APP_NAME, tr("The package %1 has been branched").arg(obsStatus->getPackage()));
 
     emit updateStatusBar(tr("Done"), true);
 }
