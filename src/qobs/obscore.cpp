@@ -300,7 +300,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("createprj").isValid()) {
                     project = reply->property("createprj").toString();
                 }
-                xmlReader->parseCreateProject(data, project);
+                xmlReader->parseCreateProject(project, data);
                 break;
             }
 
@@ -314,7 +314,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("createpkg").isValid()) {
                     package = reply->property("createpkg").toString();
                 }
-                xmlReader->parseCreatePackage(data, project, package);
+                xmlReader->parseCreatePackage(project, package, data);
                 break;
             }
 
@@ -332,7 +332,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("uploadfile").isValid()) {
                     file = reply->property("uploadfile").toString();
                 }
-                xmlReader->parseUploadFile(data, project, package, file);
+                xmlReader->parseUploadFile(project, package, file, data);
                 break;
             }
 
@@ -342,7 +342,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("deleteprj").isValid()) {
                     project = reply->property("deleteprj").toString();
                 }
-                xmlReader->parseDeleteProject(data, project);
+                xmlReader->parseDeleteProject(project, data);
                 break;
             }
 
@@ -356,7 +356,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("deletepkg").isValid()) {
                     package = reply->property("deletepkg").toString();
                 }
-                xmlReader->parseDeletePackage(data, project, package);
+                xmlReader->parseDeletePackage(project, package, data);
                 break;
             }
 
@@ -374,7 +374,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("deletefile").isValid()) {
                     fileName = reply->property("deletefile").toString();
                 }
-                xmlReader->parseDeleteFile(data, project, package, fileName);
+                xmlReader->parseDeleteFile(project, package, fileName, data);
                 break;
             }
 

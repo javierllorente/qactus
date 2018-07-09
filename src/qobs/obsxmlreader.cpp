@@ -231,7 +231,7 @@ void OBSXmlReader::parseBranchPackage(const QString &data)
     emit finishedParsingBranchPackage(obsStatus);
 }
 
-void OBSXmlReader::parseCreateProject(const QString &data, const QString &project)
+void OBSXmlReader::parseCreateProject(const QString &project, const QString &data)
 {
     qDebug() << "OBSXmlReader::parseCreateProject()";
     QXmlStreamReader xml(data);
@@ -251,7 +251,7 @@ void OBSXmlReader::parseCreateProject(const QString &data, const QString &projec
     emit finishedParsingCreatePrjStatus(obsStatus);
 }
 
-void OBSXmlReader::parseCreatePackage(const QString &data, const QString &project, const QString &package)
+void OBSXmlReader::parseCreatePackage(const QString &project, const QString &package,const QString &data)
 {
     qDebug() << "OBSXmlReader::parseCreatePackage()";
     QXmlStreamReader xml(data);
@@ -272,7 +272,7 @@ void OBSXmlReader::parseCreatePackage(const QString &data, const QString &projec
     emit finishedParsingCreatePkgStatus(obsStatus);
 }
 
-void OBSXmlReader::parseUploadFile(const QString &data, const QString &project, const QString &package, const QString &file)
+void OBSXmlReader::parseUploadFile(const QString &project, const QString &package, const QString &file, const QString &data)
 {
     qDebug() << "OBSXmlReader::parseUploadFile()";
     QXmlStreamReader xml(data);
@@ -294,7 +294,7 @@ void OBSXmlReader::parseUploadFile(const QString &data, const QString &project, 
     emit finishedParsingUploadFileRevision(obsRevision);
 }
 
-void OBSXmlReader::parseDeleteProject(const QString &data, const QString &project)
+void OBSXmlReader::parseDeleteProject(const QString &project, const QString &data)
 {
     qDebug() << "OBSXmlReader::parseDeleteProject()";
     QXmlStreamReader xml(data);
@@ -314,7 +314,7 @@ void OBSXmlReader::parseDeleteProject(const QString &data, const QString &projec
     emit finishedParsingDeletePrjStatus(obsStatus);
 }
 
-void OBSXmlReader::parseDeletePackage(const QString &data, const QString &project, const QString &package)
+void OBSXmlReader::parseDeletePackage(const QString &project, const QString &package, const QString &data)
 {
     qDebug() << "OBSXmlReader::parseDeletePackage()";
     QXmlStreamReader xml(data);
@@ -335,7 +335,7 @@ void OBSXmlReader::parseDeletePackage(const QString &data, const QString &projec
     emit finishedParsingDeletePkgStatus(obsStatus);
 }
 
-void OBSXmlReader::parseDeleteFile(const QString &data, const QString &project, const QString &package, const QString &fileName)
+void OBSXmlReader::parseDeleteFile(const QString &project, const QString &package, const QString &fileName, const QString &data)
 {
     qDebug() << "OBSXmlReader::parseDeleteFile()";
     QXmlStreamReader xml(data);

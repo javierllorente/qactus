@@ -50,12 +50,12 @@ public:
     void parseResultList(const QString &data);
     void parseSubmitRequest(const QString &data);
     void parseBranchPackage(const QString &data);
-    void parseCreateProject(const QString &data, const QString &project);
-    void parseCreatePackage(const QString &data, const QString &project, const QString &package);
-    void parseUploadFile(const QString &data, const QString &project, const QString &package, const QString &file);
-    void parseDeleteProject(const QString &data, const QString &project);
-    void parseDeletePackage(const QString &data, const QString &project, const QString &package);
-    void parseDeleteFile(const QString &data, const QString &project, const QString &package, const QString &fileName);
+    void parseCreateProject(const QString &project, const QString &data);
+    void parseCreatePackage(const QString &package, const QString &project, const QString &data);
+    void parseUploadFile(const QString &project, const QString &package, const QString &file, const QString &data);
+    void parseDeleteProject(const QString &project, const QString &data);
+    void parseDeletePackage(const QString &project, const QString &package, const QString &data);
+    void parseDeleteFile(const QString &project, const QString &package, const QString &fileName, const QString &data);
     int getRequestNumber();
     QStringList getList();
     void readList();
