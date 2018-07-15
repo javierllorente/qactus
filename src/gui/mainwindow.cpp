@@ -500,6 +500,7 @@ void MainWindow::slotContextMenuPackages(const QPoint &point)
 {
     QMenu *treePackagesMenu = new QMenu(ui->treeBuilds);
     treePackagesMenu->addAction(actionNew_package);
+    treePackagesMenu->addAction(ui->action_Branch_package);
     treePackagesMenu->addAction(actionDelete_package);
 
     QModelIndex index = ui->treeBuilds->indexAt(point);
