@@ -482,6 +482,9 @@
    </property>
   </action>
   <action name="action_Refresh">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="view-refresh">
      <normaloff>.</normaloff>.</iconset>

@@ -1650,6 +1650,8 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
 
     bool requestsTabVisible = (index==2);
     ui->actionChange_request_state->setVisible(requestsTabVisible);
+
+    ui->action_Refresh->setVisible(monitorTabVisible || requestsTabVisible);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
