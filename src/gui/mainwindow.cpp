@@ -583,11 +583,11 @@ void MainWindow::finishedResultListSlot()
    if (firstTimeBuildResultsDisplayed) {
        ui->treeBuildResults->sortByColumn(0, Qt::AscendingOrder);
        firstTimeBuildResultsDisplayed = false;
-       return;
+   } else {
+       int column = ui->treeBuildResults->header()->sortIndicatorSection();
+       ui->treeBuildResults->sortByColumn(-1);
+       ui->treeBuildResults->sortByColumn(column);
    }
-   int column = ui->treeBuildResults->header()->sortIndicatorSection();
-   ui->treeBuildResults->sortByColumn(-1);
-   ui->treeBuildResults->sortByColumn(column);
    emit updateStatusBar(tr("Done"), true);
 }
 
