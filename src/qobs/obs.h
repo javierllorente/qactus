@@ -99,6 +99,7 @@ signals:
     void packageListIsReady();
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);
+    void finishedParsingFileList();
     void srStatus(const QString &);
     void srDiffFetched(const QString &);
     void finishedParsingAbout(OBSAbout *obsAbout);

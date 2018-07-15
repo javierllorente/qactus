@@ -95,6 +95,8 @@ private:
     QAction *action_Restore;
 
     void setupBrowser();
+    bool firstTimeFileListDisplayed;
+    bool firstTimeBuildResultsDisplayed;
     void loadProjects();
     QStringListModel *sourceModelProjects;
     QStringListModel *sourceModelBuilds;
@@ -185,6 +187,7 @@ private slots:
     void insertProjectList();
     void insertPackageList();
     void insertFile(OBSFile*);
+    void slotFileListAdded();
     void insertResult(OBSResult*);
     void insertBuildStatus(OBSStatus *obsStatus, int row);
     void slotBranchPackage(OBSStatus *obsStatus);

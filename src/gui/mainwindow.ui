@@ -170,7 +170,11 @@
                 </attribute>
                 <layout class="QVBoxLayout" name="verticalLayout_4">
                  <item>
-                  <widget class="QTreeView" name="treeFiles"/>
+                  <widget class="QTreeView" name="treeFiles">
+                   <property name="sortingEnabled">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -180,7 +184,11 @@
                 </attribute>
                 <layout class="QVBoxLayout" name="verticalLayout_2">
                  <item>
-                  <widget class="QTreeView" name="treeBuildResults"/>
+                  <widget class="QTreeView" name="treeBuildResults">
+                   <property name="sortingEnabled">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -547,7 +555,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="cloud-upload"/>
+    <iconset theme="cloud-upload">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Upload file</string>

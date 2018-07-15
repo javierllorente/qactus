@@ -82,6 +82,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingFile(OBSFile*)),
             this, SIGNAL(finishedParsingFile(OBSFile*)));
+    connect(xmlReader, SIGNAL(finishedParsingFileList()),
+            this, SIGNAL(finishedParsingFileList()));
     connect(xmlReader, SIGNAL(finishedParsingSR(OBSStatus *)),
             this, SLOT(srChangeResult(OBSStatus *)));
     connect(obsCore, SIGNAL(srDiffFetched(QString)),

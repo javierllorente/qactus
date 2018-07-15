@@ -604,6 +604,7 @@ void OBSXmlReader::parseFileList(QXmlStreamReader &xml)
         } // end entry
 
     } // end while
+    emit finishedParsingFileList();
 }
 
 void OBSXmlReader::stringToFile(const QString &data)

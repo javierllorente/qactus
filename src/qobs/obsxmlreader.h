@@ -108,6 +108,7 @@ signals:
     void projectMetadataIsReady();
     void packageListIsReady();
     void finishedParsingFile(OBSFile*);
+    void finishedParsingFileList();
     void finishedParsingSR(OBSStatus *obsStatus);
     void finishedParsingAbout(OBSAbout *obsAbout);
 };

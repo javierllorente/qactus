@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
     connect(obs, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(insertFile(OBSFile*)));
+    connect(obs, SIGNAL(finishedParsingFileList()), this, SLOT(slotFileListAdded()));
     connect(obs, SIGNAL(finishedParsingPackage(OBSStatus*,int)),
             this, SLOT(insertBuildStatus(OBSStatus*,int)));
 
@@ -241,6 +242,8 @@ void MainWindow::setupBrowser()
     sourceModelFiles = nullptr;
     sourceModelBuildResults = nullptr;
 
+    firstTimeFileListDisplayed = true;
+    firstTimeBuildResultsDisplayed = true;
 }
 
 void MainWindow::loadProjects()
@@ -403,7 +406,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
     QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     sourceModelFiles = new QStandardItemModel(ui->treeFiles);
     QStringList treeFilesHeaders;
-    treeFilesHeaders << tr("File name") << tr("Size") << tr("Modified Time");
+    treeFilesHeaders << tr("File name") << tr("Size") << tr("Modified time");
     sourceModelFiles->setHorizontalHeaderLabels(treeFilesHeaders);
     ui->treeFiles->setModel(sourceModelFiles);
     ui->treeFiles->setColumnWidth(0, 250);
@@ -525,6 +528,14 @@ void MainWindow::on_action_Add_triggered()
 void MainWindow::finishedResultListSlot()
 {
    qDebug() << "MainWindow::finishedResultListSlot()";
+   if (firstTimeBuildResultsDisplayed) {
+       ui->treeBuildResults->sortByColumn(0, Qt::AscendingOrder);
+       firstTimeBuildResultsDisplayed = false;
+       return;
+   }
+   int column = ui->treeBuildResults->header()->sortIndicatorSection();
+   ui->treeBuildResults->sortByColumn(-1);
+   ui->treeBuildResults->sortByColumn(column);
    emit updateStatusBar(tr("Done"), true);
 }
 
@@ -849,15 +860,57 @@ void MainWindow::insertFile(OBSFile *obsFile)
     qDebug() << "MainWindow::insertFile()";
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     if (model) {
-        QStandardItem *itemName = new QStandardItem(obsFile->getName());
-        QStandardItem *itemSize = new QStandardItem(Utils::fileSizeHuman(obsFile->getSize().toInt()));
-        QString lastModified = Utils::unixTimeToDate(obsFile->getLastModified());
-        QStandardItem *itemLastModified = new QStandardItem(lastModified);
-        QList<QStandardItem*> items;
+        model->setSortRole(Qt::UserRole);
+
+        // Name
+        QStandardItem *itemName = new QStandardItem();
+        itemName->setData(obsFile->getName(), Qt::UserRole);
+        itemName->setData(obsFile->getName(), Qt::DisplayRole);
+
+        // Size
+        QStandardItem *itemSize = new QStandardItem();
+        QString fileSizeHuman;
+#if QT_VERSION >= 0x051000
+        QLocale locale = this->locale();
+        fileSizeHuman = locale.formattedDataSize(obsFile->getSize().toInt());
+#else
+        fileSizeHuman = Utils::fileSizeHuman(obsFile->getSize().toInt());
+#endif
+        itemSize->setData(QVariant(fileSizeHuman), Qt::DisplayRole);
+        itemSize->setData(obsFile->getSize().toInt(), Qt::UserRole);
+
+        // Modified time
+        QStandardItem *itemLastModified = new QStandardItem();
+        QString lastModifiedStr;
+        QString lastModifiedUnixTimeStr = obsFile->getLastModified();
+#if QT_VERSION >= 0x050800
+        QDateTime lastModifiedDateTime = QDateTime::fromSecsSinceEpoch(qint64(lastModifiedUnixTimeStr.toInt()), Qt::UTC);
+        lastModifiedStr = lastModifiedDateTime.toString("dd/MM/yyyy H:mm");
+#else
+        lastModifiedStr = Utils::unixTimeToDate(lastModifiedUnixTimeStr);
+#endif
+        itemLastModified->setData(lastModifiedUnixTimeStr.toInt(), Qt::UserRole);
+        itemLastModified->setData(lastModifiedStr, Qt::DisplayRole);
+
+        QList<QStandardItem *> items;
         items << itemName << itemSize << itemLastModified;
         model->appendRow(items);
     }
     delete obsFile;
+    obsFile = nullptr;
+}
+
+void MainWindow::slotFileListAdded()
+{
+    qDebug() << "MainWindow::slotFileListAdded()";
+    if (firstTimeFileListDisplayed) {
+        ui->treeFiles->sortByColumn(0, Qt::AscendingOrder);
+        firstTimeFileListDisplayed = false;
+        return;
+    }
+    int column = ui->treeFiles->header()->sortIndicatorSection();
+    ui->treeFiles->sortByColumn(-1);
+    ui->treeFiles->sortByColumn(column);
 }
 
 void MainWindow::insertResult(OBSResult *obsResult)
