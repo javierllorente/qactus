@@ -235,6 +235,22 @@ void MainWindow::setupBrowser()
     connect(browserFilter, SIGNAL(projectClicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
     connect(browserFilter, SIGNAL(packageClicked(bool)), this, SLOT(filterRadioButtonClicked(bool)));
 
+    connect(ui->treeProjects, SIGNAL(customContextMenuRequested(QPoint)), this,
+            SLOT(slotContextMenuProjects(QPoint)));
+    ui->treeProjects->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(ui->treeBuilds, SIGNAL(customContextMenuRequested(QPoint)), this,
+            SLOT(slotContextMenuPackages(QPoint)));
+    ui->treeBuilds->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(ui->treeBuilds, SIGNAL(customContextMenuRequested(QPoint)), this,
+            SLOT(slotContextMenuPackages(QPoint)));
+    ui->treeBuilds->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(ui->treeFiles, SIGNAL(customContextMenuRequested(QPoint)), this,
+            SLOT(slotContextMenuFiles(QPoint)));
+    ui->treeFiles->setContextMenuPolicy(Qt::CustomContextMenu);
+
     sourceModelProjects = new QStringListModel(ui->treeProjects);
     proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
     sourceModelBuilds = new QStringListModel(ui->treeBuilds);
@@ -460,6 +476,42 @@ void MainWindow::slotContextMenuRequests(const QPoint &point)
     QModelIndex index = ui->treeRequests->indexAt(point);
     if (index.isValid()) {
         treeRequestsMenu->exec(ui->treeRequests->mapToGlobal(point));
+    }
+}
+
+void MainWindow::slotContextMenuProjects(const QPoint &point)
+{
+    QMenu *treeProjectsMenu = new QMenu(ui->treeProjects);
+    treeProjectsMenu->addAction(actionNew_project);
+    treeProjectsMenu->addAction(actionDelete_project);
+
+    QModelIndex index = ui->treeProjects->indexAt(point);
+    if (index.isValid()) {
+        treeProjectsMenu->exec(ui->treeProjects->mapToGlobal(point));
+    }
+}
+
+void MainWindow::slotContextMenuPackages(const QPoint &point)
+{
+    QMenu *treePackagesMenu = new QMenu(ui->treeBuilds);
+    treePackagesMenu->addAction(actionNew_package);
+    treePackagesMenu->addAction(actionDelete_package);
+
+    QModelIndex index = ui->treeBuilds->indexAt(point);
+    if (index.isValid()) {
+        treePackagesMenu->exec(ui->treeBuilds->mapToGlobal(point));
+    }
+}
+
+void MainWindow::slotContextMenuFiles(const QPoint &point)
+{
+    QMenu *treeFilesMenu = new QMenu(ui->treeFiles);
+    treeFilesMenu->addAction(ui->action_Upload_file);
+    treeFilesMenu->addAction(actionDelete_file);
+
+    QModelIndex index = ui->treeFiles->indexAt(point);
+    if (index.isValid()) {
+        treeFilesMenu->exec(ui->treeFiles->mapToGlobal(point));
     }
 }
 

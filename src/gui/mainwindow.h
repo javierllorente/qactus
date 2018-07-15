@@ -152,6 +152,9 @@ private slots:
     void credentialsRestoredSlot(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
     void slotContextMenuRequests(const QPoint &point);
+    void slotContextMenuProjects(const QPoint &point);
+    void slotContextMenuPackages(const QPoint &point);
+    void slotContextMenuFiles(const QPoint &point);
     void changeRequestState();
     void getPackages(QModelIndex index);
     void getPackageFiles(QModelIndex index);
