@@ -1258,9 +1258,9 @@ void MainWindow::setNotify(bool notify)
     }
 }
 
-void MainWindow::updateStatusBarSlot(const QString &message, bool progressBarHidden)
+void MainWindow::slotUpdateStatusBar(const QString &message, bool progressBarHidden)
 {
-    qDebug() << "MainWindow::updateStatusBarSlot()";
+    qDebug() << "MainWindow::slotUpdateStatusBar()";
     ui->statusbar->showMessage(message);
     progressBar->setHidden(progressBarHidden);
 }
@@ -1394,7 +1394,7 @@ void MainWindow::setupIconBar()
 
 void MainWindow::createStatusBar()
 {
-    connect(this, SIGNAL(updateStatusBar(QString,bool)), this, SLOT(updateStatusBarSlot(QString,bool)));
+    connect(this, SIGNAL(updateStatusBar(QString,bool)), this, SLOT(slotUpdateStatusBar(QString,bool)));
 
     ui->statusbar->showMessage(tr("Offline"));
     progressBar = new QProgressBar(ui->statusbar);

@@ -201,7 +201,7 @@ private slots:
     void slotDeleteFile(OBSStatus *obsStatus);
     void insertRequest(OBSRequest*);
     void removeRequest(const QString& id);
-    void updateStatusBarSlot(const QString &message, bool progressBarHidden);
+    void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
     void refreshProjectFilter();
     void projectSelectionChanged(const QItemSelection &, const QItemSelection &);
     void buildSelectionChanged(const QItemSelection &, const QItemSelection &);
