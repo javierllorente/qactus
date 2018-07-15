@@ -45,8 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
-    connect(ui->treeRequests, SIGNAL(customContextMenuRequested(const QPoint&)),this,
-            SLOT(showContextMenu(const QPoint&)));
+    connect(ui->treeRequests, SIGNAL(customContextMenuRequested(QPoint)), this,
+            SLOT(slotContextMenuRequests(QPoint)));
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(isAuthenticated(bool)));
@@ -446,7 +446,7 @@ void MainWindow::getBuildResults()
     obs->getAllBuildStatus(currentProject, currentPackage);
 }
 
-void MainWindow::showContextMenu(const QPoint& point)
+void MainWindow::slotContextMenuRequests(const QPoint &point)
 {
     QMenu *treeRequestsMenu = new QMenu(ui->treeRequests);
 
