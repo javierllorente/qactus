@@ -243,10 +243,6 @@ void MainWindow::setupBrowser()
             SLOT(slotContextMenuPackages(QPoint)));
     ui->treeBuilds->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(ui->treeBuilds, SIGNAL(customContextMenuRequested(QPoint)), this,
-            SLOT(slotContextMenuPackages(QPoint)));
-    ui->treeBuilds->setContextMenuPolicy(Qt::CustomContextMenu);
-
     connect(ui->treeFiles, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuFiles(QPoint)));
     ui->treeFiles->setContextMenuPolicy(Qt::CustomContextMenu);
