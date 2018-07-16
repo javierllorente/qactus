@@ -1381,15 +1381,15 @@ void MainWindow::createActions()
 
     // Delete actions
     actionDelete_project = new QAction(tr("Delete pro&ject"), this);
-    actionDelete_project->setIcon(QIcon::fromTheme("project-development"));
+    actionDelete_project->setIcon(QIcon::fromTheme("trash-empty"));
     connect(actionDelete_project, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
 
     actionDelete_package = new QAction(tr("Delete pac&kage"), this);
-    actionDelete_package->setIcon(QIcon::fromTheme("application-x-source-rpm"));
+    actionDelete_package->setIcon(QIcon::fromTheme("trash-empty"));
     connect(actionDelete_package, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
 
     actionDelete_file = new QAction(tr("Delete &file"), this);
-    actionDelete_file->setIcon(QIcon::fromTheme("none"));
+    actionDelete_file->setIcon(QIcon::fromTheme("trash-empty"));
     connect(actionDelete_file, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
 
     // Browser filter actions
