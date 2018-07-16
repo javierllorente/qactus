@@ -1317,11 +1317,11 @@ void MainWindow::createActions()
     newButton->setIcon(QIcon::fromTheme("document-new"));
 
     newMenu = new QMenu(newButton);
-    actionNew_package = new QAction(tr("P&ackage"), this);
+    actionNew_package = new QAction(tr("New p&ackage"), this);
     actionNew_package->setIcon(QIcon::fromTheme("application-x-source-rpm"));
     connect(actionNew_package, SIGNAL(triggered(bool)), this, SLOT(newPackage()));
 
-    actionNew_project = new QAction(tr("Pr&oject"), this);
+    actionNew_project = new QAction(tr("New pr&oject"), this);
     actionNew_project->setIcon(QIcon::fromTheme("project-development"));
     connect(actionNew_project, SIGNAL(triggered(bool)), this, SLOT(newProject()));
 
@@ -1341,15 +1341,15 @@ void MainWindow::createActions()
     deleteButton->setIcon(QIcon::fromTheme("trash-empty"));
 
     deleteMenu = new QMenu(deleteButton);
-    actionDelete_project = new QAction(tr("Pro&ject"), this);
+    actionDelete_project = new QAction(tr("Delete pro&ject"), this);
     actionDelete_project->setIcon(QIcon::fromTheme("project-development"));
     connect(actionDelete_project, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
 
-    actionDelete_package = new QAction(tr("Pac&kage"), this);
+    actionDelete_package = new QAction(tr("Delete pac&kage"), this);
     actionDelete_package->setIcon(QIcon::fromTheme("application-x-source-rpm"));
     connect(actionDelete_package, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
 
-    actionDelete_file = new QAction(tr("&File"), this);
+    actionDelete_file = new QAction(tr("Delete &file"), this);
     actionDelete_file->setIcon(QIcon::fromTheme("none"));
     connect(actionDelete_file, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
 
