@@ -78,12 +78,12 @@ private:
     QAction *actionNew_project;
     QAction *actionNew;
 
-    QToolButton *deleteButton;
-    QMenu *deleteMenu;
     QAction *actionDelete_project;
     QAction *actionDelete_package;
     QAction *actionDelete_file;
-    QAction *actionDelete;
+    bool deleteProjectConnected;
+    bool deletePackageConnected;
+    bool deleteFileConnected;
 
     BrowserFilter *browserFilter;
     QAction *actionFilter;

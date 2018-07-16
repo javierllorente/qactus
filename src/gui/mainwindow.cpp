@@ -256,6 +256,10 @@ void MainWindow::setupBrowser()
 
     firstTimeFileListDisplayed = true;
     firstTimeBuildResultsDisplayed = true;
+
+    deleteProjectConnected = false;
+    deletePackageConnected = false;
+    deleteFileConnected = false;
 }
 
 void MainWindow::loadProjects()
@@ -379,10 +383,21 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
     actionDelete_file->setEnabled(false);
     actionDelete_package->setEnabled(false);
     actionDelete_project->setEnabled(true);
-    actionDelete->setEnabled(true);
+    ui->action_Delete->setEnabled(true);
     actionDelete_package->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence());
     actionDelete_project->setShortcut(QKeySequence::Delete);
+
+    ui->action_Delete->setEnabled(true);
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+
+    deletePackageConnected = false;
+    deleteFileConnected = false;
+    if (!deleteProjectConnected) {
+        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
+        deleteProjectConnected = true;
+    }
 
     actionNew_project->setShortcut(QKeySequence::New);
     actionNew_package->setShortcut(QKeySequence());
@@ -397,10 +412,21 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
     ui->action_Upload_file->setEnabled(true);
     actionDelete_file->setEnabled(false);
     actionDelete_package->setEnabled(true);
-    actionDelete->setEnabled(true);
+    ui->action_Delete->setEnabled(true);
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence::Delete);
+
+    ui->action_Delete->setEnabled(true);
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+
+    deleteProjectConnected = false;
+    deleteFileConnected = false;
+    if (!deletePackageConnected) {
+        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
+        deletePackageConnected = true;
+    }
 
     actionNew_project->setShortcut(QKeySequence());
     actionNew_package->setShortcut(QKeySequence::New);
@@ -413,6 +439,17 @@ void MainWindow::fileSelectionChanged(const QItemSelection &/*selected*/, const 
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence::Delete);
+
+    ui->action_Delete->setEnabled(true);
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
+
+    deleteProjectConnected = false;
+    deletePackageConnected = false;
+    if (!deleteFileConnected) {
+        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+        deleteFileConnected = true;
+    }
 
     actionNew_project->setShortcut(QKeySequence());
     actionNew_package->setShortcut(QKeySequence());
@@ -452,7 +489,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
     emit updateStatusBar(tr("Getting package data..."), false);
 
     actionDelete_file->setEnabled(true);
-    actionDelete->setEnabled(true);
+    ui->action_Delete->setEnabled(true);
 
     getBuildResults();
 }
@@ -1342,14 +1379,7 @@ void MainWindow::createActions()
     connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newPackage()));
 
 
-    // Delete button actions
-    deleteButton = new QToolButton(this);
-    deleteButton->setPopupMode(QToolButton::InstantPopup);
-    deleteButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    deleteButton->setText(tr("&Delete"));
-    deleteButton->setIcon(QIcon::fromTheme("trash-empty"));
-
-    deleteMenu = new QMenu(deleteButton);
+    // Delete actions
     actionDelete_project = new QAction(tr("Delete pro&ject"), this);
     actionDelete_project->setIcon(QIcon::fromTheme("project-development"));
     connect(actionDelete_project, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
@@ -1361,14 +1391,6 @@ void MainWindow::createActions()
     actionDelete_file = new QAction(tr("Delete &file"), this);
     actionDelete_file->setIcon(QIcon::fromTheme("none"));
     connect(actionDelete_file, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
-
-    deleteMenu->addAction(actionDelete_project);
-    deleteMenu->addAction(actionDelete_package);
-    deleteMenu->addAction(actionDelete_file);
-    deleteButton->setMenu(deleteMenu);
-
-    actionDelete = ui->toolBar->addWidget(deleteButton);
-    actionDelete->setVisible(false);
 
     // Browser filter actions
     QWidget *filterSpacer = new QWidget(this);
@@ -1699,14 +1721,11 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
         actionDelete_project->setEnabled(false);
     }
 
-    bool enableactionDelete = actionDelete_project->isEnabled() || actionDelete_package->isEnabled();
-    actionDelete->setEnabled(enableactionDelete);
-
     bool browserTabVisible = (index==0);
     actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
     ui->action_Upload_file->setVisible(browserTabVisible);
-    actionDelete->setVisible(browserTabVisible);
+    ui->action_Delete->setVisible(browserTabVisible);
     actionFilterSpacer->setVisible(browserTabVisible);
     actionFilter->setVisible(browserTabVisible);
 
