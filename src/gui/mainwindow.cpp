@@ -383,6 +383,9 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
     actionDelete_package->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence());
     actionDelete_project->setShortcut(QKeySequence::Delete);
+
+    actionNew_project->setShortcut(QKeySequence::New);
+    actionNew_package->setShortcut(QKeySequence());
 }
 
 void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
@@ -398,6 +401,9 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence::Delete);
+
+    actionNew_project->setShortcut(QKeySequence());
+    actionNew_package->setShortcut(QKeySequence::New);
 }
 
 void MainWindow::fileSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
@@ -407,6 +413,9 @@ void MainWindow::fileSelectionChanged(const QItemSelection &/*selected*/, const 
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence::Delete);
+
+    actionNew_project->setShortcut(QKeySequence());
+    actionNew_package->setShortcut(QKeySequence());
 }
 
 void MainWindow::getPackages(QModelIndex index)
