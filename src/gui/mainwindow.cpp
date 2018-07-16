@@ -299,10 +299,10 @@ void MainWindow::loadProjects()
     ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setRootIsDecorated(false);
+    ui->action_Delete->setEnabled(false);
 
     emit updateStatusBar(tr("Getting projects..."), false);
     obs->getProjects();
-
 }
 
 void MainWindow::filterProjects(const QString &item)
@@ -534,6 +534,7 @@ void MainWindow::slotContextMenuProjects(const QPoint &point)
 {
     QMenu *treeProjectsMenu = new QMenu(ui->treeProjects);
     treeProjectsMenu->addAction(actionNew_project);
+    treeProjectsMenu->addAction(action_ReloadProjects);
     treeProjectsMenu->addAction(actionDelete_project);
 
     QModelIndex index = ui->treeProjects->indexAt(point);
@@ -1378,6 +1379,9 @@ void MainWindow::createActions()
     actionNew = ui->toolBar->insertWidget(ui->action_Branch_package, newButton);
     connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newPackage()));
 
+    action_ReloadProjects = new QAction(tr("&Reload project list"), this);
+    action_ReloadProjects->setIcon(QIcon::fromTheme("view-refresh"));
+    connect(action_ReloadProjects, SIGNAL(triggered(bool)), this, SLOT(loadProjects()));
 
     // Delete actions
     actionDelete_project = new QAction(tr("Delete pro&ject"), this);

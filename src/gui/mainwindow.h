@@ -78,6 +78,8 @@ private:
     QAction *actionNew_project;
     QAction *actionNew;
 
+    QAction *action_ReloadProjects;
+
     QAction *actionDelete_project;
     QAction *actionDelete_package;
     QAction *actionDelete_file;
@@ -97,7 +99,6 @@ private:
     void setupBrowser();
     bool firstTimeFileListDisplayed;
     bool firstTimeBuildResultsDisplayed;
-    void loadProjects();
     QStringListModel *sourceModelProjects;
     QStringListModel *sourceModelBuilds;
     QSortFilterProxyModel *proxyModelProjects;
@@ -151,6 +152,7 @@ private slots:
     void errorReadingPasswordSlot(const QString &error);
     void credentialsRestoredSlot(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
+    void loadProjects();
     void slotContextMenuRequests(const QPoint &point);
     void slotContextMenuProjects(const QPoint &point);
     void slotContextMenuPackages(const QPoint &point);
