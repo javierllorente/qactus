@@ -193,7 +193,7 @@ private slots:
     void on_iconBar_currentRowChanged(int index);
     void insertProjectList();
     void insertPackageList();
-    void insertFile(OBSFile*);
+    void addFile(OBSFile*);
     void slotFileListAdded();
     void addResult(OBSResult*);
     void insertBuildStatus(OBSStatus *obsStatus, int row);

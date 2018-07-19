@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(obs, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
     connect(obs, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
-    connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(insertFile(OBSFile*)));
+    connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(addFile(OBSFile*)));
     connect(obs, SIGNAL(finishedParsingFileList()), this, SLOT(slotFileListAdded()));
     connect(obs, SIGNAL(finishedParsingPackage(OBSStatus*,int)),
             this, SLOT(insertBuildStatus(OBSStatus*,int)));
@@ -967,7 +967,7 @@ void MainWindow::insertPackageList()
     emit updateStatusBar(tr("Done"), true);
 }
 
-void MainWindow::insertFile(OBSFile *obsFile)
+void MainWindow::addFile(OBSFile *obsFile)
 {
     qDebug() << "MainWindow::insertFile()";
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
