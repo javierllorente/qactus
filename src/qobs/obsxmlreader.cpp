@@ -83,11 +83,6 @@ void OBSXmlReader::parsePackageList(const QString &data)
     packageListToFile(data);
 }
 
-void OBSXmlReader::parseFileList(const QString &data)
-{
-    fileListToFile(data);
-}
-
 void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
 {
     qDebug() << "OBSXmlReader::parseStatus()";
@@ -581,21 +576,25 @@ void OBSXmlReader::parseList(QXmlStreamReader &xml)
     emit finishedParsingList(list);
 }
 
-void OBSXmlReader::parseFileList(QXmlStreamReader &xml)
+void OBSXmlReader::parseFileList(const QString &project, const QString &package, const QString &data)
 {
     qDebug() << "OBSXmlReader::parseFileList()";
+    QXmlStreamReader xml(data);
+
     while (!xml.atEnd() && !xml.hasError()) {
 
         xml.readNext();
 
         if (xml.name()=="entry") {
-            OBSFile *obsFile = NULL;
+            OBSFile *obsFile = nullptr;
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 qDebug() << "Name: " << attrib.value("name").toString();
                 qDebug() << "Size: " << attrib.value("size").toString();
                 qDebug() << "Mtime: " << attrib.value("mtime").toString();
                 obsFile = new OBSFile();
+                obsFile->setProject(project);
+                obsFile->setPackage(package);
                 obsFile->setName(attrib.value("name").toString());
                 obsFile->setSize(attrib.value("size").toString());
                 obsFile->setLastModified(attrib.value("mtime").toString());
@@ -644,13 +643,7 @@ void OBSXmlReader::packageListToFile(const QString &data)
     emit packageListIsReady();
 }
 
-void OBSXmlReader::fileListToFile(const QString &data)
-{
-    stringToFile(data);
-    readFileList();
-}
-
-QFile* OBSXmlReader::openFile()
+QFile *OBSXmlReader::openFile()
 {
     qDebug() << "OBSXmlReader::openFile()" << fileName;
     list.clear();
@@ -669,13 +662,6 @@ void OBSXmlReader::readList()
     QXmlStreamReader xml;
     xml.setDevice(openFile());
     parseList(xml);
-}
-
-void OBSXmlReader::readFileList()
-{
-    QXmlStreamReader xml;
-    xml.setDevice(openFile());
-    parseFileList(xml);
 }
 
 void OBSXmlReader::getRepositoryArchs(const QString &repository)

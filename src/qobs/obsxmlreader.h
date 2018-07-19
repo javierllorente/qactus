@@ -46,7 +46,7 @@ public:
     void parseProjectList(const QString &data);
     void parseProjectMetadata(const QString &data);
     void parsePackageList(const QString &data);
-    void parseFileList(const QString &data);
+    void parseFileList(const QString &project, const QString &package, const QString &data);
     void parseResultList(const QString &data);
     void parseSubmitRequest(const QString &data);
     void parseBranchPackage(const QString &project, const QString &package, const QString &data);
@@ -59,7 +59,6 @@ public:
     int getRequestNumber();
     QStringList getList();
     void readList();
-    void readFileList();
     void setFileName(const QString &fileName);
     void getRepositoryArchs(const QString &repository);
     void parseAbout(const QString &data);
@@ -77,7 +76,6 @@ private:
     void parseRequests(const QString &data);
     void parseRequest(QXmlStreamReader &xml);
     void parseList(QXmlStreamReader &xml);
-    void parseFileList(QXmlStreamReader &xml);
     OBSRequest *obsRequest;
     QString requestNumber;
     QStringList list;
@@ -85,9 +83,8 @@ private:
     void projectListToFile(const QString &data);
     void projectMetadataToFile(const QString &data);
     void packageListToFile(const QString &data);
-    void fileListToFile(const QString &data);
     QString fileName;
-    QFile* openFile();
+    QFile *openFile();
 
 signals:
     void finishedParsingPackage(OBSStatus*, int);
