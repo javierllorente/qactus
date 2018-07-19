@@ -55,7 +55,7 @@ public:
     void getProjects();
     void getProjectMetadata(const QString &resource);
     void getPackages(const QString &resource);
-    void getFiles(const QString &resource);
+    void getFiles(const QString &project, const QString &package);
     void getAllBuildStatus(const QString &resource);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     void request(const QString &resource, int row);

@@ -222,8 +222,7 @@ void OBS::getFiles(const QString &project, const QString &package)
 {
     QString fileName = QString("%1_%2.xml").arg(project, package);
     xmlReader->setFileName(fileName);
-    QString resource = QString("/%1/%2").arg(project, package);
-    obsCore->getFiles(resource);
+    obsCore->getFiles(project, package);
 }
 
 QStringList OBS::getRepositoryArchs(const QString &repository)
