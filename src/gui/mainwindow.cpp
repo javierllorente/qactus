@@ -970,43 +970,53 @@ void MainWindow::insertPackageList()
 void MainWindow::addFile(OBSFile *obsFile)
 {
     qDebug() << "MainWindow::addFile()";
-    QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
-    if (model) {
-        model->setSortRole(Qt::UserRole);
 
-        // Name
-        QStandardItem *itemName = new QStandardItem();
-        itemName->setData(obsFile->getName(), Qt::UserRole);
-        itemName->setData(obsFile->getName(), Qt::DisplayRole);
+    currentProject = ui->treeProjects->currentIndex().data().toString();
+    currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    QString projectFile = obsFile->getProject();
+    QString packageFile = obsFile->getPackage();
 
-        // Size
-        QStandardItem *itemSize = new QStandardItem();
-        QString fileSizeHuman;
+    if (currentProject==projectFile && currentPackage==packageFile) {
+
+
+        QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
+        if (model) {
+            model->setSortRole(Qt::UserRole);
+
+            // Name
+            QStandardItem *itemName = new QStandardItem();
+            itemName->setData(obsFile->getName(), Qt::UserRole);
+            itemName->setData(obsFile->getName(), Qt::DisplayRole);
+
+            // Size
+            QStandardItem *itemSize = new QStandardItem();
+            QString fileSizeHuman;
 #if QT_VERSION >= 0x051000
-        QLocale locale = this->locale();
-        fileSizeHuman = locale.formattedDataSize(obsFile->getSize().toInt());
+            QLocale locale = this->locale();
+            fileSizeHuman = locale.formattedDataSize(obsFile->getSize().toInt());
 #else
-        fileSizeHuman = Utils::fileSizeHuman(obsFile->getSize().toInt());
+            fileSizeHuman = Utils::fileSizeHuman(obsFile->getSize().toInt());
 #endif
-        itemSize->setData(QVariant(fileSizeHuman), Qt::DisplayRole);
-        itemSize->setData(obsFile->getSize().toInt(), Qt::UserRole);
+            itemSize->setData(QVariant(fileSizeHuman), Qt::DisplayRole);
+            itemSize->setData(obsFile->getSize().toInt(), Qt::UserRole);
 
-        // Modified time
-        QStandardItem *itemLastModified = new QStandardItem();
-        QString lastModifiedStr;
-        QString lastModifiedUnixTimeStr = obsFile->getLastModified();
+            // Modified time
+            QStandardItem *itemLastModified = new QStandardItem();
+            QString lastModifiedStr;
+            QString lastModifiedUnixTimeStr = obsFile->getLastModified();
 #if QT_VERSION >= 0x050800
-        QDateTime lastModifiedDateTime = QDateTime::fromSecsSinceEpoch(qint64(lastModifiedUnixTimeStr.toInt()), Qt::UTC);
-        lastModifiedStr = lastModifiedDateTime.toString("dd/MM/yyyy H:mm");
+            QDateTime lastModifiedDateTime = QDateTime::fromSecsSinceEpoch(qint64(lastModifiedUnixTimeStr.toInt()), Qt::UTC);
+            lastModifiedStr = lastModifiedDateTime.toString("dd/MM/yyyy H:mm");
 #else
-        lastModifiedStr = Utils::unixTimeToDate(lastModifiedUnixTimeStr);
+            lastModifiedStr = Utils::unixTimeToDate(lastModifiedUnixTimeStr);
 #endif
-        itemLastModified->setData(lastModifiedUnixTimeStr.toInt(), Qt::UserRole);
-        itemLastModified->setData(lastModifiedStr, Qt::DisplayRole);
+            itemLastModified->setData(lastModifiedUnixTimeStr.toInt(), Qt::UserRole);
+            itemLastModified->setData(lastModifiedStr, Qt::DisplayRole);
 
-        QList<QStandardItem *> items;
-        items << itemName << itemSize << itemLastModified;
-        model->appendRow(items);
+            QList<QStandardItem *> items;
+            items << itemName << itemSize << itemLastModified;
+            model->appendRow(items);
+        }
     }
     delete obsFile;
     obsFile = nullptr;
