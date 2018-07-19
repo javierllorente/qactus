@@ -507,9 +507,10 @@ void MainWindow::getBuildResults()
     ui->treeBuildResults->setModel(sourceModelBuildResults);
     ui->treeBuildResults->setColumnWidth(0, 250);
     delete oldModel;
+    oldModel = nullptr;
 
-    QString currentProject = ui->treeProjects->currentIndex().data().toString();
-    QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    currentProject = ui->treeProjects->currentIndex().data().toString();
+    currentPackage = ui->treeBuilds->currentIndex().data().toString();
     obs->getAllBuildStatus(currentProject, currentPackage);
 }
 
@@ -641,6 +642,9 @@ void MainWindow::finishedResultListSlot()
        ui->treeBuildResults->sortByColumn(-1);
        ui->treeBuildResults->sortByColumn(column);
    }
+
+   currentProject = "";
+   currentPackage = "";
    emit updateStatusBar(tr("Done"), true);
 }
 
@@ -1022,15 +1026,12 @@ void MainWindow::insertResult(OBSResult *obsResult)
 {
     qDebug() << "MainWindow::insertResult()";
 
-    // FIXME: data should be added based on origin, not on where you are
-    if (ui->iconBar->currentRow()==1) {
-        // Monitor tab
-        ui->treePackages->insertDroppedPackage(obsResult);
-        delete obsResult;
-        obsResult = nullptr;
-    } else if (ui->iconBar->currentRow()==0) {
-        // Browser tab
+    QString resultProject = obsResult->getProject();
+    QString resultPackage = obsResult->getStatus()->getPackage();
+
+    if (currentProject==resultProject && currentPackage==resultPackage) {
         QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
+
         if (model) {
             QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
             QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
@@ -1047,9 +1048,11 @@ void MainWindow::insertResult(OBSResult *obsResult)
             items << itemRepository << itemArch << itemBuildResult;
             model->appendRow(items);
         }
-        delete obsResult;
-        obsResult = nullptr;
     }
+
+//  This slot is in charge of deleting result (last one connected)
+    delete obsResult;
+    obsResult = nullptr;
 }
 
 void MainWindow::insertBuildStatus(OBSStatus *obsStatus, int row)

@@ -106,6 +106,8 @@ private:
     QStandardItemModel *sourceModelFiles;
     QStandardItemModel *sourceModelBuildResults;
     void getBuildResults();
+    QString currentProject;
+    QString currentPackage;
     void filterProjects(const QString &item);
     void filterBuilds(const QString &item);
     void createTreePackages();

@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
 void PackageTreeWidget::setOBS(OBS *obs)
 {
     connect(this, SIGNAL(obsUrlDropped(QString,QString)), obs, SLOT(getAllBuildStatus(QString,QString)));
+    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(insertDroppedPackage(OBSResult*)));
+    connect(obs, SIGNAL(finishedParsingResultList()), this, SLOT(finishedAddingPackages()));
 }
 
 
@@ -55,9 +57,9 @@ void PackageTreeWidget::dropEvent(QDropEvent *event)
         if(urlStr.contains(rx)) {
             qDebug () << "Valid OBS URL found!";
             QStringList list = rx.capturedTexts();
-            QString project = list[2];
-            QString package = list[3];
-            emit obsUrlDropped(project, package);
+            droppedProject = list[2];
+            droppedPackage = list[3];
+            emit obsUrlDropped(droppedProject, droppedPackage);
         }
     }
 }
@@ -66,24 +68,37 @@ void PackageTreeWidget::insertDroppedPackage(OBSResult *result)
 {
     qDebug() << "PackageTreeWidget::insertDroppedPackage()";
 
-    QTreeWidgetItem *item = new QTreeWidgetItem(this);
-    item->setText(0, result->getProject());
-    item->setText(1, result->getStatus()->getPackage());
-    item->setText(2, result->getRepository());
-    item->setText(3, result->getArch());
-    QString status = result->getStatus()->getCode();
-    item->setText(4, status);
-    if (!result->getStatus()->getDetails().isEmpty()) {
-        QString details = result->getStatus()->getDetails();
-        details = Utils::breakLine(details, 250);
-        item->setToolTip(4, details);
-    }
-    item->setForeground(4, Utils::getColorForStatus(status));
+    if (droppedProject==result->getProject() && droppedPackage==result->getStatus()->getPackage()) {
+        QTreeWidgetItem *item = new QTreeWidgetItem(this);
+        item->setText(0, result->getProject());
+        item->setText(1, result->getStatus()->getPackage());
+        item->setText(2, result->getRepository());
+        item->setText(3, result->getArch());
+        QString status = result->getStatus()->getCode();
+        item->setText(4, status);
+        if (!result->getStatus()->getDetails().isEmpty()) {
+            QString details = result->getStatus()->getDetails();
+            details = Utils::breakLine(details, 250);
+            item->setToolTip(4, details);
+        }
+        item->setForeground(4, Utils::getColorForStatus(status));
 
-    addTopLevelItem(item);
-    int index = indexOfTopLevelItem(item);
-    qDebug() << "Build" << item->text(1)
-             << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
-             << "added at" << index;
+        addTopLevelItem(item);
+        int index = indexOfTopLevelItem(item);
+        qDebug() << "Package" << item->text(1)
+                 << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
+                 << "added at" << index;
+//        delete result;
+//        result = nullptr;
+//        The last slot connected (MainWindow::insertResult()) is in charge of deleting result
+
+    }
+}
+
+void PackageTreeWidget::finishedAddingPackages()
+{
+    qDebug() << "PackageTreeWidget::finishedAddingPackages()";
+    droppedProject = "";
+    droppedPackage = "";
 }
 

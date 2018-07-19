@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -49,6 +49,11 @@ signals:
 
 public slots:
     void insertDroppedPackage(OBSResult *result);
+    void finishedAddingPackages();
+
+private:
+    QString droppedProject;
+    QString droppedPackage;
 
 };
 
