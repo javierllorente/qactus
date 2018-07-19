@@ -969,7 +969,7 @@ void MainWindow::insertPackageList()
 
 void MainWindow::addFile(OBSFile *obsFile)
 {
-    qDebug() << "MainWindow::insertFile()";
+    qDebug() << "MainWindow::addFile()";
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
     if (model) {
         model->setSortRole(Qt::UserRole);
@@ -1029,6 +1029,8 @@ void MainWindow::addResult(OBSResult *obsResult)
 {
     qDebug() << "MainWindow::addResult()";
 
+    currentProject = ui->treeProjects->currentIndex().data().toString();
+    currentPackage = ui->treeBuilds->currentIndex().data().toString();
     QString resultProject = obsResult->getProject();
     QString resultPackage = obsResult->getStatus()->getPackage();
 
