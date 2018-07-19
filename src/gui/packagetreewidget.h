@@ -48,7 +48,7 @@ signals:
     void obsUrlDropped(const QString &project, const QString &package);
 
 public slots:
-    void insertDroppedPackage(OBSResult *result);
+    void addDroppedPackage(OBSResult *result);
     void finishedAddingPackages();
 
 private:

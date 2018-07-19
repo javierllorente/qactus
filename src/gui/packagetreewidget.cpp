@@ -29,7 +29,7 @@ PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
 void PackageTreeWidget::setOBS(OBS *obs)
 {
     connect(this, SIGNAL(obsUrlDropped(QString,QString)), obs, SLOT(getAllBuildStatus(QString,QString)));
-    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(insertDroppedPackage(OBSResult*)));
+    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addDroppedPackage(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResultList()), this, SLOT(finishedAddingPackages()));
 }
 
@@ -64,9 +64,9 @@ void PackageTreeWidget::dropEvent(QDropEvent *event)
     }
 }
 
-void PackageTreeWidget::insertDroppedPackage(OBSResult *result)
+void PackageTreeWidget::addDroppedPackage(OBSResult *result)
 {
-    qDebug() << "PackageTreeWidget::insertDroppedPackage()";
+    qDebug() << "PackageTreeWidget::addDroppedPackage()";
 
     if (droppedProject==result->getProject() && droppedPackage==result->getStatus()->getPackage()) {
         QTreeWidgetItem *item = new QTreeWidgetItem(this);
@@ -90,7 +90,7 @@ void PackageTreeWidget::insertDroppedPackage(OBSResult *result)
                  << "added at" << index;
 //        delete result;
 //        result = nullptr;
-//        The last slot connected (MainWindow::insertResult()) is in charge of deleting result
+//        The last slot connected (MainWindow::addResult()) is in charge of deleting result
 
     }
 }
