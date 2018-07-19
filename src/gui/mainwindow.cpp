@@ -973,10 +973,10 @@ void MainWindow::addFile(OBSFile *obsFile)
 
     currentProject = ui->treeProjects->currentIndex().data().toString();
     currentPackage = ui->treeBuilds->currentIndex().data().toString();
-    QString projectFile = obsFile->getProject();
-    QString packageFile = obsFile->getPackage();
+    QString fileProject = obsFile->getProject();
+    QString filePackage = obsFile->getPackage();
 
-    if (currentProject==projectFile && currentPackage==packageFile) {
+    if (currentProject==fileProject && currentPackage==filePackage) {
 
 
         QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
