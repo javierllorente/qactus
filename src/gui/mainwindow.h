@@ -167,7 +167,7 @@ private slots:
     void getRequestDescription(QTreeWidgetItem*, int);
     void setNotify(bool notify);
     void on_action_Add_triggered();
-    void finishedResultListSlot();
+    void finishedAddingResults();
     void editRow(QTreeWidgetItem*, int);
     void slotEnableRemoveRow();
     void on_action_Remove_triggered();
@@ -195,7 +195,7 @@ private slots:
     void insertPackageList();
     void insertFile(OBSFile*);
     void slotFileListAdded();
-    void insertResult(OBSResult*);
+    void addResult(OBSResult*);
     void insertBuildStatus(OBSStatus *obsStatus, int row);
     void slotBranchPackage(OBSStatus *obsStatus);
     void slotUploadFile(OBSRevision *obsRevision);

@@ -85,9 +85,9 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(slotDeleteFile(OBSStatus*)));
 
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)),
-            this, SLOT(insertResult(OBSResult*)));
+            this, SLOT(addResult(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResultList()),
-            this, SLOT(finishedResultListSlot()));
+            this, SLOT(finishedAddingResults()));
     connect(obs, SIGNAL(finishedParsingRequest(OBSRequest*)),
             this, SLOT(insertRequest(OBSRequest*)));
     connect(obs, SIGNAL(removeRequest(const QString&)),
@@ -631,9 +631,9 @@ void MainWindow::on_action_Add_triggered()
     delete rowEditor;
 }
 
-void MainWindow::finishedResultListSlot()
+void MainWindow::finishedAddingResults()
 {
-   qDebug() << "MainWindow::finishedResultListSlot()";
+   qDebug() << "MainWindow::finishedAddingResults()";
    if (firstTimeBuildResultsDisplayed) {
        ui->treeBuildResults->sortByColumn(0, Qt::AscendingOrder);
        firstTimeBuildResultsDisplayed = false;
@@ -1022,9 +1022,9 @@ void MainWindow::slotFileListAdded()
     ui->treeFiles->sortByColumn(column);
 }
 
-void MainWindow::insertResult(OBSResult *obsResult)
+void MainWindow::addResult(OBSResult *obsResult)
 {
-    qDebug() << "MainWindow::insertResult()";
+    qDebug() << "MainWindow::addResult()";
 
     QString resultProject = obsResult->getProject();
     QString resultPackage = obsResult->getStatus()->getPackage();
