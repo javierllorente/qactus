@@ -643,8 +643,11 @@ void MainWindow::finishedAddingResults()
        ui->treeBuildResults->sortByColumn(column);
    }
 
-   currentProject = "";
-   currentPackage = "";
+   if (!currentProject.isEmpty() && !currentPackage.isEmpty()) {
+       currentProject = "";
+       currentPackage = "";
+   }
+
    emit updateStatusBar(tr("Done"), true);
 }
 

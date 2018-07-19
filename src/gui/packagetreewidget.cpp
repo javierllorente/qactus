@@ -33,7 +33,6 @@ void PackageTreeWidget::setOBS(OBS *obs)
     connect(obs, SIGNAL(finishedParsingResultList()), this, SLOT(finishedAddingPackages()));
 }
 
-
 void PackageTreeWidget::dragEnterEvent(QDragEnterEvent *event)
 {
     event->acceptProposedAction();
@@ -98,7 +97,9 @@ void PackageTreeWidget::addDroppedPackage(OBSResult *result)
 void PackageTreeWidget::finishedAddingPackages()
 {
     qDebug() << "PackageTreeWidget::finishedAddingPackages()";
-    droppedProject = "";
-    droppedPackage = "";
+    if (!droppedProject.isEmpty() && !droppedPackage.isEmpty()) {
+        droppedProject = "";
+        droppedPackage = "";
+    }
 }
 
