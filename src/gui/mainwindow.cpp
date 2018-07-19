@@ -573,6 +573,8 @@ void MainWindow::changeRequestState()
 {
     qDebug() << "Launching RequestStateEditor...";
     RequestStateEditor *reqStateEditor = new RequestStateEditor(this, obs);
+    disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
+    disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treePackages, SLOT(addDroppedPackage(OBSResult*)));
     QTreeWidgetItem *item = ui->treeRequests->currentItem();
     qDebug() << "Request selected:" << item->text(1);
     reqStateEditor->setRequestId(item->text(1));
@@ -601,6 +603,9 @@ void MainWindow::changeRequestState()
     reqStateEditor->exec();
     delete reqStateEditor;
     reqStateEditor = nullptr;
+
+    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treePackages, SLOT(addDroppedPackage(OBSResult*)));
+    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
 }
 
 void MainWindow::srStatusSlot(const QString &status)
