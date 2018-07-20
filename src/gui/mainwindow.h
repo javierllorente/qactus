@@ -105,6 +105,7 @@ private:
     QSortFilterProxyModel *proxyModelBuilds;
     QStandardItemModel *sourceModelFiles;
     QStandardItemModel *sourceModelBuildResults;
+    void setupProjectActions();
     void getBuildResults();
     QString currentProject;
     QString currentPackage;

@@ -262,6 +262,34 @@ void MainWindow::setupBrowser()
     deleteFileConnected = false;
 }
 
+void MainWindow::setupProjectActions()
+{
+    qDebug() << "MainWindow::setupProjectActions()";
+    ui->action_Branch_package->setEnabled(false);
+    ui->action_Upload_file->setEnabled(false);
+    actionDelete_file->setEnabled(false);
+    actionDelete_package->setEnabled(false);
+    actionDelete_project->setEnabled(true);
+    ui->action_Delete->setEnabled(true);
+    actionDelete_package->setShortcut(QKeySequence());
+    actionDelete_file->setShortcut(QKeySequence());
+    actionDelete_project->setShortcut(QKeySequence::Delete);
+
+    ui->action_Delete->setEnabled(true);
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+
+    deletePackageConnected = false;
+    deleteFileConnected = false;
+    if (!deleteProjectConnected) {
+        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
+        deleteProjectConnected = true;
+    }
+
+    actionNew_project->setShortcut(QKeySequence::New);
+    actionNew_package->setShortcut(QKeySequence());
+}
+
 void MainWindow::loadProjects()
 {
     qDebug() << "MainWindow::loadProjects()";
@@ -377,59 +405,54 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
 
     getPackages(ui->treeProjects->currentIndex());
     filterBuilds("");
-
-    ui->action_Branch_package->setEnabled(false);
-    ui->action_Upload_file->setEnabled(false);
-    actionDelete_file->setEnabled(false);
-    actionDelete_package->setEnabled(false);
-    actionDelete_project->setEnabled(true);
-    ui->action_Delete->setEnabled(true);
-    actionDelete_package->setShortcut(QKeySequence());
-    actionDelete_file->setShortcut(QKeySequence());
-    actionDelete_project->setShortcut(QKeySequence::Delete);
-
-    ui->action_Delete->setEnabled(true);
-    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
-    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
-
-    deletePackageConnected = false;
-    deleteFileConnected = false;
-    if (!deleteProjectConnected) {
-        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
-        deleteProjectConnected = true;
-    }
-
-    actionNew_project->setShortcut(QKeySequence::New);
-    actionNew_package->setShortcut(QKeySequence());
+    setupProjectActions();
 }
 
 void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
 {
     qDebug() << "MainWindow::buildSelectionChanged()";
-    getPackageFiles(ui->treeBuilds->currentIndex());
 
-    ui->action_Branch_package->setEnabled(true);
-    ui->action_Upload_file->setEnabled(true);
-    actionDelete_file->setEnabled(false);
-    actionDelete_package->setEnabled(true);
-    ui->action_Delete->setEnabled(true);
-    actionDelete_project->setShortcut(QKeySequence());
-    actionDelete_file->setShortcut(QKeySequence());
-    actionDelete_package->setShortcut(QKeySequence::Delete);
+    // Make sure the index is valid (eg: the filter yields results)
+    if (ui->treeBuilds->currentIndex().isValid()) {
+        getPackageFiles(ui->treeBuilds->currentIndex());
 
-    ui->action_Delete->setEnabled(true);
-    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
-    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+        ui->action_Branch_package->setEnabled(true);
+        ui->action_Upload_file->setEnabled(true);
+        actionDelete_file->setEnabled(false);
+        actionDelete_package->setEnabled(true);
+        ui->action_Delete->setEnabled(true);
+        actionDelete_project->setShortcut(QKeySequence());
+        actionDelete_file->setShortcut(QKeySequence());
+        actionDelete_package->setShortcut(QKeySequence::Delete);
 
-    deleteProjectConnected = false;
-    deleteFileConnected = false;
-    if (!deletePackageConnected) {
-        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
-        deletePackageConnected = true;
+        ui->action_Delete->setEnabled(true);
+        disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
+        disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+
+        deleteProjectConnected = false;
+        deleteFileConnected = false;
+        if (!deletePackageConnected) {
+            connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
+            deletePackageConnected = true;
+        }
+
+        actionNew_project->setShortcut(QKeySequence());
+        actionNew_package->setShortcut(QKeySequence::New);
+
+    } else {
+        // If there is no package selected, clear both the file and build result lists
+        if (sourceModelFiles!=nullptr) {
+            delete sourceModelFiles;
+            sourceModelFiles = nullptr;
+        }
+
+        if (sourceModelBuildResults!=nullptr) {
+            delete sourceModelBuildResults;
+            sourceModelBuildResults = nullptr;
+        }
+
+        setupProjectActions();
     }
-
-    actionNew_project->setShortcut(QKeySequence());
-    actionNew_package->setShortcut(QKeySequence::New);
 }
 
 void MainWindow::fileSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
