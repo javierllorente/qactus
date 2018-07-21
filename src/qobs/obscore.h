@@ -45,6 +45,7 @@ public:
     void setApiUrl(const QString &apiUrl);
     QString getApiUrl() const;
     QNetworkReply *request(const QString &resource);
+    void request(QNetworkReply *reply);
     QNetworkReply *requestBuild(const QString &resource);
     void getBuildStatus(const QStringList &build, int row);
     QNetworkReply *requestSource(const QString &resource);
@@ -85,9 +86,9 @@ public slots:
     void setCredentials(const QString&, const QString&);
 
 private slots:
-    void provideAuthentication(QNetworkReply* reply, QAuthenticator* ator);
-    void replyFinished(QNetworkReply* reply);
-    void onSslErrors(QNetworkReply* reply, const QList<QSslError> &list);
+    void provideAuthentication(QNetworkReply *reply, QAuthenticator* ator);
+    void replyFinished(QNetworkReply *reply);
+    void onSslErrors(QNetworkReply *reply, const QList<QSslError> &list);
 
 private:
 /*

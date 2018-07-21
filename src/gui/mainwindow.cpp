@@ -197,7 +197,7 @@ void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
             file.close();
 
             QSslSocket::addDefaultCaCertificate(sslCertificate);
-            obs->request(reply->url().toString(), reply->property("row").toInt());
+            obs->request(reply);
             reply->ignoreSslErrors();
         }
     }

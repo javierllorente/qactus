@@ -117,9 +117,9 @@ void OBS::request(const QString &resource)
     obsCore->request(resource);
 }
 
-void OBS::request(const QString &resource, int row)
+void OBS::request(QNetworkReply *reply)
 {
-    obsCore->request(resource, row);
+    obsCore->request(reply);
 }
 
 void OBS::postRequest(const QString &resource, const QByteArray &data)

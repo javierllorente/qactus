@@ -43,7 +43,7 @@ public:
     void setApiUrl(const QString &apiUrl);
     QString getApiUrl() const;
     void request(const QString& resource);
-    void request(const QString &resource, int row);
+    void request(QNetworkReply *reply);
     bool isAuthenticated();
     void login();
     void getBuildStatus(const QStringList &stringList, int row);

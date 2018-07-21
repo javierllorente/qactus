@@ -89,6 +89,17 @@ QNetworkReply *OBSCore::request(const QString &resource)
     return reply;
 }
 
+void OBSCore::request(QNetworkReply *reply)
+{
+    QString resource = reply->url().toString();
+    QNetworkReply *newReply = request(resource);
+    newReply->setProperty("reqtype", reply->property("reqtype"));
+
+    if (reply->property("row").isValid()) {
+        newReply->setProperty("row", reply->property("row").toInt());
+    }
+}
+
 QNetworkReply *OBSCore::requestBuild(const QString &resource)
 {
     return request("/build/" + resource);
@@ -638,7 +649,7 @@ void OBSCore::about()
     reply->setProperty("reqtype", OBSCore::About);
 }
 
-void OBSCore::onSslErrors(QNetworkReply* reply, const QList<QSslError> &list)
+void OBSCore::onSslErrors(QNetworkReply *reply, const QList<QSslError> &list)
 {
     QString errorString;
     QString message;
