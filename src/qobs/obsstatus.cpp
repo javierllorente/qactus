@@ -40,26 +40,6 @@ OBSStatus& OBSStatus::operator=(const OBSStatus &other)
     return *this;
 }
 
-QString OBSStatus::getProject() const
-{
-    return project;
-}
-
-void OBSStatus::setProject(const QString &value)
-{
-    project = value;
-}
-
-QString OBSStatus::getPackage() const
-{
-    return package;
-}
-
-void OBSStatus::setPackage(const QString &value)
-{
-    package = value;
-}
-
 QString OBSStatus::getCode() const
 {
     return code;

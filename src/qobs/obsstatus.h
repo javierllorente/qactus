@@ -22,8 +22,9 @@
 #define OBSSTATUS_H
 
 #include <QString>
+#include "obsobject.h"
 
-class OBSStatus
+class OBSStatus : public OBSObject
 {
 public:
     OBSStatus();
@@ -34,12 +35,6 @@ public:
         return this->getProject()==rhs.getProject() && this->getPackage()==rhs.getPackage() &&
                 this->getCode()==rhs.getCode();
     }
-
-    QString getProject() const;
-    void setProject(const QString &value);
-
-    QString getPackage() const;
-    void setPackage(const QString &value);
 
     QString getCode() const;
     void setCode(const QString &value);
