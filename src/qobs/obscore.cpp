@@ -94,9 +94,12 @@ QNetworkReply *OBSCore::requestBuild(const QString &resource)
     return request("/build/" + resource);
 }
 
-void OBSCore::requestBuild(const QString &resource, int row)
+void OBSCore::requestBuild(const QStringList &build, int row)
 {
-    request("/build/" + resource, row);
+    QString resource = QString("%1/%2/%3/%4/_status").arg(build[0], build[1], build[2], build[3]);
+    QNetworkReply *reply = requestBuild(resource);
+    reply->setProperty("reqtype", OBSCore::BuildStatus);
+    reply->setProperty("row", row);
 }
 
 QNetworkReply *OBSCore::requestSource(const QString &resource)
@@ -145,6 +148,7 @@ void OBSCore::getAllBuildStatus(const QString &resource)
 void OBSCore::request(const QString &resource, int row)
 {
     QNetworkReply *reply = request(resource);
+    reply->setProperty("reqtype", OBSCore::BuildStatus);
     reply->setProperty("row", row);
 }
 
@@ -285,6 +289,11 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 xmlReader->parseFileList(project, package, data);
                 break;
             }
+
+            case OBSCore::BuildStatus: // <status>
+                qDebug() << reqType << "BuildStatus";
+                xmlReader->parsePackage(data);
+                break;
 
             case OBSCore::BuildStatusList: // <resultlist>
                 qDebug() << reqType << "BuildStatusList";

@@ -46,7 +46,7 @@ public:
     QString getApiUrl() const;
     QNetworkReply *request(const QString &resource);
     QNetworkReply *requestBuild(const QString &resource);
-    void requestBuild(const QString &resource, int row);
+    void requestBuild(const QStringList &build, int row);
     QNetworkReply *requestSource(const QString &resource);
     void requestRequest(const QString &resource);
     QNetworkReply *postRequest(const QString &resource, const QByteArray &data);
@@ -111,6 +111,7 @@ private:
         ProjectMetadata,
         PackageList,
         FileList,
+        BuildStatus,
         BuildStatusList,
         SubmitRequest,
         SRDiff,
