@@ -22,8 +22,9 @@
 #define OBSREVISION_H
 
 #include <QString>
+#include "obsobject.h"
 
-class OBSRevision
+class OBSRevision : public OBSObject
 {
 public:
     OBSRevision();
@@ -42,12 +43,6 @@ public:
 
     QString getComment() const;
     void setComment(const QString &value);
-
-    QString getProject() const;
-    void setProject(const QString &value);
-
-    QString getPackage() const;
-    void setPackage(const QString &value);
 
     QString getFile() const;
     void setFile(const QString &value);

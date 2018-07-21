@@ -75,26 +75,6 @@ void OBSRevision::setComment(const QString &value)
     comment = value;
 }
 
-QString OBSRevision::getProject() const
-{
-    return project;
-}
-
-void OBSRevision::setProject(const QString &value)
-{
-    project = value;
-}
-
-QString OBSRevision::getPackage() const
-{
-    return package;
-}
-
-void OBSRevision::setPackage(const QString &value)
-{
-    package = value;
-}
-
 QString OBSRevision::getFile() const
 {
     return file;
