@@ -45,7 +45,7 @@ public:
     void setPackageRow(int row);
     void parseProjectList(const QString &data);
     void parseProjectMetadata(const QString &data);
-    void parsePackage(const QString &data);
+    void parseBuildStatus(const QString &data);
     void parsePackageList(const QString &data);
     void parseFileList(const QString &project, const QString &package, const QString &data);
     void parseResultList(const QString &data);

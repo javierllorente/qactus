@@ -292,7 +292,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
 
             case OBSCore::BuildStatus: // <status>
                 qDebug() << reqType << "BuildStatus";
-                xmlReader->parsePackage(data);
+                xmlReader->parseBuildStatus(data);
                 break;
 
             case OBSCore::BuildStatusList: // <resultlist>

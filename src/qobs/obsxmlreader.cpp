@@ -54,7 +54,7 @@ void OBSXmlReader::addData(const QString &data)
             parseRevisionList(data);
         } else if (xml.name()=="status" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: status tag found";
-            parsePackage(data);
+            parseBuildStatus(data);
         } else if (xml.name()=="collection" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: collection tag found";
             parseRequests(data);
@@ -117,7 +117,7 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
 
 }
 
-void OBSXmlReader::parsePackage(const QString &data)
+void OBSXmlReader::parseBuildStatus(const QString &data)
 {
     QXmlStreamReader xml(data);
     OBSStatus *obsStatus = new OBSStatus();
