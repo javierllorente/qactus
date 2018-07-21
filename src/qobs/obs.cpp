@@ -145,7 +145,7 @@ void OBS::login()
 void OBS::getBuildStatus(const QStringList &stringList, int row)
 {
     //    URL format: https://api.opensuse.org/build/<project>/<repository>/<arch>/<package>/_status
-    obsCore->requestBuild(stringList, row);
+    obsCore->getBuildStatus(stringList, row);
 }
 
 void OBS::getAllBuildStatus(const QString &project, const QString &package)

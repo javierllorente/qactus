@@ -94,7 +94,7 @@ QNetworkReply *OBSCore::requestBuild(const QString &resource)
     return request("/build/" + resource);
 }
 
-void OBSCore::requestBuild(const QStringList &build, int row)
+void OBSCore::getBuildStatus(const QStringList &build, int row)
 {
     QString resource = QString("%1/%2/%3/%4/_status").arg(build[0], build[1], build[2], build[3]);
     QNetworkReply *reply = requestBuild(resource);
