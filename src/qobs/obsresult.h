@@ -48,7 +48,6 @@ public:
     OBSStatus *getStatus() const;
 
 private:
-    QString project;
     QString repository;
     QString arch;
     QString code;

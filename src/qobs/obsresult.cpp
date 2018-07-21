@@ -33,12 +33,12 @@ OBSResult::~OBSResult()
 
 QString OBSResult::getProject() const
 {
-    return project;
+    return status->getProject();
 }
 
 void OBSResult::setProject(const QString &value)
 {
-    project = value;
+    status->setProject(value);
 }
 
 QString OBSResult::getRepository() const
