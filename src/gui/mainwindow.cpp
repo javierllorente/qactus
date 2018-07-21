@@ -1116,7 +1116,9 @@ void MainWindow::insertBuildStatus(OBSStatus *obsStatus, int row)
     if (item) {
         QString oldStatus = item->text(4);
         item->setText(4, status);
-        item->setToolTip(4, details);
+        if (!details.isEmpty()) {
+            item->setToolTip(4, details);
+        }
         item->setForeground(4, Utils::getColorForStatus(status));
 
         qDebug() << "Build status" << status << "inserted in" << row

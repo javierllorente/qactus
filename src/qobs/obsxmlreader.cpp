@@ -109,7 +109,7 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
         }
     } // end summary
 
-    if (xml.name()=="details") {
+    if (xml.name()=="details" && xml.isStartElement()) {
         xml.readNext();
         obsStatus->setDetails(xml.text().toString());
         qDebug() << "Status details:" << obsStatus->getDetails();
