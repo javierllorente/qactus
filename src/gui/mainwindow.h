@@ -110,6 +110,7 @@ private:
     QStandardItemModel *sourceModelBuildResults;
     void setupProjectActions();
     void setupPackageActions();
+    void setupFileActions();
     QString currentProject;
     QString currentPackage;
     void filterProjects(const QString &item);
@@ -200,6 +201,7 @@ private slots:
     void on_actionAPI_information_triggered();
     void slotAbout(OBSAbout *obsAbout);
     void on_iconBar_currentRowChanged(int index);
+    void on_tabWidgetPackages_currentChanged(int index);
     void insertProjectList();
     void insertPackageList();
     void addFile(OBSFile*);

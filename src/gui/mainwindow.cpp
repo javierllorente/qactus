@@ -321,6 +321,29 @@ void MainWindow::setupPackageActions()
     actionNew_package->setShortcut(QKeySequence::New);
 }
 
+void MainWindow::setupFileActions()
+{
+    qDebug() << "MainWindow::setupFileActions()";
+    actionDelete_file->setEnabled(true);
+    actionDelete_project->setShortcut(QKeySequence());
+    actionDelete_package->setShortcut(QKeySequence());
+    actionDelete_file->setShortcut(QKeySequence::Delete);
+
+    ui->action_Delete->setEnabled(true);
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
+
+    deleteProjectConnected = false;
+    deletePackageConnected = false;
+    if (!deleteFileConnected) {
+        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+        deleteFileConnected = true;
+    }
+
+    actionNew_project->setShortcut(QKeySequence());
+    actionNew_package->setShortcut(QKeySequence());
+}
+
 void MainWindow::loadProjects()
 {
     qDebug() << "MainWindow::loadProjects()";
@@ -467,24 +490,7 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
 void MainWindow::fileSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
 {
     qDebug() << "MainWindow::fileSelectionChanged()";
-    actionDelete_file->setEnabled(true);
-    actionDelete_project->setShortcut(QKeySequence());
-    actionDelete_package->setShortcut(QKeySequence());
-    actionDelete_file->setShortcut(QKeySequence::Delete);
-
-    ui->action_Delete->setEnabled(true);
-    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
-    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
-
-    deleteProjectConnected = false;
-    deletePackageConnected = false;
-    if (!deleteFileConnected) {
-        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
-        deleteFileConnected = true;
-    }
-
-    actionNew_project->setShortcut(QKeySequence());
-    actionNew_package->setShortcut(QKeySequence());
+    setupFileActions();
 }
 
 void MainWindow::getPackages(QModelIndex index)
@@ -1859,6 +1865,17 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     ui->actionChange_request_state->setVisible(requestsTabVisible);
 
     ui->action_Refresh->setVisible(monitorTabVisible || requestsTabVisible);
+}
+
+void MainWindow::on_tabWidgetPackages_currentChanged(int index)
+{
+    QItemSelectionModel *treeFilesSelectionModel = ui->treeFiles->selectionModel();
+    if (treeFilesSelectionModel) {
+        QList<QModelIndex> selectedFiles = treeFilesSelectionModel->selectedIndexes();
+        if (index==0 && !selectedFiles.isEmpty()) {
+            setupFileActions();
+        }
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
