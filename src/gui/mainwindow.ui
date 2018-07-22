@@ -173,7 +173,7 @@
                 </attribute>
                 <layout class="QVBoxLayout" name="verticalLayout_4">
                  <item>
-                  <widget class="QTreeView" name="treeFiles">
+                  <widget class="FileTreeWidget" name="treeFiles">
                    <property name="sortingEnabled">
                     <bool>true</bool>
                    </property>
@@ -577,7 +577,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="trash-empty"/>
+    <iconset theme="trash-empty">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
@@ -592,6 +593,11 @@
    <class>PackageTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>packagetreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FileTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>filetreewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
