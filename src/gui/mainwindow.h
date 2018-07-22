@@ -186,6 +186,7 @@ private slots:
     void on_action_Upload_file_triggered();
     void newProject();
     void newPackage();
+    void uploadFile(QString path);
     void deleteProject();
     void deletePackage();
     void deleteFile();

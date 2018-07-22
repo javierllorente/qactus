@@ -251,6 +251,8 @@ void MainWindow::setupBrowser()
             SLOT(slotContextMenuResults(QPoint)));
     ui->treeBuildResults->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    connect(ui->treeFiles, SIGNAL(droppedFile(QString)), this, SLOT(uploadFile(QString)));
+
     sourceModelProjects = new QStringListModel(ui->treeProjects);
     proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
     sourceModelBuilds = new QStringListModel(ui->treeBuilds);
@@ -818,29 +820,7 @@ void MainWindow::on_action_Branch_package_triggered()
 void MainWindow::on_action_Upload_file_triggered()
 {
     QString path = QFileDialog::getOpenFileName(this, tr("Upload file"));
-    qDebug() << "MainWindow::on_action_Upload_file_triggered() path:" << path;
-
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return;
-    }
-
-    QByteArray data = file.readAll();
-    qDebug() << "MainWindow::on_action_Upload_file_triggered() data.size()" << data.size();
-
-    QModelIndex prjIndex = ui->treeProjects->currentIndex();
-    QString project = prjIndex.data().toString();
-
-    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
-    QString build = pkgIndex.data().toString();
-
-    QFileInfo fi(file.fileName());
-    QString fileName = fi.fileName();
-
-    obs->uploadFile(project, build, fileName, data);
-
-    QString statusText = tr("Uploading %1 to %2/%3...").arg(fileName, project, build);
-    emit updateStatusBar(statusText, false);
+    uploadFile(path);
 }
 
 void MainWindow::newProject()
@@ -870,6 +850,32 @@ void MainWindow::newPackage()
     createDialog->exec();
     delete createDialog;
     createDialog = nullptr;
+}
+
+void MainWindow::uploadFile(QString path)
+{
+    qDebug() << "MainWindow:uploadFile() path:" << path;
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    qDebug() << "MainWindow::uploadFile() data.size()" << data.size();
+
+    QModelIndex prjIndex = ui->treeProjects->currentIndex();
+    QString project = prjIndex.data().toString();
+
+    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
+    QString package = pkgIndex.data().toString();
+
+    QFileInfo fi(file.fileName());
+    QString fileName = fi.fileName();
+
+    obs->uploadFile(project, package, fileName, data);
+
+    QString statusText = tr("Uploading %1 to %2/%3...").arg(fileName, project, package);
+    emit updateStatusBar(statusText, false);
 }
 
 void MainWindow::deleteProject()
