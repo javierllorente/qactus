@@ -79,6 +79,7 @@ private:
     QAction *actionNew;
 
     QAction *action_ReloadProjects;
+    QAction *action_ReloadPackages;
 
     QAction *actionDelete_project;
     QAction *actionDelete_package;
@@ -162,6 +163,7 @@ private slots:
     void slotContextMenuFiles(const QPoint &point);
     void changeRequestState();
     void getPackages(QModelIndex index);
+    void reloadPackages();
     void getPackageFiles(QModelIndex index);
     void filterResults(const QString &item);
     void filterRadioButtonClicked(bool);

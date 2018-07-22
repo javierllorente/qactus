@@ -488,6 +488,26 @@ void MainWindow::getPackages(QModelIndex index)
     }
 }
 
+void MainWindow::reloadPackages()
+{
+    qDebug() << "MainWindow::reloadPackages()";
+    getPackages(ui->treeProjects->currentIndex());
+
+    // Clean up package files and results
+
+    if (sourceModelFiles!=nullptr) {
+        delete sourceModelFiles;
+        sourceModelFiles = nullptr;
+    }
+
+    if (sourceModelBuildResults!=nullptr) {
+        delete sourceModelBuildResults;
+        sourceModelBuildResults = nullptr;
+    }
+
+    setupProjectActions();
+}
+
 void MainWindow::getPackageFiles(QModelIndex index)
 {
     qDebug() << "MainWindow::getPackageFiles()";
@@ -572,6 +592,7 @@ void MainWindow::slotContextMenuPackages(const QPoint &point)
     QMenu *treePackagesMenu = new QMenu(ui->treeBuilds);
     treePackagesMenu->addAction(actionNew_package);
     treePackagesMenu->addAction(ui->action_Branch_package);
+    treePackagesMenu->addAction(action_ReloadPackages);
     treePackagesMenu->addAction(actionDelete_package);
 
     QModelIndex index = ui->treeBuilds->indexAt(point);
@@ -1427,9 +1448,14 @@ void MainWindow::createActions()
     actionNew = ui->toolBar->insertWidget(ui->action_Branch_package, newButton);
     connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newPackage()));
 
+    // Reload actions
     action_ReloadProjects = new QAction(tr("&Reload project list"), this);
     action_ReloadProjects->setIcon(QIcon::fromTheme("view-refresh"));
     connect(action_ReloadProjects, SIGNAL(triggered(bool)), this, SLOT(loadProjects()));
+
+    action_ReloadPackages = new QAction(tr("&Reload package list"), this);
+    action_ReloadPackages->setIcon(QIcon::fromTheme("view-refresh"));
+    connect(action_ReloadPackages, SIGNAL(triggered(bool)), this, SLOT(reloadPackages()));
 
     // Delete actions
     actionDelete_project = new QAction(tr("Delete pro&ject"), this);
