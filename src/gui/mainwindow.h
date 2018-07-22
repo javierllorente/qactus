@@ -80,6 +80,8 @@ private:
 
     QAction *action_ReloadProjects;
     QAction *action_ReloadPackages;
+    QAction *action_ReloadFiles;
+    QAction *action_ReloadResults;
 
     QAction *actionDelete_project;
     QAction *actionDelete_package;
@@ -107,7 +109,7 @@ private:
     QStandardItemModel *sourceModelFiles;
     QStandardItemModel *sourceModelBuildResults;
     void setupProjectActions();
-    void getBuildResults();
+    void setupPackageActions();
     QString currentProject;
     QString currentPackage;
     void filterProjects(const QString &item);
@@ -161,10 +163,14 @@ private slots:
     void slotContextMenuProjects(const QPoint &point);
     void slotContextMenuPackages(const QPoint &point);
     void slotContextMenuFiles(const QPoint &point);
+    void slotContextMenuResults(const QPoint &point);
     void changeRequestState();
     void getPackages(QModelIndex index);
     void reloadPackages();
     void getPackageFiles(QModelIndex index);
+    void reloadFiles();
+    void getBuildResults();
+    void reloadResults();
     void filterResults(const QString &item);
     void filterRadioButtonClicked(bool);
     void getRequestDescription(QTreeWidgetItem*, int);

@@ -247,6 +247,10 @@ void MainWindow::setupBrowser()
             SLOT(slotContextMenuFiles(QPoint)));
     ui->treeFiles->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    connect(ui->treeBuildResults, SIGNAL(customContextMenuRequested(QPoint)), this,
+            SLOT(slotContextMenuResults(QPoint)));
+    ui->treeBuildResults->setContextMenuPolicy(Qt::CustomContextMenu);
+
     sourceModelProjects = new QStringListModel(ui->treeProjects);
     proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
     sourceModelBuilds = new QStringListModel(ui->treeBuilds);
@@ -288,6 +292,33 @@ void MainWindow::setupProjectActions()
 
     actionNew_project->setShortcut(QKeySequence::New);
     actionNew_package->setShortcut(QKeySequence());
+}
+
+void MainWindow::setupPackageActions()
+{
+    qDebug() << "MainWindow::setupPackageActions()";
+    ui->action_Branch_package->setEnabled(true);
+    ui->action_Upload_file->setEnabled(true);
+    actionDelete_file->setEnabled(false);
+    actionDelete_package->setEnabled(true);
+    ui->action_Delete->setEnabled(true);
+    actionDelete_project->setShortcut(QKeySequence());
+    actionDelete_file->setShortcut(QKeySequence());
+    actionDelete_package->setShortcut(QKeySequence::Delete);
+
+    ui->action_Delete->setEnabled(true);
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
+    disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
+
+    deleteProjectConnected = false;
+    deleteFileConnected = false;
+    if (!deletePackageConnected) {
+        connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
+        deletePackageConnected = true;
+    }
+
+    actionNew_project->setShortcut(QKeySequence());
+    actionNew_package->setShortcut(QKeySequence::New);
 }
 
 void MainWindow::loadProjects()
@@ -415,29 +446,7 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
     // Make sure the index is valid (eg: the filter yields results)
     if (ui->treeBuilds->currentIndex().isValid()) {
         getPackageFiles(ui->treeBuilds->currentIndex());
-
-        ui->action_Branch_package->setEnabled(true);
-        ui->action_Upload_file->setEnabled(true);
-        actionDelete_file->setEnabled(false);
-        actionDelete_package->setEnabled(true);
-        ui->action_Delete->setEnabled(true);
-        actionDelete_project->setShortcut(QKeySequence());
-        actionDelete_file->setShortcut(QKeySequence());
-        actionDelete_package->setShortcut(QKeySequence::Delete);
-
-        ui->action_Delete->setEnabled(true);
-        disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteProject()));
-        disconnect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deleteFile()));
-
-        deleteProjectConnected = false;
-        deleteFileConnected = false;
-        if (!deletePackageConnected) {
-            connect(ui->action_Delete, SIGNAL(triggered(bool)), this, SLOT(deletePackage()));
-            deletePackageConnected = true;
-        }
-
-        actionNew_project->setShortcut(QKeySequence());
-        actionNew_package->setShortcut(QKeySequence::New);
+        setupPackageActions();
 
     } else {
         // If there is no package selected, clear both the file and build result lists
@@ -537,6 +546,13 @@ void MainWindow::getPackageFiles(QModelIndex index)
     getBuildResults();
 }
 
+void MainWindow::reloadFiles()
+{
+    qDebug() << "MainWindow::reloadFiles()";
+    getPackageFiles(ui->treeBuilds->currentIndex());
+    setupPackageActions();
+}
+
 void MainWindow::getBuildResults()
 {
     qDebug() << "MainWindow::getBuildResults()";
@@ -555,6 +571,13 @@ void MainWindow::getBuildResults()
     currentProject = ui->treeProjects->currentIndex().data().toString();
     currentPackage = ui->treeBuilds->currentIndex().data().toString();
     obs->getAllBuildStatus(currentProject, currentPackage);
+}
+
+void MainWindow::reloadResults()
+{
+    qDebug() << "MainWindow::reloadResults()";
+    getBuildResults();
+    setupPackageActions();
 }
 
 void MainWindow::slotContextMenuRequests(const QPoint &point)
@@ -605,11 +628,23 @@ void MainWindow::slotContextMenuFiles(const QPoint &point)
 {
     QMenu *treeFilesMenu = new QMenu(ui->treeFiles);
     treeFilesMenu->addAction(ui->action_Upload_file);
+    treeFilesMenu->addAction(action_ReloadFiles);
     treeFilesMenu->addAction(actionDelete_file);
 
     QModelIndex index = ui->treeFiles->indexAt(point);
     if (index.isValid()) {
         treeFilesMenu->exec(ui->treeFiles->mapToGlobal(point));
+    }
+}
+
+void MainWindow::slotContextMenuResults(const QPoint &point)
+{
+    QMenu *treeResultsMenu = new QMenu(ui->treeBuildResults);
+    treeResultsMenu->addAction(action_ReloadResults);
+
+    QModelIndex index = ui->treeBuildResults->indexAt(point);
+    if (index.isValid()) {
+        treeResultsMenu->exec(ui->treeBuildResults->mapToGlobal(point));
     }
 }
 
@@ -1456,6 +1491,14 @@ void MainWindow::createActions()
     action_ReloadPackages = new QAction(tr("&Reload package list"), this);
     action_ReloadPackages->setIcon(QIcon::fromTheme("view-refresh"));
     connect(action_ReloadPackages, SIGNAL(triggered(bool)), this, SLOT(reloadPackages()));
+
+    action_ReloadFiles = new QAction(tr("&Reload file list"), this);
+    action_ReloadFiles->setIcon(QIcon::fromTheme("view-refresh"));
+    connect(action_ReloadFiles, SIGNAL(triggered(bool)), this, SLOT(reloadFiles()));
+
+    action_ReloadResults = new QAction(tr("&Reload result list"), this);
+    action_ReloadResults->setIcon(QIcon::fromTheme("view-refresh"));
+    connect(action_ReloadResults, SIGNAL(triggered(bool)), this, SLOT(reloadResults()));
 
     // Delete actions
     actionDelete_project = new QAction(tr("Delete pro&ject"), this);
