@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     credentials.cpp \
     syntaxhighlighter.cpp \
     browserfilter.cpp \
-    createdialog.cpp
+    createdialog.cpp \
+    filetreewidget.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -45,7 +46,8 @@ HEADERS += mainwindow.h \
     credentials.h \
     syntaxhighlighter.h \
     browserfilter.h \
-    createdialog.h
+    createdialog.h \
+    filetreewidget.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \
