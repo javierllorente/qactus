@@ -49,6 +49,7 @@ public:
     void parsePackageList(const QString &data);
     void parseFileList(const QString &project, const QString &package, const QString &data);
     void parseResultList(const QString &data);
+    void parseRequests(const QString &data);
     void parseSubmitRequest(const QString &data);
     void parseBranchPackage(const QString &project, const QString &package, const QString &data);
     void parseCreateProject(const QString &project, const QString &data);
@@ -73,7 +74,6 @@ private:
     void parseRevisionList(const QString &data);
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
-    void parseRequests(const QString &data);
     void parseRequest(QXmlStreamReader &xml);
     void parseList(QXmlStreamReader &xml);
     OBSRequest *obsRequest;

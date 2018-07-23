@@ -55,9 +55,6 @@ void OBSXmlReader::addData(const QString &data)
         } else if (xml.name()=="status" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: status tag found";
             parseBuildStatus(data);
-        } else if (xml.name()=="collection" && xml.isStartElement()) {
-            qDebug() << "OBSXmlReader: collection tag found";
-            parseRequests(data);
         } else if (xml.name()=="directory" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: directory tag found";
             stringToFile(data);

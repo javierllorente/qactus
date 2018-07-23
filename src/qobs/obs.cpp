@@ -165,7 +165,7 @@ void OBS::getRevisions(const QString &project, const QString &package)
 void OBS::getRequests()
 {
     QString resource = QString("?view=collection&states=new&roles=maintainer&user=%1").arg(getUsername());
-    obsCore->requestRequest(resource);
+    obsCore->getRequests(resource);
 }
 
 int OBS::getRequestCount()

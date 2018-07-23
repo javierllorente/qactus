@@ -118,9 +118,10 @@ QNetworkReply *OBSCore::requestSource(const QString &resource)
     return request("/source/" + resource);
 }
 
-void OBSCore::requestRequest(const QString &resource)
+void OBSCore::getRequests(const QString &resource)
 {
-    request("/request/" + resource);
+    QNetworkReply *reply = request("/request/" + resource);
+    reply->setProperty("reqtype", OBSCore::Requests);
 }
 
 void OBSCore::getProjects()
@@ -309,6 +310,11 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             case OBSCore::BuildStatusList: // <resultlist>
                 qDebug() << reqType << "BuildStatusList";
                 xmlReader->parseResultList(data);
+                break;
+
+            case OBSCore::Requests: // <collection>
+                qDebug() << reqType << "Collection";
+                xmlReader->parseRequests(data);
                 break;
 
             case OBSCore::SubmitRequest:

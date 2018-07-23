@@ -49,7 +49,7 @@ public:
     QNetworkReply *requestBuild(const QString &resource);
     void getBuildStatus(const QStringList &build, int row);
     QNetworkReply *requestSource(const QString &resource);
-    void requestRequest(const QString &resource);
+    void getRequests(const QString &resource);
     QNetworkReply *postRequest(const QString &resource, const QByteArray &data);
     QNetworkReply *putRequest(const QString &resource, const QByteArray &data);
     QNetworkReply *deleteRequest(const QString &resource);
@@ -114,6 +114,7 @@ private:
         FileList,
         BuildStatus,
         BuildStatusList,
+        Requests,
         SubmitRequest,
         SRDiff,
         BranchPackage,
