@@ -825,8 +825,12 @@ void MainWindow::on_action_Branch_package_triggered()
 
 void MainWindow::on_action_Upload_file_triggered()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Upload file"));
-    uploadFile(path);
+    QStringList pathList = QFileDialog::getOpenFileNames(this, tr("Upload file"));
+
+    foreach (QString path, pathList) {
+        qDebug() << "MainWindow::on_action_Upload_file_triggered() Selected file:" << path;
+        uploadFile(path);
+    }
 }
 
 void MainWindow::newProject()
