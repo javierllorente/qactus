@@ -44,6 +44,7 @@ public:
     QString getUsername();
     void setApiUrl(const QString &apiUrl);
     QString getApiUrl() const;
+    void login();
     QNetworkReply *request(const QString &resource);
     void request(QNetworkReply *reply);
     QNetworkReply *requestBuild(const QString &resource);
@@ -71,6 +72,7 @@ public:
     void about();
 
 signals:
+    void apiNotFound(QUrl url);
     void isAuthenticated(bool authenticated);
     void selfSignedCertificate(QNetworkReply *reply);
     void networkError(const QString &error);
@@ -108,6 +110,7 @@ private:
     QString prevUsername;
     QString apiUrl;
     enum RequestType {
+        Login,
         ProjectList,
         ProjectMetadata,
         PackageList,

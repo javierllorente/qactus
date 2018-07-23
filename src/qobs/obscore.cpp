@@ -79,6 +79,12 @@ QString OBSCore::getApiUrl() const
     return apiUrl;
 }
 
+void OBSCore::login()
+{
+    QNetworkReply *reply = request("/");
+    reply->setProperty("reqtype", OBSCore::Login);
+}
+
 QNetworkReply *OBSCore::request(const QString &resource)
 {
     QNetworkRequest request;
@@ -273,6 +279,11 @@ void OBSCore::replyFinished(QNetworkReply *reply)
 
             switch(reply->property("reqtype").toInt()) {
 
+            case OBSCore::Login: // <html>
+                qDebug() << reqType << "Login";
+                // do nothing
+                break;
+
             case OBSCore::ProjectList: // <directory>
                 qDebug() << reqType << "ProjectList";
                 xmlReader->parseProjectList(data);
@@ -436,20 +447,26 @@ void OBSCore::replyFinished(QNetworkReply *reply)
         break; // end of case QNetworkReply::NoError
 
     case QNetworkReply::ContentNotFoundError: // 404
-        if (isAuthenticated()) {
-            if (reply->property("reqtype").isValid()) {
-                QString reqType = "RequestType";
+        if (reply->property("reqtype").isValid()) {
+            QString reqType = "RequestType";
 
-                switch(reply->property("reqtype").toInt()) {
+            switch(reply->property("reqtype").toInt()) {
 
-                case OBSCore::BuildStatus: // <status>
-                    qDebug() << reqType << "BuildStatus";
+            case OBSCore::Login:
+                qDebug() << reqType << "Login"; // <hash><status>
+                qDebug() << "OBSCore::replyFinished() OBS API not found at" << reply->url().toString();
+                emit apiNotFound(reply->url());
+                break;
+
+            case OBSCore::BuildStatus: // <status>
+                qDebug() << reqType << "BuildStatus";
+                if (isAuthenticated()) {
                     xmlReader->parseBuildStatus(data);
-                    break;
-
-                default:
-                    qDebug() << "OBSCore Error 404 NOT handled for request type" << reply->property("reqtype").toInt();
                 }
+                break;
+
+            default:
+                qDebug() << "OBSCore Error 404 NOT handled for request type" << reply->property("reqtype").toInt();
             }
         }
         break;

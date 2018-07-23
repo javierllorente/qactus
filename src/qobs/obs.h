@@ -72,6 +72,7 @@ private:
     void deleteRequest(const QString &resource);
 
 signals:
+    void apiNotFound(QUrl url);
     void isAuthenticated(bool);
     void selfSignedCertificate(QNetworkReply*);
     void networkError(const QString&);

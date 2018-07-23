@@ -26,6 +26,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
     xmlReader = OBSXmlReader::getInstance();
 
     // Forward signals
+    connect(obsCore, SIGNAL(apiNotFound(QUrl)), this, SIGNAL(apiNotFound(QUrl)));
     connect(obsCore, SIGNAL(isAuthenticated(bool)),
             this, SIGNAL(isAuthenticated(bool)));
     connect(obsCore, SIGNAL(selfSignedCertificate(QNetworkReply*)),
@@ -139,7 +140,7 @@ bool OBS::isAuthenticated()
 
 void OBS::login()
 {
-    request("/");
+    obsCore->login();
 }
 
 void OBS::getBuildStatus(const QStringList &stringList, int row)
