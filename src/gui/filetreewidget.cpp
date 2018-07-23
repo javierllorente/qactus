@@ -43,7 +43,7 @@ void FileTreeWidget::dropEvent(QDropEvent *event)
 
     foreach (const QUrl &url, event->mimeData()->urls()) {
         pathList.append(url.toLocalFile());
-        qDebug() << "Dropped file:" << pathList;
+        qDebug() << "FileTreeWidget::dropEvent() Dropped file:" << pathList;
     }
 
     foreach (QString path, pathList) {
