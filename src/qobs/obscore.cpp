@@ -430,9 +430,21 @@ void OBSCore::replyFinished(QNetworkReply *reply)
         break; // end of case QNetworkReply::NoError
 
     case QNetworkReply::ContentNotFoundError: // 404
-        // Package/Project not found
         if (isAuthenticated()) {
-            xmlReader->addData(data);
+            if (reply->property("reqtype").isValid()) {
+                QString reqType = "RequestType";
+
+                switch(reply->property("reqtype").toInt()) {
+
+                case OBSCore::BuildStatus: // <status>
+                    qDebug() << reqType << "BuildStatus";
+                    xmlReader->parseBuildStatus(data);
+                    break;
+
+                default:
+                    qDebug() << "OBSCore Error 404 NOT handled for request type" << reply->property("reqtype").toInt();
+                }
+            }
         }
         break;
 
