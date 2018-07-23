@@ -383,6 +383,7 @@ void MainWindow::loadProjects()
     ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setRootIsDecorated(false);
+    ui->treeFiles->setAcceptDrops(false);
     ui->action_Delete->setEnabled(false);
 
     emit updateStatusBar(tr("Getting projects..."), false);
@@ -462,6 +463,7 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
     getPackages(ui->treeProjects->currentIndex());
     filterBuilds("");
     setupProjectActions();
+    ui->treeFiles->setAcceptDrops(false);
 }
 
 void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
@@ -472,6 +474,7 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
     if (ui->treeBuilds->currentIndex().isValid()) {
         getPackageFiles(ui->treeBuilds->currentIndex());
         setupPackageActions();
+        ui->treeFiles->setAcceptDrops(true);
 
     } else {
         // If there is no package selected, clear both the file and build result lists
@@ -486,6 +489,7 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
         }
 
         setupProjectActions();
+        ui->treeFiles->setAcceptDrops(false);
     }
 }
 
@@ -523,6 +527,8 @@ void MainWindow::reloadPackages()
     }
 
     setupProjectActions();
+
+    ui->treeFiles->setAcceptDrops(false);
 }
 
 void MainWindow::getPackageFiles(QModelIndex index)

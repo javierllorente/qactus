@@ -23,7 +23,7 @@
 FileTreeWidget::FileTreeWidget(QWidget *parent) :
     QTreeView(parent)
 {
-    setAcceptDrops(true);
+
 }
 
 void FileTreeWidget::dragEnterEvent(QDragEnterEvent *event)
