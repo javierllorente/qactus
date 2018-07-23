@@ -855,13 +855,6 @@ void MainWindow::newPackage()
 void MainWindow::uploadFile(QString path)
 {
     qDebug() << "MainWindow:uploadFile() path:" << path;
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return;
-    }
-
-    QByteArray data = file.readAll();
-    qDebug() << "MainWindow::uploadFile() data.size()" << data.size();
 
     QModelIndex prjIndex = ui->treeProjects->currentIndex();
     QString project = prjIndex.data().toString();
@@ -869,13 +862,25 @@ void MainWindow::uploadFile(QString path)
     QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
     QString package = pkgIndex.data().toString();
 
-    QFileInfo fi(file.fileName());
-    QString fileName = fi.fileName();
+    if (!project.isEmpty() && !package.isEmpty()) {
+        QFile file(path);
+        if (!file.open(QIODevice::ReadOnly)) {
+            return;
+        }
 
-    obs->uploadFile(project, package, fileName, data);
+        QByteArray data = file.readAll();
+        qDebug() << "MainWindow::uploadFile() data.size()" << data.size();
 
-    QString statusText = tr("Uploading %1 to %2/%3...").arg(fileName, project, package);
-    emit updateStatusBar(statusText, false);
+        QFileInfo fi(file.fileName());
+        QString fileName = fi.fileName();
+
+        obs->uploadFile(project, package, fileName, data);
+
+        QString statusText = tr("Uploading %1 to %2/%3...").arg(fileName, project, package);
+        emit updateStatusBar(statusText, false);
+    } else {
+        qDebug() << "MainWindow:uploadFile() File" << path << "cannot be uploaded. Project/package is empty!";
+    }
 }
 
 void MainWindow::deleteProject()
