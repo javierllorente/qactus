@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(slotContextMenuRequests(QPoint)));
     ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    connect(obs, SIGNAL(apiNotFound(QUrl)), this, SLOT(slotApiNotFound(QUrl)));
     connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(isAuthenticated(bool)));
     connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
             this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
@@ -1766,6 +1767,17 @@ void MainWindow::readProxySettings()
     }
 
     settings.endGroup();
+}
+
+void MainWindow::slotApiNotFound(QUrl url)
+{
+    qDebug() << " MainWindow::slotApiNotFound()";
+    const QString title = tr("Error");
+    const QString text = QString(tr("OBS API not found at<br>%1<br>"
+                                    "Please check the URL and retry")).arg(url.toString());
+    QMessageBox::critical(this, title, text);
+
+    emit updateStatusBar(tr("OBS API not found at ") + url.toString(), true);
 }
 
 void MainWindow::readTimerSettings()

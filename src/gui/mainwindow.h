@@ -151,6 +151,7 @@ signals:
 
 private slots:
     void readProxySettings();
+    void slotApiNotFound(QUrl url);
     void startTimer(bool authenticated);
     void readTimerSettings();
     void showNetworkError(const QString &networkError);
