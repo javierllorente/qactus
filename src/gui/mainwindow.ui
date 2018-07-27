@@ -408,6 +408,7 @@
    <addaction name="actionChange_request_state"/>
    <addaction name="action_Refresh"/>
    <addaction name="action_Upload_file"/>
+   <addaction name="action_Download_file"/>
    <addaction name="action_Delete"/>
    <addaction name="action_Mark_all_as_read"/>
   </widget>
@@ -585,6 +586,17 @@
    </property>
    <property name="visible">
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Download_file">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="download"/>
+   </property>
+   <property name="text">
+    <string>&amp;Download file</string>
    </property>
   </action>
  </widget>
