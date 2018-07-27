@@ -245,8 +245,8 @@ void OBSCore::replyFinished(QNetworkReply *reply)
     // once data is read from the object, it no longer kept by the device.
     // It is therefore the application's responsibility to keep this data if it needs to.
     // See http://doc.qt.nokia.com/latest/qnetworkreply.html for more info
+    QByteArray data = reply->readAll();
 
-    QString data = QString::fromUtf8(reply->readAll());
     qDebug() << "OBSCore::replyFinished()" << reply->url().toString();
     int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << "OBSCore::replyFinished() HTTP status code:" << httpStatusCode;
@@ -269,38 +269,46 @@ void OBSCore::replyFinished(QNetworkReply *reply)
         xmlReader->setPackageRow(row);
     }
 
+    QString reqTypeStr = "RequestType";
+
     switch (reply->error()) {
 
-    case QNetworkReply::NoError:
+    case QNetworkReply::NoError: {
         qDebug() << "OBSCore::replyFinished() Request succeeded! Status code:" << httpStatusCode;
 
         if (reply->property("reqtype").isValid()) {
-            QString reqType = "RequestType";
+            QString reqTypeStr = "RequestType";
+            int reqType = reply->property("reqtype").toInt();
 
-            switch(reply->property("reqtype").toInt()) {
+            QString dataStr;
+            if (reqType != OBSCore::DownloadFile) {
+                dataStr = QString::fromUtf8(data);
+            }
+
+            switch(reqType) {
 
             case OBSCore::Login: // <html>
-                qDebug() << reqType << "Login";
+                qDebug() << reqTypeStr << "Login";
                 // do nothing
                 break;
 
             case OBSCore::ProjectList: // <directory>
-                qDebug() << reqType << "ProjectList";
-                xmlReader->parseProjectList(data);
+                qDebug() << reqTypeStr << "ProjectList";
+                xmlReader->parseProjectList(dataStr);
                 break;
 
             case OBSCore::ProjectMetadata: // <project>
-                qDebug() << reqType << "ProjectList";
-                xmlReader->parseProjectMetadata(data);
+                qDebug() << reqTypeStr << "ProjectList";
+                xmlReader->parseProjectMetadata(dataStr);
                 break;
 
             case OBSCore::PackageList: // <directory>
-                qDebug() << reqType << "PackageList";
-                xmlReader->parsePackageList(data);
+                qDebug() << reqTypeStr << "PackageList";
+                xmlReader->parsePackageList(dataStr);
                 break;
 
             case OBSCore::FileList: { // <directory>
-                qDebug() << reqType << "FileList";
+                qDebug() << reqTypeStr << "FileList";
                 QString project;
                 QString package;
                 if (reply->property("prjfile").isValid()) {
@@ -309,37 +317,37 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("pkgfile").isValid()) {
                     package = reply->property("pkgfile").toString();
                 }
-                xmlReader->parseFileList(project, package, data);
+                xmlReader->parseFileList(project, package, dataStr);
                 break;
             }
 
             case OBSCore::BuildStatus: // <status>
-                qDebug() << reqType << "BuildStatus";
-                xmlReader->parseBuildStatus(data);
+                qDebug() << reqTypeStr << "BuildStatus";
+                xmlReader->parseBuildStatus(dataStr);
                 break;
 
             case OBSCore::BuildStatusList: // <resultlist>
-                qDebug() << reqType << "BuildStatusList";
-                xmlReader->parseResultList(data);
+                qDebug() << reqTypeStr << "BuildStatusList";
+                xmlReader->parseResultList(dataStr);
                 break;
 
             case OBSCore::Requests: // <collection>
-                qDebug() << reqType << "Collection";
-                xmlReader->parseRequests(data);
+                qDebug() << reqTypeStr << "Collection";
+                xmlReader->parseRequests(dataStr);
                 break;
 
             case OBSCore::SubmitRequest:
-                qDebug() << reqType << "SubmitRequest";
-                xmlReader->parseSubmitRequest(data);
+                qDebug() << reqTypeStr << "SubmitRequest";
+                xmlReader->parseSubmitRequest(dataStr);
                 break;
 
             case OBSCore::SRDiff:
-                qDebug() << reqType << "SRDiff";
-                emit srDiffFetched(data);
+                qDebug() << reqTypeStr << "SRDiff";
+                emit srDiffFetched(dataStr);
                 break;
 
             case OBSCore::BranchPackage: {
-                qDebug() << reqType << "BranchPackage";
+                qDebug() << reqTypeStr << "BranchPackage";
                 QString project;
                 QString package;
                 if (reply->property("branchprj").isValid()) {
@@ -348,22 +356,22 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("branchpkg").isValid()) {
                     package = reply->property("branchpkg").toString();
                 }
-                xmlReader->parseBranchPackage(project, package, data);
+                xmlReader->parseBranchPackage(project, package, dataStr);
                 break;
             }
 
             case OBSCore::CreateProject: {
-                qDebug() << reqType << "CreateProject";
+                qDebug() << reqTypeStr << "CreateProject";
                 QString project;
                 if (reply->property("createprj").isValid()) {
                     project = reply->property("createprj").toString();
                 }
-                xmlReader->parseCreateProject(project, data);
+                xmlReader->parseCreateProject(project, dataStr);
                 break;
             }
 
             case OBSCore::CreatePackage: {
-                qDebug() << reqType << "CreatePackage";
+                qDebug() << reqTypeStr << "CreatePackage";
                 QString project;
                 QString package;
                 if (reply->property("createprj").isValid()) {
@@ -372,12 +380,12 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("createpkg").isValid()) {
                     package = reply->property("createpkg").toString();
                 }
-                xmlReader->parseCreatePackage(project, package, data);
+                xmlReader->parseCreatePackage(project, package, dataStr);
                 break;
             }
 
             case OBSCore::UploadFile: {
-                qDebug() << reqType << "UploadFile";
+                qDebug() << reqTypeStr << "UploadFile";
                 QString project;
                 QString package;
                 QString file;
@@ -390,22 +398,32 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("uploadfile").isValid()) {
                     file = reply->property("uploadfile").toString();
                 }
-                xmlReader->parseUploadFile(project, package, file, data);
+                xmlReader->parseUploadFile(project, package, file, dataStr);
+                break;
+            }
+
+            case OBSCore::DownloadFile: {
+                qDebug() << reqTypeStr << "DownloadFile";
+                QString fileName;
+                if (reply->property("downloadfile").isValid()) {
+                    fileName = reply->property("downloadfile").toString();
+                }
+                emit fileFetched(fileName, data);
                 break;
             }
 
             case OBSCore::DeleteProject: {
-                qDebug() << reqType << "DeleteProject";
+                qDebug() << reqTypeStr << "DeleteProject";
                 QString project;
                 if (reply->property("deleteprj").isValid()) {
                     project = reply->property("deleteprj").toString();
                 }
-                xmlReader->parseDeleteProject(project, data);
+                xmlReader->parseDeleteProject(project, dataStr);
                 break;
             }
 
             case OBSCore::DeletePackage: {
-                qDebug() << reqType << "DeletePackage";
+                qDebug() << reqTypeStr << "DeletePackage";
                 QString project;
                 QString package;
                 if (reply->property("deleteprj").isValid()) {
@@ -414,12 +432,12 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("deletepkg").isValid()) {
                     package = reply->property("deletepkg").toString();
                 }
-                xmlReader->parseDeletePackage(project, package, data);
+                xmlReader->parseDeletePackage(project, package, dataStr);
                 break;
             }
 
             case OBSCore::DeleteFile: {
-                qDebug() << reqType << "DeleteFile";
+                qDebug() << reqTypeStr << "DeleteFile";
                 QString project;
                 QString package;
                 QString fileName;
@@ -432,36 +450,38 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("deletefile").isValid()) {
                     fileName = reply->property("deletefile").toString();
                 }
-                xmlReader->parseDeleteFile(project, package, fileName, data);
+                xmlReader->parseDeleteFile(project, package, fileName, dataStr);
                 break;
             }
 
             case OBSCore::About:
-                qDebug() << reqType << "About";
-                xmlReader->parseAbout(data);
+                qDebug() << reqTypeStr << "About";
+                xmlReader->parseAbout(dataStr);
                 break;
             }
             return;
         }
-        xmlReader->addData(data);
+        QString dataStr = QString::fromUtf8(data);
+        xmlReader->addData(dataStr);
         break; // end of case QNetworkReply::NoError
+    }
 
     case QNetworkReply::ContentNotFoundError: // 404
         if (reply->property("reqtype").isValid()) {
-            QString reqType = "RequestType";
 
             switch(reply->property("reqtype").toInt()) {
 
             case OBSCore::Login:
-                qDebug() << reqType << "Login"; // <hash><status>
+                qDebug() << reqTypeStr << "Login"; // <hash><status>
                 qDebug() << "OBSCore::replyFinished() OBS API not found at" << reply->url().toString();
                 emit apiNotFound(reply->url());
                 break;
 
             case OBSCore::BuildStatus: // <status>
-                qDebug() << reqType << "BuildStatus";
+                qDebug() << reqTypeStr << "BuildStatus";
                 if (isAuthenticated()) {
-                    xmlReader->parseBuildStatus(data);
+                    QString dataStr = QString::fromUtf8(data);
+                    xmlReader->parseBuildStatus(dataStr);
                 }
                 break;
 
@@ -648,6 +668,16 @@ void OBSCore::uploadFile(const QString &project, const QString &package, const Q
     reply->setProperty("uploadprj", project);
     reply->setProperty("uploadpkg", package);
     reply->setProperty("uploadfile", fileName);
+}
+
+void OBSCore::downloadFile(const QString &project, const QString &package, const QString &fileName)
+{
+    QString resource = QString("/source/%1/%2/%3").arg(project, package, fileName);
+    QNetworkReply *reply = request(resource);
+    reply->setProperty("reqtype", OBSCore::DownloadFile);
+    reply->setProperty("downloadprj", project);
+    reply->setProperty("downloadpkg", package);
+    reply->setProperty("downloadfile", fileName);
 }
 
 void OBSCore::deleteProject(const QString &project)
