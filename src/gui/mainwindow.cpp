@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(slotUploadFile(OBSRevision*)));
     connect(obs, SIGNAL(cannotUploadFile(OBSStatus*)),
             this, SLOT(slotUploadFileError(OBSStatus*)));
+    connect(obs, SIGNAL(fileFetched(QString,QByteArray)), this, SLOT(slotFileFetched(QString, QByteArray)));
 
     connect(obs, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
@@ -274,6 +275,7 @@ void MainWindow::setupProjectActions()
     qDebug() << "MainWindow::setupProjectActions()";
     ui->action_Branch_package->setEnabled(false);
     ui->action_Upload_file->setEnabled(false);
+    ui->action_Download_file->setEnabled(false);
     actionDelete_file->setEnabled(false);
     actionDelete_package->setEnabled(false);
     actionDelete_project->setEnabled(true);
@@ -302,6 +304,7 @@ void MainWindow::setupPackageActions()
     qDebug() << "MainWindow::setupPackageActions()";
     ui->action_Branch_package->setEnabled(true);
     ui->action_Upload_file->setEnabled(true);
+    ui->action_Download_file->setEnabled(false);
     actionDelete_file->setEnabled(false);
     actionDelete_package->setEnabled(true);
     ui->action_Delete->setEnabled(true);
@@ -327,6 +330,7 @@ void MainWindow::setupPackageActions()
 void MainWindow::setupFileActions()
 {
     qDebug() << "MainWindow::setupFileActions()";
+    ui->action_Download_file->setEnabled(true);
     actionDelete_file->setEnabled(true);
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence());
@@ -643,6 +647,7 @@ void MainWindow::slotContextMenuFiles(const QPoint &point)
 {
     QMenu *treeFilesMenu = new QMenu(ui->treeFiles);
     treeFilesMenu->addAction(ui->action_Upload_file);
+    treeFilesMenu->addAction(ui->action_Download_file);
     treeFilesMenu->addAction(action_ReloadFiles);
     treeFilesMenu->addAction(actionDelete_file);
 
@@ -832,6 +837,14 @@ void MainWindow::on_action_Upload_file_triggered()
         qDebug() << "MainWindow::on_action_Upload_file_triggered() Selected file:" << path;
         uploadFile(path);
     }
+}
+
+void MainWindow::on_action_Download_file_triggered()
+{
+    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    QString currentFile = ui->treeFiles->currentIndex().data().toString();
+    obs->downloadFile(currentProject, currentPackage, currentFile);
 }
 
 void MainWindow::newProject()
@@ -1284,6 +1297,20 @@ void MainWindow::slotUploadFileError(OBSStatus *obsStatus)
     obsStatus = nullptr;
 
     emit updateStatusBar(statusText, true);
+}
+
+void MainWindow::slotFileFetched(const QString &fileName, const QByteArray &data)
+{
+    QString path = QFileDialog::getSaveFileName(this, tr("Save as"), fileName);
+    QFile file(path);
+
+    file.open(QIODevice::WriteOnly);
+    qint64 bytesWritten = file.write(data);
+    file.close();
+
+    if (bytesWritten!=-1) {
+        trayIcon->showMessage(APP_NAME, tr("File %1 downloaded successfuly").arg(fileName));
+    }
 }
 
 void MainWindow::slotDeleteProject(OBSStatus *obsStatus)
@@ -1854,8 +1881,10 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     if (treeFilesSelectionModel) {
         QList<QModelIndex> selectedFiles = treeFilesSelectionModel->selectedIndexes();
         bool enable = !selectedFiles.isEmpty();
+        ui->action_Download_file->setEnabled(enable);
         actionDelete_file->setEnabled(enable);
     } else {
+        ui->action_Download_file->setEnabled(false);
         actionDelete_file->setEnabled(false);
     }
 
@@ -1885,6 +1914,7 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
     ui->action_Upload_file->setVisible(browserTabVisible);
+    ui->action_Download_file->setVisible(browserTabVisible);
     ui->action_Delete->setVisible(browserTabVisible);
     actionFilterSpacer->setVisible(browserTabVisible);
     actionFilter->setVisible(browserTabVisible);

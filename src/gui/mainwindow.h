@@ -185,6 +185,7 @@ private slots:
     void on_action_Refresh_triggered();
     void on_action_Branch_package_triggered();
     void on_action_Upload_file_triggered();
+    void on_action_Download_file_triggered();
     void newProject();
     void newPackage();
     void uploadFile(QString path);
@@ -213,6 +214,7 @@ private slots:
     void slotBranchPackage(OBSStatus *obsStatus);
     void slotUploadFile(OBSRevision *obsRevision);
     void slotUploadFileError(OBSStatus *obsStatus);
+    void slotFileFetched(const QString &fileName, const QByteArray &data);
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
     void slotDeleteFile(OBSStatus *obsStatus);
