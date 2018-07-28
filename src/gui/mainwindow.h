@@ -46,6 +46,7 @@
 #include "credentials.h"
 #include "browserfilter.h"
 #include "createdialog.h"
+#include "buildlogviewer.h"
 
 namespace Ui {
     class MainWindow;
@@ -82,6 +83,8 @@ private:
     QAction *action_ReloadPackages;
     QAction *action_ReloadFiles;
     QAction *action_ReloadResults;
+
+    QAction *action_getBuildLog;
 
     QAction *actionDelete_project;
     QAction *actionDelete_package;
@@ -173,6 +176,7 @@ private slots:
     void reloadFiles();
     void getBuildResults();
     void reloadResults();
+    void getBuildLog();
     void filterResults(const QString &item);
     void filterRadioButtonClicked(bool);
     void getRequestDescription(QTreeWidgetItem*, int);
@@ -215,6 +219,8 @@ private slots:
     void slotUploadFile(OBSRevision *obsRevision);
     void slotUploadFileError(OBSStatus *obsStatus);
     void slotFileFetched(const QString &fileName, const QByteArray &data);
+    void slotBuildLogFetched(const QString &buildLog);
+    void slotBuildLogNotFound();
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
     void slotDeleteFile(OBSStatus *obsStatus);

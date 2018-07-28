@@ -72,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(cannotUploadFile(OBSStatus*)),
             this, SLOT(slotUploadFileError(OBSStatus*)));
     connect(obs, SIGNAL(fileFetched(QString,QByteArray)), this, SLOT(slotFileFetched(QString, QByteArray)));
+    connect(obs, SIGNAL(buildLogFetched(QString)), this, SLOT(slotBuildLogFetched(QString)));
+    connect(obs, SIGNAL(buildLogNotFound()), this, SLOT(slotBuildLogNotFound()));
 
     connect(obs, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
@@ -599,6 +601,18 @@ void MainWindow::reloadResults()
     setupPackageActions();
 }
 
+void MainWindow::getBuildLog()
+{
+    qDebug() << "MainWindow::getBuildLog()";
+    QModelIndexList indexList = ui->treeBuildResults->selectionModel()->selectedIndexes();
+    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentBuildRepository = indexList.at(0).data().toString();
+    QString currentBuildArch = indexList.at(1).data().toString();
+    QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+
+    obs->getBuildLog(currentProject, currentBuildRepository, currentBuildArch, currentPackage);
+}
+
 void MainWindow::slotContextMenuRequests(const QPoint &point)
 {
     QMenu *treeRequestsMenu = new QMenu(ui->treeRequests);
@@ -660,6 +674,7 @@ void MainWindow::slotContextMenuFiles(const QPoint &point)
 void MainWindow::slotContextMenuResults(const QPoint &point)
 {
     QMenu *treeResultsMenu = new QMenu(ui->treeBuildResults);
+    treeResultsMenu->addAction(action_getBuildLog);
     treeResultsMenu->addAction(action_ReloadResults);
 
     QModelIndex index = ui->treeBuildResults->indexAt(point);
@@ -1313,6 +1328,23 @@ void MainWindow::slotFileFetched(const QString &fileName, const QByteArray &data
     }
 }
 
+void MainWindow::slotBuildLogFetched(const QString &buildLog)
+{
+    qDebug() << "MainWindow::slotBuildLogFetched()";
+    BuildLogViewer *buildLogViewer = new BuildLogViewer(this);
+    buildLogViewer->setText(buildLog);
+    buildLogViewer->setAttribute(Qt::WA_DeleteOnClose, true);
+    buildLogViewer->show();
+}
+
+void MainWindow::slotBuildLogNotFound()
+{
+    qDebug() << "MainWindow::slotBuildLogNotFound()";
+    QString title = tr("Information");
+    QString text = tr("Build log not found");
+    QMessageBox::information(this, title, text);
+}
+
 void MainWindow::slotDeleteProject(OBSStatus *obsStatus)
 {
     qDebug() << "MainWindow::slotDeleteProject()";
@@ -1554,6 +1586,11 @@ void MainWindow::createActions()
     action_ReloadResults = new QAction(tr("&Reload result list"), this);
     action_ReloadResults->setIcon(QIcon::fromTheme("view-refresh"));
     connect(action_ReloadResults, SIGNAL(triggered(bool)), this, SLOT(reloadResults()));
+
+    // Get build log action
+    action_getBuildLog = new QAction(tr("&Get build log"), this);
+    action_getBuildLog->setIcon(QIcon::fromTheme("text-x-log"));
+    connect(action_getBuildLog, SIGNAL(triggered(bool)), this, SLOT(getBuildLog()));
 
     // Delete actions
     actionDelete_project = new QAction(tr("Delete pro&ject"), this);
