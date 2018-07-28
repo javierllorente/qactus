@@ -412,6 +412,12 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 break;
             }
 
+            case OBSCore::BuildLog: {
+                qDebug() << reqTypeStr << "BuildLog";
+                emit buildLogFetched(dataStr);
+                break;
+            }
+
             case OBSCore::DeleteProject: {
                 qDebug() << reqTypeStr << "DeleteProject";
                 QString project;
@@ -484,6 +490,12 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                     xmlReader->parseBuildStatus(dataStr);
                 }
                 break;
+
+            case OBSCore::BuildLog: {
+                qDebug() << reqTypeStr << "BuildLog";
+                emit buildLogNotFound();
+                break;
+            }
 
             default:
                 qDebug() << "OBSCore Error 404 NOT handled for request type" << reply->property("reqtype").toInt();
@@ -678,6 +690,13 @@ void OBSCore::downloadFile(const QString &project, const QString &package, const
     reply->setProperty("downloadprj", project);
     reply->setProperty("downloadpkg", package);
     reply->setProperty("downloadfile", fileName);
+}
+
+void OBSCore::getBuildLog(const QString &project, const QString &repository, const QString &arch, const QString &package)
+{
+    QString resource = QString("/build/%1/%2/%3/%4/_log").arg(project, repository, arch, package);
+    QNetworkReply *reply = request(resource);
+    reply->setProperty("reqtype", OBSCore::BuildLog);
 }
 
 void OBSCore::deleteProject(const QString &project)

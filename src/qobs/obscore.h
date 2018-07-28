@@ -67,6 +67,7 @@ public:
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
     void uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data);
     void downloadFile(const QString &project, const QString &package, const QString &fileName);
+    void getBuildLog(const QString &project, const QString &repository, const QString &arch, const QString &package);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
     void deleteFile(const QString &project, const QString &package, const QString &fileName);
@@ -78,7 +79,9 @@ signals:
     void selfSignedCertificate(QNetworkReply *reply);
     void networkError(const QString &error);
     void srDiffFetched(const QString &diff);
-    void fileFetched(const QString fileName, const QByteArray &data);
+    void fileFetched(const QString &fileName, const QByteArray &data);
+    void buildLogFetched(const QString &buildLog);
+    void buildLogNotFound();
     void cannotCreateProject(OBSStatus *obsStatus);
     void cannotCreatePackage(OBSStatus *obsStatus);
     void cannotUploadFile(OBSStatus *obsStatus);
@@ -127,6 +130,7 @@ private:
         CreatePackage,
         UploadFile,
         DownloadFile,
+        BuildLog,
         DeleteProject,
         DeletePackage,
         DeleteFile,
