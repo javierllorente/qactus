@@ -32,7 +32,8 @@ SOURCES += main.cpp \
     syntaxhighlighter.cpp \
     browserfilter.cpp \
     createdialog.cpp \
-    filetreewidget.cpp
+    filetreewidget.cpp \
+    buildlogviewer.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -47,14 +48,16 @@ HEADERS += mainwindow.h \
     syntaxhighlighter.h \
     browserfilter.h \
     createdialog.h \
-    filetreewidget.h
+    filetreewidget.h \
+    buildlogviewer.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \
     roweditor.ui \
     requeststateeditor.ui \
     browserfilter.ui \
-    createdialog.ui
+    createdialog.ui \
+    buildlogviewer.ui
 OTHER_FILES += ../README.md \
     ../LICENSE
 INSTALLS += target \
