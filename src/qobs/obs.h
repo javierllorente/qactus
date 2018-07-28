@@ -85,6 +85,8 @@ signals:
     void finishedParsingUploadFileRevision(OBSRevision*);
     void cannotUploadFile(OBSStatus *obsStatus);
     void fileFetched(const QString &fileName, const QByteArray &data);
+    void buildLogFetched(const QString &buildLog);
+    void buildLogNotFound();
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingDeleteFileStatus(OBSStatus*);
@@ -114,6 +116,7 @@ public slots:
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
     void uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data);
     void downloadFile(const QString &project, const QString &package, const QString &fileName);
+    void getBuildLog(const QString &project, const QString &repository, const QString &arch, const QString &package);
 };
 
 #endif // OBS_H

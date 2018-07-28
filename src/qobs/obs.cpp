@@ -51,6 +51,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(obsCore, SIGNAL(cannotUploadFile(OBSStatus*)),
             this, SIGNAL(cannotUploadFile(OBSStatus*)));
     connect(obsCore, SIGNAL(fileFetched(QString,QByteArray)), this, SIGNAL(fileFetched(QString,QByteArray)));
+    connect(obsCore, SIGNAL(buildLogFetched(QString)), this, SIGNAL(buildLogFetched(QString)));
+    connect(obsCore, SIGNAL(buildLogNotFound()), this, SIGNAL(buildLogNotFound()));
     connect(xmlReader, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
@@ -272,6 +274,11 @@ void OBS::uploadFile(const QString &project, const QString &package, const QStri
 void OBS::downloadFile(const QString &project, const QString &package, const QString &fileName)
 {
     obsCore->downloadFile(project, package, fileName);
+}
+
+void OBS::getBuildLog(const QString &project, const QString &repository, const QString &arch, const QString &package)
+{
+    obsCore->getBuildLog(project, repository, arch, package);
 }
 
 void OBS::deleteProject(const QString &project)
