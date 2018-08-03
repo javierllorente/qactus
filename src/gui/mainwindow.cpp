@@ -400,8 +400,9 @@ void MainWindow::loadProjects()
 void MainWindow::filterProjects(const QString &item)
 {
     // Always include the user's home project
-    QString noHomeProjects = QString("home:%1|^(?!home)(.*%2)").arg(obs->getUsername(), item);
-    QString regExp = !includeHomeProjects ? noHomeProjects : item;
+    QString regExp = includeHomeProjects ?
+                item : QString("^(home:%1)|^(?!home)(.*%2)").arg(obs->getUsername(), item);
+
     proxyModelProjects->setFilterRegExp(QRegExp(regExp, Qt::CaseInsensitive));
     proxyModelProjects->setFilterKeyColumn(0);
 
