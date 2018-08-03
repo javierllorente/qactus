@@ -614,6 +614,7 @@ void MainWindow::getBuildLog()
     QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
 
     obs->getBuildLog(currentProject, currentBuildRepository, currentBuildArch, currentPackage);
+    emit updateStatusBar(tr("Getting build log..."), false);
 }
 
 void MainWindow::slotContextMenuRequests(const QPoint &point)
@@ -1338,6 +1339,7 @@ void MainWindow::slotBuildLogFetched(const QString &buildLog)
     buildLogViewer->show();
     buildLogViewer->setText(buildLog);
     buildLogViewer->setAttribute(Qt::WA_DeleteOnClose, true);
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void MainWindow::slotBuildLogNotFound()
@@ -1346,6 +1348,7 @@ void MainWindow::slotBuildLogNotFound()
     QString title = tr("Information");
     QString text = tr("Build log not found");
     QMessageBox::information(this, title, text);
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void MainWindow::slotDeleteProject(OBSStatus *obsStatus)
