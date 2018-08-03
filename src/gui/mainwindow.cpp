@@ -1332,9 +1332,9 @@ void MainWindow::slotBuildLogFetched(const QString &buildLog)
 {
     qDebug() << "MainWindow::slotBuildLogFetched()";
     BuildLogViewer *buildLogViewer = new BuildLogViewer(this);
+    buildLogViewer->show();
     buildLogViewer->setText(buildLog);
     buildLogViewer->setAttribute(Qt::WA_DeleteOnClose, true);
-    buildLogViewer->show();
 }
 
 void MainWindow::slotBuildLogNotFound()

@@ -22,6 +22,7 @@
 #define BUILDLOGVIEWER_H
 
 #include <QDialog>
+#include <QScrollBar>
 
 namespace Ui {
 class BuildLogViewer;
@@ -39,6 +40,7 @@ public:
 
 private:
     Ui::BuildLogViewer *ui;
+    void scrollToBottom();
 };
 
 #endif // BUILDLOGVIEWER_H

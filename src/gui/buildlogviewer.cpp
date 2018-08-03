@@ -26,6 +26,7 @@ BuildLogViewer::BuildLogViewer(QWidget *parent) :
     ui(new Ui::BuildLogViewer)
 {
     ui->setupUi(this);
+
 }
 
 BuildLogViewer::~BuildLogViewer()
@@ -36,4 +37,10 @@ BuildLogViewer::~BuildLogViewer()
 void BuildLogViewer::setText(const QString &text)
 {
     ui->textEdit->setText(text);
+    scrollToBottom();
+}
+
+void BuildLogViewer::scrollToBottom()
+{
+    ui->textEdit->verticalScrollBar()->setValue(ui->textEdit->verticalScrollBar()->maximum());
 }
