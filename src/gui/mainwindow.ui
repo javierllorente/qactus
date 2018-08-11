@@ -407,6 +407,7 @@
    <addaction name="action_Remove"/>
    <addaction name="actionChange_request_state"/>
    <addaction name="action_Refresh"/>
+   <addaction name="action_Home"/>
    <addaction name="action_Upload_file"/>
    <addaction name="action_Download_file"/>
    <addaction name="action_Delete"/>
@@ -593,10 +594,23 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="download"/>
+    <iconset theme="download">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Download file</string>
+   </property>
+  </action>
+  <action name="action_Home">
+   <property name="icon">
+    <iconset theme="user-home">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Home</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
  </widget>
