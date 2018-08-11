@@ -455,9 +455,10 @@ void MainWindow::refreshProjectFilter()
     }
 }
 
-void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
+void MainWindow::projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     qDebug() << "MainWindow::projectSelectionChanged()";
+    Q_UNUSED(deselected);
 
     // Clean up files and build results on project click
     if (sourceModelFiles!=nullptr) {
@@ -470,19 +471,22 @@ void MainWindow::projectSelectionChanged(const QItemSelection &/*selected*/, con
         sourceModelBuildResults = nullptr;
     }
 
-    getPackages(ui->treeProjects->currentIndex());
+    QModelIndex selectedProject = selected.indexes().at(0);
+    getPackages(selectedProject);
     filterBuilds("");
     setupProjectActions();
     ui->treeFiles->setAcceptDrops(false);
 }
 
-void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
+void MainWindow::buildSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     qDebug() << "MainWindow::buildSelectionChanged()";
+    Q_UNUSED(deselected);
+    QModelIndex selectedPackage = selected.indexes().at(0);
 
     // Make sure the index is valid (eg: the filter yields results)
-    if (ui->treeBuilds->currentIndex().isValid()) {
-        getPackageFiles(ui->treeBuilds->currentIndex());
+    if (selectedPackage.isValid()) {
+        getPackageFiles(selectedPackage);
         setupPackageActions();
         ui->treeFiles->setAcceptDrops(true);
 
@@ -503,9 +507,11 @@ void MainWindow::buildSelectionChanged(const QItemSelection &/*selected*/, const
     }
 }
 
-void MainWindow::fileSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
+void MainWindow::fileSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     qDebug() << "MainWindow::fileSelectionChanged()";
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
     setupFileActions();
 }
 
@@ -845,6 +851,19 @@ void MainWindow::on_action_Branch_package_triggered()
         obs->branchPackage(project, build);
         const QString statusText = tr("Branching %1/%2...").arg(project, build);
         emit updateStatusBar(statusText, false);
+    }
+}
+
+void MainWindow::on_action_Home_triggered()
+{
+    QString userHomeProject = QString("home:%1").arg(obs->getUsername());
+    QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
+                                                                Qt::DisplayRole, QVariant::fromValue(QString(userHomeProject)),
+                                                                1, Qt::MatchExactly);
+    if (!itemList.isEmpty()) {
+        auto itemIndex = itemList.at(0);
+        ui->treeProjects->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+        ui->treeProjects->scrollTo(itemIndex, QAbstractItemView::PositionAtTop);
     }
 }
 
@@ -1956,6 +1975,7 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     bool browserTabVisible = (index==0);
     actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
+    ui->action_Home->setVisible(browserTabVisible);
     ui->action_Upload_file->setVisible(browserTabVisible);
     ui->action_Download_file->setVisible(browserTabVisible);
     ui->action_Delete->setVisible(browserTabVisible);

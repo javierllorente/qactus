@@ -188,6 +188,7 @@ private slots:
     void on_action_Remove_triggered();
     void on_action_Refresh_triggered();
     void on_action_Branch_package_triggered();
+    void on_action_Home_triggered();
     void on_action_Upload_file_triggered();
     void on_action_Download_file_triggered();
     void newProject();
@@ -228,9 +229,9 @@ private slots:
     void removeRequest(const QString& id);
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
     void refreshProjectFilter();
-    void projectSelectionChanged(const QItemSelection &, const QItemSelection &);
-    void buildSelectionChanged(const QItemSelection &, const QItemSelection &);
-    void fileSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void buildSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void fileSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void srStatusSlot(const QString &status);
 };
 
