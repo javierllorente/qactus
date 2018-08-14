@@ -114,6 +114,7 @@ private:
     void setupProjectActions();
     void setupPackageActions();
     void setupFileActions();
+    void setupModels();
     QString currentProject;
     QString currentPackage;
     void filterProjects(const QString &item);

@@ -353,10 +353,9 @@ void MainWindow::setupFileActions()
     actionNew_package->setShortcut(QKeySequence());
 }
 
-void MainWindow::loadProjects()
+void MainWindow::setupModels()
 {
-    qDebug() << "MainWindow::loadProjects()";
-
+    qDebug() << "MainWindow::setupModels()";
     // Clean up package list, files and results
     if (proxyModelBuilds!=nullptr) {
         delete proxyModelBuilds;
@@ -384,6 +383,13 @@ void MainWindow::loadProjects()
             SLOT(projectSelectionChanged(QItemSelection,QItemSelection)));
     connect(buildsSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
             SLOT(buildSelectionChanged(QItemSelection,QItemSelection)));
+}
+
+void MainWindow::loadProjects()
+{
+    qDebug() << "MainWindow::loadProjects()";
+
+    setupModels();
 
     ui->treeProjects->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuilds->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -399,11 +405,7 @@ void MainWindow::loadProjects()
 
 void MainWindow::filterProjects(const QString &item)
 {
-    // Always include the user's home project
-    QString regExp = includeHomeProjects ?
-                item : QString("^(home:%1)|^(?!home)(.*%2)").arg(obs->getUsername(), item);
-
-    proxyModelProjects->setFilterRegExp(QRegExp(regExp, Qt::CaseInsensitive));
+    proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive));
     proxyModelProjects->setFilterKeyColumn(0);
 
     QModelIndex currentIndex = ui->treeProjects->currentIndex();
@@ -451,7 +453,27 @@ void MainWindow::refreshProjectFilter()
     qDebug() << "MainWindow::refreshProjectFilter()";
     readBrowserSettings();
     if (browserFilter->isProjectChecked()) {
+        OBSXmlReader *reader = obs->getXmlReader();
+        reader->setFileName("projects.xml");
+        reader->readList();
+        QStringList projectList = reader->getList();
+
+        if (!includeHomeProjects) {
+            QMutableListIterator<QString> i(projectList);
+            while (i.hasNext()) {
+                i.next();
+                if (i.value().startsWith("home:" + obs->getUsername())) {
+                    i.next();
+                }
+                if (i.value().startsWith("home")) {
+                    i.remove();
+                }
+            }
+        }
+
+        sourceModelProjects->setStringList(projectList);
         filterProjects(browserFilter->getText());
+        setupModels();
     }
 }
 
@@ -1107,10 +1129,27 @@ void MainWindow::insertProjectList()
     qDebug() << "MainWindow::insertProjectList()";
     OBSXmlReader *reader = obs->getXmlReader();
     reader->readList();
-    sourceModelProjects->setStringList(reader->getList());
+    QStringList projectList = reader->getList();
+
+    if (!includeHomeProjects) {
+        QMutableListIterator<QString> i(projectList);
+        while (i.hasNext()) {
+            i.next();
+            if (i.value().startsWith("home:" + obs->getUsername())) {
+                i.next();
+            }
+            if (i.value().startsWith("home")) {
+                i.remove();
+            }
+        }
+    }
+
+    sourceModelProjects->setStringList(projectList);
     proxyModelProjects->setSourceModel(sourceModelProjects);
     ui->treeProjects->setModel(proxyModelProjects);
-    filterProjects("");
+
+    QString browserFilterText = browserFilter->getText();
+    filterProjects(browserFilterText);
     emit updateStatusBar(tr("Done"), true);
 }
 
