@@ -475,12 +475,14 @@ void MainWindow::refreshProjectFilter()
 {
     qDebug() << "MainWindow::refreshProjectFilter()";
     readBrowserSettings();
-    if (browserFilter->isProjectChecked()) {
         QStringList projectList = readProjectList();
         sourceModelProjects->setStringList(projectList);
-        filterProjects(browserFilter->getText());
+        if (browserFilter->isProjectChecked()) {
+            filterProjects(browserFilter->getText());
+        } else {
+            browserFilter->clear();
+        }
         setupModels();
-    }
 }
 
 void MainWindow::projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
