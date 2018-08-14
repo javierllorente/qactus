@@ -481,6 +481,7 @@ void MainWindow::refreshProjectFilter()
             filterProjects(browserFilter->getText());
         } else {
             browserFilter->clear();
+            filterProjects("");
         }
         setupModels();
 }
