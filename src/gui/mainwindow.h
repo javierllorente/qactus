@@ -115,6 +115,7 @@ private:
     void setupPackageActions();
     void setupFileActions();
     void setupModels();
+    QStringList readProjectList() const;
     QString currentProject;
     QString currentPackage;
     void filterProjects(const QString &item);

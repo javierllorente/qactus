@@ -385,6 +385,29 @@ void MainWindow::setupModels()
             SLOT(buildSelectionChanged(QItemSelection,QItemSelection)));
 }
 
+QStringList MainWindow::readProjectList() const
+{
+    qDebug() << "MainWindow::readProjectList()";
+    OBSXmlReader *reader = obs->getXmlReader();
+    reader->setFileName("projects.xml");
+    reader->readList();
+    QStringList projectList = reader->getList();
+
+    if (!includeHomeProjects) {
+        QMutableListIterator<QString> i(projectList);
+        while (i.hasNext()) {
+            i.next();
+            if (i.value().startsWith("home:" + obs->getUsername())) {
+                i.next();
+            }
+            if (i.value().startsWith("home")) {
+                i.remove();
+            }
+        }
+    }
+    return projectList;
+}
+
 void MainWindow::loadProjects()
 {
     qDebug() << "MainWindow::loadProjects()";
@@ -453,24 +476,7 @@ void MainWindow::refreshProjectFilter()
     qDebug() << "MainWindow::refreshProjectFilter()";
     readBrowserSettings();
     if (browserFilter->isProjectChecked()) {
-        OBSXmlReader *reader = obs->getXmlReader();
-        reader->setFileName("projects.xml");
-        reader->readList();
-        QStringList projectList = reader->getList();
-
-        if (!includeHomeProjects) {
-            QMutableListIterator<QString> i(projectList);
-            while (i.hasNext()) {
-                i.next();
-                if (i.value().startsWith("home:" + obs->getUsername())) {
-                    i.next();
-                }
-                if (i.value().startsWith("home")) {
-                    i.remove();
-                }
-            }
-        }
-
+        QStringList projectList = readProjectList();
         sourceModelProjects->setStringList(projectList);
         filterProjects(browserFilter->getText());
         setupModels();
@@ -1127,22 +1133,7 @@ void MainWindow::createTreeRequests()
 void MainWindow::insertProjectList()
 {
     qDebug() << "MainWindow::insertProjectList()";
-    OBSXmlReader *reader = obs->getXmlReader();
-    reader->readList();
-    QStringList projectList = reader->getList();
-
-    if (!includeHomeProjects) {
-        QMutableListIterator<QString> i(projectList);
-        while (i.hasNext()) {
-            i.next();
-            if (i.value().startsWith("home:" + obs->getUsername())) {
-                i.next();
-            }
-            if (i.value().startsWith("home")) {
-                i.remove();
-            }
-        }
-    }
+    QStringList projectList = readProjectList();
 
     sourceModelProjects->setStringList(projectList);
     proxyModelProjects->setSourceModel(sourceModelProjects);
