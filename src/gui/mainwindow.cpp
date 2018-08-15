@@ -484,6 +484,7 @@ void MainWindow::refreshProjectFilter()
             filterProjects("");
         }
         setupModels();
+        ui->action_Delete->setEnabled(false);
 }
 
 void MainWindow::projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
