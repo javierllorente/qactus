@@ -161,9 +161,9 @@ private slots:
     void readTimerSettings();
     void showNetworkError(const QString &networkError);
     void handleSelfSignedCertificates(QNetworkReply*);
-    void apiChangedSlot();
-    void errorReadingPasswordSlot(const QString &error);
-    void credentialsRestoredSlot(const QString &username, const QString &password);
+    void slotApiChanged();
+    void slotErrorReadingPassword(const QString &error);
+    void slotCredentialsRestored(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
     void loadProjects();
     void slotContextMenuRequests(const QPoint &point);
@@ -201,7 +201,7 @@ private slots:
     void deleteFile();
     void on_action_Mark_all_as_read_triggered();
     void markRead(QTreeWidgetItem*, int);
-    void loginSlot(const QString &username, const QString &password);
+    void slotLogin(const QString &username, const QString &password);
     void on_action_About_triggered();
     void on_action_Quit_triggered();
     void trayIconClicked(QSystemTrayIcon::ActivationReason);
@@ -234,7 +234,7 @@ private slots:
     void projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void buildSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void fileSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void srStatusSlot(const QString &status);
+    void slotSrStatus(const QString &status);
 };
 
 

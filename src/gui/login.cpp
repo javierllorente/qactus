@@ -83,7 +83,7 @@ void Login::readSettings()
     setUsername(username);
     Credentials *credentials = new Credentials();
     connect(credentials, SIGNAL(credentialsRestored(QString, QString)),
-            this, SLOT(credentialsRestoredSlot(QString, QString)));
+            this, SLOT(slotCredentialsRestored(QString, QString)));
     credentials->readPassword(username);
     delete credentials;
     qDebug() << "Login::readSettings() AutoLogin:" << settings.value("AutoLogin").toBool();
@@ -128,8 +128,8 @@ void Login::on_pushButton_Login_clicked()
     }
 }
 
-void Login::credentialsRestoredSlot(const QString &/*username*/, const QString &password)
+void Login::slotCredentialsRestored(const QString &/*username*/, const QString &password)
 {
-    qDebug() << "Login::credentialsRestoredSlot()";
+    qDebug() << "Login::slotCredentialsRestored()";
     ui->lineEdit_Password->setText(password);
 }

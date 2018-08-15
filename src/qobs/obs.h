@@ -110,7 +110,7 @@ signals:
 
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);
-    void changeSubmitRequestSlot(const QString &id, const QString &comments, bool accepted);
+    void slotChangeSubmitRequest(const QString &id, const QString &comments, bool accepted);
     void srChangeResult(OBSStatus *obsStatus);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);

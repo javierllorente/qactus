@@ -96,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(insertRequest(OBSRequest*)));
     connect(obs, SIGNAL(removeRequest(const QString&)),
             this, SLOT(removeRequest(const QString&)));
-    connect(obs, SIGNAL(srStatus(QString)), this, SLOT(srStatusSlot(QString)));
+    connect(obs, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
 
     readSettings();
     readTimerSettings();
@@ -120,16 +120,16 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::errorReadingPasswordSlot(const QString &error)
+void MainWindow::slotErrorReadingPassword(const QString &error)
 {
-    qDebug() << "MainWindow::errorReadingPasswordSlot()" << error;
+    qDebug() << "MainWindow::slotErrorReadingPassword()" << error;
     showLoginDialog();
 }
 
-void MainWindow::credentialsRestoredSlot(const QString &username, const QString &password)
+void MainWindow::slotCredentialsRestored(const QString &username, const QString &password)
 {
-    qDebug() << "MainWindow::credentialsRestored()";
-    loginSlot(username, password);
+    qDebug() << "MainWindow::slotCredentialsRestored()";
+    slotLogin(username, password);
     QProgressDialog progress(tr("Logging in..."), 0, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
@@ -207,9 +207,9 @@ void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
     }
 }
 
-void MainWindow::apiChangedSlot()
+void MainWindow::slotApiChanged()
 {
-    qDebug() << "MainWindow::apiChangedSlot()";
+    qDebug() << "MainWindow::slotApiChanged()";
     showLoginDialog();
 }
 
@@ -763,9 +763,9 @@ void MainWindow::changeRequestState()
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
 }
 
-void MainWindow::srStatusSlot(const QString &status)
+void MainWindow::slotSrStatus(const QString &status)
 {
-    qDebug() << "MainWindow::srStatusSlot()";
+    qDebug() << "MainWindow::slotSrStatus()";
     if (status=="ok") {
         QTreeWidgetItem *item = ui->treeRequests->currentItem();
         item->setHidden(true);
@@ -1567,9 +1567,9 @@ void MainWindow::slotUpdateStatusBar(const QString &message, bool progressBarHid
     progressBar->setHidden(progressBarHidden);
 }
 
-void MainWindow::loginSlot(const QString &username, const QString &password)
+void MainWindow::slotLogin(const QString &username, const QString &password)
 {
-    qDebug() << "MainWindow::loginSlot()";
+    qDebug() << "MainWindow::slotLogin()";
     obs->setCredentials(username, password);
     obs->login();
 }
@@ -1847,9 +1847,9 @@ void MainWindow::readAuthSettings()
     if (settings.value("AutoLogin").toBool()) {
         Credentials *credentials = new Credentials(this);
         connect(credentials, SIGNAL(errorReadingPassword(QString)),
-                this, SLOT(errorReadingPasswordSlot(QString)));
+                this, SLOT(slotErrorReadingPassword(QString)));
         connect(credentials, SIGNAL(credentialsRestored(QString, QString)),
-                this, SLOT(credentialsRestoredSlot(QString, QString)));
+                this, SLOT(slotCredentialsRestored(QString, QString)));
         credentials->readPassword(settings.value("Username").toString());
         delete credentials;
     }
@@ -1926,7 +1926,7 @@ void MainWindow::showLoginDialog()
     qDebug() << "MainWindow::showLoginDialog()";
     if (loginDialog==nullptr) {
         loginDialog = new Login(this);
-        connect(loginDialog, SIGNAL(login(QString,QString)), this, SLOT(loginSlot(QString,QString)));
+        connect(loginDialog, SIGNAL(login(QString,QString)), this, SLOT(slotLogin(QString,QString)));
         loginDialog->exec();
 //        delete loginDialog;
 //        loginDialog = nullptr;
@@ -1940,7 +1940,7 @@ void MainWindow::on_action_Configure_Qactus_triggered()
 {
     qDebug() << "MainWindow Launching Configure...";
     Configure *configure = new Configure(this, obs);
-    connect(configure, SIGNAL(apiChanged()), this, SLOT(apiChangedSlot()));
+    connect(configure, SIGNAL(apiChanged()), this, SLOT(slotApiChanged()));
     connect(configure, SIGNAL(proxyChanged()), this, SLOT(readProxySettings()));
     connect(configure, SIGNAL(includeHomeProjectsChanged()), this, SLOT(refreshProjectFilter()));
     connect(configure, SIGNAL(timerChanged()), this, SLOT(readTimerSettings()));

@@ -38,9 +38,9 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs) :
     ui->treeBuildResults->setModel(sourceModelBuildResults);
     ui->treeBuildResults->setColumnWidth(0, 250);
 
-    connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), mOBS, SLOT(changeSubmitRequestSlot(QString,QString,bool)));
-    connect(mOBS, SIGNAL(srStatus(QString)), this, SLOT(srStatusSlot(QString)));
-    connect(mOBS, SIGNAL(srDiffFetched(QString)), this, SLOT(srDiffFetchedSlot(QString)));
+    connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), mOBS, SLOT(slotChangeSubmitRequest(QString,QString,bool)));
+    connect(mOBS, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
+    connect(mOBS, SIGNAL(srDiffFetched(QString)), this, SLOT(slotSrDiffFetched(QString)));
     connect(mOBS, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(slotAddBuildResults(OBSResult*)));
 }
 
@@ -103,9 +103,9 @@ void RequestStateEditor::on_declinePushButton_clicked()
     emit changeSubmitRequest(id, ui->commentsTextBrowser->toPlainText(), false);
 }
 
-void RequestStateEditor::srStatusSlot(const QString &status)
+void RequestStateEditor::slotSrStatus(const QString &status)
 {
-   qDebug() << "RequestStateEditor::srStatusSlot()" << status;
+   qDebug() << "RequestStateEditor::slotSrStatus" << status;
    QString errorStr = tr("Error changing SR!");
    if (status == "ok") {
        close();
@@ -114,9 +114,9 @@ void RequestStateEditor::srStatusSlot(const QString &status)
    }
 }
 
-void RequestStateEditor::srDiffFetchedSlot(const QString &diff)
+void RequestStateEditor::slotSrDiffFetched(const QString &diff)
 {
-    qDebug() << "RequestStateEditor::srDiffFetchedSlot()\n" << diff;
+    qDebug() << "RequestStateEditor::slotSrDiffFetched()\n" << diff;
     setDiff(diff);
 }
 

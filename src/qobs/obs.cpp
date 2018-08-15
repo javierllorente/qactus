@@ -177,7 +177,7 @@ int OBS::getRequestCount()
     return xmlReader->getRequestNumber();
 }
 
-void OBS::changeSubmitRequestSlot(const QString &id, const QString &comments, bool accepted)
+void OBS::slotChangeSubmitRequest(const QString &id, const QString &comments, bool accepted)
 {
     qDebug() << "OBS::changeSubmitRequest() id:" << id << " comments:" << comments << " accept:" << accepted;
     QString newState = accepted ? "accepted" : "declined";
