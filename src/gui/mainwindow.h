@@ -210,7 +210,7 @@ private slots:
     void slotAbout(OBSAbout *obsAbout);
     void on_iconBar_currentRowChanged(int index);
     void on_tabWidgetPackages_currentChanged(int index);
-    void insertProjectList();
+    void addProjectList();
     void insertPackageList();
     void addFile(OBSFile*);
     void slotFileListAdded();

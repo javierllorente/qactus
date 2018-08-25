@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(obs, SIGNAL(finishedParsingAbout(OBSAbout*)), this, SLOT(slotAbout(OBSAbout*)));
 
-    connect(obs, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
+    connect(obs, SIGNAL(projectListIsReady()), this, SLOT(addProjectList()));
     connect(obs, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(addFile(OBSFile*)));
     connect(obs, SIGNAL(finishedParsingFileList()), this, SLOT(slotFileListAdded()));
@@ -1107,9 +1107,9 @@ void MainWindow::createTreeRequests()
     ui->treeRequests->setItemDelegate(new AutoToolTipDelegate(ui->treeRequests));
 }
 
-void MainWindow::insertProjectList()
+void MainWindow::addProjectList()
 {
-    qDebug() << "MainWindow::insertProjectList()";
+    qDebug() << "MainWindow::addProjectList()";
     QStringList projectList = readProjectList();
     ui->treeProjects->addProjectList(projectList);
 
