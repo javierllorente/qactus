@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef PACKAGETREEWIDGET_H
-#define PACKAGETREEWIDGET_H
+#ifndef MONITORTREEWIDGET_H
+#define MONITORTREEWIDGET_H
 
 #include <QObject>
 #include <QTreeWidget>
@@ -31,12 +31,12 @@
 #include <QDebug>
 #include "utils.h"
 
-class PackageTreeWidget : public QTreeWidget
+class MonitorTreeWidget : public QTreeWidget
 {
     Q_OBJECT
 
 public:
-    PackageTreeWidget(QWidget *parent = 0);
+    MonitorTreeWidget(QWidget *parent = 0);
     void setOBS(OBS *obs);
 
 protected:
@@ -57,4 +57,4 @@ private:
 
 };
 
-#endif // PACKAGETREEWIDGET_H
+#endif // MONITORTREEWIDGET_H

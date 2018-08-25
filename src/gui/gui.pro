@@ -25,7 +25,6 @@ SOURCES += main.cpp \
     roweditor.cpp \
     requeststateeditor.cpp \
     autotooltipdelegate.cpp \
-    packagetreewidget.cpp \
     requesttreewidgetitem.cpp \
     utils.cpp \
     credentials.cpp \
@@ -34,7 +33,8 @@ SOURCES += main.cpp \
     createdialog.cpp \
     filetreewidget.cpp \
     buildlogviewer.cpp \
-    projecttreewidget.cpp
+    projecttreewidget.cpp \
+    monitortreewidget.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -42,7 +42,6 @@ HEADERS += mainwindow.h \
     roweditor.h \
     requeststateeditor.h \
     autotooltipdelegate.h \
-    packagetreewidget.h \
     requesttreewidgetitem.h \
     utils.h \
     credentials.h \
@@ -51,7 +50,8 @@ HEADERS += mainwindow.h \
     createdialog.h \
     filetreewidget.h \
     buildlogviewer.h \
-    projecttreewidget.h
+    projecttreewidget.h \
+    monitortreewidget.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \

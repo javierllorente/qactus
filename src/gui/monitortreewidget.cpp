@@ -18,34 +18,34 @@
  *
  */
 
-#include "packagetreewidget.h"
+#include "monitortreewidget.h"
 
-PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
+MonitorTreeWidget::MonitorTreeWidget(QWidget *parent) :
     QTreeWidget(parent)
 {
     setAcceptDrops(true);
 }
 
-void PackageTreeWidget::setOBS(OBS *obs)
+void MonitorTreeWidget::setOBS(OBS *obs)
 {
     connect(this, SIGNAL(obsUrlDropped(QString,QString)), obs, SLOT(getAllBuildStatus(QString,QString)));
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addDroppedPackage(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResultList()), this, SLOT(finishedAddingPackages()));
 }
 
-void PackageTreeWidget::dragEnterEvent(QDragEnterEvent *event)
+void MonitorTreeWidget::dragEnterEvent(QDragEnterEvent *event)
 {
     event->acceptProposedAction();
 }
 
-void PackageTreeWidget::dragMoveEvent(QDragMoveEvent *event)
+void MonitorTreeWidget::dragMoveEvent(QDragMoveEvent *event)
 {
     event->acceptProposedAction();
 }
 
-void PackageTreeWidget::dropEvent(QDropEvent *event)
+void MonitorTreeWidget::dropEvent(QDropEvent *event)
 {
-    qDebug() << "PackageTreeWidget::dropEvent()";
+    qDebug() << "MonitorTreeWidget::dropEvent()";
     const QMimeData *mimeData = event->mimeData();
     if (mimeData->hasUrls()) {
         QList<QUrl> urlList = mimeData->urls();
@@ -63,9 +63,9 @@ void PackageTreeWidget::dropEvent(QDropEvent *event)
     }
 }
 
-void PackageTreeWidget::addDroppedPackage(OBSResult *result)
+void MonitorTreeWidget::addDroppedPackage(OBSResult *result)
 {
-    qDebug() << "PackageTreeWidget::addDroppedPackage()";
+    qDebug() << "MonitorTreeWidget::addDroppedPackage()";
 
     if (droppedProject==result->getProject() && droppedPackage==result->getStatus()->getPackage()) {
         QTreeWidgetItem *item = new QTreeWidgetItem(this);
@@ -94,9 +94,9 @@ void PackageTreeWidget::addDroppedPackage(OBSResult *result)
     }
 }
 
-void PackageTreeWidget::finishedAddingPackages()
+void MonitorTreeWidget::finishedAddingPackages()
 {
-    qDebug() << "PackageTreeWidget::finishedAddingPackages()";
+    qDebug() << "MonitorTreeWidget::finishedAddingPackages()";
     if (!droppedProject.isEmpty() && !droppedPackage.isEmpty()) {
         droppedProject = "";
         droppedPackage = "";

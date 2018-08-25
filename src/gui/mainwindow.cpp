@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_notify = false;
     createActions();
     setupIconBar();
-    createTreePackages();
+    createTreeMonitor();
     createTreeRequests();
     setupBrowser();
     createStatusBar();
@@ -674,15 +674,15 @@ void MainWindow::slotContextMenuProjects(const QPoint &point)
 
 void MainWindow::slotContextMenuPackages(const QPoint &point)
 {
-    QMenu *treePackagesMenu = new QMenu(ui->treeBuilds);
-    treePackagesMenu->addAction(actionNew_package);
-    treePackagesMenu->addAction(ui->action_Branch_package);
-    treePackagesMenu->addAction(action_ReloadPackages);
-    treePackagesMenu->addAction(actionDelete_package);
+    QMenu *treeMonitorMenu = new QMenu(ui->treeBuilds);
+    treeMonitorMenu->addAction(actionNew_package);
+    treeMonitorMenu->addAction(ui->action_Branch_package);
+    treeMonitorMenu->addAction(action_ReloadPackages);
+    treeMonitorMenu->addAction(actionDelete_package);
 
     QModelIndex index = ui->treeBuilds->indexAt(point);
     if (index.isValid()) {
-        treePackagesMenu->exec(ui->treeBuilds->mapToGlobal(point));
+        treeMonitorMenu->exec(ui->treeBuilds->mapToGlobal(point));
     }
 }
 
@@ -717,7 +717,7 @@ void MainWindow::changeRequestState()
     qDebug() << "Launching RequestStateEditor...";
     RequestStateEditor *reqStateEditor = new RequestStateEditor(this, obs);
     disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
-    disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treePackages, SLOT(addDroppedPackage(OBSResult*)));
+    disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treeMonitor, SLOT(addDroppedPackage(OBSResult*)));
     QTreeWidgetItem *item = ui->treeRequests->currentItem();
     qDebug() << "Request selected:" << item->text(1);
     reqStateEditor->setRequestId(item->text(1));
@@ -747,7 +747,7 @@ void MainWindow::changeRequestState()
     delete reqStateEditor;
     reqStateEditor = nullptr;
 
-    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treePackages, SLOT(addDroppedPackage(OBSResult*)));
+    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treeMonitor, SLOT(addDroppedPackage(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
 }
 
@@ -767,13 +767,13 @@ void MainWindow::on_action_Add_triggered()
     RowEditor *rowEditor = new RowEditor(this, obs);
 
     if (rowEditor->exec()) {
-        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeMonitor);
         item->setText(0, rowEditor->getProject());
         item->setText(1, rowEditor->getPackage());
         item->setText(2, rowEditor->getRepository());
         item->setText(3, rowEditor->getArch());
-        ui->treePackages->addTopLevelItem(item);
-        int index = ui->treePackages->indexOfTopLevelItem(item);
+        ui->treeMonitor->addTopLevelItem(item);
+        int index = ui->treeMonitor->indexOfTopLevelItem(item);
         qDebug() << "Build" << item->text(1) << "added at" << index;
     }
     delete rowEditor;
@@ -810,13 +810,13 @@ void MainWindow::editRow(QTreeWidgetItem* item, int)
     rowEditor->show();
 
     if (rowEditor->exec()) {
-        int index = ui->treePackages->indexOfTopLevelItem(item);
+        int index = ui->treeMonitor->indexOfTopLevelItem(item);
         item->setText(0, rowEditor->getProject());
         item->setText(1, rowEditor->getPackage());
         item->setText(2, rowEditor->getRepository());
         item->setText(3, rowEditor->getArch());
         item->setText(4, "");
-        ui->treePackages->insertTopLevelItem(index, item);
+        ui->treeMonitor->insertTopLevelItem(index, item);
         qDebug() << "Build edited:" << index;
         qDebug() << "Status at" << index << item->text(4) << "(it should be empty)";
     }
@@ -825,7 +825,7 @@ void MainWindow::editRow(QTreeWidgetItem* item, int)
 
 void MainWindow::slotEnableRemoveRow()
 {
-    QList<QModelIndex> list = ui->treePackages->selectionModel()->selectedIndexes();
+    QList<QModelIndex> list = ui->treeMonitor->selectionModel()->selectedIndexes();
 
     if (list.isEmpty()) {
         ui->action_Remove->setEnabled(false);
@@ -838,14 +838,14 @@ void MainWindow::slotEnableRemoveRow()
 void MainWindow::on_action_Remove_triggered()
 {
     qDebug () << "MainWindow::removeRow()";
-    QList<QTreeWidgetItem *> items = ui->treePackages->selectedItems();
-    QList<QModelIndex> list = ui->treePackages->selectionModel()->selectedIndexes();
+    QList<QTreeWidgetItem *> items = ui->treeMonitor->selectedItems();
+    QList<QModelIndex> list = ui->treeMonitor->selectionModel()->selectedIndexes();
     foreach (QTreeWidgetItem *item, items) {
         delete item;
     }
 
     if (!list.isEmpty()) {
-        QTreeWidgetItem *currentItem = ui->treePackages->currentItem();
+        QTreeWidgetItem *currentItem = ui->treeMonitor->currentItem();
         if (currentItem) {
             currentItem->setSelected(true);
         }
@@ -1022,20 +1022,20 @@ void MainWindow::deleteFile()
 void MainWindow::on_action_Refresh_triggered()
 {
     qDebug() << "MainWindow::refreshView()";
-    int rows = ui->treePackages->topLevelItemCount();
+    int rows = ui->treeMonitor->topLevelItemCount();
     emit updateStatusBar(tr("Getting build statuses..."), false);
 
     for (int r=0; r<rows; r++) {
 //        Ignore rows with empty cells and process rows with data
-        if (!ui->treePackages->topLevelItem(r)->text(0).isEmpty() ||
-                !ui->treePackages->topLevelItem(r)->text(1).isEmpty() ||
-                !ui->treePackages->topLevelItem(r)->text(2).isEmpty() ||
-                !ui->treePackages->topLevelItem(r)->text(3).isEmpty()) {
+        if (!ui->treeMonitor->topLevelItem(r)->text(0).isEmpty() ||
+                !ui->treeMonitor->topLevelItem(r)->text(1).isEmpty() ||
+                !ui->treeMonitor->topLevelItem(r)->text(2).isEmpty() ||
+                !ui->treeMonitor->topLevelItem(r)->text(3).isEmpty()) {
             QStringList tableStringList;
-            tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(0)));
-            tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(2)));
-            tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(3)));
-            tableStringList.append(QString(ui->treePackages->topLevelItem(r)->text(1)));
+            tableStringList.append(QString(ui->treeMonitor->topLevelItem(r)->text(0)));
+            tableStringList.append(QString(ui->treeMonitor->topLevelItem(r)->text(2)));
+            tableStringList.append(QString(ui->treeMonitor->topLevelItem(r)->text(3)));
+            tableStringList.append(QString(ui->treeMonitor->topLevelItem(r)->text(1)));
 //            Get build status
             obs->getBuildStatus(tableStringList, r);
         }
@@ -1048,8 +1048,8 @@ void MainWindow::on_action_Refresh_triggered()
 
 void MainWindow::markRead(QTreeWidgetItem* item, int)
 {
-    qDebug() << "MainWindow::markRead() " << "Row: " + QString::number(ui->treePackages->indexOfTopLevelItem(item));
-    for (int i=0; i<ui->treePackages->columnCount(); i++) {
+    qDebug() << "MainWindow::markRead() " << "Row: " + QString::number(ui->treeMonitor->indexOfTopLevelItem(item));
+    for (int i=0; i<ui->treeMonitor->columnCount(); i++) {
         if (item->font(0).bold()) {
             Utils::setItemBoldFont(item, false);
         }
@@ -1061,32 +1061,32 @@ void MainWindow::markRead(QTreeWidgetItem* item, int)
 void MainWindow::on_action_Mark_all_as_read_triggered()
 {
     qDebug() << "MainWindow::markAllRead()";
-    for (int i=0; i<ui->treePackages->topLevelItemCount(); i++) {
-        if (ui->treePackages->topLevelItem(i)->font(0).bold()) {
-            Utils::setItemBoldFont(ui->treePackages->topLevelItem(i), false);
+    for (int i=0; i<ui->treeMonitor->topLevelItemCount(); i++) {
+        if (ui->treeMonitor->topLevelItem(i)->font(0).bold()) {
+            Utils::setItemBoldFont(ui->treeMonitor->topLevelItem(i), false);
         }
     }
 
     setNotify(false);
 }
 
-void MainWindow::createTreePackages()
+void MainWindow::createTreeMonitor()
 {
-    ui->treePackages->setOBS(obs);
-    ui->treePackages->setColumnCount(5);
-    ui->treePackages->setColumnWidth(0, 185); // Project
-    ui->treePackages->setColumnWidth(1, 160); // Package
-    ui->treePackages->setColumnWidth(2, 140); // Repository
-    ui->treePackages->setColumnWidth(3, 75); // Arch
-    ui->treePackages->setColumnWidth(4, 100); // Status
+    ui->treeMonitor->setOBS(obs);
+    ui->treeMonitor->setColumnCount(5);
+    ui->treeMonitor->setColumnWidth(0, 185); // Project
+    ui->treeMonitor->setColumnWidth(1, 160); // Package
+    ui->treeMonitor->setColumnWidth(2, 140); // Repository
+    ui->treeMonitor->setColumnWidth(3, 75); // Arch
+    ui->treeMonitor->setColumnWidth(4, 100); // Status
 
-    connect(ui->treePackages, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+    connect(ui->treeMonitor, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
             this, SLOT(editRow(QTreeWidgetItem*, int)));
-    connect(ui->treePackages, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
+    connect(ui->treeMonitor, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
             this, SLOT(markRead(QTreeWidgetItem*, int)));
 
-    ui->treePackages->setItemDelegate(new AutoToolTipDelegate(ui->treePackages));
-    connect(ui->treePackages, SIGNAL(itemSelectionChanged()), this, SLOT(slotEnableRemoveRow()));
+    ui->treeMonitor->setItemDelegate(new AutoToolTipDelegate(ui->treeMonitor));
+    connect(ui->treeMonitor, SIGNAL(itemSelectionChanged()), this, SLOT(slotEnableRemoveRow()));
 }
 
 void MainWindow::createTreeRequests()
@@ -1251,7 +1251,7 @@ void MainWindow::insertBuildStatus(OBSStatus *obsStatus, int row)
         qDebug() << "Details string size: " << details.size();
     }
 
-    QTreeWidgetItem *item = ui->treePackages->topLevelItem(row);
+    QTreeWidgetItem *item = ui->treeMonitor->topLevelItem(row);
     if (item) {
         QString oldStatus = item->text(4);
         item->setText(4, status);
@@ -1261,7 +1261,7 @@ void MainWindow::insertBuildStatus(OBSStatus *obsStatus, int row)
         item->setForeground(4, Utils::getColorForStatus(status));
 
         qDebug() << "Build status" << status << "inserted in" << row
-                 << "(Total rows:" << ui->treePackages->topLevelItemCount() << ")";
+                 << "(Total rows:" << ui->treeMonitor->topLevelItemCount() << ")";
 
         //    If the old status is not empty and it is different from latest one,
         //    change the tray icon and enable the "Mark all as read" button
@@ -1270,7 +1270,7 @@ void MainWindow::insertBuildStatus(OBSStatus *obsStatus, int row)
             ui->action_Mark_all_as_read->setEnabled(true);
         }
 
-        if (row == ui->treePackages->topLevelItemCount()-1) {
+        if (row == ui->treeMonitor->topLevelItemCount()-1) {
             emit updateStatusBar(tr("Done"), true);
         }
     } else {
@@ -1742,22 +1742,22 @@ void MainWindow::writeSettings()
     settings.setValue("Row", ui->iconBar->currentRow());
     settings.endGroup();
 
-    int rows = ui->treePackages->topLevelItemCount();
+    int rows = ui->treeMonitor->topLevelItemCount();
     settings.beginWriteArray("Packages");
     settings.remove("");
     for (int i=0; i<rows; ++i)
     {
         settings.setArrayIndex(i);
 //        Save settings only if all the items in a row have text
-        if (!ui->treePackages->topLevelItem(i)->text(0).isEmpty() &&
-                !ui->treePackages->topLevelItem(i)->text(1).isEmpty() &&
-                !ui->treePackages->topLevelItem(i)->text(2).isEmpty() &&
-                !ui->treePackages->topLevelItem(i)->text(3).isEmpty())
+        if (!ui->treeMonitor->topLevelItem(i)->text(0).isEmpty() &&
+                !ui->treeMonitor->topLevelItem(i)->text(1).isEmpty() &&
+                !ui->treeMonitor->topLevelItem(i)->text(2).isEmpty() &&
+                !ui->treeMonitor->topLevelItem(i)->text(3).isEmpty())
         {
-            settings.setValue("Project",ui->treePackages->topLevelItem(i)->text(0));
-            settings.setValue("Package",ui->treePackages->topLevelItem(i)->text(1));
-            settings.setValue("Repository",ui->treePackages->topLevelItem(i)->text(2));
-            settings.setValue("Arch",ui->treePackages->topLevelItem(i)->text(3));
+            settings.setValue("Project",ui->treeMonitor->topLevelItem(i)->text(0));
+            settings.setValue("Package",ui->treeMonitor->topLevelItem(i)->text(1));
+            settings.setValue("Repository",ui->treeMonitor->topLevelItem(i)->text(2));
+            settings.setValue("Arch",ui->treeMonitor->topLevelItem(i)->text(3));
         }
     }
     settings.endArray();
@@ -1793,12 +1793,12 @@ void MainWindow::readMonitorSettings()
     for (int i=0; i<size; ++i)
     {
         settings.setArrayIndex(i);
-        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treePackages);
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeMonitor);
         item->setText(0, settings.value("Project").toString());
         item->setText(1, settings.value("Package").toString());
         item->setText(2, settings.value("Repository").toString());
         item->setText(3, settings.value("Arch").toString());
-        ui->treePackages->insertTopLevelItem(i, item);
+        ui->treeMonitor->insertTopLevelItem(i, item);
     }
     settings.endArray();
 }

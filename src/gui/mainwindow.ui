@@ -210,7 +210,7 @@
       <widget class="QWidget" name="monitorPage">
        <layout class="QGridLayout" name="gridLayout_tabMonitor">
         <item row="0" column="0">
-         <widget class="PackageTreeWidget" name="treePackages">
+         <widget class="MonitorTreeWidget" name="treeMonitor">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -619,11 +619,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PackageTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>packagetreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>FileTreeWidget</class>
    <extends>QTreeView</extends>
    <header>filetreewidget.h</header>
@@ -632,6 +627,11 @@
    <class>ProjectTreeWidget</class>
    <extends>QTreeView</extends>
    <header>projecttreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MonitorTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>monitortreewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

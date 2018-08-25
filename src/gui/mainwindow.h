@@ -118,7 +118,7 @@ private:
     QString currentProject;
     QString currentPackage;
     void filterBuilds(const QString &item);
-    void createTreePackages();
+    void createTreeMonitor();
     void createTreeRequests();
 
     void createStatusBar();
