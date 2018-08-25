@@ -241,7 +241,6 @@ void MainWindow::setupBrowser()
 
     connect(ui->treeProjects, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuProjects(QPoint)));
-    ui->treeProjects->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(ui->treeBuilds, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuPackages(QPoint)));
@@ -257,8 +256,7 @@ void MainWindow::setupBrowser()
 
     connect(ui->treeFiles, SIGNAL(droppedFile(QString)), this, SLOT(uploadFile(QString)));
 
-    sourceModelProjects = new QStringListModel(ui->treeProjects);
-    proxyModelProjects = new QSortFilterProxyModel(ui->treeProjects);
+    proxyModelProjects = static_cast<QSortFilterProxyModel *>(ui->treeProjects->model());
     sourceModelBuilds = new QStringListModel(ui->treeBuilds);
     proxyModelBuilds = nullptr;
     sourceModelFiles = nullptr;
@@ -372,7 +370,6 @@ void MainWindow::setupModels()
         sourceModelBuildResults = nullptr;
     }
 
-    ui->treeProjects->setModel(proxyModelProjects);
     projectsSelectionModel = ui->treeProjects->selectionModel();
 
     proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
@@ -414,7 +411,6 @@ void MainWindow::loadProjects()
 
     setupModels();
 
-    ui->treeProjects->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuilds->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -424,15 +420,6 @@ void MainWindow::loadProjects()
 
     emit updateStatusBar(tr("Getting projects..."), false);
     obs->getProjects();
-}
-
-void MainWindow::filterProjects(const QString &item)
-{
-    proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive));
-    proxyModelProjects->setFilterKeyColumn(0);
-
-    QModelIndex currentIndex = ui->treeProjects->currentIndex();
-    ui->treeProjects->scrollTo(currentIndex, QAbstractItemView::PositionAtTop);
 }
 
 void MainWindow::filterBuilds(const QString &item)
@@ -445,7 +432,7 @@ void MainWindow::filterBuilds(const QString &item)
 void MainWindow::filterResults(const QString &item)
 {
     qDebug() << "MainWindow::filterResults())";
-    browserFilter->isProjectChecked() ? filterProjects(item) : filterBuilds(item);
+    browserFilter->isProjectChecked() ? ui->treeProjects->filterProjects(item) : filterBuilds(item);
 
     // Delete  treeBuilds' model rows when filter doesn't match a project
     if (proxyModelProjects->rowCount()==0 && ui->treeBuilds->model()->hasChildren()) {
@@ -460,7 +447,7 @@ void MainWindow::filterRadioButtonClicked(bool)
     // Clear project filter on radio button click
     // if there were no matches for the project name
     if (proxyModelProjects->rowCount()==0 && browserFilter->isPackageChecked()) {
-        filterProjects("");
+        ui->treeProjects->filterProjects("");
     }
 
     // Clear line edit text on radio button click
@@ -476,12 +463,12 @@ void MainWindow::refreshProjectFilter()
     qDebug() << "MainWindow::refreshProjectFilter()";
     readBrowserSettings();
         QStringList projectList = readProjectList();
-        sourceModelProjects->setStringList(projectList);
+        ui->treeProjects->addProjectList(projectList);
         if (browserFilter->isProjectChecked()) {
-            filterProjects(browserFilter->getText());
+            ui->treeProjects->filterProjects(browserFilter->getText());
         } else {
             browserFilter->clear();
-            filterProjects("");
+            ui->treeProjects->filterProjects("");
         }
         setupModels();
         ui->action_Delete->setEnabled(false);
@@ -597,7 +584,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
     connect(filesSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
             SLOT(fileSelectionChanged(QItemSelection,QItemSelection)));
 
-    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentProject = ui->treeProjects->getCurrentProject();
     QString currentPackage = index.data().toString();
     obs->getFiles(currentProject, currentPackage);
     emit updateStatusBar(tr("Getting package data..."), false);
@@ -630,7 +617,7 @@ void MainWindow::getBuildResults()
     delete oldModel;
     oldModel = nullptr;
 
-    currentProject = ui->treeProjects->currentIndex().data().toString();
+    currentProject = ui->treeProjects->getCurrentProject();
     currentPackage = ui->treeBuilds->currentIndex().data().toString();
     obs->getAllBuildStatus(currentProject, currentPackage);
 }
@@ -646,7 +633,7 @@ void MainWindow::getBuildLog()
 {
     qDebug() << "MainWindow::getBuildLog()";
     QModelIndexList indexList = ui->treeBuildResults->selectionModel()->selectedIndexes();
-    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentProject = ui->treeProjects->getCurrentProject();
     QString currentBuildRepository = indexList.at(0).data().toString();
     QString currentBuildArch = indexList.at(1).data().toString();
     QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
@@ -867,8 +854,7 @@ void MainWindow::on_action_Remove_triggered()
 
 void MainWindow::on_action_Branch_package_triggered()
 {
-    QModelIndex prjIndex = ui->treeProjects->currentIndex();
-    QString project = prjIndex.data().toString();
+    QString project = ui->treeProjects->getCurrentProject();
     QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
     QString build = pkgIndex.data().toString();
 
@@ -889,14 +875,7 @@ void MainWindow::on_action_Branch_package_triggered()
 void MainWindow::on_action_Home_triggered()
 {
     QString userHomeProject = QString("home:%1").arg(obs->getUsername());
-    QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
-                                                                Qt::DisplayRole, QVariant::fromValue(QString(userHomeProject)),
-                                                                1, Qt::MatchExactly);
-    if (!itemList.isEmpty()) {
-        auto itemIndex = itemList.at(0);
-        ui->treeProjects->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-        ui->treeProjects->scrollTo(itemIndex, QAbstractItemView::PositionAtTop);
-    }
+    ui->treeProjects->setCurrentProject(userHomeProject);
 }
 
 void MainWindow::on_action_Upload_file_triggered()
@@ -911,7 +890,7 @@ void MainWindow::on_action_Upload_file_triggered()
 
 void MainWindow::on_action_Download_file_triggered()
 {
-    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentProject = ui->treeProjects->getCurrentProject();
     QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
     QString currentFile = ui->treeFiles->currentIndex().data().toString();
     obs->downloadFile(currentProject, currentPackage, currentFile);
@@ -921,8 +900,7 @@ void MainWindow::newProject()
 {
     qDebug() << "MainWindow:newProject()";
 
-    QModelIndex prjIndex = ui->treeProjects->currentIndex();
-    QString project = prjIndex.data().toString();
+    QString project = ui->treeProjects->getCurrentProject();
 
     CreateDialog *createDialog = new CreateDialog(obs, this);
     createDialog->setProjectMode(true);
@@ -936,8 +914,7 @@ void MainWindow::newPackage()
 {
     qDebug() << "MainWindow:newPackage()";
 
-    QModelIndex prjIndex = ui->treeProjects->currentIndex();
-    QString project = prjIndex.data().toString();
+    QString project = ui->treeProjects->getCurrentProject();
 
     CreateDialog *createDialog = new CreateDialog(obs, this);
     createDialog->setProject(project);
@@ -950,8 +927,7 @@ void MainWindow::uploadFile(QString path)
 {
     qDebug() << "MainWindow:uploadFile() path:" << path;
 
-    QModelIndex prjIndex = ui->treeProjects->currentIndex();
-    QString project = prjIndex.data().toString();
+    QString project = ui->treeProjects->getCurrentProject();
 
     QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
     QString package = pkgIndex.data().toString();
@@ -981,8 +957,7 @@ void MainWindow::deleteProject()
 {
     qDebug() << "MainWindow:deleteProject()";
 
-    QModelIndex prjIndex = ui->treeProjects->currentIndex();
-    QString project = prjIndex.data().toString();
+    QString project = ui->treeProjects->getCurrentProject();
 
     const QString title = tr("Delete confirmation");
     const QString text = tr("Do you really want to delete project<br> %1?")
@@ -1002,8 +977,7 @@ void MainWindow::deletePackage()
 {
     qDebug() << "MainWindow:deletePackage()";
 
-    QModelIndex prjIndex = ui->treeProjects->currentIndex();
-    QString project = prjIndex.data().toString();
+    QString project = ui->treeProjects->getCurrentProject();
     QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
     QString package = pkgIndex.data().toString();
 
@@ -1025,8 +999,7 @@ void MainWindow::deleteFile()
 {
     qDebug() << "MainWindow:deleteFile()";
 
-    QModelIndex prjIndex = ui->treeProjects->currentIndex();
-    QString project = prjIndex.data().toString();
+    QString project = ui->treeProjects->getCurrentProject();
     QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
     QString package = pkgIndex.data().toString();
     QModelIndex fileIndex = ui->treeFiles->currentIndex();
@@ -1138,13 +1111,10 @@ void MainWindow::insertProjectList()
 {
     qDebug() << "MainWindow::insertProjectList()";
     QStringList projectList = readProjectList();
-
-    sourceModelProjects->setStringList(projectList);
-    proxyModelProjects->setSourceModel(sourceModelProjects);
-    ui->treeProjects->setModel(proxyModelProjects);
+    ui->treeProjects->addProjectList(projectList);
 
     QString browserFilterText = browserFilter->getText();
-    filterProjects(browserFilterText);
+    ui->treeProjects->filterProjects(browserFilterText);
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -1168,7 +1138,7 @@ void MainWindow::addFile(OBSFile *obsFile)
 {
     qDebug() << "MainWindow::addFile()";
 
-    currentProject = ui->treeProjects->currentIndex().data().toString();
+    currentProject = ui->treeProjects->getCurrentProject();
     currentPackage = ui->treeBuilds->currentIndex().data().toString();
     QString fileProject = obsFile->getProject();
     QString filePackage = obsFile->getPackage();
@@ -1236,7 +1206,7 @@ void MainWindow::addResult(OBSResult *obsResult)
 {
     qDebug() << "MainWindow::addResult()";
 
-    currentProject = ui->treeProjects->currentIndex().data().toString();
+    currentProject = ui->treeProjects->getCurrentProject();
     currentPackage = ui->treeBuilds->currentIndex().data().toString();
     QString resultProject = obsResult->getProject();
     QString resultPackage = obsResult->getStatus()->getPackage();
@@ -1342,7 +1312,7 @@ void MainWindow::slotBranchPackage(OBSStatus *obsStatus)
 void MainWindow::slotUploadFile(OBSRevision *obsRevision)
 {
     qDebug() << "MainWindow::slotUploadFile()";
-    QString currentProject = ui->treeProjects->currentIndex().data().toString();
+    QString currentProject = ui->treeProjects->getCurrentProject();
     QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
 
     // Refresh file list
@@ -1409,13 +1379,7 @@ void MainWindow::slotDeleteProject(OBSStatus *obsStatus)
     qDebug() << "MainWindow::slotDeleteProject()";
 
     if (obsStatus->getCode()=="ok") {
-        QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
-                                                                    Qt::DisplayRole, QVariant::fromValue(QString(obsStatus->getProject())),
-                                                                    1, Qt::MatchExactly);
-        if(!itemList.isEmpty()) {
-            auto item = itemList.at(0);
-            ui->treeProjects->model()->removeRow(item.row(), item.parent());
-        }
+        ui->treeProjects->removeProject(obsStatus->getProject());
         trayIcon->showMessage(APP_NAME, tr("The project %1 has been deleted").arg(obsStatus->getProject()));
     } else {
         const QString title = tr("Warning");
@@ -1463,7 +1427,7 @@ void MainWindow::slotDeleteFile(OBSStatus *obsStatus)
     qDebug() << "MainWindow::slotDeleteFile()";
 
     if (obsStatus->getCode()=="ok") {
-        QString currentProject = ui->treeProjects->currentIndex().data().toString();
+        QString currentProject = ui->treeProjects->getCurrentProject();
         QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
         QString fileName = obsStatus->getDetails();
 

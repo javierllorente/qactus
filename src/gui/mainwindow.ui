@@ -110,7 +110,7 @@
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
             <item>
-             <widget class="QTreeView" name="treeProjects">
+             <widget class="ProjectTreeWidget" name="treeProjects">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -122,6 +122,9 @@
                 <width>50</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
               </property>
               <attribute name="headerVisible">
                <bool>false</bool>
@@ -624,6 +627,11 @@
    <class>FileTreeWidget</class>
    <extends>QTreeView</extends>
    <header>filetreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ProjectTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>projecttreewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

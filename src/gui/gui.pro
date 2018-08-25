@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     browserfilter.cpp \
     createdialog.cpp \
     filetreewidget.cpp \
-    buildlogviewer.cpp
+    buildlogviewer.cpp \
+    projecttreewidget.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -49,7 +50,8 @@ HEADERS += mainwindow.h \
     browserfilter.h \
     createdialog.h \
     filetreewidget.h \
-    buildlogviewer.h
+    buildlogviewer.h \
+    projecttreewidget.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \

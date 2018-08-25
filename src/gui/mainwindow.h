@@ -105,7 +105,6 @@ private:
     void setupBrowser();
     bool firstTimeFileListDisplayed;
     bool firstTimeBuildResultsDisplayed;
-    QStringListModel *sourceModelProjects;
     QStringListModel *sourceModelBuilds;
     QSortFilterProxyModel *proxyModelProjects;
     QSortFilterProxyModel *proxyModelBuilds;
@@ -118,7 +117,6 @@ private:
     QStringList readProjectList() const;
     QString currentProject;
     QString currentPackage;
-    void filterProjects(const QString &item);
     void filterBuilds(const QString &item);
     void createTreePackages();
     void createTreeRequests();
