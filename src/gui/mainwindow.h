@@ -37,10 +37,8 @@
 #include "trayicon.h"
 #include "configure.h"
 #include "login.h"
-#include "roweditor.h"
 #include "requeststateeditor.h"
 #include "obsstatus.h"
-#include "autotooltipdelegate.h"
 #include "requesttreewidgetitem.h"
 #include "utils.h"
 #include "credentials.h"
@@ -118,7 +116,7 @@ private:
     QString currentProject;
     QString currentPackage;
     void filterBuilds(const QString &item);
-    void createTreeMonitor();
+    void setupTreeMonitor();
     void createTreeRequests();
 
     void createStatusBar();
@@ -131,7 +129,6 @@ private:
     void writeSettings();
     void readSettings();
     void readMWSettings();
-    void readMonitorSettings();
     void readAuthSettings();
     void readBrowserSettings();
     bool includeHomeProjects;
@@ -146,7 +143,6 @@ private:
     QItemSelectionModel *projectsSelectionModel;
     QItemSelectionModel *buildsSelectionModel;
     QItemSelectionModel *filesSelectionModel;
-    bool hasBuildStatusChanged(const QString &oldStatus, const QString &newStatus);
 
 signals:
     void updateStatusBar(QString message, bool progressBarHidden);
@@ -181,11 +177,8 @@ private slots:
     void filterRadioButtonClicked(bool);
     void getRequestDescription(QTreeWidgetItem*, int);
     void setNotify(bool notify);
-    void on_action_Add_triggered();
     void finishedAddingResults();
-    void editRow(QTreeWidgetItem*, int);
     void slotEnableRemoveRow();
-    void on_action_Remove_triggered();
     void on_action_Refresh_triggered();
     void on_action_Branch_package_triggered();
     void on_action_Home_triggered();
@@ -197,8 +190,6 @@ private slots:
     void deleteProject();
     void deletePackage();
     void deleteFile();
-    void on_action_Mark_all_as_read_triggered();
-    void markRead(QTreeWidgetItem*, int);
     void slotLogin(const QString &username, const QString &password);
     void on_action_About_triggered();
     void on_action_Quit_triggered();
@@ -215,7 +206,6 @@ private slots:
     void addFile(OBSFile*);
     void slotFileListAdded();
     void addResult(OBSResult*);
-    void insertBuildStatus(OBSStatus *obsStatus, int row);
     void slotBranchPackage(OBSStatus *obsStatus);
     void slotUploadFile(OBSRevision *obsRevision);
     void slotUploadFileError(OBSStatus *obsStatus);

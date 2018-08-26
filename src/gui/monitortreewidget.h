@@ -30,6 +30,8 @@
 #include "obsresult.h"
 #include <QDebug>
 #include "utils.h"
+#include "autotooltipdelegate.h"
+#include "roweditor.h"
 
 class MonitorTreeWidget : public QTreeWidget
 {
@@ -37,7 +39,9 @@ class MonitorTreeWidget : public QTreeWidget
 
 public:
     MonitorTreeWidget(QWidget *parent = 0);
+    ~MonitorTreeWidget();
     void setOBS(OBS *obs);
+    void getBuildStatus();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
@@ -46,6 +50,8 @@ protected:
 
 signals:
     void obsUrlDropped(const QString &project, const QString &package);
+    void updateStatusBar(QString message, bool progressBarHidden);
+    void notifyChanged(bool change);
 
 public slots:
     void addDroppedPackage(OBSResult *result);
@@ -54,6 +60,18 @@ public slots:
 private:
     QString droppedProject;
     QString droppedPackage;
+    OBS *obs;
+    void readSettings();
+    void writeSettings();
+    bool hasStatusChanged(const QString &oldStatus, const QString &newStatus);
+
+private slots:
+    void slotAddRow();
+    void slotEditRow(QTreeWidgetItem *item, int column);
+    void slotRemoveRow();
+    void slotInsertStatus(OBSStatus *obsStatus, int row);
+    void slotMarkRead(QTreeWidgetItem *item, int column);
+    void slotMarkAllRead();
 
 };
 
