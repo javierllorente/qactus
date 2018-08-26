@@ -103,9 +103,9 @@ private:
     void setupBrowser();
     bool firstTimeFileListDisplayed;
     bool firstTimeBuildResultsDisplayed;
-    QStringListModel *sourceModelBuilds;
+    QStringListModel *sourceModelPackages;
     QSortFilterProxyModel *proxyModelProjects;
-    QSortFilterProxyModel *proxyModelBuilds;
+    QSortFilterProxyModel *proxyModelPackages;
     QStandardItemModel *sourceModelFiles;
     QStandardItemModel *sourceModelBuildResults;
     void setupProjectActions();
@@ -115,7 +115,7 @@ private:
     QStringList readProjectList() const;
     QString currentProject;
     QString currentPackage;
-    void filterBuilds(const QString &item);
+    void filterPackages(const QString &item);
     void setupTreeMonitor();
     void createTreeRequests();
 
@@ -141,7 +141,7 @@ private:
     Login *loginDialog;
     void showLoginDialog();
     QItemSelectionModel *projectsSelectionModel;
-    QItemSelectionModel *buildsSelectionModel;
+    QItemSelectionModel *packagesSelectionModel;
     QItemSelectionModel *filesSelectionModel;
 
 signals:
@@ -220,7 +220,7 @@ private slots:
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
     void refreshProjectFilter();
     void projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void buildSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void packageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void fileSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotSrStatus(const QString &status);
 };

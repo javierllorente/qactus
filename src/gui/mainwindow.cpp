@@ -240,9 +240,9 @@ void MainWindow::setupBrowser()
     connect(ui->treeProjects, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuProjects(QPoint)));
 
-    connect(ui->treeBuilds, SIGNAL(customContextMenuRequested(QPoint)), this,
+    connect(ui->treePackages, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuPackages(QPoint)));
-    ui->treeBuilds->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->treePackages->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(ui->treeFiles, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuFiles(QPoint)));
@@ -255,8 +255,8 @@ void MainWindow::setupBrowser()
     connect(ui->treeFiles, SIGNAL(droppedFile(QString)), this, SLOT(uploadFile(QString)));
 
     proxyModelProjects = static_cast<QSortFilterProxyModel *>(ui->treeProjects->model());
-    sourceModelBuilds = new QStringListModel(ui->treeBuilds);
-    proxyModelBuilds = nullptr;
+    sourceModelPackages = new QStringListModel(ui->treePackages);
+    proxyModelPackages = nullptr;
     sourceModelFiles = nullptr;
     sourceModelBuildResults = nullptr;
 
@@ -353,9 +353,9 @@ void MainWindow::setupModels()
 {
     qDebug() << "MainWindow::setupModels()";
     // Clean up package list, files and results
-    if (proxyModelBuilds!=nullptr) {
-        delete proxyModelBuilds;
-        proxyModelBuilds = nullptr;
+    if (proxyModelPackages!=nullptr) {
+        delete proxyModelPackages;
+        proxyModelPackages = nullptr;
     }
 
     if (sourceModelFiles!=nullptr) {
@@ -370,14 +370,14 @@ void MainWindow::setupModels()
 
     projectsSelectionModel = ui->treeProjects->selectionModel();
 
-    proxyModelBuilds = new QSortFilterProxyModel(ui->treeBuilds);
-    ui->treeBuilds->setModel(proxyModelBuilds);
-    buildsSelectionModel = ui->treeBuilds->selectionModel();
+    proxyModelPackages = new QSortFilterProxyModel(ui->treePackages);
+    ui->treePackages->setModel(proxyModelPackages);
+    packagesSelectionModel = ui->treePackages->selectionModel();
 
     connect(projectsSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
             SLOT(projectSelectionChanged(QItemSelection,QItemSelection)));
-    connect(buildsSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
-            SLOT(buildSelectionChanged(QItemSelection,QItemSelection)));
+    connect(packagesSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
+            SLOT(packageSelectionChanged(QItemSelection,QItemSelection)));
 }
 
 QStringList MainWindow::readProjectList() const
@@ -409,7 +409,7 @@ void MainWindow::loadProjects()
 
     setupModels();
 
-    ui->treeBuilds->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->treePackages->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setRootIsDecorated(false);
@@ -420,21 +420,21 @@ void MainWindow::loadProjects()
     obs->getProjects();
 }
 
-void MainWindow::filterBuilds(const QString &item)
+void MainWindow::filterPackages(const QString &item)
 {
-    qDebug() << "MainWindow::filterBuilds()" << item;
-    proxyModelBuilds->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive));
-    proxyModelBuilds->setFilterKeyColumn(0);
+    qDebug() << "MainWindow::filterPackages()" << item;
+    proxyModelPackages->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive));
+    proxyModelPackages->setFilterKeyColumn(0);
 }
 
 void MainWindow::filterResults(const QString &item)
 {
     qDebug() << "MainWindow::filterResults())";
-    browserFilter->isProjectChecked() ? ui->treeProjects->filterProjects(item) : filterBuilds(item);
+    browserFilter->isProjectChecked() ? ui->treeProjects->filterProjects(item) : filterPackages(item);
 
-    // Delete  treeBuilds' model rows when filter doesn't match a project
-    if (proxyModelProjects->rowCount()==0 && ui->treeBuilds->model()->hasChildren()) {
-        ui->treeBuilds->model()->removeRows(0, ui->treeBuilds->model()->rowCount());
+    // Delete  treePackages' model rows when filter doesn't match a project
+    if (proxyModelProjects->rowCount()==0 && ui->treePackages->model()->hasChildren()) {
+        ui->treePackages->model()->removeRows(0, ui->treePackages->model()->rowCount());
     }
 }
 
@@ -490,14 +490,14 @@ void MainWindow::projectSelectionChanged(const QItemSelection &selected, const Q
 
     QModelIndex selectedProject = selected.indexes().at(0);
     getPackages(selectedProject);
-    filterBuilds("");
+    filterPackages("");
     setupProjectActions();
     ui->treeFiles->setAcceptDrops(false);
 }
 
-void MainWindow::buildSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void MainWindow::packageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    qDebug() << "MainWindow::buildSelectionChanged()";
+    qDebug() << "MainWindow::packageSelectionChanged()";
     Q_UNUSED(deselected);
     QModelIndex selectedPackage = selected.indexes().at(0);
 
@@ -596,7 +596,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
 void MainWindow::reloadFiles()
 {
     qDebug() << "MainWindow::reloadFiles()";
-    getPackageFiles(ui->treeBuilds->currentIndex());
+    getPackageFiles(ui->treePackages->currentIndex());
     setupPackageActions();
 }
 
@@ -616,7 +616,7 @@ void MainWindow::getBuildResults()
     oldModel = nullptr;
 
     currentProject = ui->treeProjects->getCurrentProject();
-    currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    currentPackage = ui->treePackages->currentIndex().data().toString();
     obs->getAllBuildStatus(currentProject, currentPackage);
 }
 
@@ -634,7 +634,7 @@ void MainWindow::getBuildLog()
     QString currentProject = ui->treeProjects->getCurrentProject();
     QString currentBuildRepository = indexList.at(0).data().toString();
     QString currentBuildArch = indexList.at(1).data().toString();
-    QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    QString currentPackage = ui->treePackages->currentIndex().data().toString();
 
     obs->getBuildLog(currentProject, currentBuildRepository, currentBuildArch, currentPackage);
     emit updateStatusBar(tr("Getting build log..."), false);
@@ -672,15 +672,15 @@ void MainWindow::slotContextMenuProjects(const QPoint &point)
 
 void MainWindow::slotContextMenuPackages(const QPoint &point)
 {
-    QMenu *treeMonitorMenu = new QMenu(ui->treeBuilds);
-    treeMonitorMenu->addAction(actionNew_package);
-    treeMonitorMenu->addAction(ui->action_Branch_package);
-    treeMonitorMenu->addAction(action_ReloadPackages);
-    treeMonitorMenu->addAction(actionDelete_package);
+    QMenu *treePackagesMenu = new QMenu(ui->treePackages);
+    treePackagesMenu->addAction(actionNew_package);
+    treePackagesMenu->addAction(ui->action_Branch_package);
+    treePackagesMenu->addAction(action_ReloadPackages);
+    treePackagesMenu->addAction(actionDelete_package);
 
-    QModelIndex index = ui->treeBuilds->indexAt(point);
+    QModelIndex index = ui->treePackages->indexAt(point);
     if (index.isValid()) {
-        treeMonitorMenu->exec(ui->treeBuilds->mapToGlobal(point));
+        treePackagesMenu->exec(ui->treePackages->mapToGlobal(point));
     }
 }
 
@@ -732,7 +732,7 @@ void MainWindow::changeRequestState()
         // Get SR diff
         obs->getRequestDiff(item->text(2));
 
-        // Get build results
+        // Get package build results
         QStringList source = item->text(2).split("/");
         QString project = source.at(0);
         QString package = source.at(1);
@@ -794,19 +794,19 @@ void MainWindow::slotEnableRemoveRow()
 void MainWindow::on_action_Branch_package_triggered()
 {
     QString project = ui->treeProjects->getCurrentProject();
-    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
-    QString build = pkgIndex.data().toString();
+    QModelIndex pkgIndex = ui->treePackages->currentIndex();
+    QString package = pkgIndex.data().toString();
 
     const QString title = tr("Branch confirmation");
     const QString text = tr("<b>Source</b><br> %1/%2<br><b>Destination</b><br> home:%3:branches:%4")
-                           .arg(project, build, obs->getUsername(), project);
+                           .arg(project, package, obs->getUsername(), project);
 
     QMessageBox::StandardButton result = QMessageBox::question(this, title, text,
                                                               QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (result == QMessageBox::Ok) {
-        qDebug() << "Branching package..." << project << "/" << build;
-        obs->branchPackage(project, build);
-        const QString statusText = tr("Branching %1/%2...").arg(project, build);
+        qDebug() << "Branching package..." << project << "/" << package;
+        obs->branchPackage(project, package);
+        const QString statusText = tr("Branching %1/%2...").arg(project, package);
         emit updateStatusBar(statusText, false);
     }
 }
@@ -830,7 +830,7 @@ void MainWindow::on_action_Upload_file_triggered()
 void MainWindow::on_action_Download_file_triggered()
 {
     QString currentProject = ui->treeProjects->getCurrentProject();
-    QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    QString currentPackage = ui->treePackages->currentIndex().data().toString();
     QString currentFile = ui->treeFiles->currentIndex().data().toString();
     obs->downloadFile(currentProject, currentPackage, currentFile);
 }
@@ -868,7 +868,7 @@ void MainWindow::uploadFile(QString path)
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
+    QModelIndex pkgIndex = ui->treePackages->currentIndex();
     QString package = pkgIndex.data().toString();
 
     if (!project.isEmpty() && !package.isEmpty()) {
@@ -917,7 +917,7 @@ void MainWindow::deletePackage()
     qDebug() << "MainWindow:deletePackage()";
 
     QString project = ui->treeProjects->getCurrentProject();
-    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
+    QModelIndex pkgIndex = ui->treePackages->currentIndex();
     QString package = pkgIndex.data().toString();
 
     const QString title = tr("Delete confirmation");
@@ -939,7 +939,7 @@ void MainWindow::deleteFile()
     qDebug() << "MainWindow:deleteFile()";
 
     QString project = ui->treeProjects->getCurrentProject();
-    QModelIndex pkgIndex = ui->treeBuilds->currentIndex();
+    QModelIndex pkgIndex = ui->treePackages->currentIndex();
     QString package = pkgIndex.data().toString();
     QModelIndex fileIndex = ui->treeFiles->currentIndex();
     QString fileName = fileIndex.data().toString();
@@ -1018,9 +1018,9 @@ void MainWindow::insertPackageList()
         OBSXmlReader *reader = obs->getXmlReader();
         reader->readList();
 
-        sourceModelBuilds->setStringList(reader->getList());
-        proxyModelBuilds->setSourceModel(sourceModelBuilds);
-        ui->treeBuilds->setModel(proxyModelBuilds);
+        sourceModelPackages->setStringList(reader->getList());
+        proxyModelPackages->setSourceModel(sourceModelPackages);
+        ui->treePackages->setModel(proxyModelPackages);
     }
     emit updateStatusBar(tr("Done"), true);
 }
@@ -1030,7 +1030,7 @@ void MainWindow::addFile(OBSFile *obsFile)
     qDebug() << "MainWindow::addFile()";
 
     currentProject = ui->treeProjects->getCurrentProject();
-    currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    currentPackage = ui->treePackages->currentIndex().data().toString();
     QString fileProject = obsFile->getProject();
     QString filePackage = obsFile->getPackage();
 
@@ -1098,7 +1098,7 @@ void MainWindow::addResult(OBSResult *obsResult)
     qDebug() << "MainWindow::addResult()";
 
     currentProject = ui->treeProjects->getCurrentProject();
-    currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    currentPackage = ui->treePackages->currentIndex().data().toString();
     QString resultProject = obsResult->getProject();
     QString resultPackage = obsResult->getStatus()->getPackage();
 
@@ -1163,11 +1163,11 @@ void MainWindow::slotUploadFile(OBSRevision *obsRevision)
 {
     qDebug() << "MainWindow::slotUploadFile()";
     QString currentProject = ui->treeProjects->getCurrentProject();
-    QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+    QString currentPackage = ui->treePackages->currentIndex().data().toString();
 
     // Refresh file list
     if (currentProject == obsRevision->getProject() && currentPackage == obsRevision->getPackage()) {
-        getPackageFiles(ui->treeBuilds->currentIndex());
+        getPackageFiles(ui->treePackages->currentIndex());
     }
     trayIcon->showMessage(APP_NAME, tr("The file %1 has been uploaded").arg(obsRevision->getFile()));
 
@@ -1251,12 +1251,12 @@ void MainWindow::slotDeletePackage(OBSStatus *obsStatus)
         QString currentProject = ui->treeProjects->currentIndex().data().toString();
 
         if (obsStatus->getProject()==currentProject) {
-            QModelIndexList itemList = ui->treeBuilds->model()->match(ui->treeBuilds->model()->index(0, 0),
+            QModelIndexList itemList = ui->treePackages->model()->match(ui->treePackages->model()->index(0, 0),
                                                                       Qt::DisplayRole, QVariant::fromValue(QString(obsStatus->getPackage())),
                                                                       1, Qt::MatchExactly);
             if(!itemList.isEmpty()) {
                 auto itemIndex = itemList.at(0);
-                ui->treeBuilds->model()->removeRow(itemIndex.row(), itemIndex.parent());
+                ui->treePackages->model()->removeRow(itemIndex.row(), itemIndex.parent());
             }
         }
         trayIcon->showMessage(APP_NAME, tr("The package %1 has been deleted").arg(obsStatus->getPackage()));
@@ -1278,7 +1278,7 @@ void MainWindow::slotDeleteFile(OBSStatus *obsStatus)
 
     if (obsStatus->getCode()=="ok") {
         QString currentProject = ui->treeProjects->getCurrentProject();
-        QString currentPackage = ui->treeBuilds->currentIndex().data().toString();
+        QString currentPackage = ui->treePackages->currentIndex().data().toString();
         QString fileName = obsStatus->getDetails();
 
         if (obsStatus->getProject()==currentProject && obsStatus->getPackage()==currentPackage) {
@@ -1752,10 +1752,10 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
         actionDelete_file->setEnabled(false);
     }
 
-    QItemSelectionModel *treeBuildsSelectionModel = ui->treeBuilds->selectionModel();
-    if (treeBuildsSelectionModel) {
-        QList<QModelIndex> selectedBuilds = treeBuildsSelectionModel->selectedIndexes();
-        bool enable = !selectedBuilds.isEmpty();
+    QItemSelectionModel *treePackagesSelectionModel = ui->treePackages->selectionModel();
+    if (treePackagesSelectionModel) {
+        QList<QModelIndex> selectedPackages = treePackagesSelectionModel->selectedIndexes();
+        bool enable = !selectedPackages.isEmpty();
         ui->action_Branch_package->setEnabled(enable);
         ui->action_Upload_file->setEnabled(enable);
         actionDelete_package->setEnabled(enable);
