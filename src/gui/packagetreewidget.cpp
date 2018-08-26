@@ -87,3 +87,8 @@ bool PackageTreeWidget::removePackage(const QString &package)
     }
     return false;
 }
+
+void PackageTreeWidget::clearModel()
+{
+    model()->removeRows(0, model()->rowCount());
+}

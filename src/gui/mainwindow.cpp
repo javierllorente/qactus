@@ -420,7 +420,7 @@ void MainWindow::filterResults(const QString &item)
 
     // Delete  treePackages' model rows when filter doesn't match a project
     if (proxyModelProjects->rowCount()==0 && ui->treePackages->model()->hasChildren()) {
-        ui->treePackages->model()->removeRows(0, ui->treePackages->model()->rowCount());
+        ui->treePackages->clearModel();
     }
 }
 

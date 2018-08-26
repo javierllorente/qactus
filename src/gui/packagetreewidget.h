@@ -39,6 +39,7 @@ public:
     QString getCurrentPackage() const;
     void filterPackages(const QString &item);
     bool removePackage(const QString &package);
+    void clearModel();
 
 private:
     QStringListModel *sourceModelPackages;
