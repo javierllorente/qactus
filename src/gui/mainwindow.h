@@ -103,9 +103,7 @@ private:
     void setupBrowser();
     bool firstTimeFileListDisplayed;
     bool firstTimeBuildResultsDisplayed;
-    QStringListModel *sourceModelPackages;
     QSortFilterProxyModel *proxyModelProjects;
-    QSortFilterProxyModel *proxyModelPackages;
     QStandardItemModel *sourceModelFiles;
     QStandardItemModel *sourceModelBuildResults;
     void setupProjectActions();
@@ -115,7 +113,6 @@ private:
     QStringList readProjectList() const;
     QString currentProject;
     QString currentPackage;
-    void filterPackages(const QString &item);
     void setupTreeMonitor();
     void createTreeRequests();
 
@@ -202,7 +199,6 @@ private slots:
     void on_iconBar_currentRowChanged(int index);
     void on_tabWidgetPackages_currentChanged(int index);
     void addProjectList();
-    void insertPackageList();
     void addFile(OBSFile*);
     void slotFileListAdded();
     void addResult(OBSResult*);
