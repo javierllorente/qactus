@@ -46,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treePackages->setOBS(obs);
     connect(ui->treePackages, SIGNAL(updateStatusBar(QString,bool)), this, SLOT(slotUpdateStatusBar(QString,bool)));
 
+    filesSelectionModel = ui->treeFiles->selectionModel();
+    connect(filesSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
+            SLOT(fileSelectionChanged(QItemSelection,QItemSelection)));
+
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
     connect(ui->treeRequests, SIGNAL(customContextMenuRequested(QPoint)), this,
@@ -247,7 +251,6 @@ void MainWindow::setupBrowser()
 
     connect(ui->treeFiles, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuFiles(QPoint)));
-    ui->treeFiles->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(ui->treeBuildResults, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuResults(QPoint)));
@@ -256,7 +259,6 @@ void MainWindow::setupBrowser()
     connect(ui->treeFiles, SIGNAL(droppedFile(QString)), this, SLOT(uploadFile(QString)));
 
     proxyModelProjects = static_cast<QSortFilterProxyModel *>(ui->treeProjects->model());
-    sourceModelFiles = nullptr;
     sourceModelBuildResults = nullptr;
 
     firstTimeFileListDisplayed = true;
@@ -353,11 +355,7 @@ void MainWindow::setupModels()
     qDebug() << "MainWindow::setupModels()";
     // Clean up package list, files and results
     ui->treePackages->deleteModel();
-
-    if (sourceModelFiles!=nullptr) {
-        delete sourceModelFiles;
-        sourceModelFiles = nullptr;
-    }
+    ui->treeFiles->clearModel();
 
     if (sourceModelBuildResults!=nullptr) {
         delete sourceModelBuildResults;
@@ -403,9 +401,7 @@ void MainWindow::loadProjects()
 
     setupModels();
 
-    ui->treeFiles->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->treeFiles->setRootIsDecorated(false);
     ui->treeFiles->setAcceptDrops(false);
     ui->action_Delete->setEnabled(false);
 
@@ -464,10 +460,7 @@ void MainWindow::projectSelectionChanged(const QItemSelection &selected, const Q
     Q_UNUSED(deselected);
 
     // Clean up files and build results on project click
-    if (sourceModelFiles!=nullptr) {
-        delete sourceModelFiles;
-        sourceModelFiles = nullptr;
-    }
+    ui->treeFiles->clearModel();
 
     if (sourceModelBuildResults!=nullptr) {
         delete sourceModelBuildResults;
@@ -495,10 +488,7 @@ void MainWindow::packageSelectionChanged(const QItemSelection &selected, const Q
 
     } else {
         // If there is no package selected, clear both the file and build result lists
-        if (sourceModelFiles!=nullptr) {
-            delete sourceModelFiles;
-            sourceModelFiles = nullptr;
-        }
+        ui->treeFiles->clearModel();
 
         if (sourceModelBuildResults!=nullptr) {
             delete sourceModelBuildResults;
@@ -534,11 +524,7 @@ void MainWindow::reloadPackages()
     getPackages(ui->treeProjects->currentIndex());
 
     // Clean up package files and results
-
-    if (sourceModelFiles!=nullptr) {
-        delete sourceModelFiles;
-        sourceModelFiles = nullptr;
-    }
+    ui->treeFiles->clearModel();
 
     if (sourceModelBuildResults!=nullptr) {
         delete sourceModelBuildResults;
@@ -555,18 +541,7 @@ void MainWindow::getPackageFiles(QModelIndex index)
     qDebug() << "MainWindow::getPackageFiles()";
     emit updateStatusBar(tr("Getting package files.."), false);
 
-    QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeFiles->model());
-    sourceModelFiles = new QStandardItemModel(ui->treeFiles);
-    QStringList treeFilesHeaders;
-    treeFilesHeaders << tr("File name") << tr("Size") << tr("Modified time");
-    sourceModelFiles->setHorizontalHeaderLabels(treeFilesHeaders);
-    ui->treeFiles->setModel(sourceModelFiles);
-    ui->treeFiles->setColumnWidth(0, 250);
-    delete oldModel;
-
-    filesSelectionModel = ui->treeFiles->selectionModel();
-    connect(filesSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
-            SLOT(fileSelectionChanged(QItemSelection,QItemSelection)));
+    ui->treeFiles->clearModel();
 
     QString currentProject = ui->treeProjects->getCurrentProject();
     QString currentPackage = index.data().toString();
@@ -816,7 +791,7 @@ void MainWindow::on_action_Download_file_triggered()
 {
     QString currentProject = ui->treeProjects->getCurrentProject();
     QString currentPackage = ui->treePackages->getCurrentPackage();
-    QString currentFile = ui->treeFiles->currentIndex().data().toString();
+    QString currentFile = ui->treeFiles->getCurrentFile();
     obs->downloadFile(currentProject, currentPackage, currentFile);
 }
 
@@ -922,8 +897,7 @@ void MainWindow::deleteFile()
 
     QString project = ui->treeProjects->getCurrentProject();
     QString package = ui->treePackages->getCurrentPackage();
-    QModelIndex fileIndex = ui->treeFiles->currentIndex();
-    QString fileName = fileIndex.data().toString();
+    QString fileName = ui->treeFiles->getCurrentFile();
 
     const QString title = tr("Delete confirmation");
     const QString text = tr("Do you really want to delete file<br> %1/%2/%3?")
@@ -1000,46 +974,7 @@ void MainWindow::addFile(OBSFile *obsFile)
     QString filePackage = obsFile->getPackage();
 
     if (currentProject==fileProject && currentPackage==filePackage) {
-
-
-        QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeFiles->model());
-        if (model) {
-            model->setSortRole(Qt::UserRole);
-
-            // Name
-            QStandardItem *itemName = new QStandardItem();
-            itemName->setData(obsFile->getName(), Qt::UserRole);
-            itemName->setData(obsFile->getName(), Qt::DisplayRole);
-
-            // Size
-            QStandardItem *itemSize = new QStandardItem();
-            QString fileSizeHuman;
-#if QT_VERSION >= 0x051000
-            QLocale locale = this->locale();
-            fileSizeHuman = locale.formattedDataSize(obsFile->getSize().toInt());
-#else
-            fileSizeHuman = Utils::fileSizeHuman(obsFile->getSize().toInt());
-#endif
-            itemSize->setData(QVariant(fileSizeHuman), Qt::DisplayRole);
-            itemSize->setData(obsFile->getSize().toInt(), Qt::UserRole);
-
-            // Modified time
-            QStandardItem *itemLastModified = new QStandardItem();
-            QString lastModifiedStr;
-            QString lastModifiedUnixTimeStr = obsFile->getLastModified();
-#if QT_VERSION >= 0x050800
-            QDateTime lastModifiedDateTime = QDateTime::fromSecsSinceEpoch(qint64(lastModifiedUnixTimeStr.toInt()), Qt::UTC);
-            lastModifiedStr = lastModifiedDateTime.toString("dd/MM/yyyy H:mm");
-#else
-            lastModifiedStr = Utils::unixTimeToDate(lastModifiedUnixTimeStr);
-#endif
-            itemLastModified->setData(lastModifiedUnixTimeStr.toInt(), Qt::UserRole);
-            itemLastModified->setData(lastModifiedStr, Qt::DisplayRole);
-
-            QList<QStandardItem *> items;
-            items << itemName << itemSize << itemLastModified;
-            model->appendRow(items);
-        }
+        ui->treeFiles->addFile(obsFile);
     }
     delete obsFile;
     obsFile = nullptr;
@@ -1241,20 +1176,16 @@ void MainWindow::slotDeleteFile(OBSStatus *obsStatus)
         QString fileName = obsStatus->getDetails();
 
         if (obsStatus->getProject()==currentProject && obsStatus->getPackage()==currentPackage) {
-            QModelIndexList itemList = ui->treeFiles->model()->match(ui->treeFiles->model()->index(0, 0),
-                                                                      Qt::DisplayRole, QVariant::fromValue(QString(fileName)),
-                                                                      1, Qt::MatchExactly);
-            if (!itemList.isEmpty()) {
-                auto itemIndex = itemList.at(0);
-                ui->treeFiles->model()->removeRow(itemIndex.row(), itemIndex.parent());
 
+            bool fileRemoved = ui->treeFiles->removeFile(fileName);
+
+            if (fileRemoved) {
                 // Disable the delete file action if there are no files after a deletion
                 QItemSelectionModel *treeFilesSelectionModel = ui->treeFiles->selectionModel();
                 QList<QModelIndex> selectedFiles = treeFilesSelectionModel->selectedIndexes();
                 bool enable = !selectedFiles.isEmpty();
                 actionDelete_file->setEnabled(enable);
             }
-
         }
         trayIcon->showMessage(APP_NAME, tr("The file %1 has been deleted").arg(obsStatus->getDetails()));
     } else {

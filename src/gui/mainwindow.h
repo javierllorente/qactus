@@ -104,7 +104,6 @@ private:
     bool firstTimeFileListDisplayed;
     bool firstTimeBuildResultsDisplayed;
     QSortFilterProxyModel *proxyModelProjects;
-    QStandardItemModel *sourceModelFiles;
     QStandardItemModel *sourceModelBuildResults;
     void setupProjectActions();
     void setupPackageActions();

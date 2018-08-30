@@ -26,7 +26,9 @@
 #include <QDropEvent>
 #include <QMimeData>
 #include <QDebug>
+#include <QStandardItemModel>
 #include "obs.h"
+#include "utils.h"
 
 class FileTreeWidget : public QTreeView
 {
@@ -34,12 +36,20 @@ class FileTreeWidget : public QTreeView
 
 public:
     FileTreeWidget(QWidget *parent = 0);
-    void setOBS(OBS *obs);
+    void createModel();
+    void deleteModel();
+    void addFile(OBSFile *obsFile);
+    QString getCurrentFile() const;
+    bool removeFile(const QString &fileName);
+    void clearModel();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
     void dropEvent(QDropEvent *event);
+
+private:
+    QStandardItemModel *sourceModelFiles;
 
 signals:
     void droppedFile(QString);

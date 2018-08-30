@@ -180,6 +180,12 @@
                 <layout class="QVBoxLayout" name="verticalLayout_4">
                  <item>
                   <widget class="FileTreeWidget" name="treeFiles">
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="rootIsDecorated">
+                    <bool>false</bool>
+                   </property>
                    <property name="sortingEnabled">
                     <bool>true</bool>
                    </property>
