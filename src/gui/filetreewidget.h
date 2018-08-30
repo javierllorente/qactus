@@ -27,7 +27,7 @@
 #include <QMimeData>
 #include <QDebug>
 #include <QStandardItemModel>
-#include "obs.h"
+#include "obsfile.h"
 #include "utils.h"
 
 class FileTreeWidget : public QTreeView
