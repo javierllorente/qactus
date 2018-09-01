@@ -254,12 +254,10 @@ void MainWindow::setupBrowser()
 
     connect(ui->treeBuildResults, SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(slotContextMenuResults(QPoint)));
-    ui->treeBuildResults->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(ui->treeFiles, SIGNAL(droppedFile(QString)), this, SLOT(uploadFile(QString)));
 
     proxyModelProjects = static_cast<QSortFilterProxyModel *>(ui->treeProjects->model());
-    sourceModelBuildResults = nullptr;
 
     firstTimeFileListDisplayed = true;
     firstTimeBuildResultsDisplayed = true;
@@ -356,11 +354,7 @@ void MainWindow::setupModels()
     // Clean up package list, files and results
     ui->treePackages->deleteModel();
     ui->treeFiles->clearModel();
-
-    if (sourceModelBuildResults!=nullptr) {
-        delete sourceModelBuildResults;
-        sourceModelBuildResults = nullptr;
-    }
+    ui->treeBuildResults->clearModel();
 
     projectsSelectionModel = ui->treeProjects->selectionModel();
     ui->treePackages->createModel();
@@ -400,8 +394,6 @@ void MainWindow::loadProjects()
     qDebug() << "MainWindow::loadProjects()";
 
     setupModels();
-
-    ui->treeBuildResults->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->treeFiles->setAcceptDrops(false);
     ui->action_Delete->setEnabled(false);
 
@@ -461,11 +453,7 @@ void MainWindow::projectSelectionChanged(const QItemSelection &selected, const Q
 
     // Clean up files and build results on project click
     ui->treeFiles->clearModel();
-
-    if (sourceModelBuildResults!=nullptr) {
-        delete sourceModelBuildResults;
-        sourceModelBuildResults = nullptr;
-    }
+    ui->treeBuildResults->clearModel();
 
     QModelIndex selectedProject = selected.indexes().at(0);
     getPackages(selectedProject);
@@ -489,11 +477,7 @@ void MainWindow::packageSelectionChanged(const QItemSelection &selected, const Q
     } else {
         // If there is no package selected, clear both the file and build result lists
         ui->treeFiles->clearModel();
-
-        if (sourceModelBuildResults!=nullptr) {
-            delete sourceModelBuildResults;
-            sourceModelBuildResults = nullptr;
-        }
+        ui->treeBuildResults->clearModel();
 
         setupProjectActions();
         ui->treeFiles->setAcceptDrops(false);
@@ -525,11 +509,7 @@ void MainWindow::reloadPackages()
 
     // Clean up package files and results
     ui->treeFiles->clearModel();
-
-    if (sourceModelBuildResults!=nullptr) {
-        delete sourceModelBuildResults;
-        sourceModelBuildResults = nullptr;
-    }
+    ui->treeBuildResults->clearModel();
 
     setupProjectActions();
 
@@ -566,18 +546,9 @@ void MainWindow::getBuildResults()
     qDebug() << "MainWindow::getBuildResults()";
     emit updateStatusBar(tr("Getting build results..."), false);
 
-    QStandardItemModel *oldModel = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
-    sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
-    QStringList treeBuildResultsHeaders;
-    treeBuildResultsHeaders << tr("Repository") << tr("Arch") << tr("Status");
-    sourceModelBuildResults->setHorizontalHeaderLabels(treeBuildResultsHeaders);
-    ui->treeBuildResults->setModel(sourceModelBuildResults);
-    ui->treeBuildResults->setColumnWidth(0, 250);
-    delete oldModel;
-    oldModel = nullptr;
-
+    ui->treeBuildResults->clearModel();
     currentProject = ui->treeProjects->getCurrentProject();
-    currentPackage = ui->treePackages->currentIndex().data().toString();
+    currentPackage = ui->treePackages->getCurrentPackage();
     obs->getAllBuildStatus(currentProject, currentPackage);
 }
 
@@ -591,11 +562,10 @@ void MainWindow::reloadResults()
 void MainWindow::getBuildLog()
 {
     qDebug() << "MainWindow::getBuildLog()";
-    QModelIndexList indexList = ui->treeBuildResults->selectionModel()->selectedIndexes();
     QString currentProject = ui->treeProjects->getCurrentProject();
-    QString currentBuildRepository = indexList.at(0).data().toString();
-    QString currentBuildArch = indexList.at(1).data().toString();
-    QString currentPackage = ui->treePackages->currentIndex().data().toString();
+    QString currentBuildRepository = ui->treeBuildResults->getCurrentRepository();
+    QString currentBuildArch = ui->treeBuildResults->getCurrentArch();
+    QString currentPackage = ui->treePackages->getCurrentPackage();
 
     obs->getBuildLog(currentProject, currentBuildRepository, currentBuildArch, currentPackage);
     emit updateStatusBar(tr("Getting build log..."), false);
@@ -1003,24 +973,7 @@ void MainWindow::addResult(OBSResult *obsResult)
     QString resultPackage = obsResult->getStatus()->getPackage();
 
     if (currentProject==resultProject && currentPackage==resultPackage) {
-        QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
-
-        if (model) {
-            QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
-            QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
-            QStandardItem *itemBuildResult = new QStandardItem(obsResult->getStatus()->getCode());
-            itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
-
-            if (!obsResult->getStatus()->getDetails().isEmpty()) {
-                QString details = obsResult->getStatus()->getDetails();
-                details = Utils::breakLine(details, 250);
-                itemBuildResult->setToolTip(details);
-            }
-
-            QList<QStandardItem*> items;
-            items << itemRepository << itemArch << itemBuildResult;
-            model->appendRow(items);
-        }
+        ui->treeBuildResults->addResult(obsResult);
     }
 
 //  This slot is in charge of deleting result (last one connected)
@@ -1172,7 +1125,7 @@ void MainWindow::slotDeleteFile(OBSStatus *obsStatus)
 
     if (obsStatus->getCode()=="ok") {
         QString currentProject = ui->treeProjects->getCurrentProject();
-        QString currentPackage = ui->treePackages->currentIndex().data().toString();
+        QString currentPackage = ui->treePackages->getCurrentPackage();
         QString fileName = obsStatus->getDetails();
 
         if (obsStatus->getProject()==currentProject && obsStatus->getPackage()==currentPackage) {

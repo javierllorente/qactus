@@ -35,7 +35,8 @@ SOURCES += main.cpp \
     buildlogviewer.cpp \
     projecttreewidget.cpp \
     monitortreewidget.cpp \
-    packagetreewidget.cpp
+    packagetreewidget.cpp \
+    buildresulttreewidget.cpp
 HEADERS += mainwindow.h \
     trayicon.h \
     configure.h \
@@ -53,7 +54,8 @@ HEADERS += mainwindow.h \
     buildlogviewer.h \
     projecttreewidget.h \
     monitortreewidget.h \
-    packagetreewidget.h
+    packagetreewidget.h \
+    buildresulttreewidget.h
 FORMS += mainwindow.ui \
     configure.ui \
     login.ui \
