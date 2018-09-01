@@ -114,7 +114,8 @@ void FileTreeWidget::addFile(OBSFile *obsFile)
 
 QString FileTreeWidget::getCurrentFile() const
 {
-    return currentIndex().data().toString();
+    QModelIndexList indexList = selectionModel()->selectedIndexes();
+    return indexList.at(0).data().toString();
 }
 
 bool FileTreeWidget::removeFile(const QString &fileName)
