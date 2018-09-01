@@ -1624,12 +1624,14 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     ui->action_Upload_file->setVisible(browserTabVisible);
     ui->action_Download_file->setVisible(browserTabVisible);
     ui->action_Delete->setVisible(browserTabVisible);
+    ui->action_Delete->setShortcut(browserTabVisible ? QKeySequence::Delete : QKeySequence());
     actionFilterSpacer->setVisible(browserTabVisible);
     actionFilter->setVisible(browserTabVisible);
 
     bool monitorTabVisible = (index==1);
     ui->action_Add->setVisible(monitorTabVisible);
     ui->action_Remove->setVisible(monitorTabVisible);
+    ui->action_Remove->setShortcut(monitorTabVisible ? QKeySequence::Delete : QKeySequence());
     ui->action_Mark_all_as_read->setVisible(monitorTabVisible);
 
     bool requestsTabVisible = (index==2);
