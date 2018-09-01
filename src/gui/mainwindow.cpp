@@ -792,7 +792,7 @@ void MainWindow::newPackage()
     createDialog = nullptr;
 }
 
-void MainWindow::uploadFile(QString path)
+void MainWindow::uploadFile(const QString &path)
 {
     qDebug() << "MainWindow:uploadFile() path:" << path;
 

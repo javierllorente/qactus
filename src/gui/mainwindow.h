@@ -181,7 +181,7 @@ private slots:
     void on_action_Download_file_triggered();
     void newProject();
     void newPackage();
-    void uploadFile(QString path);
+    void uploadFile(const QString &path);
     void deleteProject();
     void deletePackage();
     void deleteFile();
