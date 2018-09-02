@@ -122,9 +122,9 @@ void Login::on_pushButton_Login_clicked()
     if (getUsername().isEmpty() || getPassword().isEmpty()) {
         QMessageBox::warning(parentWidget(), tr("Error"), tr("Empty username/password"), QMessageBox::Ok);
     } else {
-        close();
         writeSettings();
         emit login(getUsername(), getPassword());
+        close();
     }
 }
 

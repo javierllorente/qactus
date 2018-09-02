@@ -1222,6 +1222,7 @@ void MainWindow::slotLogin(const QString &username, const QString &password)
     qDebug() << "MainWindow::slotLogin()";
     obs->setCredentials(username, password);
     obs->login();
+    emit updateStatusBar(tr("Logging in..."), false);
 }
 
 void MainWindow::on_action_Quit_triggered()
@@ -1536,16 +1537,11 @@ void MainWindow::readTimerSettings()
 void MainWindow::showLoginDialog()
 {
     qDebug() << "MainWindow::showLoginDialog()";
-    if (loginDialog==nullptr) {
+    if (!loginDialog) {
         loginDialog = new Login(this);
         connect(loginDialog, SIGNAL(login(QString,QString)), this, SLOT(slotLogin(QString,QString)));
-        loginDialog->exec();
-//        delete loginDialog;
-//        loginDialog = nullptr;
-    } else {
-        loginDialog->show();
     }
-
+    loginDialog->show();
 }
 
 void MainWindow::on_action_Configure_Qactus_triggered()
