@@ -8,8 +8,8 @@
         <file>icons/help-about.png</file>
         <file>icons/list-add.png</file>
         <file>icons/list-remove.png</file>
-        <file>obs.png</file>
-        <file>obs_change.png</file>
+        <file>icons/obs.png</file>
+        <file>icons/obs_change.png</file>
         <file>icons/system-switch-user.png</file>
         <file>icons/dialog-ok-apply.png</file>
         <file>icons/dialog-cancel.png</file>

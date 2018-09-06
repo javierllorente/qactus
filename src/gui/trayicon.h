@@ -36,8 +36,8 @@ public:
 
 private:
     bool notifyIcon;
-    const QString NOTIFY_ICON = ":/obs_change.png";
-    const QString NORMAL_ICON = ":/obs.png";
+    const QString NOTIFY_ICON = ":/icons/obs_change.png";
+    const QString NORMAL_ICON = ":/icons/obs.png";
 
 public slots:
     void toggleIcon(bool toggle);
