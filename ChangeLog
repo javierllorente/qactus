@@ -2,6 +2,81 @@ Qactus ChangeLog
 ================
 
 v0.9.XX (2018-XX-XX)
+- Code cleanup
+- Move qactus.png, obs.png and obs_change.png to the icons directory
+- Fix login dialog crash on login failure
+- New class: BuildResultTreeWidget
+- New class: PackageTreeWidget
+ - Refactoring: fix wrong naming (build != package)
+- Refactoring: rename PackageTreeWidget to MonitorTreeWidget, treePackages
+to treeMonitor, treePackagesMenu to treeMonitorMenu
+- Refactoring: Rename MainWindow::insertProjectList() to MainWindow::addProjectList()
+- New class: ProjectTreeWidget
+- Disable delete action on refreshProjectFilter() since everything (project, package, ...)
+is deselected when the project list is loaded
+- Refactoring: Use 'slot' infront of method name to standarise naming
+- Improve filtering
+- Implement on_action_Home_triggered, add home action
+- New class: BuildLogViewer
+- Implement getBuildLog(), add get build log to build results context menu
+- Implement downloadFile(), add download action to file context menu,
+add download file button to toolbar
+- Refactoring of OBS::login(): better handling of errors,
+check if isAuthenticated before parsing on OBSCore::BuildStatus
+- Enable multiselection of files in the slot on_action_Upload_file_triggered()
+- Accept drops on FileTreeWidget only if there is a package selected
+- Make sure project/package is not empty before uploading a file
+- Use OBSCore::RequestType enum for handling build status 404 error
+instead of calling OBSXmlReader::addData()
+- New class: FileTreeWidget
+- Composition/forward methods: switch OBSResult's getProject() and
+setProject() to OBSStatus'
+- Make OBSStatus a subclass of OBSObject
+- Make OBSRevision a subclass of OBSObject
+- Reimplement OBS::request for making a new request with a
+QNetworkReply * as a parameter;
+- Fix a RequestStateEditor crash: disconnect slots to signal
+- Make OBSFile a subclass of OBSObject
+- New class: OBSObject
+- Browser: Update currentProject and currentPackage to the current selection so that
+we only display relevant data
+- Browser: Refactoring: one delete button to rule them all! (project, package
+or file)
+- Browser: Implement context menus for the project, package and file lists;
+(new, branch, delete, reload, get build log)
+- Enable alternating row colours for the browsers' package list
+- Browser: Enable sorting for files and build results tabs
+- Show a ballon message on branch package, upload file and delete project/package/file
+- Refresh file list on successful file upload
+- Rename OBSAccess to OBSCore
+- Implement uploadFile() method, UploadFile cases (ok, error), parseUploadFile(),
+parseRevision(), add upload button to toolbar
+- Achtung! OBSStatus obsoletes OBSPackage. Delete all references to OBSPackage
+- CreateDialog: Fill in project field when creating a subproject if a base project is selected
+- Implement newProject() and newPackage(), add a "new" button to the tool bar
+- New class: OBSXmlWriter. Purpose: writing xml data needed for creating a project/package
+- New class: CreateDialog. Purpose: a dialog for creating a project/package
+- Implement createProject(), parseCreateProject(), deal with no permissions error
+- Implement createPackage(), parseCreatePackage(), deal with no permissions error
+- RequestStateEditor: Add new a tab widget for showing changes and build results
+- Get build results for a SR
+- Implement deleteFile()
+- Get build results and submit requests on log-in
+- Implement about() to get API information
+- New class: OBSAbout
+- Implement new widget: BrowserFilter
+- FIXME: select and scroll to branch after branching
+- Implement parseDeleteProject() and parseDeletePackage()
+- Implement deleteProject()
+- Use icons from current theme in RequestStateEditor
+- Disable the "Mark all as read" button by default, enable it only on build status changes
+- Add a "Change request state" button to the requests tab
+- Add a 'Branch package' button
+- New class: OBSStatus
+- Enable/disable "Remove" button if an item is selected/deselected
+- Select current item after deleting selected items
+- Fix saving/loading 'includeHomeProjects'
+- Implement branching and deleting a package
 - Enhancenment: enable deleting multiple builds from the monitor tab at once
 - New feature: system proxy support
 - Enhancement: coloured SR diffs
