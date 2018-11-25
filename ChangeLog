@@ -1,7 +1,8 @@
 Qactus ChangeLog
 ================
 
-v0.9.XX (2018-XX-XX)
+v1.0.0 (2018-11-25)
+- Main new feature: an OBS browser :-)
 - Code cleanup
 - Move qactus.png, obs.png and obs_change.png to the icons directory
 - Fix login dialog crash on login failure
