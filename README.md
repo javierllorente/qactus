@@ -26,7 +26,7 @@ Building Qactus
 ------------
 ```
 cd qactus
-qmake-qt5 qactus.pro DESTDIR=/install/dir
+cmake .
 make
 ```
 

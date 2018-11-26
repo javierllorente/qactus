@@ -2,6 +2,7 @@
 # spec file for package qactus
 #
 # Copyright (c) 2015 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright (c) 2018 Neal Gompa <ngompa13@gmail.com>.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -15,6 +16,13 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
+%global libmajor 1
+%global libprefix libqobs
+%global libname %{libprefix}%{libmajor}
+%global devname %{libprefix}-devel
+
+# For SUSE Linux < 15
+%{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           qactus
 Version:        1.0.0
@@ -22,33 +30,51 @@ Release:        0
 Summary:        An OBS notifier application
 License:        GPL-2.0 or GPL-3.0
 Group:          Utility/Development/Other
-Url:            http://www.javierllorente.com/
-Source:         %{name}-%{version}.tar.bz2
+URL:            https://github.com/javierllorente/qactus
+Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+BuildRequires:  cmake >= 3.5
+BuildRequires:  cmake(Qt5Core)
+BuildRequires:  cmake(Qt5Gui)
+BuildRequires:  cmake(Qt5Widgets)
+BuildRequires:  cmake(Qt5Network)
+# Needed to ensure Qt5Keychain can be used properly
+BuildRequires:  cmake(Qt5DBus)
+BuildRequires:  cmake(Qt5Keychain)
 BuildRequires:  hicolor-icon-theme
-BuildRequires:  pkgconfig(Qt5Core)
-BuildRequires:  pkgconfig(Qt5Gui)
-BuildRequires:  pkgconfig(Qt5Widgets)
-BuildRequires:  pkgconfig(Qt5Network)
-BuildRequires:  qtkeychain-qt5-devel
+BuildRequires:  pkgconfig
 BuildRequires:  update-desktop-files
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+Requires:       %{libname}%{?_isa} = %{version}-%{release}
 
 %description
 A Qt-based OBS notifier application
 
+%package -n %{libname}
+Summary:        A library for interacting with OBS
+Group:          System/Libraries
+
+%description -n %{libname}
+A library for interacting with OBS
+
+%package -n %{devname}
+Summary:        Development files for %{libprefix}
+Group:          Development/Libraries/C and C++
+Requires:       %{libname}%{?_isa} = %{version}-%{release}
+
+%description -n %{devname}
+Development files for %{libprefix}
+
 %prep
-%setup -q -n %{name}
+%setup -q
 
 %build
-cat > .qmake.cache <<EOF
-PREFIX=%{_prefix}
-QMAKE_CXXFLAGS_RELEASE += "%{optflags}"
-EOF
-qmake-qt5
-make %{?_smp_mflags}
+# Deal with bug in SUSE's cmake macro that was fixed in Fedora long ago...
+# Cf. RH#795542 (https://bugzilla.redhat.com/795542)
+%cmake -DCMAKE_INSTALL_LIBDIR:PATH=%{_lib}
+%make_build
 
 %install
-make INSTALL_ROOT=%{buildroot} install
+%make_install -C build
+
 %suse_update_desktop_file %{name}
 
 %post
@@ -57,12 +83,24 @@ make INSTALL_ROOT=%{buildroot} install
 %postun
 %desktop_database_postun
 
+%post -n %{libname} -p /sbin/ldconfig
+%postun -n %{libname} -p /sbin/ldconfig
+
 %files
-%defattr(-,root,root)
-%doc COPYING README.md
+%doc README.md
+%license COPYING gpl-*.txt
 %{_bindir}/%{name}
-%{_libdir}/libqobs.so*
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/128x128/apps/%{name}.png
+
+%files -n %{libname}
+%license COPYING gpl-*.txt
+%{_libdir}/%{libprefix}.so.%{libmajor}
+%{_libdir}/%{libprefix}.so.%{libmajor}.*
+
+%files -n %{devname}
+%{_libdir}/%{libprefix}.so
+%{_libdir}/pkgconfig/%{libprefix}.pc
+%{_includedir}/qobs
 
 %changelog
