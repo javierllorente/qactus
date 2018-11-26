@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/include
+
+Name: libqobs
+Description: Library for interfacing with Open Build Service instances
+Version: @PROJECT_VERSION@
+Requires: Qt5Core, Qt5Gui, Qt5Network
+Libs: -L${libdir} -lqobs
+Cflags: -I${includedir}
