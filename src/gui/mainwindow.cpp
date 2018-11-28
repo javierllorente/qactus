@@ -380,7 +380,7 @@ QStringList MainWindow::readProjectList() const
         QMutableListIterator<QString> i(projectList);
         while (i.hasNext()) {
             i.next();
-            if (i.value().startsWith("home:" + obs->getUsername())) {
+            while (i.value().startsWith("home:" + obs->getUsername())) {
                 i.next();
             }
             if (i.value().startsWith("home")) {
