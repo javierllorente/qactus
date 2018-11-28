@@ -21,6 +21,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+const QString defaultApiUrl = "https://api.opensuse.org";
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -1456,7 +1458,12 @@ void MainWindow::readAuthSettings()
     qDebug() << "MainWindow::readAuthSettings()";
     QSettings settings;
     settings.beginGroup("Auth");
-    obs->setApiUrl(settings.value("ApiUrl").toString());
+    QString apiUrl = settings.value("ApiUrl").toString();
+    if (apiUrl.isEmpty()) {
+        apiUrl = defaultApiUrl;
+        settings.setValue("ApiUrl", defaultApiUrl);
+    }
+    obs->setApiUrl(apiUrl);
     if (settings.value("AutoLogin").toBool()) {
         Credentials *credentials = new Credentials(this);
         connect(credentials, SIGNAL(errorReadingPassword(QString)),
