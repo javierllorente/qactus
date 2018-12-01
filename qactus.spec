@@ -27,7 +27,7 @@
 Name:           qactus
 Version:        1.0.0
 Release:        0
-Summary:        An OBS notifier application
+Summary:        A GUI client for OBS
 License:        GPL-2.0 or GPL-3.0
 Group:          Utility/Development/Other
 URL:            https://github.com/javierllorente/qactus
@@ -46,14 +46,14 @@ BuildRequires:  update-desktop-files
 Requires:       %{libname}%{?_isa} = %{version}-%{release}
 
 %description
-A Qt-based OBS notifier application
+A Qt-based Open Build Service (OBS) client featuring a browser, request management and more
 
 %package -n %{libname}
-Summary:        A library for interacting with OBS
+Summary:        A Qt-based OBS library
 Group:          System/Libraries
 
 %description -n %{libname}
-A library for interacting with OBS
+A library for interacting with the Open Build Service (OBS)
 
 %package -n %{devname}
 Summary:        Development files for %{libprefix}
@@ -61,7 +61,8 @@ Group:          Development/Libraries/C and C++
 Requires:       %{libname}%{?_isa} = %{version}-%{release}
 
 %description -n %{devname}
-Development files for %{libprefix}
+This package contains the development files for %{libprefix}, a Qt-based
+Open Build Service (OBS) library
 
 %prep
 %setup -q
