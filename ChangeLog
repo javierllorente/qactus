@@ -1,5 +1,10 @@
 Qactus ChangeLog
 ================
+v1.0.1 (2018-12-01)
+- Bugfix: some user's home subprojects are missing in the project list if
+"include home projects" is unchecked.
+- Fix issue #4: 'Protocol "" is unknown' during login
+- Switch from QMake to CMake, rpm spec rewritten (Thanks Neal Gompa!)
 
 v1.0.0 (2018-11-25)
 - Main new feature: an OBS browser :-)
