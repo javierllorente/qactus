@@ -29,7 +29,7 @@ Version:        1.0.1
 Release:        0
 Summary:        A GUI client for OBS
 License:        GPL-2.0 or GPL-3.0
-Group:          Utility/Development/Other
+Group:          Development/Tools/Building
 URL:            https://github.com/javierllorente/qactus
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 BuildRequires:  cmake >= 3.5
