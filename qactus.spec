@@ -25,7 +25,7 @@
 %{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           qactus
-Version:        1.0.0
+Version:        1.0.1
 Release:        0
 Summary:        A GUI client for OBS
 License:        GPL-2.0 or GPL-3.0
