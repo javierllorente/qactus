@@ -21,9 +21,6 @@
 %global libname %{libprefix}%{libmajor}
 %global devname %{libprefix}-devel
 
-# For SUSE Linux < 15
-%{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
-
 Name:           qactus
 Version:        1.0.1
 Release:        0
