@@ -68,9 +68,7 @@ Open Build Service (OBS) library
 %setup -q
 
 %build
-# Deal with bug in SUSE's cmake macro that was fixed in Fedora long ago...
-# Cf. RH#795542 (https://bugzilla.redhat.com/795542)
-%cmake -DCMAKE_INSTALL_LIBDIR:PATH=%{_lib}
+%cmake
 %make_build
 
 %install
