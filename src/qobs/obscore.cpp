@@ -506,8 +506,8 @@ void OBSCore::replyFinished(QNetworkReply *reply)
     case QNetworkReply::ContentAccessDenied: // 401
         qDebug() << "OBSCore::replyFinished() Access denied!";
         if (reply->property("reqtype").isValid()) {
+            OBSStatus *obsStatus = nullptr;
             switch(reply->property("reqtype").toInt()) {
-            OBSStatus *obsStatus;
 
             case OBSCore::CreateProject: {
                 obsStatus = new OBSStatus();
