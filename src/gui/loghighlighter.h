@@ -18,34 +18,26 @@
  *
  */
 
-#ifndef BUILDLOGVIEWER_H
-#define BUILDLOGVIEWER_H
+#ifndef LOGHIGHLIGHTER_H
+#define LOGHIGHLIGHTER_H
 
-#include <QDialog>
-#include <QScrollBar>
-#include <QAction>
-#include "searchwidget.h"
+#include <QObject>
+#include <QSyntaxHighlighter>
+#include <QTextDocument>
+#include <QRegularExpression>
+#include <QRegularExpressionMatchIterator>
 
-namespace Ui {
-class BuildLogViewer;
-}
-
-class BuildLogViewer : public QDialog
+class LogHighlighter : public QSyntaxHighlighter
 {
-    Q_OBJECT
-
 public:
-    explicit BuildLogViewer(QWidget *parent = nullptr);
-    ~BuildLogViewer();
+    LogHighlighter(QTextDocument *parent = nullptr, const QString &searchText = "");
 
-    void setText(const QString &text);
+protected:
+    void highlightBlock(const QString &text);
 
 private:
-    Ui::BuildLogViewer *ui;
-    void scrollToBottom();
-
-private slots:
-    void findText();
+    QRegularExpression pattern;
+    QTextCharFormat format;
 };
 
-#endif // BUILDLOGVIEWER_H
+#endif // LOGHIGHLIGHTER_H

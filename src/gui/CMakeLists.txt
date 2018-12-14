@@ -29,7 +29,9 @@ set(QACTUS_SRC
     projecttreewidget.cpp
     monitortreewidget.cpp
     packagetreewidget.cpp
-    buildresulttreewidget.cpp)
+    buildresulttreewidget.cpp
+    searchwidget.cpp
+    loghighlighter.cpp)
 
 set(QACTUS_HDR
     mainwindow.h
@@ -50,7 +52,9 @@ set(QACTUS_HDR
     projecttreewidget.h
     monitortreewidget.h
     packagetreewidget.h
-    buildresulttreewidget.h)
+    buildresulttreewidget.h
+    searchwidget.h
+    loghighlighter.h)
 
 set(QACTUS_UI
     mainwindow.ui
@@ -60,7 +64,8 @@ set(QACTUS_UI
     requeststateeditor.ui
     browserfilter.ui
     createdialog.ui
-    buildlogviewer.ui)
+    buildlogviewer.ui
+    searchwidget.ui)
 
 set(QACTUS_RC
     ../../application.qrc)

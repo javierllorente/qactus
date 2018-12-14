@@ -18,34 +18,21 @@
  *
  */
 
-#ifndef BUILDLOGVIEWER_H
-#define BUILDLOGVIEWER_H
+#include "loghighlighter.h"
 
-#include <QDialog>
-#include <QScrollBar>
-#include <QAction>
-#include "searchwidget.h"
-
-namespace Ui {
-class BuildLogViewer;
+LogHighlighter::LogHighlighter(QTextDocument *parent, const QString &searchText)
+    : QSyntaxHighlighter(parent)
+{
+    QColor yellow(255, 255, 0);
+    format.setBackground(yellow);
+    pattern = QRegularExpression(searchText, QRegularExpression::CaseInsensitiveOption);
 }
 
-class BuildLogViewer : public QDialog
+void LogHighlighter::highlightBlock(const QString &text)
 {
-    Q_OBJECT
-
-public:
-    explicit BuildLogViewer(QWidget *parent = nullptr);
-    ~BuildLogViewer();
-
-    void setText(const QString &text);
-
-private:
-    Ui::BuildLogViewer *ui;
-    void scrollToBottom();
-
-private slots:
-    void findText();
-};
-
-#endif // BUILDLOGVIEWER_H
+    QRegularExpressionMatchIterator matchIterator = pattern.globalMatch(text);
+    while (matchIterator.hasNext()) {
+        QRegularExpressionMatch match = matchIterator.next();
+        setFormat(match.capturedStart(), match.capturedLength(), format);
+    }
+}

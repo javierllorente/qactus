@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -26,6 +26,10 @@ BuildLogViewer::BuildLogViewer(QWidget *parent) :
     ui(new Ui::BuildLogViewer)
 {
     ui->setupUi(this);
+    QAction *findAction = new QAction(this);
+    findAction->setShortcut(QKeySequence("Ctrl+F"));
+    connect(findAction, SIGNAL(triggered()), this, SLOT(findText()));
+    addAction(findAction);
 
     ui->plainTextEdit->ensureCursorVisible();
 }
@@ -45,4 +49,18 @@ void BuildLogViewer::scrollToBottom()
 {
     int value = ui->plainTextEdit->verticalScrollBar()->maximum();
     ui->plainTextEdit->verticalScrollBar()->setValue(value);
+}
+
+void BuildLogViewer::findText()
+{
+    const int widgetIndex = 0;
+    SearchWidget *searchWidget = nullptr;
+
+    if (ui->verticalLayout->count() == 2) {
+        searchWidget = new SearchWidget(this, ui->plainTextEdit);
+        ui->verticalLayout->insertWidget(widgetIndex, searchWidget);
+    } else if (ui->verticalLayout->count() == 3) {
+        searchWidget = static_cast<SearchWidget *>(ui->verticalLayout->itemAt(widgetIndex)->widget());
+    }
+    searchWidget->setup();
 }
