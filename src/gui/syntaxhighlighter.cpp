@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -27,7 +27,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
 
     QColor green(34, 153, 34);
     addedLineFormat.setForeground(green);
-    rule.pattern = QRegularExpression("^(\\+.*)$|^(.*added)$");
+    rule.pattern = QRegularExpression("^(\\+.*)$|^(.*added)$|^(add.*)$");
     rule.format = addedLineFormat;
     highlightingRules.append(rule);
 
