@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -46,8 +46,6 @@ public:
     void setDetails(const QString &value);
 
 private:
-    QString project;
-    QString package;
     QString code;
     QString summary;
     QString details;
