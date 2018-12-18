@@ -666,6 +666,7 @@ void MainWindow::changeRequestState()
         obs->getRequestDiff(item->text(2));
 
         // Get package build results
+        reqStateEditor->showTabBuildResults(true);
         QStringList source = item->text(2).split("/");
         QString project = source.at(0);
         QString package = source.at(1);
