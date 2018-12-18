@@ -27,10 +27,10 @@ class OBSObject
 {
 public:
     OBSObject();
-    inline bool operator==(const OBSObject &lhs, const OBSObject &rhs)
+    inline bool operator==(const OBSObject &other)
     {
-        return lhs.getProject()==rhs.getProject() &&
-                lhs.getPackage()==rhs.getPackage();
+        return project==other.getProject() &&
+                package==other.getPackage();
     }
 
     QString getProject() const;
