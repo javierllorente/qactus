@@ -39,6 +39,8 @@ public:
     QString getPackage() const;
     void setPackage(const QString &value);
 
+    QString toString() const;
+
 private:
     QString project;
     QString package;

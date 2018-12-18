@@ -44,3 +44,8 @@ void OBSObject::setPackage(const QString &value)
 {
     package = value;
 }
+
+QString OBSObject::toString() const
+{
+     return project + "/" + package;
+}
