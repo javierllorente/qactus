@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Name=Qactus
-GenericName=OBS notifier
-Comment=A Qt-based notifier application
+GenericName=OBS client
+Comment=A Qt-based OBS client
 Icon=qactus
 Exec=qactus
 Categories=Network;Monitor;
