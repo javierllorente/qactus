@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
@@ -48,6 +48,7 @@ public:
     void setTarget(const QString& target);
     void setDate(const QString& date);
     void setDiff(const QString &diff);
+    void showTabBuildResults(bool show);
 
 signals:
     void changeSubmitRequest(const QString &id, const QString &comments, bool accepted);

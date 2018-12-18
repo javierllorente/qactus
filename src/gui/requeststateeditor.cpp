@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
@@ -29,6 +29,7 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs) :
     ui->setupUi(this);
     ui->commentsTextBrowser->setFocus();
     ui->diffTextBrowser->setFocusPolicy(Qt::NoFocus);
+    showTabBuildResults(false);
 
     // Setup build results tree view
     QStandardItemModel *sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
@@ -81,6 +82,16 @@ void RequestStateEditor::setDiff(const QString &diff)
     textDocument->setPlainText(diff);
     syntaxHighlighter = new SyntaxHighlighter(textDocument);
     ui->diffTextBrowser->setDocument(textDocument);
+}
+
+void RequestStateEditor::showTabBuildResults(bool show)
+{
+    if (show) {
+        QWidget *buildResultsWidget = ui->tabWidget->findChild<QWidget *>("tabBuildResults");
+        ui->tabWidget->addTab(buildResultsWidget, tr("Build results"));
+    } else {
+        ui->tabWidget->removeTab(1);
+    }
 }
 
 void RequestStateEditor::on_acceptPushButton_clicked()
