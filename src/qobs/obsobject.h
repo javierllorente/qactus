@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -27,6 +27,11 @@ class OBSObject
 {
 public:
     OBSObject();
+    inline bool operator==(const OBSObject &lhs, const OBSObject &rhs)
+    {
+        return lhs.getProject()==rhs.getProject() &&
+                lhs.getPackage()==rhs.getPackage();
+    }
 
     QString getProject() const;
     void setProject(const QString &value);
