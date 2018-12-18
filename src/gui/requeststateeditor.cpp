@@ -87,8 +87,7 @@ void RequestStateEditor::setDiff(const QString &diff)
 void RequestStateEditor::showTabBuildResults(bool show)
 {
     if (show) {
-        QWidget *buildResultsWidget = ui->tabWidget->findChild<QWidget *>("tabBuildResults");
-        ui->tabWidget->addTab(buildResultsWidget, tr("Build results"));
+        ui->tabWidget->addTab(ui->tabBuildResults, tr("Build results"));
     } else {
         ui->tabWidget->removeTab(1);
     }
