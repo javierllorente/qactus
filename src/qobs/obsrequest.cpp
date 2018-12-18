@@ -1,7 +1,7 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013, 2015, 2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,9 +20,10 @@
 
 #include "obsrequest.h"
 
-
 OBSRequest::OBSRequest()
 {
+    source = new OBSObject();
+    target = new OBSObject();
 }
 
 OBSRequest::OBSRequest(const OBSRequest &other)
@@ -30,7 +31,13 @@ OBSRequest::OBSRequest(const OBSRequest &other)
     *this = other;
 }
 
-OBSRequest& OBSRequest::operator=(const OBSRequest &other)
+OBSRequest::~OBSRequest()
+{
+    delete source;
+    delete target;
+}
+
+OBSRequest &OBSRequest::operator=(const OBSRequest &other)
 {
     this->setId(other.getId());
     this->setActionType(other.getActionType());
@@ -67,56 +74,53 @@ QString OBSRequest::getActionType() const
 
 void OBSRequest::setSourceProject(const QString &sourceProject)
 {
-    this->sourceProject = sourceProject;
+    source->setProject(sourceProject);
 }
 
 QString OBSRequest::getSourceProject() const
 {
-    return sourceProject;
+    return source->getProject();
 }
 
 void OBSRequest::setSourcePackage(const QString &sourcePackage)
 {
-    this->sourcePackage = sourcePackage;
+    source->setPackage(sourcePackage);
 }
 
 QString OBSRequest::getSourcePackage() const
 {
-    return sourcePackage;
+    return source->getPackage();
 }
 
 QString OBSRequest::getSource() const
 {
-    if (!sourcePackage.isEmpty()) {
-        return sourceProject + "/" + sourcePackage;
-    } else {
-        return "N/A";
-    }
+    return source->getPackage().isEmpty() ?
+                "N/A" : source->toString();
 }
 
 void OBSRequest::setTargetProject(const QString &targetProject)
 {
-    this->targetProject = targetProject;
+    target->setProject(targetProject);
 }
 
 QString OBSRequest::getTargetProject() const
 {
-    return targetProject;
+    return target->getProject();
 }
 
 void OBSRequest::setTargetPackage(const QString &targetPackage)
 {
-    this->targetPackage = targetPackage;
+    target->setPackage(targetPackage);
 }
 
 QString OBSRequest::getTargetPackage() const
 {
-    return targetPackage;
+    return target->getPackage();
 }
 
 QString OBSRequest::getTarget() const
 {
-    return targetProject + "/" + targetPackage;
+    return target->toString();
 }
 
 void OBSRequest::setState(const QString &state)

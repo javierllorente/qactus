@@ -1,7 +1,7 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013, 2015, 2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,12 +22,14 @@
 #define OBSREQUEST_H
 
 #include <QString>
+#include "obsobject.h"
 
 class OBSRequest
 {
 public:
     OBSRequest();
     OBSRequest(const OBSRequest &other);
+    ~OBSRequest();
     OBSRequest &operator=(const OBSRequest &other);
     inline bool operator==(const OBSRequest &rhs)
     {
@@ -61,10 +63,8 @@ public:
 private:
     QString id;
     QString actionType;
-    QString sourceProject;
-    QString sourcePackage;
-    QString targetProject;
-    QString targetPackage;
+    OBSObject *source;
+    OBSObject *target;
     QString state;
     QString requester;
     QString date;
