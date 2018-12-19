@@ -34,7 +34,7 @@ QByteArray OBSXmlWriter::createRequest(OBSRequest *obsRequest)
     xmlWriter.writeStartElement("request");
 
     xmlWriter.writeStartElement("action");
-    xmlWriter.writeAttribute("type", "submit");
+    xmlWriter.writeAttribute("type", obsRequest->getActionType());
 
     xmlWriter.writeEmptyElement("source");
     xmlWriter.writeAttribute("project", obsRequest->getSourceProject());
