@@ -207,7 +207,7 @@ QNetworkReply *OBSCore::deleteRequest(const QString &resource)
 void OBSCore::changeSubmitRequest(const QString &resource, const QByteArray &data)
 {
     QNetworkReply *reply = postRequest(resource, data);
-    reply->setProperty("reqtype", OBSCore::SubmitRequest);
+    reply->setProperty("reqtype", OBSCore::ChangeRequestState);
 }
 
 void OBSCore::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
@@ -336,8 +336,8 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 xmlReader->parseRequests(dataStr);
                 break;
 
-            case OBSCore::SubmitRequest:
-                qDebug() << reqTypeStr << "SubmitRequest";
+            case OBSCore::ChangeRequestState:
+                qDebug() << reqTypeStr << "ChangeRequestState";
                 xmlReader->parseSubmitRequest(dataStr);
                 break;
 

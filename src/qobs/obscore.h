@@ -124,7 +124,7 @@ private:
         BuildStatus,
         BuildStatusList,
         Requests,
-        SubmitRequest,
+        ChangeRequestState,
         SRDiff,
         BranchPackage,
         CreateRequest,
