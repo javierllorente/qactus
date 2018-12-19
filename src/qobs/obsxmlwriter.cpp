@@ -52,6 +52,7 @@ QByteArray OBSXmlWriter::createRequest(OBSRequest *obsRequest)
 
     return data;
 }
+
 QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const
 {
     QByteArray data;
