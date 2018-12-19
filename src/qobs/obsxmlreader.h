@@ -52,6 +52,7 @@ public:
     void parseRequests(const QString &data);
     void parseSubmitRequest(const QString &data);
     void parseBranchPackage(const QString &project, const QString &package, const QString &data);
+    void parseCreateRequest(const QString &data);
     void parseCreateProject(const QString &project, const QString &data);
     void parseCreatePackage(const QString &package, const QString &project, const QString &data);
     void parseUploadFile(const QString &project, const QString &package, const QString &file, const QString &data);
@@ -88,6 +89,7 @@ private:
 signals:
     void finishedParsingPackage(OBSStatus*, int);
     void finishedParsingBranchPackage(OBSStatus*);
+    void finishedParsingCreateRequest(OBSRequest*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
     void finishedParsingUploadFileRevision(OBSRevision*);
