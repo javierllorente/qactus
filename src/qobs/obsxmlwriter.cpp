@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -25,6 +25,33 @@ OBSXmlWriter::OBSXmlWriter(QObject *parent) : QObject(parent)
 
 }
 
+QByteArray OBSXmlWriter::createRequest(OBSRequest *obsRequest)
+{
+    QByteArray data;
+    QXmlStreamWriter xmlWriter(&data);
+    xmlWriter.setAutoFormatting(true);
+
+    xmlWriter.writeStartElement("request");
+
+    xmlWriter.writeStartElement("action");
+    xmlWriter.writeAttribute("type", "submit");
+
+    xmlWriter.writeEmptyElement("source");
+    xmlWriter.writeAttribute("project", obsRequest->getSourceProject());
+    xmlWriter.writeAttribute("package", obsRequest->getSourcePackage());
+
+    xmlWriter.writeEmptyElement("target");
+    xmlWriter.writeAttribute("project", obsRequest->getTargetProject());
+    xmlWriter.writeAttribute("package", obsRequest->getTargetPackage());
+
+    xmlWriter.writeEndElement(); // action
+
+    xmlWriter.writeTextElement("description", obsRequest->getDescription());
+
+    xmlWriter.writeEndElement(); // request
+
+    return data;
+}
 QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const
 {
     QByteArray data;

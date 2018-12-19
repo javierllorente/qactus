@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -23,12 +23,14 @@
 
 #include <QObject>
 #include <QXmlStreamWriter>
+#include "obsrequest.h"
 
 class OBSXmlWriter : public QObject
 {
     Q_OBJECT
 public:
     explicit OBSXmlWriter(QObject *parent = nullptr);
+    QByteArray createRequest(OBSRequest *obsRequest);
     QByteArray createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const;
     QByteArray createPackageMeta(const QString &project, const QString &package, const QString &title, const QString &description, const QString &username) const;
 
