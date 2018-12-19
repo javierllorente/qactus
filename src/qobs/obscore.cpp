@@ -639,6 +639,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
 
     default: // Other errors
         qDebug() << "OBSCore::replyFinished() Request failed! Error:" << reply->errorString();
+        qDebug() << data;
         emit networkError(reply->errorString());
         break;
     }
