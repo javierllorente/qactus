@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *
@@ -40,7 +40,7 @@ class OBSXmlReader : public QObject
     Q_OBJECT
 
 public:
-    static OBSXmlReader* getInstance();
+    static OBSXmlReader *getInstance();
     void addData(const QString &data);
     void setPackageRow(int row);
     void parseProjectList(const QString &data);
@@ -74,9 +74,8 @@ private:
     void parseRevisionList(const QString &data);
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
-    void parseRequest(QXmlStreamReader &xml);
+    OBSRequest *parseRequest(QXmlStreamReader &xml);
     void parseList(QXmlStreamReader &xml);
-    OBSRequest *obsRequest;
     QString requestNumber;
     QStringList list;
     void stringToFile(const QString &data);
