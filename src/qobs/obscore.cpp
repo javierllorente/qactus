@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
@@ -360,6 +360,12 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 break;
             }
 
+            case OBSCore::CreateRequest: {
+                qDebug() << reqTypeStr << "CreateRequest";
+                xmlReader->parseCreateRequest(dataStr);
+                break;
+            }
+
             case OBSCore::CreateProject: {
                 qDebug() << reqTypeStr << "CreateProject";
                 QString project;
@@ -653,6 +659,13 @@ void OBSCore::branchPackage(const QString &project, const QString &package)
     reply->setProperty("reqtype", OBSCore::BranchPackage);
     reply->setProperty("branchprj", project);
     reply->setProperty("branchpkg", package);
+}
+
+void OBSCore::createRequest(const QByteArray &data)
+{
+    QString resource = QString("/request?cmd=create");
+    QNetworkReply *reply = postRequest(resource, data);
+    reply->setProperty("reqtype", OBSCore::CreateRequest);
 }
 
 void OBSCore::createProject(const QString &project, const QByteArray &data)

@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
@@ -63,6 +63,7 @@ public:
     void request(const QString &resource, int row);
     void getSRDiff(const QString &resource);
     void branchPackage(const QString &project, const QString &package);
+    void createRequest(const QByteArray &data);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
     void uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data);
@@ -126,6 +127,7 @@ private:
         SubmitRequest,
         SRDiff,
         BranchPackage,
+        CreateRequest,
         CreateProject,
         CreatePackage,
         UploadFile,

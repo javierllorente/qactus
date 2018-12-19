@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
@@ -78,6 +78,7 @@ signals:
     void networkError(const QString&);
     void finishedParsingPackage(OBSStatus*, int);
     void finishedParsingBranchPackage(OBSStatus*);
+    void finishedParsingCreateRequest(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
     void cannotCreateProject(OBSStatus *obsStatus);
@@ -112,6 +113,7 @@ public slots:
     void getAllBuildStatus(const QString &project, const QString &package);
     void slotChangeSubmitRequest(const QString &id, const QString &comments, bool accepted);
     void srChangeResult(OBSStatus *obsStatus);
+    void createRequest(const QByteArray &data);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
     void uploadFile(const QString &project, const QString &package, const QString &fileName, const QByteArray &data);

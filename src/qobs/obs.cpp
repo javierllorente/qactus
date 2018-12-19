@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
@@ -38,6 +38,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
 
     connect(xmlReader, SIGNAL(finishedParsingBranchPackage(OBSStatus*)),
             this, SIGNAL(finishedParsingBranchPackage(OBSStatus*)));
+    connect(xmlReader, SIGNAL(finishedParsingCreateRequest(OBSStatus*)),
+            this, SIGNAL(finishedParsingCreateRequest(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingCreatePrjStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingCreatePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)),
@@ -193,6 +195,11 @@ void OBS::srChangeResult(OBSStatus *obsStatus)
     delete obsStatus;
     obsStatus = nullptr;
     emit srStatus(code);
+}
+
+void OBS::createRequest(const QByteArray &data)
+{
+    obsCore->createRequest(data);
 }
 
 void OBS::getRequestDiff(const QString &source)
