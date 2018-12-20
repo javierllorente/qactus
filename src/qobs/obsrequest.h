@@ -42,6 +42,7 @@ public:
     void setSourcePackage(const QString &);
     void setTargetProject(const QString &);
     void setTargetPackage(const QString &);
+    void setSourceUpdate(const QString &value);
     void setState(const QString &);
     void setRequester(const QString &);
     void setDate(const QString &);
@@ -55,6 +56,7 @@ public:
     QString getTargetProject() const;
     QString getTargetPackage() const;
     QString getTarget() const;
+    QString getSourceUpdate() const;
     QString getState() const;
     QString getRequester() const;
     QString getDate() const;
@@ -65,6 +67,7 @@ private:
     QString actionType;
     OBSObject *source;
     OBSObject *target;
+    QString sourceUpdate;
     QString state;
     QString requester;
     QString date;

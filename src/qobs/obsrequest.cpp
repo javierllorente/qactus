@@ -123,6 +123,16 @@ QString OBSRequest::getTarget() const
     return target->toString();
 }
 
+void OBSRequest::setSourceUpdate(const QString &value)
+{
+    sourceUpdate = value;
+}
+
+QString OBSRequest::getSourceUpdate() const
+{
+    return sourceUpdate;
+}
+
 void OBSRequest::setState(const QString &state)
 {
     this->state = state;
