@@ -79,6 +79,7 @@ signals:
     void finishedParsingPackage(OBSStatus*, int);
     void finishedParsingBranchPackage(OBSStatus*);
     void finishedParsingCreateRequest(OBSRequest*);
+    void finishedParsingCreateRequestStatus(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
     void cannotCreateProject(OBSStatus *obsStatus);

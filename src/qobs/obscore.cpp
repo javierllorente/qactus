@@ -497,6 +497,10 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 }
                 break;
 
+            case OBSCore::CreateRequest:
+                xmlReader->parseCreateRequestStatus(data);
+                break;
+
             case OBSCore::BuildLog: {
                 qDebug() << reqTypeStr << "BuildLog";
                 emit buildLogNotFound();
@@ -506,6 +510,23 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             default:
                 qDebug() << "OBSCore Error 404 NOT handled for request type" << reply->property("reqtype").toInt();
             }
+        }
+        break;
+
+    case QNetworkReply::ProtocolInvalidOperationError: // 400
+        if (reply->property("reqtype").isValid()) {
+
+            switch(reply->property("reqtype").toInt()) {
+            case OBSCore::CreateRequest:
+                xmlReader->parseCreateRequestStatus(data);
+                break;
+            default:
+                qDebug() << "OBSCore::replyFinished() Request failed! Error:" << reply->errorString();
+                qDebug() << data;
+                emit networkError(reply->errorString());
+                break;
+            }
+
         }
         break;
 
