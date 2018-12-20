@@ -232,7 +232,10 @@ void OBSXmlReader::parseCreateRequest(const QString &data)
     OBSRequest *obsRequest = nullptr;
 
     while (!xml.atEnd() && !xml.hasError()) {
-        obsRequest = parseRequest(xml);
+        xml.readNext();
+        if (xml.name()=="request") {
+            obsRequest = parseRequest(xml);
+        }
     } // end while
 
     if (xml.hasError()) {
