@@ -1,5 +1,5 @@
 /* 
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2010-2018 Javier Llorente <javier@opensuse.org>
  *
@@ -72,6 +72,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(obs, SIGNAL(finishedParsingBranchPackage(OBSStatus*)),
             this, SLOT(slotBranchPackage(OBSStatus*)));
+    connect(obs, SIGNAL(finishedParsingCreateRequest(OBSRequest*)),
+            this, SLOT(slotCreateRequest(OBSRequest*)));
+    connect(obs, SIGNAL(finishedParsingCreateRequestStatus(OBSStatus*)),
+            this, SLOT(slotCreateRequestStatus(OBSStatus*)));
 
     connect(obs, SIGNAL(finishedParsingUploadFileRevision(OBSRevision*)),
             this, SLOT(slotUploadFile(OBSRevision*)));
@@ -608,6 +612,7 @@ void MainWindow::slotContextMenuPackages(const QPoint &point)
     QMenu *treePackagesMenu = new QMenu(ui->treePackages);
     treePackagesMenu->addAction(actionNew_package);
     treePackagesMenu->addAction(ui->action_Branch_package);
+    treePackagesMenu->addAction(action_createRequest);
     treePackagesMenu->addAction(action_ReloadPackages);
     treePackagesMenu->addAction(actionDelete_package);
 
@@ -823,6 +828,29 @@ void MainWindow::uploadFile(const QString &path)
     }
 }
 
+void MainWindow::createRequest()
+{
+//    FIXME: If there is a _link, set target to project/package from _link
+    QString currentProject = ui->treeProjects->getCurrentProject();
+    QString currentPackage = ui->treePackages->getCurrentPackage();
+
+    OBSRequest *request = new OBSRequest();
+    request->setActionType("submit");
+    request->setSourceProject(currentProject);
+    request->setSourcePackage(currentPackage);
+
+    CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, this);
+    connect(createRequestDialog, SIGNAL(createRequest(QByteArray)), obs, SLOT(createRequest(QByteArray)));
+    connect(obs, SIGNAL(finishedParsingCreateRequestStatus(OBSStatus*)), createRequestDialog, SLOT(slotCreateRequestStatus(OBSStatus*)));
+
+    createRequestDialog->exec();
+    delete createRequestDialog;
+    delete request;
+
+    QString statusText = tr("Creating request...");
+    emit updateStatusBar(statusText, false);
+}
+
 void MainWindow::deleteProject()
 {
     qDebug() << "MainWindow:deleteProject()";
@@ -1011,6 +1039,31 @@ void MainWindow::slotBranchPackage(OBSStatus *obsStatus)
 
     delete obsStatus;
     obsStatus = nullptr;
+
+    emit updateStatusBar(tr("Done"), true);
+}
+
+void MainWindow::slotCreateRequest(OBSRequest *obsRequest)
+{
+    qDebug() << "MainWindow::slotCreateRequest()";
+
+    QString message = tr("Request created successfully. %1").arg(obsRequest->getId());
+    trayIcon->showMessage(APP_NAME, message);
+    delete obsRequest;
+
+    emit updateStatusBar(tr("Done"), true);
+}
+
+void MainWindow::slotCreateRequestStatus(OBSStatus *obsStatus)
+{
+    qDebug() << "MainWindow::slotCreateRequestStatus()";
+
+    const QString title = tr("Request failed!");
+    const QString text = QString("<b>%1</b><br>%2<br>%3").arg(
+                obsStatus->getCode(), obsStatus->getSummary(), obsStatus->getDetails());
+    QMessageBox::critical(this, title, text);
+
+    delete obsStatus;
 
     emit updateStatusBar(tr("Done"), true);
 }
@@ -1303,6 +1356,11 @@ void MainWindow::createActions()
     action_getBuildLog = new QAction(tr("&Get build log"), this);
     action_getBuildLog->setIcon(QIcon::fromTheme("text-x-log"));
     connect(action_getBuildLog, SIGNAL(triggered(bool)), this, SLOT(getBuildLog()));
+
+    // Create request action
+    action_createRequest = new QAction(tr("&Submit package"), this);
+    action_createRequest->setIcon(QIcon::fromTheme("cloud-upload"));
+    connect(action_createRequest, SIGNAL(triggered(bool)), this, SLOT(createRequest()));
 
     // Delete actions
     actionDelete_project = new QAction(tr("Delete pro&ject"), this);

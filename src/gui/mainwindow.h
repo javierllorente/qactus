@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2010-2018 Javier Llorente <javier@opensuse.org>
  *
@@ -45,6 +45,7 @@
 #include "browserfilter.h"
 #include "createdialog.h"
 #include "buildlogviewer.h"
+#include "createrequestdialog.h"
 
 namespace Ui {
     class MainWindow;
@@ -73,6 +74,7 @@ private:
 
     QToolButton *newButton;
     QMenu *newMenu;
+    QAction *action_createRequest;
     QAction *actionNew_package;
     QAction *actionNew_project;
     QAction *actionNew;
@@ -182,6 +184,7 @@ private slots:
     void newProject();
     void newPackage();
     void uploadFile(const QString &path);
+    void createRequest();
     void deleteProject();
     void deletePackage();
     void deleteFile();
@@ -201,6 +204,8 @@ private slots:
     void slotFileListAdded();
     void addResult(OBSResult*);
     void slotBranchPackage(OBSStatus *obsStatus);
+    void slotCreateRequest(OBSRequest *obsRequest);
+    void slotCreateRequestStatus(OBSStatus*obsStatus);
     void slotUploadFile(OBSRevision *obsRevision);
     void slotUploadFileError(OBSStatus *obsStatus);
     void slotFileFetched(const QString &fileName, const QByteArray &data);
