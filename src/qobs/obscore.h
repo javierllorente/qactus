@@ -51,7 +51,7 @@ public:
     void getBuildStatus(const QStringList &build, int row);
     QNetworkReply *requestSource(const QString &resource);
     void getRequests(const QString &resource);
-    QNetworkReply *postRequest(const QString &resource, const QByteArray &data);
+    QNetworkReply *postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     QNetworkReply *putRequest(const QString &resource, const QByteArray &data);
     QNetworkReply *deleteRequest(const QString &resource);
     void getProjects();

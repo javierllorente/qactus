@@ -128,9 +128,9 @@ void OBS::request(QNetworkReply *reply)
     obsCore->request(reply);
 }
 
-void OBS::postRequest(const QString &resource, const QByteArray &data)
+void OBS::postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader)
 {
-    obsCore->postRequest(resource, data);
+    obsCore->postRequest(resource, data, contentTypeHeader);
 }
 
 void OBS::deleteRequest(const QString &resource)

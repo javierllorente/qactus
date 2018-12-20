@@ -68,7 +68,7 @@ public:
 private:
     OBSCore *obsCore;
     OBSXmlReader *xmlReader;
-    void postRequest(const QString &resource, const QByteArray &data);
+    void postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     void deleteRequest(const QString &resource);
 
 signals:

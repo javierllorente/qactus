@@ -170,13 +170,13 @@ void OBSCore::request(const QString &resource, int row)
     reply->setProperty("row", row);
 }
 
-QNetworkReply *OBSCore::postRequest(const QString &resource, const QByteArray &data)
+QNetworkReply *OBSCore::postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(apiUrl + resource));
     qDebug() << "User-Agent:" << userAgent;
     request.setRawHeader("User-Agent", userAgent.toLatin1());
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    request.setHeader(QNetworkRequest::ContentTypeHeader, contentTypeHeader);
     QNetworkReply *reply = manager->post(request, data);
 
     return reply;
@@ -206,7 +206,7 @@ QNetworkReply *OBSCore::deleteRequest(const QString &resource)
 
 void OBSCore::changeSubmitRequest(const QString &resource, const QByteArray &data)
 {
-    QNetworkReply *reply = postRequest(resource, data);
+    QNetworkReply *reply = postRequest(resource, data, "application/x-www-form-urlencoded");
     reply->setProperty("reqtype", OBSCore::ChangeRequestState);
 }
 
@@ -649,14 +649,14 @@ void OBSCore::replyFinished(QNetworkReply *reply)
 
 void OBSCore::getSRDiff(const QString &resource)
 {
-    QNetworkReply *reply = postRequest(resource, "");
+    QNetworkReply *reply = postRequest(resource, "", "application/x-www-form-urlencoded");
     reply->setProperty("reqtype", OBSCore::SRDiff);
 }
 
 void OBSCore::branchPackage(const QString &project, const QString &package)
 {
     QString resource = QString("/source/%1/%2?cmd=branch").arg(project, package);
-    QNetworkReply *reply = postRequest(resource, "");
+    QNetworkReply *reply = postRequest(resource, "", "application/x-www-form-urlencoded");
     reply->setProperty("reqtype", OBSCore::BranchPackage);
     reply->setProperty("branchprj", project);
     reply->setProperty("branchpkg", package);
@@ -665,7 +665,7 @@ void OBSCore::branchPackage(const QString &project, const QString &package)
 void OBSCore::createRequest(const QByteArray &data)
 {
     QString resource = QString("/request?cmd=create");
-    QNetworkReply *reply = postRequest(resource, data);
+    QNetworkReply *reply = postRequest(resource, data, "application/xml");
     reply->setProperty("reqtype", OBSCore::CreateRequest);
 }
 
