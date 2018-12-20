@@ -78,7 +78,7 @@ signals:
     void networkError(const QString&);
     void finishedParsingPackage(OBSStatus*, int);
     void finishedParsingBranchPackage(OBSStatus*);
-    void finishedParsingCreateRequest(OBSStatus*);
+    void finishedParsingCreateRequest(OBSRequest*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
     void cannotCreateProject(OBSStatus *obsStatus);
