@@ -843,12 +843,13 @@ void MainWindow::createRequest()
     connect(createRequestDialog, SIGNAL(createRequest(QByteArray)), obs, SLOT(createRequest(QByteArray)));
     connect(obs, SIGNAL(finishedParsingCreateRequestStatus(OBSStatus*)), createRequestDialog, SLOT(slotCreateRequestStatus(OBSStatus*)));
 
-    createRequestDialog->exec();
+    int result = createRequestDialog->exec();
+    if (result) {
+        QString statusText = tr("Creating request...");
+        emit updateStatusBar(statusText, false);
+    }
     delete createRequestDialog;
     delete request;
-
-    QString statusText = tr("Creating request...");
-    emit updateStatusBar(statusText, false);
 }
 
 void MainWindow::deleteProject()
