@@ -841,7 +841,6 @@ void MainWindow::createRequest()
 
     CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, this);
     connect(createRequestDialog, SIGNAL(createRequest(QByteArray)), obs, SLOT(createRequest(QByteArray)));
-    connect(obs, SIGNAL(finishedParsingCreateRequestStatus(OBSStatus*)), createRequestDialog, SLOT(slotCreateRequestStatus(OBSStatus*)));
 
     int result = createRequestDialog->exec();
     if (result) {
