@@ -1,7 +1,7 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class RowEditor : public QDialog
     Q_OBJECT
 
 public:
-    explicit RowEditor(QWidget *parent = 0, OBS *obs = 0);
+    explicit RowEditor(QWidget *parent = nullptr, OBS *obs = nullptr);
     ~RowEditor();
     QString getProject();
     QString getPackage();
@@ -70,13 +70,13 @@ private:
     QCompleter *archCompleter;
 
 private slots:
-    void insertProjectList();
+    void insertProjectList(const QStringList &list);
     void refreshProjectAutocompleter(const QString &);
     void autocompletedProjectName_clicked(const QString &projectName);
-    void insertPackageList();
+    void insertPackageList(const QStringList &list);
     void refreshPackageAutocompleter(const QString&);
     void autocompletedPackageName_clicked(const QString&);
-    void insertProjectMetadata();
+    void insertProjectMetadata(const QStringList &list);
     void refreshRepositoryAutocompleter(const QString&);
     void autocompletedRepositoryName_clicked(const QString&repository);
     void refreshArchAutocompleter(const QString&);

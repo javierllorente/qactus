@@ -62,9 +62,9 @@ public:
     void parseDeleteFile(const QString &project, const QString &package, const QString &fileName, const QString &data);
     int getRequestNumber();
     QStringList getList();
-    void readList();
+    QStringList readList();
     void setFileName(const QString &fileName);
-    void getRepositoryArchs(const QString &repository);
+    QStringList getRepositoryArchs(const QString &repository);
     void parseAbout(const QString &data);
 
 private:
@@ -77,13 +77,9 @@ private:
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
     OBSRequest *parseRequest(QXmlStreamReader &xml);
-    void parseList(QXmlStreamReader &xml);
+    QStringList parseList(QXmlStreamReader &xml);
     QString requestNumber;
-    QStringList list;
     void stringToFile(const QString &data);
-    void projectListToFile(const QString &data);
-    void projectMetadataToFile(const QString &data);
-    void packageListToFile(const QString &data);
     QString fileName;
     QFile *openFile();
 
@@ -104,9 +100,9 @@ signals:
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
     void finishedParsingList(QStringList);
-    void projectListIsReady();
-    void projectMetadataIsReady();
-    void packageListIsReady();
+    void finishedParsingProjectList(QStringList);
+    void finishedParsingProjectMetadata(QStringList);
+    void finishedParsingPackageList(QStringList);
     void finishedParsingFile(OBSFile*);
     void finishedParsingFileList();
     void finishedParsingSR(OBSStatus *obsStatus);

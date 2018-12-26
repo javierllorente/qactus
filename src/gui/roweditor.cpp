@@ -1,7 +1,7 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2016 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -156,17 +156,14 @@ QStringList RowEditor::getListFor(const QString &name)
 void RowEditor::initProjectAutocompleter()
 {
     qDebug() << "RowEditor::initProjectAutocompleter()";
-    connect(mOBS, SIGNAL(projectListIsReady()), this, SLOT(insertProjectList()));
+    connect(mOBS, SIGNAL(finishedParsingProjectList(QStringList)), this, SLOT(insertProjectList(QStringList)));
     mOBS->getProjects();
 }
 
-void RowEditor::insertProjectList()
+void RowEditor::insertProjectList(const QStringList &list)
 {
     qDebug() << "RowEditor::insertProjectList()";
-    OBSXmlReader *reader = mOBS->getXmlReader();
-    reader->readList();
-
-    projectList = reader->getList();
+    projectList = list;
     projectModel = new QStringListModel(projectList);
     projectCompleter = new QCompleter(projectModel, this);
 
@@ -187,17 +184,14 @@ void RowEditor::autocompletedProjectName_clicked(const QString &projectName)
 {
     ui->lineEditPackage->setFocus();
 
-    connect(mOBS, SIGNAL(packageListIsReady()), this, SLOT(insertPackageList()));
+    connect(mOBS, SIGNAL(finishedParsingPackageList(QStringList)), this, SLOT(insertPackageList(QStringList)));
     mOBS->getPackages(projectName);
 }
 
-void RowEditor::insertPackageList()
+void RowEditor::insertPackageList(const QStringList &list)
 {
     qDebug() << "RowEditor::insertPackageList()";
-    OBSXmlReader *reader = mOBS->getXmlReader();
-    reader->readList();
-
-    packageList = reader->getList();
+    packageList = list;
     packageModel = new QStringListModel(packageList);
     packageCompleter = new QCompleter(packageModel, this);
 
@@ -218,18 +212,15 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
 {
     ui->lineEditRepository->setFocus();
 
-    connect(mOBS, SIGNAL(projectMetadataIsReady()), this, SLOT(insertProjectMetadata()));
+    connect(mOBS, SIGNAL(finishedParsingProjectMetadata(QStringList)), this, SLOT(insertProjectMetadata(QStringList)));
     QString project = ui->lineEditProject->text();
     mOBS->getProjectMetadata(project);
 }
 
-void RowEditor::insertProjectMetadata()
+void RowEditor::insertProjectMetadata(const QStringList &list)
 {
     qDebug() << "RowEditor::insertProjectMetadata()";
-    OBSXmlReader *reader = mOBS->getXmlReader();
-    reader->readList();
-
-    repositoryList = reader->getList();
+    repositoryList = list;
     repositoryModel = new QStringListModel(repositoryList);
     repositoryCompleter = new QCompleter(repositoryModel, this);
 

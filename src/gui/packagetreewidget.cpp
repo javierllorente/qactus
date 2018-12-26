@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -32,7 +32,7 @@ PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
 void PackageTreeWidget::setOBS(OBS *obs)
 {
     this->obs = obs;
-    connect(obs, SIGNAL(packageListIsReady()), this, SLOT(addPackageList()));
+    connect(obs, SIGNAL(finishedParsingPackageList(QStringList)), this, SLOT(addPackageList(QStringList)));
 }
 
 void PackageTreeWidget::createModel()
@@ -49,14 +49,10 @@ void PackageTreeWidget::deleteModel()
     }
 }
 
-void PackageTreeWidget::addPackageList()
+void PackageTreeWidget::addPackageList(const QStringList &packageList)
 {
     qDebug() << "PackageTreeWidget::addPackageList()";
-
-    OBSXmlReader *reader = obs->getXmlReader();
-    reader->readList();
-
-    sourceModelPackages->setStringList(reader->getList());
+    sourceModelPackages->setStringList(packageList);
     proxyModelPackages->setSourceModel(sourceModelPackages);
     setModel(proxyModelPackages);
 

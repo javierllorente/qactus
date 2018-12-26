@@ -80,12 +80,12 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingRequest(OBSRequest*)));
     connect(xmlReader, SIGNAL(removeRequest(const QString&)),
             this, SIGNAL(removeRequest(const QString&)));
-    connect(xmlReader, SIGNAL(projectListIsReady()),
-            this, SIGNAL(projectListIsReady()));
-    connect(xmlReader, SIGNAL(projectMetadataIsReady()),
-            this, SIGNAL(projectMetadataIsReady()));
-    connect(xmlReader, SIGNAL(packageListIsReady()),
-            this, SIGNAL(packageListIsReady()));
+    connect(xmlReader, SIGNAL(finishedParsingProjectList(QStringList)),
+            this, SIGNAL(finishedParsingProjectList(QStringList)));
+    connect(xmlReader, SIGNAL(finishedParsingProjectMetadata(QStringList)),
+            this, SIGNAL(finishedParsingProjectMetadata(QStringList)));
+    connect(xmlReader, SIGNAL(finishedParsingPackageList(QStringList)),
+            this, SIGNAL(finishedParsingPackageList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingList(QStringList)),
             this, SIGNAL(finishedParsingList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingFile(OBSFile*)),
@@ -252,7 +252,7 @@ QStringList OBS::readXmlFile(const QString &xmlFile)
 {
     xmlReader->setFileName(xmlFile);
     xmlReader->readList();
-    return xmlReader->getList();
+    return xmlReader->readList();
 }
 
 OBSXmlReader* OBS::getXmlReader()

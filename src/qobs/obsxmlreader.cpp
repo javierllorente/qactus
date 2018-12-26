@@ -37,7 +37,6 @@ OBSXmlReader *OBSXmlReader::getInstance()
 
 void OBSXmlReader::addData(const QString &data)
 {
-    list.clear();
     qDebug() << "OBSXmlReader::addData()";
     QXmlStreamReader xml(data);
 
@@ -67,17 +66,23 @@ void OBSXmlReader::addData(const QString &data)
 
 void OBSXmlReader::parseProjectList(const QString &data)
 {
-    projectListToFile(data);
+    QXmlStreamReader xml(data);
+    QStringList list = parseList(xml);
+    emit finishedParsingProjectList(list);
 }
 
 void OBSXmlReader::parseProjectMetadata(const QString &data)
 {
-    projectMetadataToFile(data);
+    QXmlStreamReader xml(data);
+    QStringList list = parseList(xml);
+    emit finishedParsingProjectMetadata(list);
 }
 
 void OBSXmlReader::parsePackageList(const QString &data)
 {
-    packageListToFile(data);
+    QXmlStreamReader xml(data);
+    QStringList list = parseList(xml);
+    emit finishedParsingPackageList(list);
 }
 
 void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
@@ -575,9 +580,10 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
     return obsRequest;
 }
 
-void OBSXmlReader::parseList(QXmlStreamReader &xml)
+QStringList OBSXmlReader::parseList(QXmlStreamReader &xml)
 {
     qDebug() << "OBSXmlReader::parseList()";
+    QStringList list;
     while (!xml.atEnd() && !xml.hasError()) {
 
         xml.readNext();
@@ -612,10 +618,9 @@ void OBSXmlReader::parseList(QXmlStreamReader &xml)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
-        return;
     }
 
-    emit finishedParsingList(list);
+    return list;
 }
 
 void OBSXmlReader::parseFileList(const QString &project, const QString &package, const QString &data)
@@ -667,29 +672,10 @@ void OBSXmlReader::stringToFile(const QString &data)
     file.close();
 }
 
-void OBSXmlReader::projectListToFile(const QString &data)
-{
-    stringToFile(data);
-    emit projectListIsReady();
-}
-
-void OBSXmlReader::projectMetadataToFile(const QString &data)
-{
-    stringToFile(data);
-    emit projectMetadataIsReady();
-}
-
-void OBSXmlReader::packageListToFile(const QString &data)
-{
-    stringToFile(data);
-    emit packageListIsReady();
-}
-
 QFile *OBSXmlReader::openFile()
 {
     qDebug() << "OBSXmlReader::openFile()" << fileName;
-    list.clear();
-    QFile* file = new QFile(fileName);
+    QFile *file = new QFile(fileName);
     QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
             "/data/" + QCoreApplication::applicationName();
     QDir::setCurrent(dataDir);
@@ -699,17 +685,17 @@ QFile *OBSXmlReader::openFile()
     return file;
 }
 
-void OBSXmlReader::readList()
+QStringList OBSXmlReader::readList()
 {
     QXmlStreamReader xml;
     xml.setDevice(openFile());
-    parseList(xml);
+    return parseList(xml);
 }
 
-void OBSXmlReader::getRepositoryArchs(const QString &repository)
+QStringList OBSXmlReader::getRepositoryArchs(const QString &repository)
 {
     qDebug() << "OBSXmlReader::getRepositoryArchs()";
-    list.clear();
+    QStringList list;
     QXmlStreamReader xml;
     xml.setDevice(openFile());
     bool repositoryFound = false;
@@ -743,8 +729,9 @@ void OBSXmlReader::getRepositoryArchs(const QString &repository)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
-        return;
     }
+
+    return list;
 }
 
 void OBSXmlReader::parseAbout(const QString &data)
@@ -793,7 +780,7 @@ int OBSXmlReader::getRequestNumber()
 
 QStringList OBSXmlReader::getList()
 {
-    return list;
+    return QStringList(); // FIXME: this method is deprecated and will be deleted.
 }
 
 void OBSXmlReader::setFileName(const QString &fileName)

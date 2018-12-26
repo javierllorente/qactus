@@ -100,9 +100,9 @@ signals:
     void finishedParsingRevision(OBSRevision*);
     void finishedParsingRequest(OBSRequest*);
     void removeRequest(const QString&);
-    void projectListIsReady();
-    void projectMetadataIsReady();
-    void packageListIsReady();
+    void finishedParsingProjectList(QStringList);
+    void finishedParsingProjectMetadata(QStringList);
+    void finishedParsingPackageList(QStringList);
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);
     void finishedParsingFileList();

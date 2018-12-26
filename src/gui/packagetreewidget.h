@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -32,7 +32,7 @@ class PackageTreeWidget : public QTreeView
     Q_OBJECT
 
 public:
-    PackageTreeWidget(QWidget *parent = 0);
+    PackageTreeWidget(QWidget *parent = nullptr);
     void setOBS(OBS *obs);
     void createModel();
     void deleteModel();
@@ -50,7 +50,7 @@ signals:
     void updateStatusBar(QString message, bool progressBarHidden);
 
 private slots:
-    void addPackageList();
+    void addPackageList(const QStringList &packageList);
 };
 
 #endif // PACKAGETREEWIDGET_H
