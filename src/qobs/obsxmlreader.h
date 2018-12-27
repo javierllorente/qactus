@@ -43,7 +43,7 @@ public:
     static OBSXmlReader *getInstance();
     void addData(const QString &data);
     void setPackageRow(int row);
-    void parseProjectList(const QString &data);
+    void parseProjectList(const QString &userHome, const QString &data);
     void parseProjectMetadata(const QString &data);
     void parseBuildStatus(const QString &data);
     void parsePackageList(const QString &data);

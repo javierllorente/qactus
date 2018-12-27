@@ -110,7 +110,6 @@ private:
     void setupPackageActions();
     void setupFileActions();
     void setupModels();
-    QStringList readProjectList() const;
     QString currentProject;
     QString currentPackage;
     void setupTreeMonitor();

@@ -51,6 +51,8 @@ public:
     void getRequests();
     int getRequestCount();
     void getRequestDiff(const QString &source);
+    bool isIncludeHomeProjects() const;
+    void setIncludeHomeProjects(bool value);
     void getProjects();
     void getPackages(const QString &project);
     void getProjectMetadata(const QString &project);
@@ -68,6 +70,7 @@ public:
 private:
     OBSCore *obsCore;
     OBSXmlReader *xmlReader;
+    bool includeHomeProjects;
     void postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     void deleteRequest(const QString &resource);
 

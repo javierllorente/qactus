@@ -64,10 +64,39 @@ void OBSXmlReader::addData(const QString &data)
     }
 }
 
-void OBSXmlReader::parseProjectList(const QString &data)
+void OBSXmlReader::parseProjectList(const QString &userHome, const QString &data)
 {
     QXmlStreamReader xml(data);
-    QStringList list = parseList(xml);
+
+    QStringList list;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+
+        if (xml.name()=="entry") {
+            if (xml.isStartElement()) {
+                QXmlStreamAttributes attrib = xml.attributes();
+                QString entry = attrib.value("name").toString();
+                qDebug() << "Entry name: " << entry;
+                if (!userHome.isEmpty()) {
+                    if (entry.startsWith(userHome)) {
+                        list.append(entry);
+                    }
+                    if (!entry.startsWith("home")) {
+                        list.append(entry);
+                    }
+                } else {
+                    list.append(entry);
+                }
+            }
+        } // end entry
+
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+    }
+
     emit finishedParsingProjectList(list);
 }
 

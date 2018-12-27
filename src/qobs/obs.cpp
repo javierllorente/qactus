@@ -24,6 +24,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
 {
     obsCore = OBSCore::getInstance();
     xmlReader = OBSXmlReader::getInstance();
+    includeHomeProjects = false;
 
     // Forward signals
     connect(obsCore, SIGNAL(apiNotFound(QUrl)), this, SIGNAL(apiNotFound(QUrl)));
@@ -212,9 +213,19 @@ void OBS::getRequestDiff(const QString &source)
     obsCore->getSRDiff(resource);
 }
 
+bool OBS::isIncludeHomeProjects() const
+{
+    return includeHomeProjects;
+}
+
+void OBS::setIncludeHomeProjects(bool value)
+{
+    includeHomeProjects = value;
+}
+
 void OBS::getProjects()
 {
-    xmlReader->setFileName("projects.xml");
+    obsCore->setIncludeHomeProjects(includeHomeProjects);
     obsCore->getProjects();
 }
 

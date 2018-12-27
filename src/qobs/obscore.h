@@ -54,6 +54,8 @@ public:
     QNetworkReply *postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     QNetworkReply *putRequest(const QString &resource, const QByteArray &data);
     QNetworkReply *deleteRequest(const QString &resource);
+    bool isIncludeHomeProjects() const;
+    void setIncludeHomeProjects(bool value);
     void getProjects();
     void getProjectMetadata(const QString &resource);
     void getPackages(const QString &resource);
@@ -140,6 +142,7 @@ private:
     };
     bool authenticated;
     OBSXmlReader *xmlReader;
+    bool includeHomeProjects;
 };
 
 #endif // OBSCORE_H

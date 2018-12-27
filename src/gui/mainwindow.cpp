@@ -372,29 +372,6 @@ void MainWindow::setupModels()
             SLOT(packageSelectionChanged(QItemSelection,QItemSelection)));
 }
 
-QStringList MainWindow::readProjectList() const
-{
-    qDebug() << "MainWindow::readProjectList()";
-    OBSXmlReader *reader = obs->getXmlReader();
-    reader->setFileName("projects.xml");
-    reader->readList();
-    QStringList projectList = reader->getList();
-
-    if (!includeHomeProjects) {
-        QMutableListIterator<QString> i(projectList);
-        while (i.hasNext()) {
-            i.next();
-            while (i.value().startsWith("home:" + obs->getUsername())) {
-                i.next();
-            }
-            if (i.value().startsWith("home")) {
-                i.remove();
-            }
-        }
-    }
-    return projectList;
-}
-
 void MainWindow::loadProjects()
 {
     qDebug() << "MainWindow::loadProjects()";
@@ -440,16 +417,16 @@ void MainWindow::refreshProjectFilter()
 {
     qDebug() << "MainWindow::refreshProjectFilter()";
     readBrowserSettings();
-        QStringList projectList = readProjectList();
-        ui->treeProjects->addProjectList(projectList);
-        if (browserFilter->isProjectChecked()) {
-            ui->treeProjects->filterProjects(browserFilter->getText());
-        } else {
-            browserFilter->clear();
-            ui->treeProjects->filterProjects("");
-        }
-        setupModels();
-        ui->action_Delete->setEnabled(false);
+    obs->setIncludeHomeProjects(includeHomeProjects);
+    obs->getProjects();
+    if (browserFilter->isProjectChecked()) {
+        ui->treeProjects->filterProjects(browserFilter->getText());
+    } else {
+        browserFilter->clear();
+        ui->treeProjects->filterProjects("");
+    }
+    setupModels();
+    ui->action_Delete->setEnabled(false);
 }
 
 void MainWindow::projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
@@ -1541,6 +1518,7 @@ void MainWindow::readBrowserSettings()
     QSettings settings;
     settings.beginGroup("Browser");
     includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
+    obs->setIncludeHomeProjects(includeHomeProjects);
     settings.endGroup();
 }
 

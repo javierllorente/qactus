@@ -21,7 +21,7 @@
 
 #include "obscore.h"
 
-OBSCore *OBSCore::instance = NULL;
+OBSCore *OBSCore::instance = nullptr;
 const QString userAgent = APP_NAME + QString(" ") + QACTUS_VERSION;
 
 OBSCore::OBSCore()
@@ -29,6 +29,7 @@ OBSCore::OBSCore()
     authenticated = false;
     xmlReader = OBSXmlReader::getInstance();
     manager = nullptr;
+    includeHomeProjects = false;
 }
 
 void OBSCore::createManager()
@@ -130,10 +131,22 @@ void OBSCore::getRequests(const QString &resource)
     reply->setProperty("reqtype", OBSCore::Requests);
 }
 
+bool OBSCore::isIncludeHomeProjects() const
+{
+    return includeHomeProjects;
+}
+
+void OBSCore::setIncludeHomeProjects(bool value)
+{
+    includeHomeProjects = value;
+}
+
 void OBSCore::getProjects()
 {
     QNetworkReply *reply = requestSource("");
     reply->setProperty("reqtype", OBSCore::ProjectList);
+    QString userHome = includeHomeProjects ? "" : "home:" + curUsername;
+    reply->setProperty("includehomeprjs", userHome);
 }
 
 void OBSCore::getProjectMetadata(const QString &resource)
@@ -292,10 +305,15 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 // do nothing
                 break;
 
-            case OBSCore::ProjectList: // <directory>
+            case OBSCore::ProjectList: { // <directory>
                 qDebug() << reqTypeStr << "ProjectList";
-                xmlReader->parseProjectList(dataStr);
+                QString userHome;
+                if (reply->property("includehomeprjs").isValid()) {
+                    userHome = reply->property("includehomeprjs").toString();
+                }
+                xmlReader->parseProjectList(userHome, dataStr);
                 break;
+            }
 
             case OBSCore::ProjectMetadata: // <project>
                 qDebug() << reqTypeStr << "ProjectList";
