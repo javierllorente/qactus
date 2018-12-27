@@ -461,11 +461,13 @@ void MainWindow::projectSelectionChanged(const QItemSelection &selected, const Q
     ui->treeFiles->clearModel();
     ui->treeBuildResults->clearModel();
 
-    QModelIndex selectedProject = selected.indexes().at(0);
-    getPackages(selectedProject);
-    ui->treePackages->filterPackages("");
-    setupProjectActions();
-    ui->treeFiles->setAcceptDrops(false);
+    if (!selected.isEmpty()) {
+        QModelIndex selectedProject = selected.indexes().at(0);
+        getPackages(selectedProject);
+        ui->treePackages->filterPackages("");
+        setupProjectActions();
+        ui->treeFiles->setAcceptDrops(false);
+    }
 }
 
 void MainWindow::packageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
