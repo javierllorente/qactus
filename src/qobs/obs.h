@@ -57,10 +57,8 @@ public:
     void getPackages(const QString &project);
     void getProjectMetadata(const QString &project);
     void getFiles(const QString &project, const QString &package);
-    QStringList getRepositoryArchs(const QString &repository);
-    QStringList readXmlFile(const QString &xmlFile);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
-    OBSXmlReader* getXmlReader();   
+    OBSXmlReader *getXmlReader();
     void branchPackage(const QString &project, const QString &package);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);

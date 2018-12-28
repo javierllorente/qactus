@@ -244,22 +244,9 @@ void OBS::getFiles(const QString &project, const QString &package)
     obsCore->getFiles(project, package);
 }
 
-QStringList OBS::getRepositoryArchs(const QString &repository)
-{
-    xmlReader->getRepositoryArchs(repository);
-    return xmlReader->getList();
-}
-
 void OBS::changeSubmitRequest(const QString &resource, const QByteArray &data)
 {
     obsCore->changeSubmitRequest(resource, data);
-}
-
-QStringList OBS::readXmlFile(const QString &xmlFile)
-{
-    xmlReader->setFileName(xmlFile);
-    xmlReader->readList();
-    return xmlReader->readList();
 }
 
 OBSXmlReader* OBS::getXmlReader()
