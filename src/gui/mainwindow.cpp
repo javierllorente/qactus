@@ -820,6 +820,8 @@ void MainWindow::createRequest()
 
     CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, obs, this);
     createRequestDialog->addProjectList(ui->treeProjects->getProjectList());
+    disconnect(obs, &OBS::finishedParsingPackageList,
+               ui->treePackages, &PackageTreeWidget::addPackageList);
 
     int result = createRequestDialog->exec();
     if (result) {
@@ -828,6 +830,9 @@ void MainWindow::createRequest()
     }
     delete createRequestDialog;
     delete request;
+
+    connect(obs, &OBS::finishedParsingPackageList,
+               ui->treePackages, &PackageTreeWidget::addPackageList);
 }
 
 void MainWindow::deleteProject()
