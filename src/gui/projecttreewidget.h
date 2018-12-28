@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -35,6 +35,7 @@ public:
     QString getCurrentProject() const;
     bool setCurrentProject(const QString &project);
     void addProjectList(const QStringList &projectList);
+    QStringList getProjectList() const;
     bool removeProject(const QString &project);
     void filterProjects(const QString &item);
 

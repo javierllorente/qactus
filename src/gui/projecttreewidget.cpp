@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -58,6 +58,11 @@ void ProjectTreeWidget::addProjectList(const QStringList &projectList)
     sourceModelProjects->setStringList(projectList);
     proxyModelProjects->setSourceModel(sourceModelProjects);
     setModel(proxyModelProjects);
+}
+
+QStringList ProjectTreeWidget::getProjectList() const
+{
+    return sourceModelProjects->stringList();
 }
 
 bool ProjectTreeWidget::removeProject(const QString &project)
