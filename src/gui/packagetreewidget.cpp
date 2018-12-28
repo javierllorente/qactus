@@ -59,6 +59,11 @@ void PackageTreeWidget::addPackageList(const QStringList &packageList)
     emit updateStatusBar(tr("Done"), true);
 }
 
+QStringList PackageTreeWidget::getPackageList() const
+{
+    return sourceModelPackages->stringList();
+}
+
 QString PackageTreeWidget::getCurrentPackage() const
 {
     return currentIndex().data().toString();

@@ -36,6 +36,7 @@ public:
     void setOBS(OBS *obs);
     void createModel();
     void deleteModel();
+    QStringList getPackageList() const;
     QString getCurrentPackage() const;
     void filterPackages(const QString &item);
     bool removePackage(const QString &package);
