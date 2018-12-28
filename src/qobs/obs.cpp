@@ -231,20 +231,16 @@ void OBS::getProjects()
 
 void OBS::getPackages(const QString &project)
 {
-    xmlReader->setFileName(project + ".xml");
     obsCore->getPackages("/" + project);
 }
 
 void OBS::getProjectMetadata(const QString &project)
 {
-    xmlReader->setFileName(project + "_meta.xml");
     obsCore->getProjectMetadata("/" + project + "/_meta");
 }
 
 void OBS::getFiles(const QString &project, const QString &package)
 {
-    QString fileName = QString("%1_%2.xml").arg(project, package);
-    xmlReader->setFileName(fileName);
     obsCore->getFiles(project, package);
 }
 
