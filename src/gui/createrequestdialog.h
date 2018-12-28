@@ -22,8 +22,6 @@
 #define CREATEREQUESTDIALOG_H
 
 #include <QDialog>
-#include <QProgressDialog>
-#include <QMessageBox>
 #include <QStringListModel>
 #include <QCompleter>
 #include <QDebug>
