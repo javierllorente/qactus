@@ -108,51 +108,6 @@ void RowEditor::setArch(const QString &arch)
     ui->lineEditArch->setText(arch);
 }
 
-QStringList RowEditor::getListFor(const QString &name)
-{
-    // Not used anymore. To be refactored :)
-
-    qDebug() << "RowEditor::getListFor()";
-    QStringList stringList;
-    QString lastUpdateStr = getLastUpdateDate();
-    QDate lastUpdateDate = QDate::fromString(lastUpdateStr);
-    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
-            "/data/" + QCoreApplication::applicationName();
-    QDir::setCurrent(dataDir);
-    QString fileName = name + ".xml";
-
-    /* The XML file is downloaded if
-     * it doesn't exist or
-     * there is no lastupdate entry in settings file or
-     * 7 days have passed since the XML file was downloaded
-     */
-    if (!QFile::exists(fileName) ||
-            lastUpdateStr.isEmpty() ||
-            lastUpdateDate.daysTo(QDate::currentDate()) == -7) {
-        if (mOBS->isAuthenticated()) {
-            qDebug() << "Downloading" << name + "...";
-            QProgressDialog progress(tr("Downloading") + name + "...", 0, 0, 0, this);
-            progress.setWindowModality(Qt::WindowModal);
-            progress.show();
-
-            if (name == "projects") {
-//                stringList = mOBS->getProjectList();
-            } else if (name.contains("meta")) {
-                QStringList projectName = name.split("_meta");
-//                stringList = mOBS->getProjectMetadata(projectName[0]);
-            } else {
-//                stringList = mOBS->getProjectPackageList(name);
-            }
-            setLastUpdateDate(QDate::currentDate().toString());
-        }
-    } else {
-        qDebug() << "Reading" << name;
-        stringList = mOBS->readXmlFile(fileName);
-    }
-
-    return stringList;
-}
-
 void RowEditor::initProjectAutocompleter()
 {
     qDebug() << "RowEditor::initProjectAutocompleter()";

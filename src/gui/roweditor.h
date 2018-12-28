@@ -54,7 +54,6 @@ private:
     OBS *mOBS;
     QString getLastUpdateDate();
     void setLastUpdateDate(const QString &date);
-    QStringList getListFor(const QString &name);
     QStringList projectList;
     QStringListModel *projectModel;
     QCompleter *projectCompleter;
