@@ -54,12 +54,6 @@ void OBSXmlReader::addData(const QString &data)
         } else if (xml.name()=="status" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: status tag found";
             parseBuildStatus(data);
-        } else if (xml.name()=="directory" && xml.isStartElement()) {
-            qDebug() << "OBSXmlReader: directory tag found";
-            stringToFile(data);
-        } else if (xml.name()=="project" && xml.isStartElement()) {
-            qDebug() << "OBSXmlReader: project tag found";
-            stringToFile(data);
         }
     }
 }
@@ -682,87 +676,6 @@ void OBSXmlReader::parseFileList(const QString &project, const QString &package,
     emit finishedParsingFileList();
 }
 
-void OBSXmlReader::stringToFile(const QString &data)
-{
-    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
-            "/data/" + QCoreApplication::applicationName();
-    QDir dir(dataDir);
-
-    if (!dir.exists()) {
-        dir.mkpath(dataDir);
-    }
-
-    QFile file(fileName);
-    QDir::setCurrent(dataDir);
-
-    file.open(QIODevice::WriteOnly);
-    QTextStream stream(&file);
-    stream << data;
-    file.close();
-}
-
-QFile *OBSXmlReader::openFile()
-{
-    qDebug() << "OBSXmlReader::openFile()" << fileName;
-    QFile *file = new QFile(fileName);
-    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
-            "/data/" + QCoreApplication::applicationName();
-    QDir::setCurrent(dataDir);
-    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Error: Cannot read file " << dataDir << fileName << "(" << file->errorString() << ")";
-    }
-    return file;
-}
-
-QStringList OBSXmlReader::readList()
-{
-    QXmlStreamReader xml;
-    xml.setDevice(openFile());
-    return parseList(xml);
-}
-
-QStringList OBSXmlReader::getRepositoryArchs(const QString &repository)
-{
-    qDebug() << "OBSXmlReader::getRepositoryArchs()";
-    QStringList list;
-    QXmlStreamReader xml;
-    xml.setDevice(openFile());
-    bool repositoryFound = false;
-
-    while (!xml.atEnd() && !xml.hasError()) {
-
-        xml.readNext();
-
-        if (xml.name()=="repository") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-
-                if (attrib.value("name")==repository) {
-//                    qDebug() << "Repository: " << attrib.value("name").toString();
-                    repositoryFound = true;
-                } else {
-                    repositoryFound = false;
-                }
-            }
-        } // end repository
-
-        if (xml.name()=="arch" && repositoryFound) {
-            xml.readNext();
-//            qDebug() << "Arch:" << xml.text().toString();
-            list.append(xml.text().toString());
-            xml.readNextStartElement();
-
-        } // end arch
-
-    } // end while
-
-    if (xml.hasError()) {
-        qDebug() << "Error parsing XML!" << xml.errorString();
-    }
-
-    return list;
-}
-
 void OBSXmlReader::parseAbout(const QString &data)
 {
     QXmlStreamReader xml(data);
@@ -805,14 +718,4 @@ void OBSXmlReader::parseAbout(const QString &data)
 int OBSXmlReader::getRequestNumber()
 {
     return requestNumber.toInt();
-}
-
-QStringList OBSXmlReader::getList()
-{
-    return QStringList(); // FIXME: this method is deprecated and will be deleted.
-}
-
-void OBSXmlReader::setFileName(const QString &fileName)
-{
-    this->fileName = fileName;
 }
