@@ -32,7 +32,7 @@ PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
 void PackageTreeWidget::setOBS(OBS *obs)
 {
     this->obs = obs;
-    connect(obs, SIGNAL(finishedParsingPackageList(QStringList)), this, SLOT(addPackageList(QStringList)));
+    connect(obs, &OBS::finishedParsingPackageList, this, &PackageTreeWidget::addPackageList);
 }
 
 void PackageTreeWidget::createModel()

@@ -42,6 +42,9 @@ public:
     bool removePackage(const QString &package);
     void clearModel();
 
+public slots:
+    void addPackageList(const QStringList &packageList);
+
 private:
     QStringListModel *sourceModelPackages;
     QSortFilterProxyModel *proxyModelPackages;
@@ -50,8 +53,6 @@ private:
 signals:
     void updateStatusBar(QString message, bool progressBarHidden);
 
-private slots:
-    void addPackageList(const QStringList &packageList);
 };
 
 #endif // PACKAGETREEWIDGET_H
