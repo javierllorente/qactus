@@ -196,17 +196,19 @@ void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
 {
     ui->lineEditArch->setFocus();
 
-    archList = mOBS->getRepositoryArchs(repository);
-    archModel = new QStringListModel(archList);
-    archCompleter = new QCompleter(archModel, this);
+    // FIXME: OBSXmlReader::parseProjectMetadata() needs to be refactored!
 
-    ui->lineEditArch->setCompleter(archCompleter);
+//    archList = mOBS->getRepositoryArchs(repository);
+//    archModel = new QStringListModel(archList);
+//    archCompleter = new QCompleter(archModel, this);
 
-    connect(ui->lineEditArch, SIGNAL(textEdited(const QString&)),
-            this, SLOT(refreshArchAutocompleter(const QString&)));
+//    ui->lineEditArch->setCompleter(archCompleter);
+
+//    connect(ui->lineEditArch, SIGNAL(textEdited(const QString&)),
+//            this, SLOT(refreshArchAutocompleter(const QString&)));
 }
 
 void RowEditor::refreshArchAutocompleter(const QString&)
 {
-    archModel->setStringList(archList);
+//    archModel->setStringList(archList);
 }
