@@ -820,7 +820,6 @@ void MainWindow::createRequest()
 
     CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, obs, this);
     createRequestDialog->addProjectList(ui->treeProjects->getProjectList());
-    connect(createRequestDialog, SIGNAL(createRequest(QByteArray)), obs, SLOT(createRequest(QByteArray)));
 
     int result = createRequestDialog->exec();
     if (result) {

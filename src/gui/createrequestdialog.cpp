@@ -33,6 +33,7 @@ CreateRequestDialog::CreateRequestDialog(OBSRequest *request, OBS *obs, QWidget 
 {
     ui->setupUi(this);
     ui->sourceProjectLineEdit->setText(request->getSourceProject());
+    connect(this, &CreateRequestDialog::createRequest, obs, &OBS::createRequest);
 }
 
 CreateRequestDialog::~CreateRequestDialog()
