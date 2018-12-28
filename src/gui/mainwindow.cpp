@@ -818,7 +818,8 @@ void MainWindow::createRequest()
     request->setSourceProject(currentProject);
     request->setSourcePackage(currentPackage);
 
-    CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, this);
+    CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, obs, this);
+    createRequestDialog->addProjectList(ui->treeProjects->getProjectList());
     connect(createRequestDialog, SIGNAL(createRequest(QByteArray)), obs, SLOT(createRequest(QByteArray)));
 
     int result = createRequestDialog->exec();

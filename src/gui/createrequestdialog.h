@@ -24,10 +24,13 @@
 #include <QDialog>
 #include <QProgressDialog>
 #include <QMessageBox>
+#include <QStringListModel>
+#include <QCompleter>
+#include <QDebug>
 #include "obsxmlwriter.h"
 #include "obsrequest.h"
+#include "obs.h"
 #include "obsstatus.h"
-#include <QDebug>
 
 namespace Ui {
 class CreateRequestDialog;
@@ -38,17 +41,30 @@ class CreateRequestDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CreateRequestDialog(OBSRequest *request = nullptr, QWidget *parent = nullptr);
+    explicit CreateRequestDialog(OBSRequest *request = nullptr, OBS *obs = nullptr, QWidget *parent = nullptr);
     ~CreateRequestDialog();
 
 signals:
     void createRequest(QByteArray data);
 
+public slots:
+    void addProjectList(const QStringList &projectList);
+    void addPackageList(const QStringList &packageList);
+
 private:
     Ui::CreateRequestDialog *ui;
     OBSRequest *m_request;
+    OBS *m_obs;
+
+    QStringListModel *m_projectModel;
+    QCompleter *m_projectCompleter;
+
+    QStringListModel *m_packageModel;
+    QCompleter *m_packageCompleter;
 
 private slots:
+    void autocompletedProject_activated(const QString &project);
+    void autocompletedPackage_activated(const QString &package);
     void on_buttonBox_accepted();
 };
 

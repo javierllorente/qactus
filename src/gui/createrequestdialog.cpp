@@ -21,10 +21,15 @@
 #include "createrequestdialog.h"
 #include "ui_createrequestdialog.h"
 
-CreateRequestDialog::CreateRequestDialog(OBSRequest *request, QWidget *parent) :
+CreateRequestDialog::CreateRequestDialog(OBSRequest *request, OBS *obs, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CreateRequestDialog),
-    m_request(request)
+    m_request(request),
+    m_obs(obs),
+    m_projectModel(nullptr),
+    m_projectCompleter(nullptr),
+    m_packageModel(nullptr),
+    m_packageCompleter(nullptr)
 {
     ui->setupUi(this);
     ui->sourceProjectLineEdit->setText(request->getSourceProject());
@@ -33,6 +38,52 @@ CreateRequestDialog::CreateRequestDialog(OBSRequest *request, QWidget *parent) :
 CreateRequestDialog::~CreateRequestDialog()
 {
     delete ui;
+}
+
+void CreateRequestDialog::addProjectList(const QStringList &projectList)
+{
+    qDebug() << "CreateRequestDialog::addProjectList()";
+    m_projectModel = new QStringListModel(projectList, this);
+    m_projectCompleter = new QCompleter(m_projectModel, this);
+    ui->targetProjectLineEdit->setCompleter(m_projectCompleter);
+
+#if QT_VERSION >= 0x050700
+    connect(m_projectCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+            this, &CreateRequestDialog::autocompletedProject_activated);
+#else
+    connect(m_projectCompleter, static_cast<void (QCompleter::*)(const QString &)>(&QCompleter::activated),
+            this, &CreateRequestDialog::autocompletedProject_activated);
+#endif
+}
+
+void CreateRequestDialog::autocompletedProject_activated(const QString &project)
+{
+    ui->targetPackageLineEdit->setFocus();
+
+    connect(m_obs, &OBS::finishedParsingPackageList, this, &CreateRequestDialog::addPackageList);
+    m_obs->getPackages(project);
+}
+
+void CreateRequestDialog::addPackageList(const QStringList &packageList)
+{
+    qDebug() << "CreateRequestDialog::addPackageList()";
+    m_packageModel = new QStringListModel(packageList, this);
+    m_packageCompleter = new QCompleter(m_packageModel, this);
+    ui->targetPackageLineEdit->setCompleter(m_packageCompleter);
+
+#if QT_VERSION >= 0x050700
+    connect(m_packageCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+            this, &CreateRequestDialog::autocompletedPackage_activated);
+#else
+    connect(m_packageCompleter, static_cast<void (QCompleter::*)(const QString &)>(&QCompleter::activated),
+            this, &CreateRequestDialog::autocompletedPackage_activated);
+#endif
+}
+
+void CreateRequestDialog::autocompletedPackage_activated(const QString &package)
+{
+    Q_UNUSED(package);
+    ui->descriptionPlainTextEdit->setFocus();
 }
 
 void CreateRequestDialog::on_buttonBox_accepted()
