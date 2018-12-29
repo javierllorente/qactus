@@ -33,7 +33,10 @@ CreateRequestDialog::CreateRequestDialog(OBSRequest *request, OBS *obs, QWidget 
 {
     ui->setupUi(this);
     ui->sourceProjectLineEdit->setText(request->getSourceProject());
+
+    connect(m_obs, &OBS::finishedParsingPackageList, this, &CreateRequestDialog::addPackageList);
     connect(this, &CreateRequestDialog::createRequest, obs, &OBS::createRequest);
+    connect(m_obs, &OBS::finishedParsingLink, this, &CreateRequestDialog::linkFetched);
 }
 
 CreateRequestDialog::~CreateRequestDialog()
@@ -60,8 +63,6 @@ void CreateRequestDialog::addProjectList(const QStringList &projectList)
 void CreateRequestDialog::autocompletedProject_activated(const QString &project)
 {
     ui->targetPackageLineEdit->setFocus();
-
-    connect(m_obs, &OBS::finishedParsingPackageList, this, &CreateRequestDialog::addPackageList);
     m_obs->getPackages(project);
 }
 
@@ -79,6 +80,19 @@ void CreateRequestDialog::addPackageList(const QStringList &packageList)
     connect(m_packageCompleter, static_cast<void (QCompleter::*)(const QString &)>(&QCompleter::activated),
             this, &CreateRequestDialog::autocompletedPackage_activated);
 #endif
+}
+
+void CreateRequestDialog::linkFetched(OBSLink *link)
+{
+    QString project = link->getProject().isEmpty() ? m_request->getSourceProject() : link->getProject();
+    ui->targetProjectLineEdit->setText(project);
+
+    QString package = link->getPackage().isEmpty() ? m_request->getSourcePackage() : link->getPackage();
+    m_obs->getPackages(project); // Make autocomplete work when filling the target package automatically
+    ui->targetPackageLineEdit->setText(package);
+
+    ui->descriptionPlainTextEdit->setFocus();
+    delete link;
 }
 
 void CreateRequestDialog::autocompletedPackage_activated(const QString &package)

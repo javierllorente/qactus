@@ -61,6 +61,7 @@ private:
     QCompleter *m_packageCompleter;
 
 private slots:
+    void linkFetched(OBSLink *link);
     void autocompletedProject_activated(const QString &project);
     void autocompletedPackage_activated(const QString &package);
     void on_buttonBox_accepted();
