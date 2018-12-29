@@ -18,7 +18,8 @@ set(LIBQOBS_SRC
     obsstatus.cpp
     obsabout.cpp
     obsxmlwriter.cpp
-    obsobject.cpp)
+    obsobject.cpp
+    obslink.cpp)
 
 set(LIBQOBS_HDR
     obscore.h
@@ -31,7 +32,8 @@ set(LIBQOBS_HDR
     obsstatus.h
     obsabout.h
     obsxmlwriter.h
-    obsobject.h)
+    obsobject.h
+    obslink.h)
 
 add_library(libqobs SHARED ${LIBQOBS_SRC})
 
