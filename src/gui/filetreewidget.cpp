@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -110,6 +110,18 @@ void FileTreeWidget::addFile(OBSFile *obsFile)
         items << itemName << itemSize << itemLastModified;
         fileModel->appendRow(items);
     }
+}
+
+bool FileTreeWidget::hasLink() const
+{
+    QStandardItemModel *fileModel = static_cast<QStandardItemModel *>(model());
+
+    if (fileModel) {
+        QList<QStandardItem *> list = fileModel->findItems("_link", Qt::MatchExactly, 0);
+        return !list.isEmpty();
+    }
+
+    return false;
 }
 
 QString FileTreeWidget::getCurrentFile() const

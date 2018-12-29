@@ -1,5 +1,5 @@
 /*
- *  Qactus - A Qt based OBS notifier
+ *  Qactus - A Qt-based OBS client
  *
  *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
  *
@@ -35,10 +35,11 @@ class FileTreeWidget : public QTreeView
         Q_OBJECT
 
 public:
-    FileTreeWidget(QWidget *parent = 0);
+    FileTreeWidget(QWidget *parent = nullptr);
     void createModel();
     void deleteModel();
     void addFile(OBSFile *obsFile);
+    bool hasLink() const;
     QString getCurrentFile() const;
     bool removeFile(const QString &fileName);
     void clearModel();
