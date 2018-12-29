@@ -39,9 +39,7 @@ CreateRequestDialog::CreateRequestDialog(OBSRequest *request, OBS *obs, QWidget 
     connect(m_obs, &OBS::finishedParsingLink, this, &CreateRequestDialog::linkFetched);
     connect(ui->targetProjectLineEdit, &QLineEdit::textChanged, this, &CreateRequestDialog::toggleOkButton);
     connect(ui->targetPackageLineEdit, &QLineEdit::textChanged, this, &CreateRequestDialog::toggleOkButton);
-    connect(ui->descriptionPlainTextEdit, &QPlainTextEdit::textChanged, [=] {
-        toggleOkButton();
-    });
+    connect(ui->descriptionPlainTextEdit, &QPlainTextEdit::textChanged, this, &CreateRequestDialog::toggleOkButton);
     connect(this, &CreateRequestDialog::createRequest, obs, &OBS::createRequest);
 }
 
