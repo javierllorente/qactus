@@ -818,6 +818,10 @@ void MainWindow::createRequest()
     request->setSourceProject(currentProject);
     request->setSourcePackage(currentPackage);
 
+    if (ui->treeFiles->hasLink()) {
+        obs->getLink(currentProject, currentPackage);
+    }
+
     CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, obs, this);
     createRequestDialog->addProjectList(ui->treeProjects->getProjectList());
     disconnect(obs, &OBS::finishedParsingPackageList,
