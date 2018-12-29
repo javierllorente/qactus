@@ -22,6 +22,7 @@
 #define CREATEREQUESTDIALOG_H
 
 #include <QDialog>
+#include <QPushButton>
 #include <QStringListModel>
 #include <QCompleter>
 #include <QDebug>
@@ -64,6 +65,7 @@ private slots:
     void linkFetched(OBSLink *link);
     void autocompletedProject_activated(const QString &project);
     void autocompletedPackage_activated(const QString &package);
+    void toggleOkButton();
     void on_buttonBox_accepted();
 };
 

@@ -32,11 +32,17 @@ CreateRequestDialog::CreateRequestDialog(OBSRequest *request, OBS *obs, QWidget 
     m_packageCompleter(nullptr)
 {
     ui->setupUi(this);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     ui->sourceProjectLineEdit->setText(request->getSourceProject());
 
     connect(m_obs, &OBS::finishedParsingPackageList, this, &CreateRequestDialog::addPackageList);
-    connect(this, &CreateRequestDialog::createRequest, obs, &OBS::createRequest);
     connect(m_obs, &OBS::finishedParsingLink, this, &CreateRequestDialog::linkFetched);
+    connect(ui->targetProjectLineEdit, &QLineEdit::textChanged, this, &CreateRequestDialog::toggleOkButton);
+    connect(ui->targetPackageLineEdit, &QLineEdit::textChanged, this, &CreateRequestDialog::toggleOkButton);
+    connect(ui->descriptionPlainTextEdit, &QPlainTextEdit::textChanged, [=] {
+        toggleOkButton();
+    });
+    connect(this, &CreateRequestDialog::createRequest, obs, &OBS::createRequest);
 }
 
 CreateRequestDialog::~CreateRequestDialog()
@@ -99,6 +105,15 @@ void CreateRequestDialog::autocompletedPackage_activated(const QString &package)
 {
     Q_UNUSED(package);
     ui->descriptionPlainTextEdit->setFocus();
+}
+
+void CreateRequestDialog::toggleOkButton()
+{
+    bool enable = !ui->targetProjectLineEdit->text().isEmpty() &&
+            !ui->targetPackageLineEdit->text().isEmpty() &&
+            !ui->descriptionPlainTextEdit->toPlainText().isEmpty();
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
 }
 
 void CreateRequestDialog::on_buttonBox_accepted()
