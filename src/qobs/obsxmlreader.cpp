@@ -676,6 +676,35 @@ void OBSXmlReader::parseFileList(const QString &project, const QString &package,
     emit finishedParsingFileList();
 }
 
+void OBSXmlReader::parseLink(const QString &data)
+{
+    qDebug() << "OBSXmlReader::parseLink()";
+    QXmlStreamReader xml(data);
+    OBSLink *obsLink = new OBSLink();
+
+    while (!xml.atEnd() && !xml.hasError()) {
+
+        xml.readNext();
+
+        if (xml.name()=="link") {
+            if (xml.isStartElement()) {
+                QXmlStreamAttributes attrib = xml.attributes();
+                obsLink->setProject(attrib.value("project").toString());
+                obsLink->setPackage(attrib.value("package").toString());
+            }
+        } // end link
+
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsLink;
+        return;
+    }
+
+    emit finishedParsingLink(obsLink);
+}
+
 void OBSXmlReader::parseAbout(const QString &data)
 {
     QXmlStreamReader xml(data);
