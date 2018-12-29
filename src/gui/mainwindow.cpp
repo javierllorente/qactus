@@ -451,14 +451,12 @@ void MainWindow::packageSelectionChanged(const QItemSelection &selected, const Q
 {
     qDebug() << "MainWindow::packageSelectionChanged()";
     Q_UNUSED(deselected);
-    QModelIndex selectedPackage = selected.indexes().at(0);
 
-    // Make sure the index is valid (eg: the filter yields results)
-    if (selectedPackage.isValid()) {
+    if (!selected.isEmpty()) {
+        QModelIndex selectedPackage = selected.indexes().at(0);
         getPackageFiles(selectedPackage);
         setupPackageActions();
         ui->treeFiles->setAcceptDrops(true);
-
     } else {
         // If there is no package selected, clear both the file and build result lists
         ui->treeFiles->clearModel();
