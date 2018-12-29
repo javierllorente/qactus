@@ -93,6 +93,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingFile(OBSFile*)));
     connect(xmlReader, SIGNAL(finishedParsingFileList()),
             this, SIGNAL(finishedParsingFileList()));
+    connect(xmlReader, &OBSXmlReader::finishedParsingLink, this, &OBS::finishedParsingLink);
     connect(xmlReader, SIGNAL(finishedParsingSR(OBSStatus *)),
             this, SLOT(srChangeResult(OBSStatus *)));
     connect(obsCore, SIGNAL(srDiffFetched(QString)),
@@ -242,6 +243,11 @@ void OBS::getProjectMetadata(const QString &project)
 void OBS::getFiles(const QString &project, const QString &package)
 {
     obsCore->getFiles(project, package);
+}
+
+void OBS::getLink(const QString &project, const QString &package)
+{
+    obsCore->getLink(project, package);
 }
 
 void OBS::changeSubmitRequest(const QString &resource, const QByteArray &data)

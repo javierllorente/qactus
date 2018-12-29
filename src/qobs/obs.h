@@ -57,6 +57,7 @@ public:
     void getPackages(const QString &project);
     void getProjectMetadata(const QString &project);
     void getFiles(const QString &project, const QString &package);
+    void getLink(const QString &project, const QString &package);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     OBSXmlReader *getXmlReader();
     void branchPackage(const QString &project, const QString &package);
@@ -107,6 +108,7 @@ signals:
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);
     void finishedParsingFileList();
+    void finishedParsingLink(OBSLink *obsLink);
     void srStatus(const QString &);
     void srDiffFetched(const QString &);
     void finishedParsingAbout(OBSAbout *obsAbout);

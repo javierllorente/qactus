@@ -60,6 +60,7 @@ public:
     void getProjectMetadata(const QString &resource);
     void getPackages(const QString &resource);
     void getFiles(const QString &project, const QString &package);
+    void getLink(const QString &project, const QString &package);
     void getAllBuildStatus(const QString &resource);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     void request(const QString &resource, int row);
@@ -123,6 +124,7 @@ private:
         ProjectMetadata,
         PackageList,
         FileList,
+        Link,
         BuildStatus,
         BuildStatusList,
         Requests,

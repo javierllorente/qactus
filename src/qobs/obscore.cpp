@@ -170,6 +170,13 @@ void OBSCore::getFiles(const QString &project, const QString &package)
     reply->setProperty("pkgfile", package);
 }
 
+void OBSCore::getLink(const QString &project, const QString &package)
+{
+    QString resource = QString("/source/%1/%2/_link").arg(project, package);
+    QNetworkReply *reply = request(resource);
+    reply->setProperty("reqtype", OBSCore::Link);
+}
+
 void OBSCore::getAllBuildStatus(const QString &resource)
 {
     QNetworkReply *reply = requestBuild(resource);
@@ -336,6 +343,12 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                     package = reply->property("pkgfile").toString();
                 }
                 xmlReader->parseFileList(project, package, dataStr);
+                break;
+            }
+
+            case OBSCore::Link: { // <link>
+                qDebug() << reqTypeStr << "Link";
+                xmlReader->parseLink(dataStr);
                 break;
             }
 
