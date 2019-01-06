@@ -32,7 +32,10 @@ set(QACTUS_SRC
     buildresulttreewidget.cpp
     searchwidget.cpp
     loghighlighter.cpp
-    createrequestdialog.cpp)
+    createrequestdialog.cpp
+    requestboxtreewidget.cpp
+    requesttreewidget.cpp
+    requestitemmodel.cpp)
 
 set(QACTUS_HDR
     mainwindow.h
@@ -56,7 +59,10 @@ set(QACTUS_HDR
     buildresulttreewidget.h
     searchwidget.h
     loghighlighter.h
-    createrequestdialog.h)
+    createrequestdialog.h
+    requestboxtreewidget.h
+    requesttreewidget.h
+    requestitemmodel.h)
 
 set(QACTUS_UI
     mainwindow.ui

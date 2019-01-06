@@ -18,8 +18,8 @@
     <normaloff>:/icons/obs.png</normaloff>:/icons/obs.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
      <widget class="QListWidget" name="iconBar">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -80,7 +80,7 @@
       </item>
      </widget>
     </item>
-    <item row="0" column="1">
+    <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -130,7 +130,7 @@
                <bool>false</bool>
               </attribute>
               <attribute name="headerDefaultSectionSize">
-               <number>0</number>
+               <number>49</number>
               </attribute>
              </widget>
             </item>
@@ -163,7 +163,7 @@
                 <bool>false</bool>
                </attribute>
                <attribute name="headerDefaultSectionSize">
-                <number>0</number>
+                <number>49</number>
                </attribute>
               </widget>
               <widget class="QTabWidget" name="tabWidgetPackages">
@@ -277,89 +277,108 @@
        </layout>
       </widget>
       <widget class="QWidget" name="requestsPage">
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QSplitter" name="splitter">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+         <widget class="QSplitter" name="splitter_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <widget class="QTreeWidget" name="treeRequests">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="RequestBoxTreeWidget" name="treeRequestBoxes">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
+            <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+             <horstretch>1</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
            </property>
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
            </property>
-           <property name="showDropIndicator" stdset="0">
+           <property name="baseSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <attribute name="headerVisible">
             <bool>false</bool>
-           </property>
-           <property name="dragDropOverwriteMode">
-            <bool>false</bool>
-           </property>
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::SingleSelection</enum>
-           </property>
-           <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
-           </property>
-           <property name="rootIsDecorated">
-            <bool>false</bool>
-           </property>
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
+           </attribute>
            <column>
             <property name="text">
-             <string>Date</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>SR#</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Source</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Target</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Requester</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Type</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>State</string>
+             <string>New Column</string>
             </property>
            </column>
           </widget>
-          <widget class="QTextBrowser" name="textBrowser">
+          <widget class="QSplitter" name="splitter">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
+             <horstretch>5</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <widget class="RequestTreeWidget" name="treeRequests">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="showDropIndicator" stdset="0">
+             <bool>false</bool>
+            </property>
+            <property name="dragDropOverwriteMode">
+             <bool>false</bool>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="rootIsDecorated">
+             <bool>false</bool>
+            </property>
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QTextBrowser" name="textBrowser">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
           </widget>
          </widget>
         </item>
@@ -654,6 +673,16 @@
    <class>BuildResultTreeWidget</class>
    <extends>QTreeView</extends>
    <header>buildresulttreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RequestBoxTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>requestboxtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RequestTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header location="global">requesttreewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
