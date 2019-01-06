@@ -18,7 +18,6 @@ set(QACTUS_SRC
     roweditor.cpp
     requeststateeditor.cpp
     autotooltipdelegate.cpp
-    requesttreewidgetitem.cpp
     utils.cpp
     credentials.cpp
     syntaxhighlighter.cpp
@@ -45,7 +44,6 @@ set(QACTUS_HDR
     roweditor.h
     requeststateeditor.h
     autotooltipdelegate.h
-    requesttreewidgetitem.h
     utils.h
     credentials.h
     syntaxhighlighter.h

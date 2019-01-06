@@ -39,7 +39,6 @@
 #include "login.h"
 #include "requeststateeditor.h"
 #include "obsstatus.h"
-#include "requesttreewidgetitem.h"
 #include "utils.h"
 #include "credentials.h"
 #include "browserfilter.h"
