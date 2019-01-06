@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -77,10 +77,12 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingResultList()));
     connect(xmlReader, SIGNAL(finishedParsingRevision(OBSRevision*)),
             this, SIGNAL(finishedParsingRevision(OBSRevision*)));
-    connect(xmlReader, SIGNAL(finishedParsingRequest(OBSRequest*)),
-            this, SIGNAL(finishedParsingRequest(OBSRequest*)));
-    connect(xmlReader, SIGNAL(removeRequest(const QString&)),
-            this, SIGNAL(removeRequest(const QString&)));
+
+    connect(xmlReader, &OBSXmlReader::finishedParsingIncomingRequest, this, &OBS::finishedParsingIncomingRequest);
+    connect(xmlReader, &OBSXmlReader::finishedParsingIncomingRequestList, this, &OBS::finishedParsingIncomingRequestList);
+    connect(xmlReader, &OBSXmlReader::finishedParsingOutgoingRequest, this, &OBS::finishedParsingOutgoingRequest);
+    connect(xmlReader, &OBSXmlReader::finishedParsingOutgoingRequestList, this, &OBS::finishedParsingOutgoingRequestList);
+
     connect(xmlReader, SIGNAL(finishedParsingProjectList(QStringList)),
             this, SIGNAL(finishedParsingProjectList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingProjectMetadata(QStringList)),
@@ -142,6 +144,18 @@ void OBS::deleteRequest(const QString &resource)
     obsCore->deleteRequest(resource);
 }
 
+void OBS::getRequests(const QString &type)
+{
+    QString resource = QString("?view=collection&states=new&roles=%1&user=%2").arg(type).arg(getUsername());
+    if (type=="maintainer") {
+        obsCore->getIncomingRequests(resource);
+    } else if(type=="creator") {
+        obsCore->getOutgoingRequests(resource);
+    } else {
+        qDebug() << "OBS::getRequests() Unknown request type!";
+    }
+}
+
 bool OBS::isAuthenticated()
 {
     return obsCore->isAuthenticated();
@@ -172,10 +186,14 @@ void OBS::getRevisions(const QString &project, const QString &package)
     obsCore->requestSource(resource);
 }
 
-void OBS::getRequests()
+void OBS::getIncomingRequests()
 {
-    QString resource = QString("?view=collection&states=new&roles=maintainer&user=%1").arg(getUsername());
-    obsCore->getRequests(resource);
+    getRequests("maintainer");
+}
+
+void OBS::getOutgoingRequests()
+{
+    getRequests("creator");
 }
 
 int OBS::getRequestCount()

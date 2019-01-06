@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -48,7 +48,8 @@ public:
     void login();
     void getBuildStatus(const QStringList &stringList, int row);
     void getRevisions(const QString &project, const QString &package);
-    void getRequests();
+    void getIncomingRequests();
+    void getOutgoingRequests();
     int getRequestCount();
     void getRequestDiff(const QString &source);
     bool isIncludeHomeProjects() const;
@@ -72,6 +73,7 @@ private:
     bool includeHomeProjects;
     void postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     void deleteRequest(const QString &resource);
+    void getRequests(const QString &type);
 
 signals:
     void apiNotFound(QUrl url);
@@ -100,8 +102,10 @@ signals:
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);
-    void finishedParsingRequest(OBSRequest*);
-    void removeRequest(const QString&);
+    void finishedParsingIncomingRequest(OBSRequest *request);
+    void finishedParsingIncomingRequestList();
+    void finishedParsingOutgoingRequest(OBSRequest *request);
+    void finishedParsingOutgoingRequestList();
     void finishedParsingProjectList(QStringList);
     void finishedParsingProjectMetadata(QStringList);
     void finishedParsingPackageList(QStringList);
