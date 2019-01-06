@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ void OBSXmlReader::parseSubmitRequest(const QString &data)
         return;
     }
 
-    emit finishedParsingSR(obsStatus );
+    emit finishedParsingSR(obsStatus);
 }
 
 void OBSXmlReader::parseBranchPackage(const QString &project, const QString &package, const QString &data)
@@ -467,48 +467,68 @@ void OBSXmlReader::parseRevisionList(const QString &data)
     }
 }
 
-void OBSXmlReader::parseRequests(const QString &data)
+void OBSXmlReader::parseCollection(QXmlStreamReader &xml)
+{
+    if (xml.name()=="collection") {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            QStringRef matches = attrib.value("matches");
+            QStringRef code = attrib.value("code");
+            requestNumber = matches.toString();
+
+            qDebug() << "Collection matches:" << requestNumber;
+        }
+    } // collection
+}
+
+void OBSXmlReader::parseIncomingRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QString id;
     OBSRequest *obsRequest = nullptr;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
 
-        if (xml.name()=="collection") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-                QStringRef matches = attrib.value("matches");
-                QStringRef code = attrib.value("code");
-                requestNumber = matches.toString();
+        parseCollection(xml);
 
-                qDebug() << "Matches:" << requestNumber;
-
-                if (code.toString() == "unregistered_ichain_user") {
-                    qDebug() << "Unregistered username!";
-                } else {
-//                    data = code.toString();
-                }
-            }
-        } // collection
-
-        if (xml.name()=="request") {
-            if (xml.isStartElement()) {
-                QXmlStreamAttributes attrib = xml.attributes();
-                id = attrib.value("id").toString();
-                if (!id.isEmpty() && !requestIdList.contains(id)) {
-                    obsRequest = parseRequest(xml);
-
-                    if (xml.name()=="request" && xml.isEndElement()) {
-                        if(!id.isEmpty() && !requestIdList.contains(id)) {
-                            requestIdList.append(obsRequest->getId());
-                            emit finishedParsingRequest(obsRequest);
-                        }
-                    }
-                }
+        if (xml.name()=="request" && xml.isStartElement()) {
+            obsRequest = parseRequest(xml);
+            if (xml.name()=="request" && xml.isEndElement()) {
+                emit finishedParsingIncomingRequest(obsRequest);
             }
         } // request
+
+        if (xml.name()=="collection" && xml.isEndElement()) {
+            emit finishedParsingIncomingRequestList();
+        }
+    }
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+}
+
+void OBSXmlReader::parseOutgoingRequests(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSRequest *obsRequest = nullptr;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+
+        parseCollection(xml);
+
+        if (xml.name()=="request" && xml.isStartElement()) {
+            obsRequest = parseRequest(xml);
+            if (xml.name()=="request" && xml.isEndElement()) {
+                emit finishedParsingOutgoingRequest(obsRequest);
+            }
+        } // request
+
+        if (xml.name()=="collection" && xml.isEndElement()) {
+            emit finishedParsingOutgoingRequestList();
+        }
 
     }
 
@@ -516,20 +536,6 @@ void OBSXmlReader::parseRequests(const QString &data)
         qDebug() << "Error parsing XML!" << xml.errorString();
         return;
     }
-
-    if (oldRequestIdList.size()>0) {
-        QSet<QString> currentSet = requestIdList.toSet();
-        QSet<QString> oldSet = oldRequestIdList.toSet();
-
-        // For code's clarity sake (substraction is perfomed on oldSet)
-        QList<QString> removedRequests = oldSet.subtract(currentSet).toList();
-
-        foreach (QString requestId, removedRequests) {
-                requestIdList.removeOne(requestId);
-                emit removeRequest(requestId);
-        }
-    }
-    oldRequestIdList = requestIdList;
 }
 
 OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)

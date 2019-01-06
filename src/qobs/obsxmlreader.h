@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@ public:
     void parseFileList(const QString &project, const QString &package, const QString &data);
     void parseLink(const QString &data);
     void parseResultList(const QString &data);
-    void parseRequests(const QString &data);
+    void parseIncomingRequests(const QString &data);
+    void parseOutgoingRequests(const QString &data);
     void parseSubmitRequest(const QString &data);
     void parseBranchPackage(const QString &project, const QString &package, const QString &data);
     void parseCreateRequest(const QString &data);
@@ -74,6 +75,7 @@ private:
     void parseRevisionList(const QString &data);
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
+    void parseCollection(QXmlStreamReader &xml);
     OBSRequest *parseRequest(QXmlStreamReader &xml);
     QStringList parseList(QXmlStreamReader &xml);
     QString requestNumber;
@@ -92,8 +94,10 @@ signals:
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList();
     void finishedParsingRevision(OBSRevision*);
-    void finishedParsingRequest(OBSRequest*);
-    void removeRequest(const QString&);
+    void finishedParsingIncomingRequest(OBSRequest *request);
+    void finishedParsingIncomingRequestList();
+    void finishedParsingOutgoingRequest(OBSRequest *request);
+    void finishedParsingOutgoingRequestList();
     void finishedParsingList(QStringList);
     void finishedParsingProjectList(QStringList);
     void finishedParsingProjectMetadata(QStringList);
