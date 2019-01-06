@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2019 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -50,7 +50,8 @@ public:
     QNetworkReply *requestBuild(const QString &resource);
     void getBuildStatus(const QStringList &build, int row);
     QNetworkReply *requestSource(const QString &resource);
-    void getRequests(const QString &resource);
+    void getIncomingRequests(const QString &resource);
+    void getOutgoingRequests(const QString &resource);
     QNetworkReply *postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     QNetworkReply *putRequest(const QString &resource, const QByteArray &data);
     QNetworkReply *deleteRequest(const QString &resource);
@@ -127,7 +128,8 @@ private:
         Link,
         BuildStatus,
         BuildStatusList,
-        Requests,
+        IncomingRequests,
+        OutgoingRequests,
         ChangeRequestState,
         SRDiff,
         BranchPackage,
@@ -145,6 +147,7 @@ private:
     bool authenticated;
     OBSXmlReader *xmlReader;
     bool includeHomeProjects;
+    QNetworkReply *getRequests(const QString &resource);
 };
 
 #endif // OBSCORE_H

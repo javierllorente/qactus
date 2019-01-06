@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2019 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -125,10 +125,21 @@ QNetworkReply *OBSCore::requestSource(const QString &resource)
     return request("/source/" + resource);
 }
 
-void OBSCore::getRequests(const QString &resource)
+QNetworkReply *OBSCore::getRequests(const QString &resource)
 {
-    QNetworkReply *reply = request("/request/" + resource);
-    reply->setProperty("reqtype", OBSCore::Requests);
+    return request("/request/" + resource);
+}
+
+void OBSCore::getIncomingRequests(const QString &resource)
+{
+    QNetworkReply *reply = getRequests(resource);
+    reply->setProperty("reqtype", OBSCore::IncomingRequests);
+}
+
+void OBSCore::getOutgoingRequests(const QString &resource)
+{
+    QNetworkReply *reply = getRequests(resource);
+    reply->setProperty("reqtype", OBSCore::OutgoingRequests);
 }
 
 bool OBSCore::isIncludeHomeProjects() const
@@ -362,9 +373,14 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 xmlReader->parseResultList(dataStr);
                 break;
 
-            case OBSCore::Requests: // <collection>
+            case OBSCore::IncomingRequests: // <collection>
                 qDebug() << reqTypeStr << "Collection";
-                xmlReader->parseRequests(dataStr);
+                xmlReader->parseIncomingRequests(dataStr);
+                break;
+
+            case OBSCore::OutgoingRequests: // <collection>
+                qDebug() << reqTypeStr << "Collection";
+                xmlReader->parseOutgoingRequests(dataStr);
                 break;
 
             case OBSCore::ChangeRequestState:
