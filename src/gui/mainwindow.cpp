@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2010-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,7 +36,16 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     setupIconBar();
     setupTreeMonitor();
-    createTreeRequests();
+
+    connect(ui->actionChange_request_state, &QAction::triggered, this, &MainWindow::changeRequestState);
+    connect(ui->treeRequests, &RequestTreeWidget::changeRequestState, this, &MainWindow::changeRequestState);
+    connect(ui->treeRequests, &RequestTreeWidget::descriptionFetched, this, &MainWindow::slotDescriptionFetched);
+    connect(ui->treeRequests, &RequestTreeWidget::updateStatusBar, this, &MainWindow::slotUpdateStatusBar);
+
+    connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::requestTypeChanged, ui->treeRequests, &RequestTreeWidget::requestTypeChanged);
+    connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getIncomingRequests, this, &MainWindow::getIncomingRequests);
+    connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getOutgoingRequests, this, &MainWindow::getOutgoingRequests);
+
     setupBrowser();
     createStatusBar();
 
@@ -54,9 +63,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
-    connect(ui->treeRequests, SIGNAL(customContextMenuRequested(QPoint)), this,
-            SLOT(slotContextMenuRequests(QPoint)));
-    ui->treeRequests->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(obs, SIGNAL(apiNotFound(QUrl)), this, SLOT(slotApiNotFound(QUrl)));
     connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(isAuthenticated(bool)));
@@ -102,10 +108,11 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(addResult(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResultList()),
             this, SLOT(finishedAddingResults()));
-    connect(obs, SIGNAL(finishedParsingRequest(OBSRequest*)),
-            this, SLOT(insertRequest(OBSRequest*)));
-    connect(obs, SIGNAL(removeRequest(const QString&)),
-            this, SLOT(removeRequest(const QString&)));
+
+    connect(obs, &OBS::finishedParsingIncomingRequest, ui->treeRequests, &RequestTreeWidget::addIncomingRequest);
+    connect(obs, &OBS::finishedParsingIncomingRequestList, ui->treeRequests, &RequestTreeWidget::irListFetched);
+    connect(obs, &OBS::finishedParsingOutgoingRequest, ui->treeRequests, &RequestTreeWidget::addOutgoingRequest);
+    connect(obs, &OBS::finishedParsingOutgoingRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
     connect(obs, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
 
     readSettings();
@@ -554,23 +561,6 @@ void MainWindow::getBuildLog()
     emit updateStatusBar(tr("Getting build log..."), false);
 }
 
-void MainWindow::slotContextMenuRequests(const QPoint &point)
-{
-    QMenu *treeRequestsMenu = new QMenu(ui->treeRequests);
-
-    QAction *actionChangeRequestState =  new QAction(tr("Change &State"), this);
-    actionChangeRequestState->setIcon(QIcon::fromTheme("mail-reply-sender"));
-    actionChangeRequestState->setText("Change State");
-    connect(actionChangeRequestState, SIGNAL(triggered()), this, SLOT(changeRequestState()));
-
-    treeRequestsMenu->addAction(actionChangeRequestState);
-
-    QModelIndex index = ui->treeRequests->indexAt(point);
-    if (index.isValid()) {
-        treeRequestsMenu->exec(ui->treeRequests->mapToGlobal(point));
-    }
-}
-
 void MainWindow::slotContextMenuProjects(const QPoint &point)
 {
     QMenu *treeProjectsMenu = new QMenu(ui->treeProjects);
@@ -627,39 +617,17 @@ void MainWindow::slotContextMenuResults(const QPoint &point)
 
 void MainWindow::changeRequestState()
 {
-    qDebug() << "Launching RequestStateEditor...";
-    RequestStateEditor *reqStateEditor = new RequestStateEditor(this, obs);
+    qDebug() << "MainWindow::changeRequestState()";
+    OBSRequest *request = ui->treeRequests->currentRequest();
+    RequestStateEditor *reqStateEditor = new RequestStateEditor(this, obs, request);
+
     disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
     disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treeMonitor, SLOT(addDroppedPackage(OBSResult*)));
-    QTreeWidgetItem *item = ui->treeRequests->currentItem();
-    qDebug() << "Request selected:" << item->text(1);
-    reqStateEditor->setRequestId(item->text(1));
-    reqStateEditor->setDate(item->text(0));
-    reqStateEditor->setSource(item->text(2));
-    reqStateEditor->setTarget(item->text(3));
-    reqStateEditor->setRequester(item->text(4));
-
-    if (item->text(5)=="submit") {
-        QProgressDialog progress(tr("Getting diff..."), 0, 0, 0, this);
-        progress.setWindowModality(Qt::WindowModal);
-        progress.show();
-
-        // Get SR diff
-        obs->getRequestDiff(item->text(2));
-
-        // Get package build results
-        reqStateEditor->showTabBuildResults(true);
-        QStringList source = item->text(2).split("/");
-        QString project = source.at(0);
-        QString package = source.at(1);
-        obs->getAllBuildStatus(project, package);
-    } else {
-        reqStateEditor->setDiff(item->text(5) + " " + item->text(3));
-    }
 
     reqStateEditor->exec();
+
     delete reqStateEditor;
-    reqStateEditor = nullptr;
+    delete request;
 
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treeMonitor, SLOT(addDroppedPackage(OBSResult*)));
     connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
@@ -669,9 +637,10 @@ void MainWindow::slotSrStatus(const QString &status)
 {
     qDebug() << "MainWindow::slotSrStatus()";
     if (status=="ok") {
-        QTreeWidgetItem *item = ui->treeRequests->currentItem();
-        item->setHidden(true);
+        OBSRequest *request = ui->treeRequests->currentRequest();
+        ui->treeRequests->removeIncomingRequest(request->getId());
         ui->textBrowser->clear();
+        delete request;
     }
 }
 
@@ -906,9 +875,9 @@ void MainWindow::on_action_Refresh_triggered()
     emit updateStatusBar(tr("Getting build statuses..."), false);
     ui->treeMonitor->getBuildStatus();
 
-//    Get SRs
     emit updateStatusBar(tr("Getting requests..."), false);
-    obs->getRequests();
+    obs->getIncomingRequests();
+    obs->getOutgoingRequests();
 }
 
 void MainWindow::setupTreeMonitor()
@@ -920,24 +889,6 @@ void MainWindow::setupTreeMonitor()
     connect(ui->action_Mark_all_as_read, SIGNAL(triggered(bool)), ui->treeMonitor, SLOT(slotMarkAllRead()));
     connect(ui->treeMonitor, SIGNAL(notifyChanged(bool)), this, SLOT(setNotify(bool)));
     connect(ui->treeMonitor, SIGNAL(updateStatusBar(QString,bool)), this, SLOT(slotUpdateStatusBar(QString,bool)));
-}
-
-void MainWindow::createTreeRequests()
-{
-    ui->treeRequests->setColumnCount(7);
-    ui->treeRequests->setColumnWidth(0, 145); // Date
-    ui->treeRequests->setColumnWidth(1, 60); // SR ID
-    ui->treeRequests->setColumnWidth(2, 160); // Source project
-    ui->treeRequests->setColumnWidth(3, 160); // Target project
-    ui->treeRequests->setColumnWidth(4, 90); // Requester
-    ui->treeRequests->setColumnWidth(5, 60); // Type
-    ui->treeRequests->setColumnWidth(6, 60); // State
-
-    connect(ui->treeRequests, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(changeRequestState()));
-    connect(ui->actionChange_request_state, SIGNAL(triggered()), this, SLOT(changeRequestState()));
-    connect(ui->treeRequests, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(getRequestDescription(QTreeWidgetItem*, int)));
-
-    ui->treeRequests->setItemDelegate(new AutoToolTipDelegate(ui->treeRequests));
 }
 
 void MainWindow::addProjectList(const QStringList &projectList)
@@ -1194,46 +1145,23 @@ void MainWindow::slotDeleteFile(OBSStatus *obsStatus)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void MainWindow::insertRequest(OBSRequest* obsRequest)
+void MainWindow::getIncomingRequests()
 {
-    qDebug() << "MainWindow::insertRequest()";
-    int rows = ui->treeRequests->topLevelItemCount();
-    int requests = obs->getRequestCount();
-    qDebug() << "Table rows:" << rows+1 << "Total requests:" << requests;
-
-    RequestTreeWidgetItem *item = new RequestTreeWidgetItem(ui->treeRequests);
-    item->setText(0, obsRequest->getDate());
-    item->setText(1, obsRequest->getId());
-    item->setText(2, obsRequest->getSource());
-    item->setText(3, obsRequest->getTarget());
-    item->setText(4, obsRequest->getRequester());
-    item->setText(5, obsRequest->getActionType());
-    item->setText(6, obsRequest->getState());
-    item->setDescription(obsRequest->getDescription());
-    ui->treeRequests->addTopLevelItem(item);
-
-    qDebug() << "Request added:" << obsRequest->getId();
-    delete obsRequest;
-
-    if (rows == ui->treeRequests->topLevelItemCount()-1) {
-        emit updateStatusBar(tr("Done"), true);
-    }
+    qDebug() << "MainWindow::getIncomingRequests()";
+    ui->textBrowser->clear();
+    obs->getIncomingRequests();
 }
 
-void MainWindow::removeRequest(const QString& id)
+void MainWindow::getOutgoingRequests()
 {
-    QList<QTreeWidgetItem*> itemList = ui->treeRequests->findItems(id, Qt::MatchExactly, 1);
-    delete itemList.at(0);
-    qDebug() << "Request removed:" << id;
+    qDebug() << "MainWindow::getOutgoingRequests()";
+    ui->textBrowser->clear();
+    obs->getOutgoingRequests();
 }
 
-void MainWindow::getRequestDescription(QTreeWidgetItem* item, int)
+void MainWindow::slotDescriptionFetched(const QString &description)
 {
-    QString requestDescription = static_cast<RequestTreeWidgetItem*>(item)->getDescription();
-    qDebug() << "getRequestDescription() " << "Row clicked: "
-                + QString::number(ui->treeRequests->indexOfTopLevelItem(item));
-    qDebug() << "Request description: " + requestDescription;
-    ui->textBrowser->setText(requestDescription);
+    ui->textBrowser->setText(description);
     ui->actionChange_request_state->setEnabled(true);
 }
 

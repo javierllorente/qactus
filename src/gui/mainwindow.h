@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2010-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -113,7 +113,6 @@ private:
     QString currentProject;
     QString currentPackage;
     void setupTreeMonitor();
-    void createTreeRequests();
 
     void createStatusBar();
 
@@ -156,7 +155,6 @@ private slots:
     void slotCredentialsRestored(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
     void loadProjects();
-    void slotContextMenuRequests(const QPoint &point);
     void slotContextMenuProjects(const QPoint &point);
     void slotContextMenuPackages(const QPoint &point);
     void slotContextMenuFiles(const QPoint &point);
@@ -171,7 +169,9 @@ private slots:
     void getBuildLog();
     void filterResults(const QString &item);
     void filterRadioButtonClicked(bool);
-    void getRequestDescription(QTreeWidgetItem*, int);
+    void getIncomingRequests();
+    void getOutgoingRequests();
+    void slotDescriptionFetched(const QString &description);
     void setNotify(bool notify);
     void finishedAddingResults();
     void slotEnableRemoveRow();
@@ -213,8 +213,6 @@ private slots:
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
     void slotDeleteFile(OBSStatus *obsStatus);
-    void insertRequest(OBSRequest*);
-    void removeRequest(const QString& id);
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
     void refreshProjectFilter();
     void projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
