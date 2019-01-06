@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -39,14 +39,9 @@ class RequestStateEditor : public QDialog
     Q_OBJECT
 
 public:
-    explicit RequestStateEditor(QWidget *parent = 0, OBS *obs = 0);
+    explicit RequestStateEditor(QWidget *parent = nullptr, OBS *obs = nullptr, OBSRequest *request = nullptr);
     ~RequestStateEditor();
 
-    void setRequestId(const QString& id);
-    void setSource(const QString& source);
-    void setRequester(const QString& requester);
-    void setTarget(const QString& target);
-    void setDate(const QString& date);
     void setDiff(const QString &diff);
     void showTabBuildResults(bool show);
 
@@ -62,10 +57,10 @@ private slots:
 
 private:
     Ui::RequestStateEditor *ui;
-    OBS *mOBS;
-    QString id;
-    QTextDocument *textDocument;
-    SyntaxHighlighter *syntaxHighlighter;
+    OBS *m_obs;
+    OBSRequest *m_request;
+    QTextDocument *m_document;
+    SyntaxHighlighter *m_syntaxHighlighter;
 };
 
 #endif // REQUESTSTATEEDITOR_H

@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,28 +21,49 @@
 #include "requeststateeditor.h"
 #include "ui_requeststateeditor.h"
 
-RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs) :
+RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, OBSRequest *request) :
     QDialog(parent),
     ui(new Ui::RequestStateEditor),
-    mOBS(obs)
+    m_obs(obs),
+    m_request(request),
+    m_document(new QTextDocument(this)),
+    m_syntaxHighlighter(new SyntaxHighlighter(m_document))
 {
     ui->setupUi(this);
+
     ui->commentsTextBrowser->setFocus();
     ui->diffTextBrowser->setFocusPolicy(Qt::NoFocus);
     showTabBuildResults(false);
 
-    // Setup build results tree view
-    QStandardItemModel *sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
-    QStringList treeBuildResultsHeaders;
-    treeBuildResultsHeaders << tr("Repository") << tr("Arch") << tr("Status");
-    sourceModelBuildResults->setHorizontalHeaderLabels(treeBuildResultsHeaders);
-    ui->treeBuildResults->setModel(sourceModelBuildResults);
-    ui->treeBuildResults->setColumnWidth(0, 250);
+    // Fill in the fields
+    ui->requestIdLabelText->setText(m_request->getId());
+    ui->requesterLabel->setText("Created by " + m_request->getRequester());
+    ui->sourceLabelText->setText(m_request->getSource());
+    ui->targetLabelText->setText(m_request->getTarget());
+    ui->dateLabelText->setText(m_request->getDate());
 
-    connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), mOBS, SLOT(slotChangeSubmitRequest(QString,QString,bool)));
-    connect(mOBS, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
-    connect(mOBS, SIGNAL(srDiffFetched(QString)), this, SLOT(slotSrDiffFetched(QString)));
-    connect(mOBS, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(slotAddBuildResults(OBSResult*)));
+    connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), m_obs, SLOT(slotChangeSubmitRequest(QString,QString,bool)));
+    connect(m_obs, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
+    connect(m_obs, SIGNAL(srDiffFetched(QString)), this, SLOT(slotSrDiffFetched(QString)));
+    connect(m_obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(slotAddBuildResults(OBSResult*)));
+
+    if (m_request->getActionType()=="submit") {
+        // Get SR diff
+        m_obs->getRequestDiff(m_request->getSource());
+
+        // Setup build results tree view
+        QStandardItemModel *sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);
+        QStringList treeBuildResultsHeaders = {tr("Repository"), tr("Arch"), tr("Status")};
+        sourceModelBuildResults->setHorizontalHeaderLabels(treeBuildResultsHeaders);
+        ui->treeBuildResults->setModel(sourceModelBuildResults);
+        ui->treeBuildResults->setColumnWidth(0, 250);
+
+        // Get package build results
+        showTabBuildResults(true);
+        m_obs->getAllBuildStatus(m_request->getSourceProject(), m_request->getSourcePackage());
+    } else {
+        setDiff(m_request->getActionType() + " " + m_request->getTarget());
+    }
 }
 
 RequestStateEditor::~RequestStateEditor()
@@ -50,38 +71,10 @@ RequestStateEditor::~RequestStateEditor()
     delete ui;
 }
 
-void RequestStateEditor::setRequestId(const QString& id)
-{
-    this->id = id;
-    ui->requestIdLabelText->setText(id);
-}
-
-void RequestStateEditor::setRequester(const QString& requester)
-{
-    ui->requesterLabel->setText("Created by " + requester);
-}
-
-void RequestStateEditor::setSource(const QString& source)
-{
-    ui->sourceLabelText->setText(source);
-}
-
-void RequestStateEditor::setTarget(const QString& target)
-{
-    ui->targetLabelText->setText(target);
-}
-
-void RequestStateEditor::setDate(const QString& date)
-{
-    ui->dateLabelText->setText(date);
-}
-
 void RequestStateEditor::setDiff(const QString &diff)
 {
-    textDocument = new QTextDocument(this);
-    textDocument->setPlainText(diff);
-    syntaxHighlighter = new SyntaxHighlighter(textDocument);
-    ui->diffTextBrowser->setDocument(textDocument);
+    m_document->setPlainText(diff);
+    ui->diffTextBrowser->setDocument(m_document);
 }
 
 void RequestStateEditor::showTabBuildResults(bool show)
@@ -95,22 +88,22 @@ void RequestStateEditor::showTabBuildResults(bool show)
 
 void RequestStateEditor::on_acceptPushButton_clicked()
 {
-    qDebug() << "Accepting request" << id;
-    QProgressDialog progress(tr("Accepting request..."), 0, 0, 0, this);
+    qDebug() << "Accepting request" << m_request->getId();
+    QProgressDialog progress(tr("Accepting request..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
 
-    emit changeSubmitRequest(id, ui->commentsTextBrowser->toPlainText(), true);
+    emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), true);
 }
 
 void RequestStateEditor::on_declinePushButton_clicked()
 {
-    qDebug() << "Declining request..." << id;
-    QProgressDialog progress(tr("Declining request..."), 0, 0, 0, this);
+    qDebug() << "Declining request..." << m_request->getId();
+    QProgressDialog progress(tr("Declining request..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
 
-    emit changeSubmitRequest(id, ui->commentsTextBrowser->toPlainText(), false);
+    emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), false);
 }
 
 void RequestStateEditor::slotSrStatus(const QString &status)
@@ -145,8 +138,7 @@ void RequestStateEditor::slotAddBuildResults(OBSResult *obsResult)
             itemBuildResult->setToolTip(details);
         }
 
-        QList<QStandardItem*> items;
-        items << itemRepository << itemArch << itemBuildResult;
+        QList<QStandardItem *> items = {itemRepository, itemArch, itemBuildResult};
         model->appendRow(items);
     }
     delete obsResult;
