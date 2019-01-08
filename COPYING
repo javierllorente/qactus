@@ -1,8 +1,7 @@
-      Qactus is a Qt-based OBS notifier application
+      Qactus is a Qt-based Open Build Service client
 ===================================================================
 
- Copyright (C) 2010-2016 Javier Llorente <javier@opensuse.org>
- Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
+ Copyright (C) 2010-2019 Javier Llorente <javier@opensuse.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,6 +17,10 @@ The license texts for both the GPLv2 and GPLv3 are provided with this
 source code release in the files "gpl-2.0.txt" and "gpl-3.0.txt".
 
 ===================================================================
+
+Contributors:
+  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
+
 
 The icons are part of the Oxygen project.
 License: LGPL-2.1+.
