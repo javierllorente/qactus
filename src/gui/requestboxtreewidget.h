@@ -35,6 +35,7 @@ public:
 signals:
     void getIncomingRequests();
     void getOutgoingRequests();
+    void getDeclinedRequests();
     void requestTypeChanged(int index);
 
 private:

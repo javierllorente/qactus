@@ -31,8 +31,13 @@ RequestBoxTreeWidget::RequestBoxTreeWidget(QWidget *parent) :
     outgoingItem->setText(0, "Outgoing");
     outgoingItem->setIcon(0, QIcon::fromTheme("mail-folder-outbox"));
 
+    QTreeWidgetItem *declinedItem = new QTreeWidgetItem(this);
+    declinedItem->setText(0, "Declined");
+    declinedItem->setIcon(0, QIcon::fromTheme("dialog-cancel"));
+
     addTopLevelItem(incomingItem);
     addTopLevelItem(outgoingItem);
+    addTopLevelItem(declinedItem);
 
     if (selectedItems().size()==0 && topLevelItemCount()>0) {
         topLevelItem(0)->setSelected(true);
@@ -52,6 +57,9 @@ RequestBoxTreeWidget::RequestBoxTreeWidget(QWidget *parent) :
             break;
         case 1:
             emit getOutgoingRequests();
+            break;
+        case 2:
+            emit getDeclinedRequests();
             break;
         }
         emit requestTypeChanged(index);
