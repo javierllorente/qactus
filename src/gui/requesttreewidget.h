@@ -50,13 +50,17 @@ public slots:
     void irListFetched();
     void addOutgoingRequest(OBSRequest *request);
     void orListFetched();
+    void addDeclinedRequest(OBSRequest *request);
+    void drListFetched();
     bool removeIncomingRequest(const QString &id);
     bool removeOutgoingRequest(const QString &id);
+    bool removeDeclinedRequest(const QString &id);
     void requestTypeChanged(int index);
 
 private:
      RequestItemModel *irModel;
      RequestItemModel *orModel;
+     RequestItemModel *drModel;
      QMenu *m_menu;
      int m_requestType;
 

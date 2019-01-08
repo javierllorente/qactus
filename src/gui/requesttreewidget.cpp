@@ -24,6 +24,7 @@ RequestTreeWidget::RequestTreeWidget(QWidget *parent) :
     QTreeView(parent),
     irModel(new RequestItemModel(this)),
     orModel(new RequestItemModel(this)),
+    drModel(new RequestItemModel(this)),
     m_menu(new QMenu(this)),
     m_requestType(0)
 {
@@ -95,6 +96,19 @@ void RequestTreeWidget::orListFetched()
     emit updateStatusBar(tr("Done"), true);
 }
 
+void RequestTreeWidget::addDeclinedRequest(OBSRequest *request)
+{
+    qDebug() << "RequestTreeWidget::addDeclinedRequest()";
+    drModel->appendRequest(request);
+    delete request;
+}
+
+void RequestTreeWidget::drListFetched()
+{
+    drModel->syncRequests();
+    emit updateStatusBar(tr("Done"), true);
+}
+
 bool RequestTreeWidget::removeIncomingRequest(const QString &id)
 {
     return irModel->removeRequest(id);
@@ -103,6 +117,11 @@ bool RequestTreeWidget::removeIncomingRequest(const QString &id)
 bool RequestTreeWidget::removeOutgoingRequest(const QString &id)
 {
     return orModel->removeRequest(id);
+}
+
+bool RequestTreeWidget::removeDeclinedRequest(const QString &id)
+{
+    return drModel->removeRequest(id);
 }
 
 void RequestTreeWidget::requestTypeChanged(int index)
@@ -115,6 +134,9 @@ void RequestTreeWidget::requestTypeChanged(int index)
         break;
     case 1:
         setModel(orModel);
+        break;
+    case 2:
+        setModel(drModel);
         break;
     }
 }
