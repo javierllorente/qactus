@@ -145,6 +145,10 @@ void OBSCore::getRequests(OBSCore::RequestType type)
         resource = createReqResourceStr("new", "creator");
         reply = request(resource);
         break;
+    case OBSCore::DeclinedRequests:
+        resource = createReqResourceStr("declined", "creator");
+        reply = request(resource);
+        break;
     default:
         qDebug() << " OBSCore::getRequests() request type not handled!";
         break;
@@ -163,6 +167,11 @@ void OBSCore::getIncomingRequests()
 void OBSCore::getOutgoingRequests()
 {
     getRequests(OBSCore::OutgoingRequests);
+}
+
+void OBSCore::getDeclinedRequests()
+{
+    getRequests(OBSCore::DeclinedRequests);
 }
 
 bool OBSCore::isIncludeHomeProjects() const
@@ -404,6 +413,11 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             case OBSCore::OutgoingRequests: // <collection>
                 qDebug() << reqTypeStr << "Collection";
                 xmlReader->parseOutgoingRequests(dataStr);
+                break;
+
+            case OBSCore::DeclinedRequests: // <collection>
+                qDebug() << reqTypeStr << "Collection";
+                xmlReader->parseDeclinedRequests(dataStr);
                 break;
 
             case OBSCore::ChangeRequestState:

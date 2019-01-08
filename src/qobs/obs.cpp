@@ -82,6 +82,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, &OBSXmlReader::finishedParsingIncomingRequestList, this, &OBS::finishedParsingIncomingRequestList);
     connect(xmlReader, &OBSXmlReader::finishedParsingOutgoingRequest, this, &OBS::finishedParsingOutgoingRequest);
     connect(xmlReader, &OBSXmlReader::finishedParsingOutgoingRequestList, this, &OBS::finishedParsingOutgoingRequestList);
+    connect(xmlReader, &OBSXmlReader::finishedParsingDeclinedRequest, this, &OBS::finishedParsingDeclinedRequest);
+    connect(xmlReader, &OBSXmlReader::finishedParsingDeclinedRequestList, this, &OBS::finishedParsingDeclinedRequestList);
 
     connect(xmlReader, SIGNAL(finishedParsingProjectList(QStringList)),
             this, SIGNAL(finishedParsingProjectList(QStringList)));
@@ -182,6 +184,11 @@ void OBS::getIncomingRequests()
 void OBS::getOutgoingRequests()
 {
     obsCore->getOutgoingRequests();
+}
+
+void OBS::getDeclinedRequests()
+{
+    obsCore->getDeclinedRequests();
 }
 
 int OBS::getRequestCount()

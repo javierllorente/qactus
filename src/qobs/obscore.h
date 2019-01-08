@@ -52,6 +52,7 @@ public:
     QNetworkReply *requestSource(const QString &resource);
     void getIncomingRequests();
     void getOutgoingRequests();
+    void getDeclinedRequests();
     QNetworkReply *postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     QNetworkReply *putRequest(const QString &resource, const QByteArray &data);
     QNetworkReply *deleteRequest(const QString &resource);
@@ -130,6 +131,7 @@ private:
         BuildStatusList,
         IncomingRequests,
         OutgoingRequests,
+        DeclinedRequests,
         ChangeRequestState,
         SRDiff,
         BranchPackage,

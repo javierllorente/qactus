@@ -50,6 +50,7 @@ public:
     void getRevisions(const QString &project, const QString &package);
     void getIncomingRequests();
     void getOutgoingRequests();
+    void getDeclinedRequests();
     int getRequestCount();
     void getRequestDiff(const QString &source);
     bool isIncludeHomeProjects() const;
@@ -105,6 +106,8 @@ signals:
     void finishedParsingIncomingRequestList();
     void finishedParsingOutgoingRequest(OBSRequest *request);
     void finishedParsingOutgoingRequestList();
+    void finishedParsingDeclinedRequest(OBSRequest *request);
+    void finishedParsingDeclinedRequestList();
     void finishedParsingProjectList(QStringList);
     void finishedParsingProjectMetadata(QStringList);
     void finishedParsingPackageList(QStringList);

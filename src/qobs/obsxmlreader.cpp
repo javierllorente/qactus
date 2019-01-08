@@ -538,6 +538,35 @@ void OBSXmlReader::parseOutgoingRequests(const QString &data)
     }
 }
 
+void OBSXmlReader::parseDeclinedRequests(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSRequest *obsRequest = nullptr;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+
+        parseCollection(xml);
+
+        if (xml.name()=="request" && xml.isStartElement()) {
+            obsRequest = parseRequest(xml);
+            if (xml.name()=="request" && xml.isEndElement()) {
+                emit finishedParsingDeclinedRequest(obsRequest);
+            }
+        } // request
+
+        if (xml.name()=="collection" && xml.isEndElement()) {
+            emit finishedParsingDeclinedRequestList();
+        }
+
+    }
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+}
+
 OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
 {
     OBSRequest *obsRequest = nullptr;

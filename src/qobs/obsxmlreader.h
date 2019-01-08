@@ -53,6 +53,7 @@ public:
     void parseResultList(const QString &data);
     void parseIncomingRequests(const QString &data);
     void parseOutgoingRequests(const QString &data);
+    void parseDeclinedRequests(const QString &data);
     void parseSubmitRequest(const QString &data);
     void parseBranchPackage(const QString &project, const QString &package, const QString &data);
     void parseCreateRequest(const QString &data);
@@ -98,6 +99,8 @@ signals:
     void finishedParsingIncomingRequestList();
     void finishedParsingOutgoingRequest(OBSRequest *request);
     void finishedParsingOutgoingRequestList();
+    void finishedParsingDeclinedRequest(OBSRequest *request);
+    void finishedParsingDeclinedRequestList();
     void finishedParsingList(QStringList);
     void finishedParsingProjectList(QStringList);
     void finishedParsingProjectMetadata(QStringList);
