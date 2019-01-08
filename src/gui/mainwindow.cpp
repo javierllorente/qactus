@@ -1211,21 +1211,17 @@ void MainWindow::on_action_Quit_triggered()
 
 void MainWindow::on_action_About_triggered()
 {
-    QMessageBox::about(this,tr("About") + " " + QCoreApplication::applicationName(),
-                       "<h2 align=\"left\">" + QCoreApplication::applicationName() + "</h2>" +
-                       tr("A Qt-based OBS client") + "<br>" +
-                       tr("Version:") + " " + QCoreApplication::applicationVersion() +
-                       "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a>" +
-                       "<div align=\"left\">" +
-                          "<p>" +
-                          "&copy; 2010-2019 Javier Llorente"
-                          "</p>"
-                          "<p>" +
-                          "<b>" + tr("License") + "</b> <br>"
-                          "<nobr>" + tr("This program is under the GPLv3") + "</nobr>"
-                          "</p>"
-                          "</div>"
-                       );
+    QString title = tr("About ").arg(QCoreApplication::applicationName());
+    QString aboutHtml;
+    aboutHtml += QString("<h2 align=\"left\">%1</h2>").arg(QCoreApplication::applicationName());
+    aboutHtml += tr("A Qt-based OBS client") + "<br>";
+    aboutHtml += tr("Version: %1").arg(QCoreApplication::applicationVersion());
+    aboutHtml += "<div align=\"left\"><p>&copy; 2010-2019 Javier Llorente";
+    aboutHtml += "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a> </p>";
+    aboutHtml += "<p><b>" + tr("License") + "</b><br>";
+    aboutHtml += "<nobr>" + tr("This program is under the GPLv3") + "</nobr></p></div>";
+
+    QMessageBox::about(this, title, aboutHtml);
 }
 
 void MainWindow::createActions()
