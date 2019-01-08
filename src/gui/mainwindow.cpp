@@ -1213,15 +1213,12 @@ void MainWindow::on_action_About_triggered()
 {
     QMessageBox::about(this,tr("About") + " " + QCoreApplication::applicationName(),
                        "<h2 align=\"left\">" + QCoreApplication::applicationName() + "</h2>" +
-                       tr("A Qt-based OBS notifier") + "<br>" +
+                       tr("A Qt-based OBS client") + "<br>" +
                        tr("Version:") + " " + QCoreApplication::applicationVersion() +
                        "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a>" +
                        "<div align=\"left\">" +
                           "<p>" +
-                          "&copy; 2010-2018 Javier Llorente (Main developer)<br>"
-                          "&copy; 2010-2011 Sivan Greenberg (Former contributor)  &nbsp; <br><br>"
-                          + tr("Icons by the Oxygen Team") + "<br>"
-                          + tr("Tray icon by the Open Build Service") + /*"<br>"*/
+                          "&copy; 2010-2019 Javier Llorente"
                           "</p>"
                           "<p>" +
                           "<b>" + tr("License") + "</b> <br>"
