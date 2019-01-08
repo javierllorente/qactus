@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::requestTypeChanged, ui->treeRequests, &RequestTreeWidget::requestTypeChanged);
     connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getIncomingRequests, this, &MainWindow::getIncomingRequests);
     connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getOutgoingRequests, this, &MainWindow::getOutgoingRequests);
+    connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getDeclinedRequests, this, &MainWindow::getDeclinedRequests);
 
     setupBrowser();
     createStatusBar();
@@ -113,6 +114,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, &OBS::finishedParsingIncomingRequestList, ui->treeRequests, &RequestTreeWidget::irListFetched);
     connect(obs, &OBS::finishedParsingOutgoingRequest, ui->treeRequests, &RequestTreeWidget::addOutgoingRequest);
     connect(obs, &OBS::finishedParsingOutgoingRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
+    connect(obs, &OBS::finishedParsingDeclinedRequest, ui->treeRequests, &RequestTreeWidget::addDeclinedRequest);
+    connect(obs, &OBS::finishedParsingDeclinedRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
     connect(obs, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
 
     readSettings();
@@ -1157,6 +1160,13 @@ void MainWindow::getOutgoingRequests()
     qDebug() << "MainWindow::getOutgoingRequests()";
     ui->textBrowser->clear();
     obs->getOutgoingRequests();
+}
+
+void MainWindow::getDeclinedRequests()
+{
+    qDebug() << "MainWindow::getDeclinedRequests()";
+    ui->textBrowser->clear();
+    obs->getDeclinedRequests();
 }
 
 void MainWindow::slotDescriptionFetched(const QString &description)

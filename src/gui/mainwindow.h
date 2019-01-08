@@ -170,6 +170,7 @@ private slots:
     void filterRadioButtonClicked(bool);
     void getIncomingRequests();
     void getOutgoingRequests();
+    void getDeclinedRequests();
     void slotDescriptionFetched(const QString &description);
     void setNotify(bool notify);
     void finishedAddingResults();
