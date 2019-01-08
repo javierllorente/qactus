@@ -125,21 +125,44 @@ QNetworkReply *OBSCore::requestSource(const QString &resource)
     return request("/source/" + resource);
 }
 
-QNetworkReply *OBSCore::getRequests(const QString &resource)
+QString OBSCore::createReqResourceStr(const QString &states, const QString &roles) const
 {
-    return request("/request/" + resource);
+    return  QString("/request/?view=collection&states=%1&roles=%2&user=%3")
+            .arg(states).arg(roles).arg(curUsername);
 }
 
-void OBSCore::getIncomingRequests(const QString &resource)
+void OBSCore::getRequests(OBSCore::RequestType type)
 {
-    QNetworkReply *reply = getRequests(resource);
-    reply->setProperty("reqtype", OBSCore::IncomingRequests);
+    QString resource;
+    QNetworkReply *reply = nullptr;
+
+    switch (type) {
+    case OBSCore::IncomingRequests:
+        resource = createReqResourceStr("new", "maintainer");
+        reply = request(resource);
+        break;
+    case OBSCore::OutgoingRequests:
+        resource = createReqResourceStr("new", "creator");
+        reply = request(resource);
+        break;
+    default:
+        qDebug() << " OBSCore::getRequests() request type not handled!";
+        break;
+    }
+
+    if (reply) {
+        reply->setProperty("reqtype", type);
+    }
 }
 
-void OBSCore::getOutgoingRequests(const QString &resource)
+void OBSCore::getIncomingRequests()
 {
-    QNetworkReply *reply = getRequests(resource);
-    reply->setProperty("reqtype", OBSCore::OutgoingRequests);
+    getRequests(OBSCore::IncomingRequests);
+}
+
+void OBSCore::getOutgoingRequests()
+{
+    getRequests(OBSCore::OutgoingRequests);
 }
 
 bool OBSCore::isIncludeHomeProjects() const

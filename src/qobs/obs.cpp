@@ -144,18 +144,6 @@ void OBS::deleteRequest(const QString &resource)
     obsCore->deleteRequest(resource);
 }
 
-void OBS::getRequests(const QString &type)
-{
-    QString resource = QString("?view=collection&states=new&roles=%1&user=%2").arg(type).arg(getUsername());
-    if (type=="maintainer") {
-        obsCore->getIncomingRequests(resource);
-    } else if(type=="creator") {
-        obsCore->getOutgoingRequests(resource);
-    } else {
-        qDebug() << "OBS::getRequests() Unknown request type!";
-    }
-}
-
 bool OBS::isAuthenticated()
 {
     return obsCore->isAuthenticated();
@@ -188,12 +176,12 @@ void OBS::getRevisions(const QString &project, const QString &package)
 
 void OBS::getIncomingRequests()
 {
-    getRequests("maintainer");
+    obsCore->getIncomingRequests();
 }
 
 void OBS::getOutgoingRequests()
 {
-    getRequests("creator");
+    obsCore->getOutgoingRequests();
 }
 
 int OBS::getRequestCount()

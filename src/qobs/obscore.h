@@ -50,8 +50,8 @@ public:
     QNetworkReply *requestBuild(const QString &resource);
     void getBuildStatus(const QStringList &build, int row);
     QNetworkReply *requestSource(const QString &resource);
-    void getIncomingRequests(const QString &resource);
-    void getOutgoingRequests(const QString &resource);
+    void getIncomingRequests();
+    void getOutgoingRequests();
     QNetworkReply *postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     QNetworkReply *putRequest(const QString &resource, const QByteArray &data);
     QNetworkReply *deleteRequest(const QString &resource);
@@ -147,7 +147,8 @@ private:
     bool authenticated;
     OBSXmlReader *xmlReader;
     bool includeHomeProjects;
-    QNetworkReply *getRequests(const QString &resource);
+    QString createReqResourceStr(const QString &states, const QString &roles) const;
+    void getRequests(OBSCore::RequestType type);
 };
 
 #endif // OBSCORE_H

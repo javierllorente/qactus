@@ -73,7 +73,6 @@ private:
     bool includeHomeProjects;
     void postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     void deleteRequest(const QString &resource);
-    void getRequests(const QString &type);
 
 signals:
     void apiNotFound(QUrl url);
