@@ -24,15 +24,15 @@ RequestBoxTreeWidget::RequestBoxTreeWidget(QWidget *parent) :
     QTreeWidget(parent)
 {
     QTreeWidgetItem *incomingItem = new QTreeWidgetItem(this);
-    incomingItem->setText(0, "Incoming");
+    incomingItem->setText(0, tr("Incoming"));
     incomingItem->setIcon(0, QIcon::fromTheme("mail-folder-inbox"));
 
     QTreeWidgetItem *outgoingItem = new QTreeWidgetItem(this);
-    outgoingItem->setText(0, "Outgoing");
+    outgoingItem->setText(0, tr("Outgoing"));
     outgoingItem->setIcon(0, QIcon::fromTheme("mail-folder-outbox"));
 
     QTreeWidgetItem *declinedItem = new QTreeWidgetItem(this);
-    declinedItem->setText(0, "Declined");
+    declinedItem->setText(0, tr("Declined"));
     declinedItem->setIcon(0, QIcon::fromTheme("dialog-cancel"));
 
     addTopLevelItem(incomingItem);
