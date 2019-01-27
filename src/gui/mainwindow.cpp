@@ -1212,13 +1212,14 @@ void MainWindow::on_action_About_triggered()
 {
     QString title = tr("About ").arg(QCoreApplication::applicationName());
     QString aboutHtml;
-    aboutHtml += QString("<h2 align=\"left\">%1</h2>").arg(QCoreApplication::applicationName());
-    aboutHtml += tr("A Qt-based OBS client") + "<br>";
-    aboutHtml += tr("Version: %1").arg(QCoreApplication::applicationVersion());
-    aboutHtml += "<div align=\"left\"><p>&copy; 2010-2019 Javier Llorente";
+    aboutHtml += QString("<big>%1</big>").arg(QCoreApplication::applicationName()) + "<br>";
+    aboutHtml += "<b>" + tr("Version %1").arg(QCoreApplication::applicationVersion()) + "</b><br><br>";
+    aboutHtml += tr("A Qt-based Open Build Service client")+ "<br>";
+    aboutHtml += "<div align=\"left\">&copy; 2010-2019 Javier Llorente</div>";
     aboutHtml += "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a> </p>";
     aboutHtml += "<p><b>" + tr("License") + "</b><br>";
     aboutHtml += "<nobr>" + tr("This program is under the GPLv3") + "</nobr></p></div>";
+    aboutHtml += "<small>" + tr("Qt version: %1").arg(qVersion()) + "</small>";
 
     QMessageBox::about(this, title, aboutHtml);
 }
