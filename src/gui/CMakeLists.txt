@@ -12,6 +12,7 @@ find_package(Qt5Keychain REQUIRED)
 set(QACTUS_SRC
     main.cpp
     mainwindow.cpp
+    iconbar.cpp
     trayicon.cpp
     configure.cpp
     login.cpp
@@ -38,6 +39,7 @@ set(QACTUS_SRC
 
 set(QACTUS_HDR
     mainwindow.h
+    iconbar.h
     trayicon.h
     configure.h
     login.h
