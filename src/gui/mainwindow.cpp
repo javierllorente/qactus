@@ -34,7 +34,6 @@ MainWindow::MainWindow(QWidget *parent) :
     trayIcon = new TrayIcon(this);
     m_notify = false;
     createActions();
-    setupIconBar();
     setupTreeMonitor();
 
     connect(ui->actionChange_request_state, &QAction::triggered, this, &MainWindow::changeRequestState);
@@ -1309,23 +1308,6 @@ void MainWindow::createActions()
     action_Quit->setIcon(QIcon::fromTheme("application-exit"));
     connect(action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     trayIcon->trayIconMenu->addAction(action_Quit);
-}
-
-void MainWindow::setupIconBar()
-{
-    ui->iconBar->setMaximumWidth(ui->iconBar->sizeHintForColumn(0)+4);
-
-    QListWidgetItem *browserItem = ui->iconBar->item(0);
-    QIcon browserIcon(":/icons/32x32/browser.png");
-    browserItem->setIcon(browserIcon);
-
-    QListWidgetItem *monitorItem = ui->iconBar->item(1);
-    QIcon monitorIcon(":/icons/32x32/monitor.png");
-    monitorItem->setIcon(monitorIcon);
-
-    QListWidgetItem *requestsItem = ui->iconBar->item(2);
-    QIcon requestsIcon(":/icons/32x32/requests.png");
-    requestsItem->setIcon(requestsIcon);
 }
 
 void MainWindow::createStatusBar()

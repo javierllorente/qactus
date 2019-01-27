@@ -96,7 +96,6 @@ private:
     QAction *actionFilter;
     QAction *actionFilterSpacer;
     void createActions();
-    void setupIconBar();
     QAction *action_About;
     QAction *action_Quit;
     QAction *action_Restore;
@@ -220,6 +219,5 @@ private slots:
     void fileSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotSrStatus(const QString &status);
 };
-
 
 #endif // MAINWINDOW_H
