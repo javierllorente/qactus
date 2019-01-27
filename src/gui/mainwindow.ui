@@ -419,7 +419,6 @@
      <string>Help</string>
     </property>
     <addaction name="action_About"/>
-    <addaction name="action_About_Qt"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -463,11 +462,6 @@
    </property>
    <property name="text">
     <string>&amp;About</string>
-   </property>
-  </action>
-  <action name="action_About_Qt">
-   <property name="text">
-    <string>About &amp;Qt</string>
    </property>
   </action>
   <action name="action_Quit">

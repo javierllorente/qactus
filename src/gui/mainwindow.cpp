@@ -1225,8 +1225,6 @@ void MainWindow::on_action_About_triggered()
 
 void MainWindow::createActions()
 {
-    connect(ui->action_About_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
     // New button actions
     newButton = new QToolButton(this);
     newButton->setPopupMode(QToolButton::MenuButtonPopup);
