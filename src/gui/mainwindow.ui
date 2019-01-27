@@ -20,7 +20,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QListWidget" name="iconBar">
+     <widget class="IconBar" name="iconBar">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -29,7 +29,7 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>75</width>
+        <width>72</width>
         <height>16777215</height>
        </size>
       </property>
@@ -58,6 +58,9 @@
        <property name="text">
         <string>Browser</string>
        </property>
+       <property name="icon">
+        <iconset theme="globe"/>
+       </property>
        <property name="flags">
         <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
        </property>
@@ -66,6 +69,9 @@
        <property name="text">
         <string>Monitor</string>
        </property>
+       <property name="icon">
+        <iconset theme="earthquake"/>
+       </property>
        <property name="flags">
         <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
        </property>
@@ -73,6 +79,9 @@
       <item>
        <property name="text">
         <string>Requests</string>
+       </property>
+       <property name="icon">
+        <iconset theme="dialog-messages"/>
        </property>
        <property name="flags">
         <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
@@ -683,6 +692,11 @@
    <class>RequestTreeWidget</class>
    <extends>QTreeView</extends>
    <header location="global">requesttreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>IconBar</class>
+   <extends>QListWidget</extends>
+   <header>iconbar.h</header>
   </customwidget>
  </customwidgets>
  <resources>
