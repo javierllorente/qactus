@@ -59,7 +59,8 @@
         <string>Browser</string>
        </property>
        <property name="icon">
-        <iconset theme="globe"/>
+        <iconset theme="globe">
+         <normaloff>.</normaloff>.</iconset>
        </property>
        <property name="flags">
         <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
@@ -70,7 +71,8 @@
         <string>Monitor</string>
        </property>
        <property name="icon">
-        <iconset theme="earthquake"/>
+        <iconset theme="earthquake">
+         <normaloff>.</normaloff>.</iconset>
        </property>
        <property name="flags">
         <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
@@ -81,7 +83,8 @@
         <string>Requests</string>
        </property>
        <property name="icon">
-        <iconset theme="dialog-messages"/>
+        <iconset theme="dialog-messages">
+         <normaloff>.</normaloff>.</iconset>
        </property>
        <property name="flags">
         <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
@@ -639,6 +642,9 @@
    </property>
   </action>
   <action name="action_Home">
+    <property name="enabled">
+     <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="user-home">
      <normaloff>.</normaloff>.</iconset>

@@ -249,6 +249,7 @@ void MainWindow::isAuthenticated(bool authenticated)
     }
 
     ui->actionAPI_information->setEnabled(authenticated);
+    ui->action_Home->setEnabled(authenticated);
     watchListButton->setEnabled(authenticated);
 }
 
