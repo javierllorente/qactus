@@ -67,6 +67,7 @@ public:
     void deletePackage(const QString &project, const QString &package);
     void deleteFile(const QString &project, const QString &package, const QString &fileName);
     void about();
+    void getPerson();
 
 private:
     OBSCore *obsCore;
@@ -118,6 +119,7 @@ signals:
     void srStatus(const QString &);
     void srDiffFetched(const QString &);
     void finishedParsingAbout(OBSAbout *obsAbout);
+    void finishedParsingPerson(OBSPerson *obsPerson);
 
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);

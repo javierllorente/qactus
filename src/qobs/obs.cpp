@@ -104,6 +104,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(srDiffFetched(QString)));
     connect(xmlReader, SIGNAL(finishedParsingAbout(OBSAbout*)),
             SIGNAL(finishedParsingAbout(OBSAbout*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingPerson, this, &OBS::finishedParsingPerson);
 }
 
 void OBS::setCredentials(const QString &username, const QString &password)
@@ -321,4 +322,9 @@ void OBS::deleteFile(const QString &project, const QString &package, const QStri
 void OBS::about()
 {
     obsCore->about();
+}
+
+void OBS::getPerson()
+{
+    obsCore->getPerson();
 }

@@ -779,6 +779,52 @@ void OBSXmlReader::parseAbout(const QString &data)
     emit finishedParsingAbout(obsAbout);
 }
 
+void OBSXmlReader::parsePerson(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSPerson *obsPerson = new OBSPerson();
+
+    while (!xml.atEnd() && !xml.hasError()) {
+
+        xml.readNext();
+
+        if (xml.name()=="login" && xml.isStartElement()) {
+            xml.readNext();
+            obsPerson->setLogin(xml.text().toString());
+        }
+
+        if (xml.name()=="email" && xml.isStartElement()) {
+            xml.readNext();
+            obsPerson->setEmail(xml.text().toString());
+        }
+
+        if (xml.name()=="realname" && xml.isStartElement()) {
+            xml.readNext();
+            obsPerson->setRealName(xml.text().toString());
+        }
+
+        if (xml.name()=="state" && xml.isStartElement()) {
+            xml.readNext();
+            obsPerson->setState(xml.text().toString());
+        }
+
+        if (xml.name()=="project") {
+            if (xml.isStartElement()) {
+                QXmlStreamAttributes attrib = xml.attributes();
+                obsPerson->appendWatchItem(attrib.value("name").toString());
+            }
+        }
+
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingPerson(obsPerson);
+}
+
 int OBSXmlReader::getRequestNumber()
 {
     return requestNumber.toInt();

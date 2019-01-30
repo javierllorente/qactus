@@ -35,6 +35,7 @@
 #include "obsrevision.h"
 #include "obsstatus.h"
 #include "obsabout.h"
+#include "obsperson.h"
 
 class OBSXmlReader : public QObject
 {
@@ -66,6 +67,7 @@ public:
     void parseDeleteFile(const QString &project, const QString &package, const QString &fileName, const QString &data);
     int getRequestNumber();
     void parseAbout(const QString &data);
+    void parsePerson(const QString &data);
 
 private:
     static OBSXmlReader *instance;
@@ -110,6 +112,7 @@ signals:
     void finishedParsingLink(OBSLink *obsLink);
     void finishedParsingSR(OBSStatus *obsStatus);
     void finishedParsingAbout(OBSAbout *obsAbout);
+    void finishedParsingPerson(OBSPerson *obsPerson);
 };
 
 #endif // OBSXMLREADER_H

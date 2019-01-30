@@ -78,6 +78,7 @@ public:
     void deletePackage(const QString &project, const QString &package);
     void deleteFile(const QString &project, const QString &package, const QString &fileName);
     void about();
+    void getPerson();
 
 signals:
     void apiNotFound(QUrl url);
@@ -144,7 +145,8 @@ private:
         DeleteProject,
         DeletePackage,
         DeleteFile,
-        About
+        About,
+        Person
     };
     bool authenticated;
     OBSXmlReader *xmlReader;
