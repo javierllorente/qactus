@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
 
     connect(obs, SIGNAL(finishedParsingAbout(OBSAbout*)), this, SLOT(slotAbout(OBSAbout*)));
+    connect(obs, &OBS::finishedParsingPerson, this, &MainWindow::slotPerson);
 
     connect(obs, SIGNAL(finishedParsingProjectList(QStringList)), this, SLOT(addProjectList(QStringList)));
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(addFile(OBSFile*)));
@@ -238,6 +239,7 @@ void MainWindow::isAuthenticated(bool authenticated)
     ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         loadProjects();
+        obs->getPerson();
         on_action_Refresh_triggered();
         ui->actionAPI_information->setEnabled(true);
         delete loginDialog;
@@ -246,6 +248,7 @@ void MainWindow::isAuthenticated(bool authenticated)
         emit updateStatusBar(tr("Authentication is required"), true);
         showLoginDialog();
     }
+    watchListButton->setEnabled(authenticated);
 }
 
 void MainWindow::setupBrowser()
@@ -1249,6 +1252,19 @@ void MainWindow::createActions()
     actionNew = ui->toolBar->insertWidget(ui->action_Branch_package, newButton);
     connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newPackage()));
 
+    // WatchList actions
+    watchListButton = new QToolButton(this);
+    watchListButton->setPopupMode(QToolButton::InstantPopup);
+    watchListButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    watchListButton->setText(tr("&Bookmarks"));
+    watchListButton->setIcon(QIcon::fromTheme("bookmarks"));
+
+    watchListMenu = new QMenu(watchListButton);
+    watchListButton->setMenu(watchListMenu);
+    watchListButton->setEnabled(false);
+
+    actionWatchList = ui->toolBar->insertWidget(ui->action_Upload_file, watchListButton);
+
     // Reload actions
     action_ReloadProjects = new QAction(tr("&Reload project list"), this);
     action_ReloadProjects->setIcon(QIcon::fromTheme("view-refresh"));
@@ -1541,6 +1557,23 @@ void MainWindow::slotAbout(OBSAbout *obsAbout)
     obsAbout = nullptr;
 }
 
+void MainWindow::slotPerson(OBSPerson *obsPerson)
+{
+    QAction *action = nullptr;
+
+    for (QString entry : obsPerson->getWatchList()) {
+        action = new QAction(entry);
+        action->setIcon(QIcon::fromTheme("project-development"));
+        watchListMenu->addAction(action);
+        connect(action, &QAction::triggered, this, [=]() {
+            ui->treeProjects->setCurrentProject(entry);
+        });
+    }
+
+    delete obsPerson;
+    obsPerson = nullptr;
+}
+
 void MainWindow::on_iconBar_currentRowChanged(int index)
 {
     // Enable/disable the branch/delete button if there is a file/package/project selected
@@ -1581,6 +1614,7 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
     ui->action_Home->setVisible(browserTabVisible);
+    actionWatchList->setVisible(browserTabVisible);
     ui->action_Upload_file->setVisible(browserTabVisible);
     ui->action_Download_file->setVisible(browserTabVisible);
     ui->action_Delete->setVisible(browserTabVisible);

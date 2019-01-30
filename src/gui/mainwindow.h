@@ -78,6 +78,10 @@ private:
     QAction *actionNew_project;
     QAction *actionNew;
 
+    QToolButton *watchListButton;
+    QMenu *watchListMenu;
+    QAction *actionWatchList;
+
     QAction *action_ReloadProjects;
     QAction *action_ReloadPackages;
     QAction *action_ReloadFiles;
@@ -195,6 +199,7 @@ private slots:
     void on_action_Login_triggered();
     void on_actionAPI_information_triggered();
     void slotAbout(OBSAbout *obsAbout);
+    void slotPerson(OBSPerson *obsPerson);
     void on_iconBar_currentRowChanged(int index);
     void on_tabWidgetPackages_currentChanged(int index);
     void addProjectList(const QStringList &projectList);
