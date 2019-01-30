@@ -241,13 +241,14 @@ void MainWindow::isAuthenticated(bool authenticated)
         loadProjects();
         obs->getPerson();
         on_action_Refresh_triggered();
-        ui->actionAPI_information->setEnabled(true);
         delete loginDialog;
         loginDialog = nullptr;
     } else {
         emit updateStatusBar(tr("Authentication is required"), true);
         showLoginDialog();
     }
+
+    ui->actionAPI_information->setEnabled(authenticated);
     watchListButton->setEnabled(authenticated);
 }
 
