@@ -249,6 +249,7 @@ void MainWindow::isAuthenticated(bool authenticated)
     }
 
     ui->actionAPI_information->setEnabled(authenticated);
+    newButton->setEnabled(authenticated);
     ui->action_Home->setEnabled(authenticated);
     watchListButton->setEnabled(authenticated);
 }
@@ -1250,6 +1251,7 @@ void MainWindow::createActions()
     newMenu->addAction(actionNew_package);
     newMenu->addAction(actionNew_project);
     newButton->setMenu(newMenu);
+    newButton->setEnabled(false);
 
     actionNew = ui->toolBar->insertWidget(ui->action_Branch_package, newButton);
     connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newPackage()));
