@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -59,6 +59,17 @@ QByteArray OBSXmlWriter::createRequest(OBSRequest *obsRequest)
     return data;
 }
 
+void OBSXmlWriter::createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepository *repository) const
+{
+    xmlWriter.writeStartElement("repository");
+    xmlWriter.writeAttribute("name", repository->getName());
+    xmlWriter.writeEmptyElement("path");
+    xmlWriter.writeAttribute("project", repository->getProject());
+    xmlWriter.writeAttribute("repository", repository->getRepository());
+    xmlWriter.writeTextElement("arch", repository->getArch());
+    xmlWriter.writeEndElement();
+}
+
 QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const
 {
     QByteArray data;
@@ -76,22 +87,20 @@ QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString
     xmlWriter.writeAttribute("role", "maintainer");
 
     // openSUSE Tumbleweed
-    xmlWriter.writeStartElement("repository");
-    xmlWriter.writeAttribute("name", "openSUSE_Tumbleweed");
-    xmlWriter.writeEmptyElement("path");
-    xmlWriter.writeAttribute("project", "openSUSE:Factory");
-    xmlWriter.writeAttribute("repository", "snapshot");
-    xmlWriter.writeTextElement("arch", "x86_64");
-    xmlWriter.writeEndElement(); // repository
+    OBSRepository *repository = new OBSRepository();
+    repository->setName("openSUSE_Tumbleweed");
+    repository->setProject("openSUSE:Factory");
+    repository->setRepository("snapshot");
+    repository->setArch("x86_64");
+    createRepositoryElement(xmlWriter, repository);
 
-    // openSUSE Leap
-    xmlWriter.writeStartElement("repository");
-    xmlWriter.writeAttribute("name", "openSUSE_Current");
-    xmlWriter.writeEmptyElement("path");
-    xmlWriter.writeAttribute("project", "openSUSE:Current");
-    xmlWriter.writeAttribute("repository", "standard");
-    xmlWriter.writeTextElement("arch", "x86_64");
-    xmlWriter.writeEndElement(); // repository
+    // openSUSE Leap   
+    repository->setName("openSUSE_Current");
+    repository->setProject("openSUSE:Current");
+    repository->setRepository("standard");
+    repository->setArch("x86_64");
+    createRepositoryElement(xmlWriter, repository);
+    delete repository;
 
     xmlWriter.writeEndElement(); // project
 

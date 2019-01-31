@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QXmlStreamWriter>
 #include "obsrequest.h"
+#include "obsrepository.h"
 
 class OBSXmlWriter : public QObject
 {
@@ -33,6 +34,9 @@ public:
     QByteArray createRequest(OBSRequest *obsRequest);
     QByteArray createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const;
     QByteArray createPackageMeta(const QString &project, const QString &package, const QString &title, const QString &description, const QString &username) const;
+
+private:
+    void createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepository *repository) const;
 
 signals:
 
