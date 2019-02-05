@@ -79,3 +79,12 @@ void OBSPerson::appendWatchItem(const QString &item)
 {
     watchList.append(item);
 }
+
+int OBSPerson::removeWatchItem(const QString &item)
+{
+    int index = watchList.indexOf(item);
+    if (index != -1) {
+        watchList.removeAt(index);
+    }
+    return index;
+}

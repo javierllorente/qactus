@@ -44,6 +44,7 @@ public:
     QStringList getWatchList() const;
     void setWatchList(const QStringList &value);
     void appendWatchItem(const QString &item);
+    int removeWatchItem(const QString &item);
 
 private:
     QString login;
