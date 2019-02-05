@@ -68,6 +68,7 @@ public:
     int getRequestNumber();
     void parseAbout(const QString &data);
     void parsePerson(const QString &data);
+    void parseUpdatePerson(const QString &data);
 
 private:
     static OBSXmlReader *instance;
@@ -113,6 +114,7 @@ signals:
     void finishedParsingSR(OBSStatus *obsStatus);
     void finishedParsingAbout(OBSAbout *obsAbout);
     void finishedParsingPerson(OBSPerson *obsPerson);
+    void finishedParsingUpdatePerson(OBSStatus *obsStatus);
 };
 
 #endif // OBSXMLREADER_H

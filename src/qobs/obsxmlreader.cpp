@@ -825,6 +825,25 @@ void OBSXmlReader::parsePerson(const QString &data)
     emit finishedParsingPerson(obsPerson);
 }
 
+void OBSXmlReader::parseUpdatePerson(const QString &data)
+{
+    qDebug() << "OBSXmlReader::parseUpdatePerson()";
+    QXmlStreamReader xml(data);
+    OBSStatus *obsStatus = new OBSStatus();
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseStatus(xml, obsStatus);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingUpdatePerson(obsStatus);
+}
+
 int OBSXmlReader::getRequestNumber()
 {
     return requestNumber.toInt();
