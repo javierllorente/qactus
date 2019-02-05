@@ -25,6 +25,7 @@
 #include <QXmlStreamWriter>
 #include "obsrequest.h"
 #include "obsrepository.h"
+#include "obsperson.h"
 
 class OBSXmlWriter : public QObject
 {
@@ -34,9 +35,11 @@ public:
     QByteArray createRequest(OBSRequest *obsRequest);
     QByteArray createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const;
     QByteArray createPackageMeta(const QString &project, const QString &package, const QString &title, const QString &description, const QString &username) const;
+    QByteArray createPerson(OBSPerson *obsPerson);
 
 private:
     void createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepository *repository) const;
+    void createWatchListElement(QXmlStreamWriter &xmlWriter, const QStringList &watchList);
 
 signals:
 

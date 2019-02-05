@@ -70,6 +70,19 @@ void OBSXmlWriter::createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepos
     xmlWriter.writeEndElement();
 }
 
+void OBSXmlWriter::createWatchListElement(QXmlStreamWriter &xmlWriter, const QStringList &watchList)
+{
+    xmlWriter.writeStartElement("watchlist");
+
+    for (QString project : watchList) {
+        xmlWriter.writeStartElement("project");
+        xmlWriter.writeAttribute("name", project);
+        xmlWriter.writeEndElement(); // project
+    }
+
+    xmlWriter.writeEndElement(); // watchlist
+}
+
 QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const
 {
     QByteArray data;
@@ -125,6 +138,25 @@ QByteArray OBSXmlWriter::createPackageMeta(const QString &project, const QString
     xmlWriter.writeAttribute("role", "maintainer");
 
     xmlWriter.writeEndElement(); // package
+
+    return data;
+}
+
+QByteArray OBSXmlWriter::createPerson(OBSPerson *obsPerson)
+{
+    QByteArray data;
+    QXmlStreamWriter xmlWriter(&data);
+    xmlWriter.setAutoFormatting(true);
+
+    xmlWriter.writeStartElement("person");
+
+    xmlWriter.writeTextElement("login", obsPerson->getLogin());
+    xmlWriter.writeTextElement("email", obsPerson->getEmail());
+    xmlWriter.writeTextElement("state", obsPerson->getState());
+
+    createWatchListElement(xmlWriter, obsPerson->getWatchList());
+
+    xmlWriter.writeEndElement(); // person
 
     return data;
 }
