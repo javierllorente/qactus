@@ -35,7 +35,8 @@ set(QACTUS_SRC
     createrequestdialog.cpp
     requestboxtreewidget.cpp
     requesttreewidget.cpp
-    requestitemmodel.cpp)
+    requestitemmodel.cpp
+    bookmarks.cpp)
 
 set(QACTUS_HDR
     mainwindow.h
@@ -62,7 +63,8 @@ set(QACTUS_HDR
     createrequestdialog.h
     requestboxtreewidget.h
     requesttreewidget.h
-    requestitemmodel.h)
+    requestitemmodel.h
+    bookmarks.h)
 
 set(QACTUS_UI
     mainwindow.ui
