@@ -45,6 +45,7 @@
 #include "createdialog.h"
 #include "buildlogviewer.h"
 #include "createrequestdialog.h"
+#include "bookmarks.h"
 
 namespace Ui {
     class MainWindow;
@@ -78,9 +79,12 @@ private:
     QAction *actionNew_project;
     QAction *actionNew;
 
-    QToolButton *watchListButton;
-    QMenu *watchListMenu;
-    QAction *actionWatchList;
+    QToolButton *bookmarkButton;
+    Bookmarks *bookmarks;
+    QAction *actionBookmarks;
+
+    QAction *separatorHome;
+    QAction *separatorUpload;
 
     QAction *action_ReloadProjects;
     QAction *action_ReloadPackages;
@@ -199,7 +203,7 @@ private slots:
     void on_action_Login_triggered();
     void on_actionAPI_information_triggered();
     void slotAbout(OBSAbout *obsAbout);
-    void slotPerson(OBSPerson *obsPerson);
+    void slotUpdatePerson(OBSPerson *obsPerson);
     void on_iconBar_currentRowChanged(int index);
     void on_tabWidgetPackages_currentChanged(int index);
     void addProjectList(const QStringList &projectList);

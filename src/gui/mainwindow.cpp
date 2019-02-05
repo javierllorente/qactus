@@ -71,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
 
     connect(obs, SIGNAL(finishedParsingAbout(OBSAbout*)), this, SLOT(slotAbout(OBSAbout*)));
-    connect(obs, &OBS::finishedParsingPerson, this, &MainWindow::slotPerson);
 
     connect(obs, SIGNAL(finishedParsingProjectList(QStringList)), this, SLOT(addProjectList(QStringList)));
     connect(obs, SIGNAL(finishedParsingFile(OBSFile*)), this, SLOT(addFile(OBSFile*)));
@@ -251,7 +250,7 @@ void MainWindow::isAuthenticated(bool authenticated)
     ui->actionAPI_information->setEnabled(authenticated);
     newButton->setEnabled(authenticated);
     ui->action_Home->setEnabled(authenticated);
-    watchListButton->setEnabled(authenticated);
+    bookmarkButton->setEnabled(authenticated);
 }
 
 void MainWindow::setupBrowser()
@@ -449,17 +448,22 @@ void MainWindow::projectSelectionChanged(const QItemSelection &selected, const Q
     qDebug() << "MainWindow::projectSelectionChanged()";
     Q_UNUSED(deselected);
 
+    QString selectedProjectStr;
+
     // Clean up files and build results on project click
     ui->treeFiles->clearModel();
     ui->treeBuildResults->clearModel();
 
     if (!selected.isEmpty()) {
         QModelIndex selectedProject = selected.indexes().at(0);
+        selectedProjectStr = selectedProject.data().toString();
         getPackages(selectedProject);
         ui->treePackages->filterPackages("");
         setupProjectActions();
         ui->treeFiles->setAcceptDrops(false);
     }
+
+    bookmarks->toggleActions(selectedProjectStr);
 }
 
 void MainWindow::packageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
@@ -906,6 +910,9 @@ void MainWindow::addProjectList(const QStringList &projectList)
 
     QString browserFilterText = browserFilter->getText();
     ui->treeProjects->filterProjects(browserFilterText);
+
+    bookmarks->toggleActions("");
+
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -1257,17 +1264,29 @@ void MainWindow::createActions()
     connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newPackage()));
 
     // WatchList actions
-    watchListButton = new QToolButton(this);
-    watchListButton->setPopupMode(QToolButton::InstantPopup);
-    watchListButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    watchListButton->setText(tr("&Bookmarks"));
-    watchListButton->setIcon(QIcon::fromTheme("bookmarks"));
+    bookmarkButton = new QToolButton(this);
+    bookmarkButton->setPopupMode(QToolButton::InstantPopup);
+    bookmarkButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    bookmarkButton->setText(tr("&Bookmarks"));
+    bookmarkButton->setIcon(QIcon::fromTheme("bookmarks"));
 
-    watchListMenu = new QMenu(watchListButton);
-    watchListButton->setMenu(watchListMenu);
-    watchListButton->setEnabled(false);
+    bookmarks = new Bookmarks(bookmarkButton);
+    bookmarkButton->setMenu(bookmarks);
+    bookmarkButton->setEnabled(false);
+    connect(obs, &OBS::finishedParsingPerson, bookmarks, &Bookmarks::slotLoadBookmarks);
+    connect(bookmarks, &Bookmarks::clicked, ui->treeProjects, &ProjectTreeWidget::setCurrentProject);
+    connect(bookmarks, &Bookmarks::bookmarkAdded, this, &MainWindow::slotUpdatePerson);
+    connect(bookmarks, &Bookmarks::bookmarkDeleted, this, &MainWindow::slotUpdatePerson);
+    connect(bookmarks, &Bookmarks::addBookmarkClicked, bookmarks, [=](){
+        bookmarks->addBookmark(ui->treeProjects->getCurrentProject());
+    });
+    connect(bookmarks, &Bookmarks::deleteBookmarkClicked, bookmarks, [=](){
+        bookmarks->deleteBookmark(ui->treeProjects->getCurrentProject());
+    });
 
-    actionWatchList = ui->toolBar->insertWidget(ui->action_Upload_file, watchListButton);
+    actionBookmarks = ui->toolBar->insertWidget(ui->action_Upload_file, bookmarkButton);
+    separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
+    separatorUpload = ui->toolBar->insertSeparator(ui->action_Upload_file);
 
     // Reload actions
     action_ReloadProjects = new QAction(tr("&Reload project list"), this);
@@ -1561,21 +1580,12 @@ void MainWindow::slotAbout(OBSAbout *obsAbout)
     obsAbout = nullptr;
 }
 
-void MainWindow::slotPerson(OBSPerson *obsPerson)
+void MainWindow::slotUpdatePerson(OBSPerson *obsPerson)
 {
-    QAction *action = nullptr;
-
-    for (QString entry : obsPerson->getWatchList()) {
-        action = new QAction(entry);
-        action->setIcon(QIcon::fromTheme("project-development"));
-        watchListMenu->addAction(action);
-        connect(action, &QAction::triggered, this, [=]() {
-            ui->treeProjects->setCurrentProject(entry);
-        });
-    }
-
-    delete obsPerson;
-    obsPerson = nullptr;
+    OBSXmlWriter *xmlWriter = new OBSXmlWriter(this);
+    QByteArray data = xmlWriter->createPerson(obsPerson);
+    delete xmlWriter;
+    obs->updatePerson(data);
 }
 
 void MainWindow::on_iconBar_currentRowChanged(int index)
@@ -1617,8 +1627,10 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     bool browserTabVisible = (index==0);
     actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
+    separatorHome->setVisible(browserTabVisible);
     ui->action_Home->setVisible(browserTabVisible);
-    actionWatchList->setVisible(browserTabVisible);
+    actionBookmarks->setVisible(browserTabVisible);
+    separatorUpload->setVisible(browserTabVisible);
     ui->action_Upload_file->setVisible(browserTabVisible);
     ui->action_Download_file->setVisible(browserTabVisible);
     ui->action_Delete->setVisible(browserTabVisible);
