@@ -105,6 +105,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, SIGNAL(finishedParsingAbout(OBSAbout*)),
             SIGNAL(finishedParsingAbout(OBSAbout*)));
     connect(xmlReader, &OBSXmlReader::finishedParsingPerson, this, &OBS::finishedParsingPerson);
+    connect(xmlReader, &OBSXmlReader::finishedParsingUpdatePerson, this, &OBS::finishedParsingUpdatePerson);
 }
 
 void OBS::setCredentials(const QString &username, const QString &password)
@@ -327,4 +328,9 @@ void OBS::about()
 void OBS::getPerson()
 {
     obsCore->getPerson();
+}
+
+void OBS::updatePerson(const QByteArray &data)
+{
+    obsCore->updatePerson(data);
 }
