@@ -57,9 +57,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treePackages->setOBS(obs);
     connect(ui->treePackages, SIGNAL(updateStatusBar(QString,bool)), this, SLOT(slotUpdateStatusBar(QString,bool)));
 
+    // Model selection's signals-slots
+    projectsSelectionModel = ui->treeProjects->selectionModel();
+    connect(projectsSelectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::projectSelectionChanged);
+
+    packagesSelectionModel = ui->treePackages->selectionModel();
+    connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::packageSelectionChanged);
+
     filesSelectionModel = ui->treeFiles->selectionModel();
-    connect(filesSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
-            SLOT(fileSelectionChanged(QItemSelection,QItemSelection)));
+    connect(filesSelectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::fileSelectionChanged);
 
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
@@ -116,7 +122,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, &OBS::finishedParsingDeclinedRequest, ui->treeRequests, &RequestTreeWidget::addDeclinedRequest);
     connect(obs, &OBS::finishedParsingDeclinedRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
     connect(obs, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
-
     readSettings();
     readTimerSettings();
 }
@@ -376,14 +381,9 @@ void MainWindow::setupModels()
     ui->treeFiles->clearModel();
     ui->treeBuildResults->clearModel();
 
-    projectsSelectionModel = ui->treeProjects->selectionModel();
     ui->treePackages->createModel();
     packagesSelectionModel = ui->treePackages->selectionModel();
-
-    connect(projectsSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
-            SLOT(projectSelectionChanged(QItemSelection,QItemSelection)));
-    connect(packagesSelectionModel, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
-            SLOT(packageSelectionChanged(QItemSelection,QItemSelection)));
+    connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::packageSelectionChanged);
 }
 
 void MainWindow::loadProjects()
