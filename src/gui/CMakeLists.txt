@@ -27,6 +27,7 @@ set(QACTUS_SRC
     filetreewidget.cpp
     buildlogviewer.cpp
     projecttreewidget.cpp
+    projectlistmodel.cpp
     monitortreewidget.cpp
     packagetreewidget.cpp
     buildresulttreewidget.cpp
@@ -55,6 +56,7 @@ set(QACTUS_HDR
     filetreewidget.h
     buildlogviewer.h
     projecttreewidget.h
+    projectlistmodel.h
     monitortreewidget.h
     packagetreewidget.h
     buildresulttreewidget.h
