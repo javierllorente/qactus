@@ -23,7 +23,7 @@
 
 #include <QObject>
 #include <QTreeView>
-#include <QStringListModel>
+#include "projectlistmodel.h"
 #include <QSortFilterProxyModel>
 
 class ProjectTreeWidget : public QTreeView
@@ -39,7 +39,7 @@ public:
     void filterProjects(const QString &item);
 
 private:
-    QStringListModel *sourceModelProjects;
+    ProjectListModel *sourceModelProjects;
     QSortFilterProxyModel *proxyModelProjects;
     void scrollToCurrentIndex();
 

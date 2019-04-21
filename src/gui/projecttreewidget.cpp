@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,8 +24,9 @@ ProjectTreeWidget::ProjectTreeWidget(QWidget *parent) :
     QTreeView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
-    sourceModelProjects = new QStringListModel(this);
+    sourceModelProjects = new ProjectListModel(this);
     proxyModelProjects = new QSortFilterProxyModel(this);
+    proxyModelProjects->setSourceModel(sourceModelProjects);
     setModel(proxyModelProjects);
 }
 
@@ -55,9 +56,7 @@ bool ProjectTreeWidget::setCurrentProject(const QString &project)
 
 void ProjectTreeWidget::addProjectList(const QStringList &projectList)
 {
-    sourceModelProjects->setStringList(projectList);
-    proxyModelProjects->setSourceModel(sourceModelProjects);
-    setModel(proxyModelProjects);
+    sourceModelProjects->addProjectList(projectList);
 }
 
 QStringList ProjectTreeWidget::getProjectList() const
