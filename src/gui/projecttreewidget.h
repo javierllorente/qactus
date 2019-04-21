@@ -31,7 +31,7 @@ class ProjectTreeWidget : public QTreeView
     Q_OBJECT
 
 public:
-    ProjectTreeWidget(QWidget *parent = 0);
+    ProjectTreeWidget(QWidget *parent = nullptr);
     QString getCurrentProject() const;
     void addProjectList(const QStringList &projectList);
     void addProject(const QString &project);
