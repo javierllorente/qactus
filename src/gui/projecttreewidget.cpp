@@ -59,6 +59,11 @@ void ProjectTreeWidget::addProjectList(const QStringList &projectList)
     sourceModelProjects->addProjectList(projectList);
 }
 
+void ProjectTreeWidget::addProject(const QString &project)
+{
+    sourceModelProjects->addProject(project);
+}
+
 QStringList ProjectTreeWidget::getProjectList() const
 {
     return sourceModelProjects->stringList();

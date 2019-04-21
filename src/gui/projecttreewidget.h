@@ -34,6 +34,7 @@ public:
     ProjectTreeWidget(QWidget *parent = 0);
     QString getCurrentProject() const;
     void addProjectList(const QStringList &projectList);
+    void addProject(const QString &project);
     QStringList getProjectList() const;
     bool removeProject(const QString &project);
     void filterProjects(const QString &item);
