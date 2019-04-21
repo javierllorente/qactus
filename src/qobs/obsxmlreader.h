@@ -106,6 +106,7 @@ signals:
     void finishedParsingDeclinedRequestList();
     void finishedParsingList(QStringList);
     void finishedParsingProjectList(QStringList);
+    void projectFetched(const QString &project);
     void finishedParsingProjectMetadata(QStringList);
     void finishedParsingPackageList(QStringList);
     void finishedParsingFile(OBSFile*);

@@ -71,16 +71,19 @@ void OBSXmlReader::parseProjectList(const QString &userHome, const QString &data
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 QString entry = attrib.value("name").toString();
-                qDebug() << "Entry name: " << entry;
+//                qDebug() << "Entry name: " << entry;
                 if (!userHome.isEmpty()) {
                     if (entry.startsWith(userHome)) {
                         list.append(entry);
+                        emit projectFetched(entry);
                     }
                     if (!entry.startsWith("home")) {
                         list.append(entry);
+                        emit projectFetched(entry);
                     }
                 } else {
                     list.append(entry);
+                    emit projectFetched(entry);
                 }
             }
         } // end entry
