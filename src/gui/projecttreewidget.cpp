@@ -21,11 +21,11 @@
 #include "projecttreewidget.h"
 
 ProjectTreeWidget::ProjectTreeWidget(QWidget *parent) :
-    QTreeView(parent)
+    QTreeView(parent),
+    sourceModelProjects(new ProjectListModel(this)),
+    proxyModelProjects(new QSortFilterProxyModel(this))
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
-    sourceModelProjects = new ProjectListModel(this);
-    proxyModelProjects = new QSortFilterProxyModel(this);
     proxyModelProjects->setSourceModel(sourceModelProjects);
     setModel(proxyModelProjects);
 }
