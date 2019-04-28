@@ -97,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(buildLogFetched(QString)), this, SLOT(slotBuildLogFetched(QString)));
     connect(obs, SIGNAL(buildLogNotFound()), this, SLOT(slotBuildLogNotFound()));
     connect(obs, &OBS::projectNotFound, this, &MainWindow::slotProjectNotFound);
+    connect(obs, &OBS::packageNotFound, this, &MainWindow::slotPackageNotFound);
 
     connect(obs, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
@@ -1089,6 +1090,15 @@ void MainWindow::slotProjectNotFound(OBSStatus *status)
 {
     ui->treePackages->clearModel();
     const QString title = tr("Project not found");
+    const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
+    QMessageBox::information(this, title, text);
+    delete status;
+    emit updateStatusBar(tr("Done"), true);
+}
+
+void MainWindow::slotPackageNotFound(OBSStatus *status)
+{
+    const QString title = tr("Package not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
     QMessageBox::information(this, title, text);
     delete status;

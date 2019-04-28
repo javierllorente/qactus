@@ -219,6 +219,7 @@ private slots:
     void slotBuildLogFetched(const QString &buildLog);
     void slotBuildLogNotFound();
     void slotProjectNotFound(OBSStatus *status);
+    void slotPackageNotFound(OBSStatus *status);
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
     void slotDeleteFile(OBSStatus *obsStatus);

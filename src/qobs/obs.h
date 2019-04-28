@@ -96,6 +96,7 @@ signals:
     void buildLogFetched(const QString &buildLog);
     void buildLogNotFound();
     void projectNotFound(OBSStatus *status);
+    void packageNotFound(OBSStatus *status);
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingDeleteFileStatus(OBSStatus*);

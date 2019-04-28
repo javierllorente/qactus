@@ -59,6 +59,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(obsCore, SIGNAL(buildLogFetched(QString)), this, SIGNAL(buildLogFetched(QString)));
     connect(obsCore, SIGNAL(buildLogNotFound()), this, SIGNAL(buildLogNotFound()));
     connect(obsCore, &OBSCore::projectNotFound, this, &OBS::projectNotFound);
+    connect(obsCore, &OBSCore::packageNotFound, this, &OBS::packageNotFound);
     connect(xmlReader, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),

@@ -593,6 +593,16 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 }
                 break;
 
+            case OBSCore::FileList: // <status>
+                qDebug() << reqTypeStr << "FileList";
+                if (isAuthenticated()) {
+                    QString dataStr = QString::fromUtf8(data);
+                    OBSStatus *status = xmlReader->parseNotFoundStatus(dataStr);
+                    qDebug() << "OBSCore::replyFinished() Package not found!" << status->getSummary() << status->getCode();
+                    emit packageNotFound(status);
+                }
+                break;
+
             case OBSCore::BuildStatus: // <status>
                 qDebug() << reqTypeStr << "BuildStatus";
                 if (isAuthenticated()) {
