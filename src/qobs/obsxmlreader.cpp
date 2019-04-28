@@ -162,6 +162,22 @@ void OBSXmlReader::parseBuildStatus(const QString &data)
     emit finishedParsingPackage(obsStatus, row);
 }
 
+OBSStatus *OBSXmlReader::parseNotFoundStatus(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSStatus *obsStatus = new OBSStatus();
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseStatus(xml, obsStatus);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+    }
+    return obsStatus;
+}
+
 void OBSXmlReader::setPackageRow(int row)
 {
     this->row = row;

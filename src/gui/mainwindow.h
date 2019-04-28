@@ -218,6 +218,7 @@ private slots:
     void slotFileFetched(const QString &fileName, const QByteArray &data);
     void slotBuildLogFetched(const QString &buildLog);
     void slotBuildLogNotFound();
+    void slotProjectNotFound(OBSStatus *status);
     void slotDeleteProject(OBSStatus *obsStatus);
     void slotDeletePackage(OBSStatus *obsStatus);
     void slotDeleteFile(OBSStatus *obsStatus);

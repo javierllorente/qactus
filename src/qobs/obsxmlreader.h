@@ -48,6 +48,7 @@ public:
     void parseProjectList(const QString &userHome, const QString &data);
     void parseProjectMetadata(const QString &data);
     void parseBuildStatus(const QString &data);
+    OBSStatus *parseNotFoundStatus(const QString &data);
     void parsePackageList(const QString &data);
     void parseFileList(const QString &project, const QString &package, const QString &data);
     void parseLink(const QString &data);

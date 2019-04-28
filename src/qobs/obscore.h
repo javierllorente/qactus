@@ -90,6 +90,7 @@ signals:
     void fileFetched(const QString &fileName, const QByteArray &data);
     void buildLogFetched(const QString &buildLog);
     void buildLogNotFound();
+    void projectNotFound(OBSStatus *status);
     void cannotCreateProject(OBSStatus *obsStatus);
     void cannotCreatePackage(OBSStatus *obsStatus);
     void cannotUploadFile(OBSStatus *obsStatus);

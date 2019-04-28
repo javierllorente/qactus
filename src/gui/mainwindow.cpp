@@ -96,6 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(fileFetched(QString,QByteArray)), this, SLOT(slotFileFetched(QString, QByteArray)));
     connect(obs, SIGNAL(buildLogFetched(QString)), this, SLOT(slotBuildLogFetched(QString)));
     connect(obs, SIGNAL(buildLogNotFound()), this, SLOT(slotBuildLogNotFound()));
+    connect(obs, &OBS::projectNotFound, this, &MainWindow::slotProjectNotFound);
 
     connect(obs, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
             this, SLOT(slotDeleteProject(OBSStatus*)));
@@ -1081,6 +1082,16 @@ void MainWindow::slotBuildLogNotFound()
     QString title = tr("Information");
     QString text = tr("Build log not found");
     QMessageBox::information(this, title, text);
+    emit updateStatusBar(tr("Done"), true);
+}
+
+void MainWindow::slotProjectNotFound(OBSStatus *status)
+{
+    ui->treePackages->clearModel();
+    const QString title = tr("Project not found");
+    const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
+    QMessageBox::information(this, title, text);
+    delete status;
     emit updateStatusBar(tr("Done"), true);
 }
 

@@ -583,6 +583,16 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 emit apiNotFound(reply->url());
                 break;
 
+            case OBSCore::PackageList: // <status>
+                qDebug() << reqTypeStr << "PackageList";
+                if (isAuthenticated()) {
+                    QString dataStr = QString::fromUtf8(data);
+                    OBSStatus *status = xmlReader->parseNotFoundStatus(dataStr);
+                    qDebug() << "OBSCore::replyFinished() Project not found!" << status->getSummary() << status->getCode();
+                    emit projectNotFound(status);
+                }
+                break;
+
             case OBSCore::BuildStatus: // <status>
                 qDebug() << reqTypeStr << "BuildStatus";
                 if (isAuthenticated()) {

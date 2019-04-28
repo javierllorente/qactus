@@ -95,6 +95,7 @@ signals:
     void fileFetched(const QString &fileName, const QByteArray &data);
     void buildLogFetched(const QString &buildLog);
     void buildLogNotFound();
+    void projectNotFound(OBSStatus *status);
     void finishedParsingDeletePrjStatus(OBSStatus*);
     void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingDeleteFileStatus(OBSStatus*);
