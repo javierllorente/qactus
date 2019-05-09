@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,12 +21,13 @@
 #include "packagetreewidget.h"
 
 PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
-    QTreeView(parent)
+    QTreeView(parent),
+    sourceModelPackages(new PackageListModel(this)),
+    proxyModelPackages(new QSortFilterProxyModel(this))
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
-    sourceModelPackages = new QStringListModel(this);
-    createModel();
     obs = nullptr;
+    createModel();
 }
 
 void PackageTreeWidget::setOBS(OBS *obs)
@@ -52,7 +53,7 @@ void PackageTreeWidget::deleteModel()
 void PackageTreeWidget::addPackageList(const QStringList &packageList)
 {
     qDebug() << "PackageTreeWidget::addPackageList()";
-    sourceModelPackages->setStringList(packageList);
+    sourceModelPackages->addPackageList(packageList);
     proxyModelPackages->setSourceModel(sourceModelPackages);
     setModel(proxyModelPackages);
 

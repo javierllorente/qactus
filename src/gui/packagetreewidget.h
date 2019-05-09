@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 #include <QObject>
 #include <QTreeView>
-#include <QStringListModel>
+#include "packagelistmodel.h"
 #include <QSortFilterProxyModel>
 #include "obs.h"
 
@@ -46,7 +46,7 @@ public slots:
     void addPackageList(const QStringList &packageList);
 
 private:
-    QStringListModel *sourceModelPackages;
+    PackageListModel *sourceModelPackages;
     QSortFilterProxyModel *proxyModelPackages;
     OBS *obs;
 
