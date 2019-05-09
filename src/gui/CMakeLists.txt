@@ -29,6 +29,7 @@ set(QACTUS_SRC
     projecttreewidget.cpp
     projectlistmodel.cpp
     monitortreewidget.cpp
+    packagelistmodel.cpp
     packagetreewidget.cpp
     buildresulttreewidget.cpp
     searchwidget.cpp
@@ -58,6 +59,7 @@ set(QACTUS_HDR
     projecttreewidget.h
     projectlistmodel.h
     monitortreewidget.h
+    packagelistmodel.h
     packagetreewidget.h
     buildresulttreewidget.h
     searchwidget.h
