@@ -2,14 +2,18 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-
 find_package(Qt5 COMPONENTS Core Gui Widgets Network REQUIRED)
 
 # Qt5Keychain requires Qt5DBus, but doesn't quite set this up right
 find_package(Qt5DBus REQUIRED)
 find_package(Qt5Keychain REQUIRED)
 
+include_directories(
+    browser
+)
+
 set(QACTUS_SRC
+    browser/browser.cpp
     main.cpp
     mainwindow.cpp
     iconbar.cpp
@@ -41,6 +45,7 @@ set(QACTUS_SRC
     bookmarks.cpp)
 
 set(QACTUS_HDR
+    browser/browser.h
     mainwindow.h
     iconbar.h
     trayicon.h
@@ -71,6 +76,7 @@ set(QACTUS_HDR
     bookmarks.h)
 
 set(QACTUS_UI
+    browser/browser.ui
     mainwindow.ui
     configure.ui
     login.ui

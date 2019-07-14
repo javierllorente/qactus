@@ -42,10 +42,9 @@
 #include "utils.h"
 #include "credentials.h"
 #include "browserfilter.h"
-#include "createdialog.h"
 #include "buildlogviewer.h"
-#include "createrequestdialog.h"
 #include "bookmarks.h"
+#include "browser.h"
 
 namespace Ui {
     class MainWindow;
@@ -108,14 +107,11 @@ private:
     QAction *action_Quit;
     QAction *action_Restore;
 
-    void setupBrowser();
+    Browser *browser;
     bool firstTimeFileListDisplayed;
     bool firstTimeBuildResultsDisplayed;
-    QSortFilterProxyModel *proxyModelProjects;
-    void setupProjectActions();
     void setupPackageActions();
     void setupFileActions();
-    void setupModels();
     QString currentProject;
     QString currentPackage;
     void setupTreeMonitor();
@@ -160,40 +156,16 @@ private slots:
     void slotErrorReadingPassword(const QString &error);
     void slotCredentialsRestored(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
-    void loadProjects();
-    void slotContextMenuProjects(const QPoint &point);
-    void slotContextMenuPackages(const QPoint &point);
-    void slotContextMenuFiles(const QPoint &point);
-    void slotContextMenuResults(const QPoint &point);
+    void setupProjectActions();
     void changeRequestState();
     void getPackages(QModelIndex index);
-    void reloadPackages();
-    void getPackageFiles(QModelIndex index);
-    void reloadFiles();
-    void getBuildResults();
-    void reloadResults();
-    void getBuildLog();
-    void filterResults(const QString &item);
-    void filterRadioButtonClicked(bool);
     void getIncomingRequests();
     void getOutgoingRequests();
     void getDeclinedRequests();
     void slotDescriptionFetched(const QString &description);
     void setNotify(bool notify);
-    void finishedAddingResults();
     void slotEnableRemoveRow();
     void on_action_Refresh_triggered();
-    void on_action_Branch_package_triggered();
-    void on_action_Home_triggered();
-    void on_action_Upload_file_triggered();
-    void on_action_Download_file_triggered();
-    void newProject();
-    void newPackage();
-    void uploadFile(const QString &path);
-    void createRequest();
-    void deleteProject();
-    void deletePackage();
-    void deleteFile();
     void slotLogin(const QString &username, const QString &password);
     void on_action_About_triggered();
     void on_action_Quit_triggered();
@@ -206,28 +178,7 @@ private slots:
     void slotUpdatePerson(OBSPerson *obsPerson);
     void on_iconBar_currentRowChanged(int index);
     void on_tabWidgetPackages_currentChanged(int index);
-    void addProjectList(const QStringList &projectList);
-    void addFile(OBSFile*);
-    void slotFileListAdded();
-    void addResult(OBSResult*);
-    void slotBranchPackage(OBSStatus *obsStatus);
-    void slotCreateRequest(OBSRequest *obsRequest);
-    void slotCreateRequestStatus(OBSStatus*obsStatus);
-    void slotUploadFile(OBSRevision *obsRevision);
-    void slotUploadFileError(OBSStatus *obsStatus);
-    void slotFileFetched(const QString &fileName, const QByteArray &data);
-    void slotBuildLogFetched(const QString &buildLog);
-    void slotBuildLogNotFound();
-    void slotProjectNotFound(OBSStatus *status);
-    void slotPackageNotFound(OBSStatus *status);
-    void slotDeleteProject(OBSStatus *obsStatus);
-    void slotDeletePackage(OBSStatus *obsStatus);
-    void slotDeleteFile(OBSStatus *obsStatus);
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
-    void refreshProjectFilter();
-    void projectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void packageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void fileSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotSrStatus(const QString &status);
 };
 
