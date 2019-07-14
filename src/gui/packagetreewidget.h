@@ -25,7 +25,6 @@
 #include <QTreeView>
 #include "packagelistmodel.h"
 #include <QSortFilterProxyModel>
-#include "obs.h"
 
 class PackageTreeWidget : public QTreeView
 {
@@ -33,22 +32,20 @@ class PackageTreeWidget : public QTreeView
 
 public:
     PackageTreeWidget(QWidget *parent = nullptr);
-    void setOBS(OBS *obs);
     void createModel();
     void deleteModel();
     QStringList getPackageList() const;
     QString getCurrentPackage() const;
-    void filterPackages(const QString &item);
     bool removePackage(const QString &package);
     void clearModel();
 
 public slots:
     void addPackageList(const QStringList &packageList);
+    void filterPackages(const QString &item);
 
 private:
     PackageListModel *sourceModelPackages;
     QSortFilterProxyModel *proxyModelPackages;
-    OBS *obs;
 
 signals:
     void updateStatusBar(QString message, bool progressBarHidden);

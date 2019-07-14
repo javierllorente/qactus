@@ -19,6 +19,7 @@
  */
 
 #include "packagetreewidget.h"
+#include <QDebug>
 
 PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
     QTreeView(parent),
@@ -26,14 +27,7 @@ PackageTreeWidget::PackageTreeWidget(QWidget *parent) :
     proxyModelPackages(new QSortFilterProxyModel(this))
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
-    obs = nullptr;
     createModel();
-}
-
-void PackageTreeWidget::setOBS(OBS *obs)
-{
-    this->obs = obs;
-    connect(obs, &OBS::finishedParsingPackageList, this, &PackageTreeWidget::addPackageList);
 }
 
 void PackageTreeWidget::createModel()
@@ -52,7 +46,8 @@ void PackageTreeWidget::deleteModel()
 
 void PackageTreeWidget::addPackageList(const QStringList &packageList)
 {
-    qDebug() << "PackageTreeWidget::addPackageList()";
+    qDebug() << __PRETTY_FUNCTION__;
+    selectionModel()->clear(); // Emits selectionChanged() and currentChanged()
     sourceModelPackages->addPackageList(packageList);
     proxyModelPackages->setSourceModel(sourceModelPackages);
     setModel(proxyModelPackages);
@@ -72,7 +67,7 @@ QString PackageTreeWidget::getCurrentPackage() const
 
 void PackageTreeWidget::filterPackages(const QString &item)
 {
-    qDebug() << "PackageTreeWidget::filterPackages()" << item;
+    qDebug() << __PRETTY_FUNCTION__ << item;
     proxyModelPackages->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive));
     proxyModelPackages->setFilterKeyColumn(0);
 }
