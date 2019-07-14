@@ -56,6 +56,7 @@ bool ProjectTreeWidget::setCurrentProject(const QString &project)
 
 void ProjectTreeWidget::addProjectList(const QStringList &projectList)
 {
+    selectionModel()->clear(); // Emits selectionChanged() and currentChanged()
     sourceModelProjects->addProjectList(projectList);
 }
 
