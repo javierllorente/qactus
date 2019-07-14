@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -173,9 +173,9 @@ void MonitorTreeWidget::addDroppedPackage(OBSResult *result)
         qDebug() << "Package" << item->text(1)
                  << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
                  << "added at" << index;
-//        delete result;
-//        result = nullptr;
-//        The last slot connected (MainWindow::addResult()) is in charge of deleting result
+        delete result;
+        result = nullptr;
+//        FIXME: The last slot connected is in charge of deleting result
 
     }
 }
