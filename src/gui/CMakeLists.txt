@@ -14,6 +14,17 @@ include_directories(
 
 set(QACTUS_SRC
     browser/browser.cpp
+    browser/buildlogviewer.cpp
+    browser/buildresulttreewidget.cpp
+    browser/createdialog.cpp
+    browser/createrequestdialog.cpp
+    browser/filetreewidget.cpp
+    browser/loghighlighter.cpp
+    browser/packagelistmodel.cpp
+    browser/packagetreewidget.cpp
+    browser/projectlistmodel.cpp
+    browser/projecttreewidget.cpp
+    browser/searchwidget.cpp
     main.cpp
     mainwindow.cpp
     iconbar.cpp
@@ -27,18 +38,7 @@ set(QACTUS_SRC
     credentials.cpp
     syntaxhighlighter.cpp
     browserfilter.cpp
-    createdialog.cpp
-    filetreewidget.cpp
-    buildlogviewer.cpp
-    projecttreewidget.cpp
-    projectlistmodel.cpp
     monitortreewidget.cpp
-    packagelistmodel.cpp
-    packagetreewidget.cpp
-    buildresulttreewidget.cpp
-    searchwidget.cpp
-    loghighlighter.cpp
-    createrequestdialog.cpp
     requestboxtreewidget.cpp
     requesttreewidget.cpp
     requestitemmodel.cpp
@@ -46,6 +46,17 @@ set(QACTUS_SRC
 
 set(QACTUS_HDR
     browser/browser.h
+    browser/buildlogviewer.h
+    browser/buildresulttreewidget.h
+    browser/createdialog.h
+    browser/createrequestdialog.h
+    browser/filetreewidget.h
+    browser/loghighlighter.h
+    browser/packagelistmodel.h
+    browser/packagetreewidget.h
+    browser/projectlistmodel.h
+    browser/projecttreewidget.h
+    browser/searchwidget.h
     mainwindow.h
     iconbar.h
     trayicon.h
@@ -58,18 +69,7 @@ set(QACTUS_HDR
     credentials.h
     syntaxhighlighter.h
     browserfilter.h
-    createdialog.h
-    filetreewidget.h
-    buildlogviewer.h
-    projecttreewidget.h
-    projectlistmodel.h
     monitortreewidget.h
-    packagelistmodel.h
-    packagetreewidget.h
-    buildresulttreewidget.h
-    searchwidget.h
-    loghighlighter.h
-    createrequestdialog.h
     requestboxtreewidget.h
     requesttreewidget.h
     requestitemmodel.h
@@ -77,16 +77,16 @@ set(QACTUS_HDR
 
 set(QACTUS_UI
     browser/browser.ui
+    browser/buildlogviewer.ui
+    browser/createdialog.ui
+    browser/createrequestdialog.ui
+    browser/searchwidget.ui
     mainwindow.ui
     configure.ui
     login.ui
     roweditor.ui
     requeststateeditor.ui
-    browserfilter.ui
-    createdialog.ui
-    buildlogviewer.ui
-    searchwidget.ui
-    createrequestdialog.ui)
+    browserfilter.ui)
 
 set(QACTUS_RC
     ../../application.qrc)
