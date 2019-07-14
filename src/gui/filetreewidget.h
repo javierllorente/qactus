@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -51,9 +51,14 @@ protected:
 
 private:
     QStandardItemModel *sourceModelFiles;
+    bool firstTimeFileListDisplayed;
+
+public slots:
+    void filesAdded();
 
 signals:
     void droppedFile(QString);
+    void updateStatusBar(QString message, bool progressBarHidden);
 
 };
 

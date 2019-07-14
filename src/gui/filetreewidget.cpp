@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,9 +19,11 @@
  */
 
 #include "filetreewidget.h"
+#include <QHeaderView>
 
 FileTreeWidget::FileTreeWidget(QWidget *parent) :
-    QTreeView(parent)
+    QTreeView(parent),
+    firstTimeFileListDisplayed(true)
 {
     createModel();
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -68,6 +70,22 @@ void FileTreeWidget::dropEvent(QDropEvent *event)
     foreach (QString path, pathList) {
         emit droppedFile(path);
     }
+}
+
+void FileTreeWidget::filesAdded()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    if (firstTimeFileListDisplayed) {
+        sortByColumn(0, Qt::AscendingOrder);
+        firstTimeFileListDisplayed = false;
+        return;
+    }
+    int column = header()->sortIndicatorSection();
+    sortByColumn(-1);
+    sortByColumn(column);
+
+    selectionModel()->clear(); // Emits selectionChanged() and currentChanged()
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void FileTreeWidget::addFile(OBSFile *obsFile)
