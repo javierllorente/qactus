@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -56,6 +56,10 @@ signals:
 public slots:
     void addDroppedPackage(OBSResult *result);
     void finishedAddingPackages();
+    void slotInsertStatus(OBSStatus *obsStatus, int row);
+    void slotAddRow();
+    void slotRemoveRow();
+    void slotMarkAllRead();
 
 private:
     QString droppedProject;
@@ -66,12 +70,8 @@ private:
     bool hasStatusChanged(const QString &oldStatus, const QString &newStatus);
 
 private slots:
-    void slotAddRow();
     void slotEditRow(QTreeWidgetItem *item, int column);
-    void slotRemoveRow();
-    void slotInsertStatus(OBSStatus *obsStatus, int row);
     void slotMarkRead(QTreeWidgetItem *item, int column);
-    void slotMarkAllRead();
 
 };
 

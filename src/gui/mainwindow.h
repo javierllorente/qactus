@@ -45,6 +45,7 @@
 #include "buildlogviewer.h"
 #include "bookmarks.h"
 #include "browser.h"
+#include "monitor.h"
 
 namespace Ui {
     class MainWindow;
@@ -114,6 +115,7 @@ private:
     void setupFileActions();
     QString currentProject;
     QString currentPackage;
+    Monitor *monitor;
     void setupTreeMonitor();
 
     void createStatusBar();

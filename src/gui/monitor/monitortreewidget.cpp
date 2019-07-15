@@ -92,10 +92,6 @@ void MonitorTreeWidget::writeSettings()
 void MonitorTreeWidget::setOBS(OBS *obs)
 {
     this->obs = obs;
-    connect(obs, SIGNAL(finishedParsingPackage(OBSStatus*,int)), this, SLOT(slotInsertStatus(OBSStatus*,int)));
-    connect(this, SIGNAL(obsUrlDropped(QString,QString)), obs, SLOT(getAllBuildStatus(QString,QString)));
-    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addDroppedPackage(OBSResult*)));
-    connect(obs, SIGNAL(finishedParsingResultList()), this, SLOT(finishedAddingPackages()));
 }
 
 void MonitorTreeWidget::getBuildStatus()
@@ -189,73 +185,9 @@ void MonitorTreeWidget::finishedAddingPackages()
     }
 }
 
-void MonitorTreeWidget::slotAddRow()
-{
-    qDebug() << "MonitorTreeWidget::slotAddRow()";
-    RowEditor *rowEditor = new RowEditor(this, obs);
-
-    if (rowEditor->exec()) {
-        QTreeWidgetItem *item = new QTreeWidgetItem(this);
-        item->setText(0, rowEditor->getProject());
-        item->setText(1, rowEditor->getPackage());
-        item->setText(2, rowEditor->getRepository());
-        item->setText(3, rowEditor->getArch());
-        addTopLevelItem(item);
-        int index = indexOfTopLevelItem(item);
-        qDebug() << "Build" << item->text(1) << "added at" << index;
-    }
-    delete rowEditor;
-    rowEditor = nullptr;
-}
-
-void MonitorTreeWidget::slotEditRow(QTreeWidgetItem *item, int column)
-{
-    Q_UNUSED(column);
-
-    qDebug() << "MonitorTreeWidget::slotEditRow()";
-    RowEditor *rowEditor = new RowEditor(this, obs);
-    rowEditor->setProject(item->text(0));
-    rowEditor->setPackage(item->text(1));
-    rowEditor->setRepository(item->text(2));
-    rowEditor->setArch(item->text(3));
-    rowEditor->show();
-
-    if (rowEditor->exec()) {
-        int index = indexOfTopLevelItem(item);
-        item->setText(0, rowEditor->getProject());
-        item->setText(1, rowEditor->getPackage());
-        item->setText(2, rowEditor->getRepository());
-        item->setText(3, rowEditor->getArch());
-        item->setText(4, "");
-        insertTopLevelItem(index, item);
-        qDebug() << "Build edited:" << index;
-        qDebug() << "Status at" << index << item->text(4) << "(it should be empty)";
-    }
-    delete rowEditor;
-    rowEditor = nullptr;
-}
-
-void MonitorTreeWidget::slotRemoveRow()
-{
-    qDebug () << "MonitorTreeWidget::slotRemoveRow()";
-    QList<QTreeWidgetItem *> items = selectedItems();
-    QList<QModelIndex> list = selectionModel()->selectedIndexes();
-    foreach (QTreeWidgetItem *item, items) {
-        delete item;
-        item = nullptr;
-    }
-
-    if (!list.isEmpty()) {
-        QTreeWidgetItem *curItem = currentItem();
-        if (curItem) {
-            curItem->setSelected(true);
-        }
-    }
-}
-
 void MonitorTreeWidget::slotInsertStatus(OBSStatus *obsStatus, int row)
 {
-    qDebug() << "MonitorTreeWidget::slotInsertStatus()";
+    qDebug() << __PRETTY_FUNCTION__;
     QString details = obsStatus->getDetails();
     QString status = obsStatus->getCode();
     delete obsStatus;
@@ -293,6 +225,82 @@ void MonitorTreeWidget::slotInsertStatus(OBSStatus *obsStatus, int row)
     }
 }
 
+void MonitorTreeWidget::slotAddRow()
+{
+    qDebug() << "MonitorTreeWidget::slotAddRow()";
+    RowEditor *rowEditor = new RowEditor(this, obs);
+
+    if (rowEditor->exec()) {
+        QTreeWidgetItem *item = new QTreeWidgetItem(this);
+        item->setText(0, rowEditor->getProject());
+        item->setText(1, rowEditor->getPackage());
+        item->setText(2, rowEditor->getRepository());
+        item->setText(3, rowEditor->getArch());
+        addTopLevelItem(item);
+        int index = indexOfTopLevelItem(item);
+        qDebug() << "Build" << item->text(1) << "added at" << index;
+    }
+    delete rowEditor;
+    rowEditor = nullptr;
+}
+
+void MonitorTreeWidget::slotRemoveRow()
+{
+    qDebug () << "MonitorTreeWidget::slotRemoveRow()";
+    QList<QTreeWidgetItem *> items = selectedItems();
+    QList<QModelIndex> list = selectionModel()->selectedIndexes();
+    foreach (QTreeWidgetItem *item, items) {
+        delete item;
+        item = nullptr;
+    }
+
+    if (!list.isEmpty()) {
+        QTreeWidgetItem *curItem = currentItem();
+        if (curItem) {
+            curItem->setSelected(true);
+        }
+    }
+}
+
+void MonitorTreeWidget::slotMarkAllRead()
+{
+    qDebug() << "MonitorTreeWidget::slotMarkAllRead()";
+    for (int i=0; i<topLevelItemCount(); i++) {
+        if (topLevelItem(i)->font(0).bold()) {
+            Utils::setItemBoldFont(topLevelItem(i), false);
+        }
+    }
+
+    emit notifyChanged(false);
+}
+
+void MonitorTreeWidget::slotEditRow(QTreeWidgetItem *item, int column)
+{
+    Q_UNUSED(column)
+
+    qDebug() << "MonitorTreeWidget::slotEditRow()";
+    RowEditor *rowEditor = new RowEditor(this, obs);
+    rowEditor->setProject(item->text(0));
+    rowEditor->setPackage(item->text(1));
+    rowEditor->setRepository(item->text(2));
+    rowEditor->setArch(item->text(3));
+    rowEditor->show();
+
+    if (rowEditor->exec()) {
+        int index = indexOfTopLevelItem(item);
+        item->setText(0, rowEditor->getProject());
+        item->setText(1, rowEditor->getPackage());
+        item->setText(2, rowEditor->getRepository());
+        item->setText(3, rowEditor->getArch());
+        item->setText(4, "");
+        insertTopLevelItem(index, item);
+        qDebug() << "Build edited:" << index;
+        qDebug() << "Status at" << index << item->text(4) << "(it should be empty)";
+    }
+    delete rowEditor;
+    rowEditor = nullptr;
+}
+
 bool MonitorTreeWidget::hasStatusChanged(const QString &oldStatus, const QString &newStatus)
 {
     qDebug() << "MonitorTreeWidget::hasBuildStatusChanged()"
@@ -308,24 +316,12 @@ bool MonitorTreeWidget::hasStatusChanged(const QString &oldStatus, const QString
 
 void MonitorTreeWidget::slotMarkRead(QTreeWidgetItem *item, int column)
 {
-    Q_UNUSED(column);
+    Q_UNUSED(column)
 
     qDebug() << "MonitorTreeWidget::markRead() " << "Row: " + QString::number(indexOfTopLevelItem(item));
     for (int i=0; i<columnCount(); i++) {
         if (item->font(0).bold()) {
             Utils::setItemBoldFont(item, false);
-        }
-    }
-
-    emit notifyChanged(false);
-}
-
-void MonitorTreeWidget::slotMarkAllRead()
-{
-    qDebug() << "MonitorTreeWidget::slotMarkAllRead()";
-    for (int i=0; i<topLevelItemCount(); i++) {
-        if (topLevelItem(i)->font(0).bold()) {
-            Utils::setItemBoldFont(topLevelItem(i), false);
         }
     }
 

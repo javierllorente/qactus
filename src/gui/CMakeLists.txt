@@ -10,6 +10,7 @@ find_package(Qt5Keychain REQUIRED)
 
 include_directories(
     browser
+    monitor
 )
 
 set(QACTUS_SRC
@@ -25,20 +26,21 @@ set(QACTUS_SRC
     browser/projectlistmodel.cpp
     browser/projecttreewidget.cpp
     browser/searchwidget.cpp
+    monitor/monitor.cpp
+    monitor/monitortreewidget.cpp
+    monitor/roweditor.cpp
     main.cpp
     mainwindow.cpp
     iconbar.cpp
     trayicon.cpp
     configure.cpp
     login.cpp
-    roweditor.cpp
     requeststateeditor.cpp
     autotooltipdelegate.cpp
     utils.cpp
     credentials.cpp
     syntaxhighlighter.cpp
     browserfilter.cpp
-    monitortreewidget.cpp
     requestboxtreewidget.cpp
     requesttreewidget.cpp
     requestitemmodel.cpp
@@ -57,19 +59,20 @@ set(QACTUS_HDR
     browser/projectlistmodel.h
     browser/projecttreewidget.h
     browser/searchwidget.h
+    monitor/monitor.h
+    monitor/monitortreewidget.h
+    monitor/roweditor.h
     mainwindow.h
     iconbar.h
     trayicon.h
     configure.h
     login.h
-    roweditor.h
     requeststateeditor.h
     autotooltipdelegate.h
     utils.h
     credentials.h
     syntaxhighlighter.h
     browserfilter.h
-    monitortreewidget.h
     requestboxtreewidget.h
     requesttreewidget.h
     requestitemmodel.h
@@ -81,10 +84,11 @@ set(QACTUS_UI
     browser/createdialog.ui
     browser/createrequestdialog.ui
     browser/searchwidget.ui
+    monitor/monitor.ui
+    monitor/roweditor.ui
     mainwindow.ui
     configure.ui
     login.ui
-    roweditor.ui
     requeststateeditor.ui
     browserfilter.ui)
 

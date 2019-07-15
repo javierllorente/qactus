@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     deletePackageConnected(false),
     deleteFileConnected(false),
     browser(new Browser(this, obs)),
+    monitor(new Monitor(this, obs)),
     errorBox(nullptr),
     loginDialog(nullptr)
 {
@@ -81,6 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
 
     ui->stackedWidget->addWidget(browser);
+    ui->stackedWidget->addWidget(monitor);
 
     readSettings();
     readTimerSettings();
@@ -309,20 +311,20 @@ void MainWindow::getPackages(QModelIndex index)
 
 void MainWindow::changeRequestState()
 {
-    qDebug() << "MainWindow::changeRequestState()";
+    qDebug() << __PRETTY_FUNCTION__;
     OBSRequest *request = ui->treeRequests->currentRequest();
     RequestStateEditor *reqStateEditor = new RequestStateEditor(this, obs, request);
 
-    disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
-    disconnect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treeMonitor, SLOT(addDroppedPackage(OBSResult*)));
+    disconnect(obs, &OBS::finishedParsingResult, browser, &Browser::addResult);
+    disconnect(obs, &OBS::finishedParsingResult, monitor, &Monitor::addDroppedPackage);
 
     reqStateEditor->exec();
 
     delete reqStateEditor;
     delete request;
 
-    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), ui->treeMonitor, SLOT(addDroppedPackage(OBSResult*)));
-    connect(obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(addResult(OBSResult*)));
+    connect(obs, &OBS::finishedParsingResult, monitor, &Monitor::addDroppedPackage);
+    connect(obs, &OBS::finishedParsingResult, browser, &Browser::addResult);
 }
 
 void MainWindow::slotSrStatus(const QString &status)
@@ -338,9 +340,7 @@ void MainWindow::slotSrStatus(const QString &status)
 
 void MainWindow::slotEnableRemoveRow()
 {
-    QList<QModelIndex> list = ui->treeMonitor->selectionModel()->selectedIndexes();
-
-    if (list.isEmpty()) {
+    if (!monitor->hasSelection()) {
         ui->action_Remove->setEnabled(false);
     } else if (!ui->action_Remove->isEnabled()) {
         ui->action_Remove->setEnabled(true);
@@ -351,7 +351,7 @@ void MainWindow::on_action_Refresh_triggered()
 {
     qDebug() << "MainWindow::refreshView()";
     emit updateStatusBar(tr("Getting build statuses..."), false);
-    ui->treeMonitor->getBuildStatus();
+    monitor->getBuildStatus();
 
     emit updateStatusBar(tr("Getting requests..."), false);
     obs->getIncomingRequests();
@@ -360,13 +360,12 @@ void MainWindow::on_action_Refresh_triggered()
 
 void MainWindow::setupTreeMonitor()
 {
-    ui->treeMonitor->setOBS(obs);
-    connect(ui->action_Add, SIGNAL(triggered(bool)), ui->treeMonitor, SLOT(slotAddRow()));
-    connect(ui->treeMonitor, SIGNAL(itemSelectionChanged()), this, SLOT(slotEnableRemoveRow()));
-    connect(ui->action_Remove, SIGNAL(triggered(bool)), ui->treeMonitor, SLOT(slotRemoveRow()));
-    connect(ui->action_Mark_all_as_read, SIGNAL(triggered(bool)), ui->treeMonitor, SLOT(slotMarkAllRead()));
-    connect(ui->treeMonitor, SIGNAL(notifyChanged(bool)), this, SLOT(setNotify(bool)));
-    connect(ui->treeMonitor, SIGNAL(updateStatusBar(QString,bool)), this, SLOT(slotUpdateStatusBar(QString,bool)));
+    connect(ui->action_Add, &QAction::triggered, monitor, &Monitor::addRow);
+    connect(monitor, &Monitor::itemSelectionChanged, this, &MainWindow::slotEnableRemoveRow);
+    connect(ui->action_Remove, &QAction::triggered, monitor, &Monitor::removeRow);
+    connect(ui->action_Mark_all_as_read, &QAction::triggered, monitor, &Monitor::markAllRead);
+    connect(monitor, &Monitor::notifyChanged, this, &MainWindow::setNotify);
+    connect(monitor, &Monitor::updateStatusBar, this, &MainWindow::slotUpdateStatusBar);
 }
 
 void MainWindow::getIncomingRequests()
