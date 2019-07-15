@@ -51,6 +51,7 @@ public slots:
     void newPackage();
     void reloadPackages();
     void reloadFiles();
+    void addResult(OBSResult *result);
     void reloadResults();
     void getBuildLog();
     void branchSelectedPackage();
@@ -93,7 +94,6 @@ private slots:
     void uploadFile(const QString &path);
     void slotUploadFile(OBSRevision *revision);
     void slotUploadFileError(OBSStatus *status);
-    void addResult(OBSResult *result);
     void finishedAddingResults();
     void slotContextMenuResults(const QPoint &point);
     void slotCreateRequest(OBSRequest *request);

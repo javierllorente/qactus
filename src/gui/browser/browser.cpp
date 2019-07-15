@@ -205,6 +205,24 @@ void Browser::reloadFiles()
     emit packageSelectionChanged();
 }
 
+void Browser::addResult(OBSResult *result)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    currentProject = ui->treeProjects->getCurrentProject();
+    currentPackage = ui->treePackages->getCurrentPackage();
+    QString resultProject = result->getProject();
+    QString resultPackage = result->getStatus()->getPackage();
+
+    if (currentProject==resultProject && currentPackage==resultPackage) {
+        ui->treeBuildResults->addResult(result);
+    }
+
+//  FIXME: The last slot connected is in charge of deleting result
+//    delete result;
+//    result = nullptr;
+}
+
 void Browser::reloadResults()
 {
     qDebug() << __PRETTY_FUNCTION__;
@@ -761,24 +779,6 @@ void Browser::slotDeleteFile(OBSStatus *status)
     status = nullptr;
 
     emit updateStatusBar(tr("Done"), true);
-}
-
-void Browser::addResult(OBSResult *result)
-{
-    qDebug() << __PRETTY_FUNCTION__;
-
-    currentProject = ui->treeProjects->getCurrentProject();
-    currentPackage = ui->treePackages->getCurrentPackage();
-    QString resultProject = result->getProject();
-    QString resultPackage = result->getStatus()->getPackage();
-
-    if (currentProject==resultProject && currentPackage==resultPackage) {
-        ui->treeBuildResults->addResult(result);
-    }
-
-//  FIXME: The last slot connected is in charge of deleting result
-//    delete result;
-//    result = nullptr;
 }
 
 void Browser::finishedAddingResults()
