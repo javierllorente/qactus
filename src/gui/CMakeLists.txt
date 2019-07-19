@@ -31,21 +31,21 @@ set(QACTUS_SRC
     monitor/monitortreewidget.cpp
     monitor/roweditor.cpp
     requestbox/requestbox.cpp
+    requestbox/requestboxtreewidget.cpp
+    requestbox/requestitemmodel.cpp
+    requestbox/requeststateeditor.cpp
+    requestbox/requesttreewidget.cpp
+    requestbox/syntaxhighlighter.cpp
     main.cpp
     mainwindow.cpp
     iconbar.cpp
     trayicon.cpp
     configure.cpp
     login.cpp
-    requeststateeditor.cpp
     autotooltipdelegate.cpp
     utils.cpp
     credentials.cpp
-    syntaxhighlighter.cpp
     browserfilter.cpp
-    requestboxtreewidget.cpp
-    requesttreewidget.cpp
-    requestitemmodel.cpp
     bookmarks.cpp)
 
 set(QACTUS_HDR
@@ -65,20 +65,20 @@ set(QACTUS_HDR
     monitor/monitortreewidget.h
     monitor/roweditor.h
     requestbox/requestbox.h
+    requestbox/requestboxtreewidget.h
+    requestbox/requestitemmodel.h
+    requestbox/requeststateeditor.h
+    requestbox/requesttreewidget.h
+    requestbox/syntaxhighlighter.h
     mainwindow.h
     iconbar.h
     trayicon.h
     configure.h
     login.h
-    requeststateeditor.h
     autotooltipdelegate.h
     utils.h
     credentials.h
-    syntaxhighlighter.h
     browserfilter.h
-    requestboxtreewidget.h
-    requesttreewidget.h
-    requestitemmodel.h
     bookmarks.h)
 
 set(QACTUS_UI
@@ -90,10 +90,10 @@ set(QACTUS_UI
     monitor/monitor.ui
     monitor/roweditor.ui
     requestbox/requestbox.ui
+    requestbox/requeststateeditor.ui
     mainwindow.ui
     configure.ui
     login.ui
-    requeststateeditor.ui
     browserfilter.ui)
 
 set(QACTUS_RC
