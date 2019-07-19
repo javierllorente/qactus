@@ -41,7 +41,7 @@ public:
     int getRequestType() const;
 
 signals:
-    void updateStatusBar(QString message, bool progressBarHidden);
+    void updateStatusBar(const QString &message, bool progressBarHidden);
     void descriptionFetched(const QString &description);
     void changeRequestState();
 
