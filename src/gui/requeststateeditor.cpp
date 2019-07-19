@@ -64,6 +64,11 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, OBSRequest *re
     } else {
         setDiff(m_request->getActionType() + " " + m_request->getTarget());
     }
+
+    bool writeMode = m_request->getState()=="new";
+    ui->acceptPushButton->setEnabled(writeMode);
+    ui->declinePushButton->setEnabled(writeMode);
+    ui->commentsTextBrowser->setEnabled(writeMode);
 }
 
 RequestStateEditor::~RequestStateEditor()
