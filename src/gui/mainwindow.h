@@ -37,7 +37,6 @@
 #include "trayicon.h"
 #include "configure.h"
 #include "login.h"
-#include "requeststateeditor.h"
 #include "obsstatus.h"
 #include "utils.h"
 #include "credentials.h"
@@ -46,6 +45,7 @@
 #include "bookmarks.h"
 #include "browser.h"
 #include "monitor.h"
+#include "requestbox.h"
 
 namespace Ui {
     class MainWindow;
@@ -117,6 +117,7 @@ private:
     QString currentPackage;
     Monitor *monitor;
     void setupTreeMonitor();
+    RequestBox *requestBox;
 
     void createStatusBar();
 
@@ -159,12 +160,7 @@ private slots:
     void slotCredentialsRestored(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
     void setupProjectActions();
-    void changeRequestState();
     void getPackages(QModelIndex index);
-    void getIncomingRequests();
-    void getOutgoingRequests();
-    void getDeclinedRequests();
-    void slotDescriptionFetched(const QString &description);
     void setNotify(bool notify);
     void slotEnableRemoveRow();
     void on_action_Refresh_triggered();
@@ -181,7 +177,6 @@ private slots:
     void on_iconBar_currentRowChanged(int index);
     void on_tabWidgetPackages_currentChanged(int index);
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
-    void slotSrStatus(const QString &status);
 };
 
 #endif // MAINWINDOW_H

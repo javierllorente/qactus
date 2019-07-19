@@ -20,6 +20,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QProgressDialog>
 #include "obsxmlwriter.h"
 
 const QString defaultApiUrl = "https://api.opensuse.org";
@@ -35,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     deleteFileConnected(false),
     browser(new Browser(this, obs)),
     monitor(new Monitor(this, obs)),
+    requestBox(new RequestBox(this, obs)),
     errorBox(nullptr),
     loginDialog(nullptr)
 {
@@ -50,15 +52,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupPackageActions);
     connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupFileActions);
 
-    connect(ui->actionChange_request_state, &QAction::triggered, this, &MainWindow::changeRequestState);
-    connect(ui->treeRequests, &RequestTreeWidget::changeRequestState, this, &MainWindow::changeRequestState);
-    connect(ui->treeRequests, &RequestTreeWidget::descriptionFetched, this, &MainWindow::slotDescriptionFetched);
-    connect(ui->treeRequests, &RequestTreeWidget::updateStatusBar, this, &MainWindow::slotUpdateStatusBar);
-
-    connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::requestTypeChanged, ui->treeRequests, &RequestTreeWidget::requestTypeChanged);
-    connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getIncomingRequests, this, &MainWindow::getIncomingRequests);
-    connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getOutgoingRequests, this, &MainWindow::getOutgoingRequests);
-    connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getDeclinedRequests, this, &MainWindow::getDeclinedRequests);
+    connect(ui->actionChange_request_state, &QAction::triggered, requestBox, &RequestBox::changeRequestState);
+    connect(requestBox, &RequestBox::descriptionFetched, this, [=](){
+        ui->actionChange_request_state->setEnabled(true);
+    });
 
     createStatusBar();
     createTimer();
@@ -71,18 +68,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(obs, SIGNAL(finishedParsingAbout(OBSAbout*)), this, SLOT(slotAbout(OBSAbout*)));
 
-
-
-    connect(obs, &OBS::finishedParsingIncomingRequest, ui->treeRequests, &RequestTreeWidget::addIncomingRequest);
-    connect(obs, &OBS::finishedParsingIncomingRequestList, ui->treeRequests, &RequestTreeWidget::irListFetched);
-    connect(obs, &OBS::finishedParsingOutgoingRequest, ui->treeRequests, &RequestTreeWidget::addOutgoingRequest);
-    connect(obs, &OBS::finishedParsingOutgoingRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
-    connect(obs, &OBS::finishedParsingDeclinedRequest, ui->treeRequests, &RequestTreeWidget::addDeclinedRequest);
-    connect(obs, &OBS::finishedParsingDeclinedRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
-    connect(obs, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
-
     ui->stackedWidget->addWidget(browser);
     ui->stackedWidget->addWidget(monitor);
+    ui->stackedWidget->addWidget(requestBox);
 
     readSettings();
     readTimerSettings();
@@ -309,35 +297,6 @@ void MainWindow::getPackages(QModelIndex index)
     }
 }
 
-void MainWindow::changeRequestState()
-{
-    qDebug() << __PRETTY_FUNCTION__;
-    OBSRequest *request = ui->treeRequests->currentRequest();
-    RequestStateEditor *reqStateEditor = new RequestStateEditor(this, obs, request);
-
-    disconnect(obs, &OBS::finishedParsingResult, browser, &Browser::addResult);
-    disconnect(obs, &OBS::finishedParsingResult, monitor, &Monitor::addDroppedPackage);
-
-    reqStateEditor->exec();
-
-    delete reqStateEditor;
-    delete request;
-
-    connect(obs, &OBS::finishedParsingResult, monitor, &Monitor::addDroppedPackage);
-    connect(obs, &OBS::finishedParsingResult, browser, &Browser::addResult);
-}
-
-void MainWindow::slotSrStatus(const QString &status)
-{
-    qDebug() << "MainWindow::slotSrStatus()";
-    if (status=="ok") {
-        OBSRequest *request = ui->treeRequests->currentRequest();
-        ui->treeRequests->removeIncomingRequest(request->getId());
-        ui->textBrowser->clear();
-        delete request;
-    }
-}
-
 void MainWindow::slotEnableRemoveRow()
 {
     if (!monitor->hasSelection()) {
@@ -366,33 +325,6 @@ void MainWindow::setupTreeMonitor()
     connect(ui->action_Mark_all_as_read, &QAction::triggered, monitor, &Monitor::markAllRead);
     connect(monitor, &Monitor::notifyChanged, this, &MainWindow::setNotify);
     connect(monitor, &Monitor::updateStatusBar, this, &MainWindow::slotUpdateStatusBar);
-}
-
-void MainWindow::getIncomingRequests()
-{
-    qDebug() << "MainWindow::getIncomingRequests()";
-    ui->textBrowser->clear();
-    obs->getIncomingRequests();
-}
-
-void MainWindow::getOutgoingRequests()
-{
-    qDebug() << "MainWindow::getOutgoingRequests()";
-    ui->textBrowser->clear();
-    obs->getOutgoingRequests();
-}
-
-void MainWindow::getDeclinedRequests()
-{
-    qDebug() << "MainWindow::getDeclinedRequests()";
-    ui->textBrowser->clear();
-    obs->getDeclinedRequests();
-}
-
-void MainWindow::slotDescriptionFetched(const QString &description)
-{
-    ui->textBrowser->setText(description);
-    ui->actionChange_request_state->setEnabled(true);
 }
 
 void MainWindow::setNotify(bool notify)

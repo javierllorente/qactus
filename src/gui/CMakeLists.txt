@@ -11,6 +11,7 @@ find_package(Qt5Keychain REQUIRED)
 include_directories(
     browser
     monitor
+    requestbox
 )
 
 set(QACTUS_SRC
@@ -29,6 +30,7 @@ set(QACTUS_SRC
     monitor/monitor.cpp
     monitor/monitortreewidget.cpp
     monitor/roweditor.cpp
+    requestbox/requestbox.cpp
     main.cpp
     mainwindow.cpp
     iconbar.cpp
@@ -62,6 +64,7 @@ set(QACTUS_HDR
     monitor/monitor.h
     monitor/monitortreewidget.h
     monitor/roweditor.h
+    requestbox/requestbox.h
     mainwindow.h
     iconbar.h
     trayicon.h
@@ -86,6 +89,7 @@ set(QACTUS_UI
     browser/searchwidget.ui
     monitor/monitor.ui
     monitor/roweditor.ui
+    requestbox/requestbox.ui
     mainwindow.ui
     configure.ui
     login.ui
