@@ -482,6 +482,8 @@ void MainWindow::createActions()
 
     browserFilter = new BrowserFilter(this);
     actionFilter = ui->toolBar->addWidget(browserFilter);
+    connect(obs, &OBS::finishedParsingProjectList, browserFilter, &BrowserFilter::addProjectList);
+    connect(browserFilter, &BrowserFilter::setCurrentProject, browser, &Browser::setCurrentProject);
 
     // Tray icon actions
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
@@ -727,6 +729,7 @@ void MainWindow::on_action_Configure_Qactus_triggered()
     Configure *configure = new Configure(this, obs);
     connect(configure, SIGNAL(apiChanged()), this, SLOT(slotApiChanged()));
     connect(configure, SIGNAL(proxyChanged()), this, SLOT(readProxySettings()));
+    // FIXME: no such refreshProjectFilter()
     connect(configure, SIGNAL(includeHomeProjectsChanged()), this, SLOT(refreshProjectFilter()));
     connect(configure, SIGNAL(timerChanged()), this, SLOT(readTimerSettings()));
     configure->exec();

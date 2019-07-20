@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #define BROWSERFILTER_H
 
 #include <QWidget>
+#include <QStringListModel>
+#include <QCompleter>
 
 namespace Ui {
 class BrowserFilter;
@@ -35,19 +37,23 @@ public:
     explicit BrowserFilter(QWidget *parent = 0);
     ~BrowserFilter();
 
-    bool isProjectChecked();
-    bool isPackageChecked();
     QString getText() const;
     void clear();
     void setFocus();
 
+public slots:
+    void addProjectList(const QStringList &projectList);
+
 private:
     Ui::BrowserFilter *ui;
+    QStringListModel *m_projectModel;
+    QCompleter *m_projectCompleter;
+
+private slots:
+    void autocompletedProject_clicked(const QString &project);
 
 signals:
-    void textChanged(QString);
-    void projectClicked(bool);
-    void packageClicked(bool);
+    void setCurrentProject(const QString &project);
 };
 
 #endif // BROWSERFILTER_H
