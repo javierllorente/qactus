@@ -37,6 +37,7 @@ class Browser : public QWidget
 public:
     explicit Browser(QWidget *parent = nullptr, OBS *obs = nullptr);
     ~Browser();
+    void readSettings();
     void addProjectList(const QStringList &projectList);
     void createProjectsContextMenu(QMenu *projectsMenu);
     void createPackagesContextMenu(QMenu *packagesMenu);

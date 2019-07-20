@@ -21,6 +21,7 @@
 #include "browser.h"
 #include "ui_browser.h"
 #include <QFileDialog>
+#include <QSettings>
 #include "createdialog.h"
 #include "createrequestdialog.h"
 #include "buildlogviewer.h"
@@ -92,11 +93,22 @@ Browser::Browser(QWidget *parent, OBS *obs) :
     connect(filesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::fileSelectionChanged);
 
     connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->treePackages, &PackageTreeWidget::filterPackages);
+
+    readSettings();
 }
 
 Browser::~Browser()
 {
     delete ui;
+}
+
+void Browser::readSettings()
+{
+    QSettings settings;
+    settings.beginGroup("Browser");
+    bool includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
+    m_obs->setIncludeHomeProjects(includeHomeProjects);
+    settings.endGroup();
 }
 
 void Browser::addProjectList(const QStringList &projectList)

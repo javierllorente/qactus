@@ -130,8 +130,6 @@ private:
     void readSettings();
     void readMWSettings();
     void readAuthSettings();
-    void readBrowserSettings();
-    bool includeHomeProjects;
 
     QMessageBox *errorBox;
 
@@ -176,7 +174,6 @@ private slots:
     void slotUpdatePerson(OBSPerson *obsPerson);
     void on_iconBar_currentRowChanged(int index);
     void on_tabWidgetPackages_currentChanged(int index);
-    void refreshProjectFilter();
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
 };
 

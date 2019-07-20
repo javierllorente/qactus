@@ -608,7 +608,6 @@ void MainWindow::readSettings()
     readMWSettings();
     readProxySettings();
     readAuthSettings();
-    readBrowserSettings();
 }
 
 void MainWindow::readMWSettings()
@@ -644,15 +643,6 @@ void MainWindow::readAuthSettings()
         credentials->readPassword(settings.value("Username").toString());
         delete credentials;
     }
-    settings.endGroup();
-}
-
-void MainWindow::readBrowserSettings()
-{
-    QSettings settings;
-    settings.beginGroup("Browser");
-    includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
-    obs->setIncludeHomeProjects(includeHomeProjects);
     settings.endGroup();
 }
 
@@ -725,12 +715,15 @@ void MainWindow::showLoginDialog()
 
 void MainWindow::on_action_Configure_Qactus_triggered()
 {
-    qDebug() << "MainWindow Launching Configure...";
+    qDebug() << __PRETTY_FUNCTION__;
     Configure *configure = new Configure(this, obs);
-    connect(configure, SIGNAL(apiChanged()), this, SLOT(slotApiChanged()));
-    connect(configure, SIGNAL(proxyChanged()), this, SLOT(readProxySettings()));
-    connect(configure, SIGNAL(includeHomeProjectsChanged()), this, SLOT(refreshProjectFilter()));
-    connect(configure, SIGNAL(timerChanged()), this, SLOT(readTimerSettings()));
+    connect(configure, &Configure::apiChanged, this, &MainWindow::slotApiChanged);
+    connect(configure, &Configure::proxyChanged, this, &MainWindow::readProxySettings);
+    connect(configure, &Configure::includeHomeProjectsChanged, this, [=](){
+        browser->readSettings();
+        browser->getProjects();
+    });
+    connect(configure, &Configure::timerChanged, this, &MainWindow::readTimerSettings);
     configure->exec();
     delete configure;
 }
@@ -810,14 +803,6 @@ void MainWindow::on_tabWidgetPackages_currentChanged(int index)
     if (index==0 && browser->hasFileSelection()) {
         setupFileActions();
     }
-}
-
-void MainWindow::refreshProjectFilter()
-{
-    qDebug() << __PRETTY_FUNCTION__;
-    readBrowserSettings();
-    obs->setIncludeHomeProjects(includeHomeProjects);
-    browser->getProjects();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
