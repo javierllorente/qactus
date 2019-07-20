@@ -176,6 +176,7 @@ private slots:
     void slotUpdatePerson(OBSPerson *obsPerson);
     void on_iconBar_currentRowChanged(int index);
     void on_tabWidgetPackages_currentChanged(int index);
+    void refreshProjectFilter();
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
 };
 
