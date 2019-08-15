@@ -32,9 +32,9 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-    void addPackage(const QString &project);
-    void addPackageList(const QStringList &projects);
-    bool removePackage(const QString &project);
+    void addPackage(const QString &package);
+    void addPackageList(const QStringList &packages);
+    bool removePackage(const QString &package);
     QStringList stringList() const;
 
 private:

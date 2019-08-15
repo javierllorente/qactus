@@ -61,11 +61,11 @@ QVariant PackageListModel::headerData(int section, Qt::Orientation orientation, 
     }
 }
 
-void PackageListModel::addPackage(const QString &project)
+void PackageListModel::addPackage(const QString &package)
 {
     int index = m_packages.count();
     beginInsertRows(QModelIndex(), index, index);
-    m_packages.append(project);
+    m_packages.append(package);
     endInsertRows();
 }
 
@@ -76,9 +76,9 @@ void PackageListModel::addPackageList(const QStringList &packages)
     endResetModel();
 }
 
-bool PackageListModel::removePackage(const QString &project)
+bool PackageListModel::removePackage(const QString &package)
 {
-    int index = m_packages.indexOf(project);
+    int index = m_packages.indexOf(package);
     if (index==-1) {
         return false;
     }
