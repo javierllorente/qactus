@@ -39,6 +39,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
 
     connect(xmlReader, SIGNAL(finishedParsingBranchPackage(OBSStatus*)),
             this, SIGNAL(finishedParsingBranchPackage(OBSStatus*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingCopyPkgRevision,
+            this, &OBS::finishedParsingCopyPkgRevision);
     connect(xmlReader, SIGNAL(finishedParsingCreateRequest(OBSRequest*)),
             this, SIGNAL(finishedParsingCreateRequest(OBSRequest*)));
     connect(xmlReader, SIGNAL(finishedParsingCreateRequestStatus(OBSStatus*)),
@@ -282,6 +284,12 @@ OBSXmlReader* OBS::getXmlReader()
 void OBS::branchPackage(const QString &project, const QString &package)
 {
     obsCore->branchPackage(project, package);
+}
+
+void OBS::copyPackage(const QString &originProject, const QString &originPackage,
+                      const QString &destProject, const QString &destPackage)
+{
+    obsCore->copyPackage(originProject, originPackage, destProject, destPackage);
 }
 
 void OBS::createProject(const QString &project, const QByteArray &data)

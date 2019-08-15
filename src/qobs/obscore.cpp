@@ -444,6 +444,20 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 break;
             }
 
+            case OBSCore::CopyPackage: {
+                qDebug() << reqTypeStr << "CopyPackage";
+                QString project;
+                QString package;
+                if (reply->property("destprj").isValid()) {
+                    project = reply->property("destprj").toString();
+                }
+                if (reply->property("destpkg").isValid()) {
+                    package = reply->property("destpkg").toString();
+                }
+                xmlReader->parseCopyPackage(project, package, dataStr);
+                break;
+            }
+
             case OBSCore::CreateRequest: {
                 qDebug() << reqTypeStr << "CreateRequest";
                 xmlReader->parseCreateRequest(dataStr);
@@ -795,6 +809,18 @@ void OBSCore::branchPackage(const QString &project, const QString &package)
     reply->setProperty("reqtype", OBSCore::BranchPackage);
     reply->setProperty("branchprj", project);
     reply->setProperty("branchpkg", package);
+}
+
+void OBSCore::copyPackage(const QString &originProject, const QString &originPackage,
+                          const QString &destProject, const QString &destPackage)
+{
+    QString comment = QString("osc copypac from project:%1 package:%2").arg(originProject, originPackage);
+    QString resource = QString("/source/%1/%2?cmd=copy&oproject=%3&opackage=%4&comment=%5")
+            .arg(destProject, destPackage, originProject, originPackage, comment);
+    QNetworkReply *reply = postRequest(resource, "", "application/x-www-form-urlencoded");
+    reply->setProperty("reqtype", OBSCore::CopyPackage);
+    reply->setProperty("destprj", destProject);
+    reply->setProperty("destpkg", destPackage);
 }
 
 void OBSCore::createRequest(const QByteArray &data)

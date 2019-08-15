@@ -68,6 +68,8 @@ public:
     void request(const QString &resource, int row);
     void getSRDiff(const QString &resource);
     void branchPackage(const QString &project, const QString &package);
+    void copyPackage(const QString &originProject, const QString &originPackage,
+                     const QString &destProject, const QString &destPackage);
     void createRequest(const QByteArray &data);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
@@ -139,6 +141,7 @@ private:
         ChangeRequestState,
         SRDiff,
         BranchPackage,
+        CopyPackage,
         CreateRequest,
         CreateProject,
         CreatePackage,

@@ -63,6 +63,8 @@ public:
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     OBSXmlReader *getXmlReader();
     void branchPackage(const QString &project, const QString &package);
+    void copyPackage(const QString &originProject, const QString &originPackage,
+                     const QString &destProject, const QString &destPackage);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
     void deleteFile(const QString &project, const QString &package, const QString &fileName);
@@ -84,6 +86,7 @@ signals:
     void networkError(const QString&);
     void finishedParsingPackage(OBSStatus*, int);
     void finishedParsingBranchPackage(OBSStatus*);
+    void finishedParsingCopyPkgRevision(OBSRevision *revision);
     void finishedParsingCreateRequest(OBSRequest*);
     void finishedParsingCreateRequestStatus(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
