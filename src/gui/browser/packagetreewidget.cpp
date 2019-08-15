@@ -74,15 +74,7 @@ void PackageTreeWidget::filterPackages(const QString &item)
 
 bool PackageTreeWidget::removePackage(const QString &package)
 {
-    QModelIndexList itemList = model()->match(model()->index(0, 0),
-                                              Qt::DisplayRole, QVariant::fromValue(QString(package)),
-                                              1, Qt::MatchExactly);
-    if(!itemList.isEmpty()) {
-        auto itemIndex = itemList.at(0);
-        model()->removeRow(itemIndex.row(), itemIndex.parent());
-        return true;
-    }
-    return false;
+    return sourceModelPackages->removePackage(package);
 }
 
 void PackageTreeWidget::clearModel()
