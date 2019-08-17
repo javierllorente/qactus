@@ -44,6 +44,11 @@ void PackageTreeWidget::deleteModel()
     }
 }
 
+void PackageTreeWidget::addPackage(const QString &package)
+{
+    sourceModelPackages->addPackage(package);
+}
+
 void PackageTreeWidget::addPackageList(const QStringList &packageList)
 {
     qDebug() << __PRETTY_FUNCTION__;
@@ -63,6 +68,20 @@ QStringList PackageTreeWidget::getPackageList() const
 QString PackageTreeWidget::getCurrentPackage() const
 {
     return currentIndex().data().toString();
+}
+
+bool PackageTreeWidget::setCurrentPackage(const QString &package)
+{
+    QModelIndexList itemList = model()->match(model()->index(0, 0),
+                                              Qt::DisplayRole,
+                                              QVariant::fromValue(QString(package)), 1, Qt::MatchExactly);
+    if (!itemList.isEmpty()) {
+        auto itemIndex = itemList.at(0);
+        selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+        scrollTo(itemIndex, QAbstractItemView::PositionAtTop);
+        return true;
+    }
+    return false;
 }
 
 void PackageTreeWidget::filterPackages(const QString &item)

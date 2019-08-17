@@ -59,6 +59,22 @@ Browser::Browser(QWidget *parent, OBS *obs) :
     connect(m_obs, &OBS::projectNotFound, this, &Browser::slotProjectNotFound);
     connect(m_obs, &OBS::packageNotFound, this, &Browser::slotPackageNotFound);
 
+    connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, [=](OBSStatus *status) {
+        if (status->getCode()=="ok") {
+            ui->treeProjects->addProject(status->getProject());
+            ui->treeProjects->setCurrentProject(status->getProject());
+            showTrayMessage(APP_NAME, tr("Project %1 has been created").arg(status->getProject()));
+        }
+    });
+
+    connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, [=](OBSStatus *status) {
+        if (status->getCode()=="ok") {
+            ui->treePackages->addPackage(status->getPackage());
+            ui->treePackages->setCurrentPackage(status->getPackage());
+            showTrayMessage(APP_NAME, tr("Package %1 has been created").arg(status->getPackage()));
+        }
+    });
+
     connect(m_obs, &OBS::finishedParsingDeletePrjStatus, this, &Browser::slotDeleteProject);
     connect(m_obs, &OBS::finishedParsingDeletePkgStatus, this, &Browser::slotDeletePackage);
     connect(m_obs, &OBS::finishedParsingDeleteFileStatus, this, &Browser::slotDeleteFile);

@@ -40,7 +40,9 @@ public:
     void clearModel();
 
 public slots:
+    void addPackage(const QString &package);
     void addPackageList(const QStringList &packageList);
+    bool setCurrentPackage(const QString &package);
     void filterPackages(const QString &item);
 
 private:

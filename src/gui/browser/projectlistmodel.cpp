@@ -67,6 +67,7 @@ void ProjectListModel::addProject(const QString &project)
     beginInsertRows(QModelIndex(), index, index);
     m_projects.append(project);
     endInsertRows();
+    m_projects.sort();
 }
 
 void ProjectListModel::addProjectList(const QStringList &projects)

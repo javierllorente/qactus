@@ -67,6 +67,7 @@ void PackageListModel::addPackage(const QString &package)
     beginInsertRows(QModelIndex(), index, index);
     m_packages.append(package);
     endInsertRows();
+    m_packages.sort();
 }
 
 void PackageListModel::addPackageList(const QStringList &packages)
