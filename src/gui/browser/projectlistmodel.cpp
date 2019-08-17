@@ -63,11 +63,13 @@ QVariant ProjectListModel::headerData(int section, Qt::Orientation orientation, 
 
 void ProjectListModel::addProject(const QString &project)
 {
-    int index = m_projects.count();
-    beginInsertRows(QModelIndex(), index, index);
-    m_projects.append(project);
-    endInsertRows();
-    m_projects.sort();
+    if (!m_projects.contains(project)) {
+        int index = m_projects.count();
+        beginInsertRows(QModelIndex(), index, index);
+        m_projects.append(project);
+        endInsertRows();
+        m_projects.sort();
+    }
 }
 
 void ProjectListModel::addProjectList(const QStringList &projects)
