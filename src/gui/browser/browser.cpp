@@ -656,19 +656,10 @@ void Browser::slotBranchPackage(OBSStatus *status)
     qDebug() << __PRETTY_FUNCTION__;
 
     if (status->getCode()=="ok") {
-        getProjects();
+        QString newBranch = QString("home:%1:branches:%2").arg(m_obs->getUsername(), status->getProject());
+        ui->treeProjects->addProject(newBranch);
+        ui->treeProjects->setCurrentProject(newBranch);
         showTrayMessage(APP_NAME, tr("The package %1 has been branched").arg(status->getPackage()));
-
-        // FIXME: Select and scroll to branch after branching. This doesn't work as loading the project list takes some time
-    //    QString newBranch = QString("home:%1:branches:%2").arg(obs->getUsername(), obsStatus->getProject());
-    //    QModelIndexList itemList = ui->treeProjects->model()->match(ui->treeProjects->model()->index(0, 0),
-    //                                                                Qt::DisplayRole, QVariant::fromValue(QString(newBranch)),
-    //                                                                1, Qt::MatchExactly);
-    //    if (!itemList.isEmpty()) {
-    //        auto itemIndex = itemList.at(0);
-    //        ui->treeProjects->selectionModel()->select(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-    //        ui->treeProjects->scrollTo(itemIndex, QAbstractItemView::PositionAtTop);
-    //    }
 
     } else {
         const QString title = tr("Warning");
