@@ -72,15 +72,7 @@ QStringList ProjectTreeWidget::getProjectList() const
 
 bool ProjectTreeWidget::removeProject(const QString &project)
 {
-    QModelIndexList itemList = model()->match(model()->index(0, 0),
-                                              Qt::DisplayRole,
-                                              QVariant::fromValue(QString(project)), 1, Qt::MatchExactly);
-    if(!itemList.isEmpty()) {
-        auto item = itemList.at(0);
-        model()->removeRow(item.row(), item.parent());
-        return true;
-    }
-    return false;
+    return sourceModelProjects->removeProject(project);
 }
 
 void ProjectTreeWidget::filterProjects(const QString &item)
