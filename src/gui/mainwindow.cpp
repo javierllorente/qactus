@@ -461,6 +461,11 @@ void MainWindow::createActions()
     action_createRequest->setIcon(QIcon::fromTheme("cloud-upload"));
     connect(action_createRequest, &QAction::triggered, browser, &Browser::createRequest);
 
+    // Copy package action
+    action_copyPackage = new QAction(tr("&Copy package"), this);
+    action_copyPackage->setIcon(QIcon::fromTheme("cloud-upload"));
+    connect(action_copyPackage, &QAction::triggered, browser, &Browser::copyPackage);
+
     // Delete actions
     actionDelete_project = new QAction(tr("Delete pro&ject"), this);
     actionDelete_project->setIcon(QIcon::fromTheme("trash-empty"));
@@ -505,6 +510,7 @@ void MainWindow::createActions()
     treePackagesMenu->addAction(actionNew_package);
     treePackagesMenu->addAction(ui->action_Branch_package);
     treePackagesMenu->addAction(action_createRequest);
+    treePackagesMenu->addAction(action_copyPackage);
     treePackagesMenu->addAction(action_ReloadPackages);
     treePackagesMenu->addAction(actionDelete_package);
 

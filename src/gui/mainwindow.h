@@ -75,6 +75,7 @@ private:
     QToolButton *newButton;
     QMenu *newMenu;
     QAction *action_createRequest;
+    QAction *action_copyPackage;
     QAction *actionNew_package;
     QAction *actionNew_project;
     QAction *actionNew;

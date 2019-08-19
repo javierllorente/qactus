@@ -63,6 +63,7 @@ public slots:
     void downloadFile();
     void uploadSelectedFile();
     void createRequest();
+    void copyPackage();
     void deleteProject();
     void deletePackage();
     void deleteFile();

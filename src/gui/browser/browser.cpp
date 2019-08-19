@@ -365,6 +365,15 @@ void Browser::createRequest()
             ui->treePackages, &PackageTreeWidget::addPackageList);
 }
 
+void Browser::copyPackage()
+{
+    qDebug() << __PRETTY_FUNCTION__ << "Not implemented yet";
+//    FIXME: Implement dialog
+//    m_obs->copyPackage(ui->treeProjects->getCurrentProject(), ui->treePackages->getCurrentPackage(),
+//                       "DESTINATION_PRJ", ui->treePackages->getCurrentPackage());
+
+}
+
 void Browser::deleteProject()
 {
     qDebug() << __PRETTY_FUNCTION__;
