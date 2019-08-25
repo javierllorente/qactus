@@ -100,20 +100,22 @@ QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString
     xmlWriter.writeAttribute("role", "maintainer");
 
     // openSUSE Tumbleweed
-    OBSRepository *repository = new OBSRepository();
-    repository->setName("openSUSE_Tumbleweed");
-    repository->setProject("openSUSE:Factory");
-    repository->setRepository("snapshot");
-    repository->setArch("x86_64");
-    createRepositoryElement(xmlWriter, repository);
+    OBSRepository *twRepository = new OBSRepository();
+    twRepository->setName("openSUSE_Tumbleweed");
+    twRepository->setProject("openSUSE:Factory");
+    twRepository->setRepository("snapshot");
+    twRepository->setArch("x86_64");
+    createRepositoryElement(xmlWriter, twRepository);
+    delete twRepository;
 
     // openSUSE Leap   
-    repository->setName("openSUSE_Current");
-    repository->setProject("openSUSE:Current");
-    repository->setRepository("standard");
-    repository->setArch("x86_64");
-    createRepositoryElement(xmlWriter, repository);
-    delete repository;
+    OBSRepository *leapRepository = new OBSRepository();
+    leapRepository->setName("openSUSE_Current");
+    leapRepository->setProject("openSUSE:Current");
+    leapRepository->setRepository("standard");
+    leapRepository->setArch("x86_64");
+    createRepositoryElement(xmlWriter, leapRepository);
+    delete leapRepository;
 
     xmlWriter.writeEndElement(); // project
 
