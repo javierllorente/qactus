@@ -47,7 +47,7 @@ public:
     void addData(const QString &data);
     void setPackageRow(int row);
     void parseProjectList(const QString &userHome, const QString &data);
-    void parseProjectMetadata(const QString &data);
+    void parsePrjMetaConfig(const QString &data);
     void parseBuildStatus(const QString &data);
     OBSStatus *parseNotFoundStatus(const QString &data);
     void parsePackageList(const QString &data);

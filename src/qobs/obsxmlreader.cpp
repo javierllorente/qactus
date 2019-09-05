@@ -97,7 +97,7 @@ void OBSXmlReader::parseProjectList(const QString &userHome, const QString &data
     emit finishedParsingProjectList(list);
 }
 
-void OBSXmlReader::parseProjectMetadata(const QString &data)
+void OBSXmlReader::parsePrjMetaConfig(const QString &data)
 {
     QXmlStreamReader xml(data);
     OBSPrjMetaConfig *prjMetaConfig = nullptr;

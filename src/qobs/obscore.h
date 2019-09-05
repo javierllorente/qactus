@@ -129,7 +129,7 @@ private:
     enum RequestType {
         Login,
         ProjectList,
-        ProjectMetadata,
+        PrjMetaConfig,
         PackageList,
         FileList,
         Link,

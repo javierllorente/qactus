@@ -195,7 +195,7 @@ void OBSCore::getProjects()
 void OBSCore::getProjectMetadata(const QString &resource)
 {
     QNetworkReply *reply = requestSource(resource);
-    reply->setProperty("reqtype", OBSCore::ProjectMetadata);
+    reply->setProperty("reqtype", OBSCore::PrjMetaConfig);
 }
 
 void OBSCore::getPackages(const QString &resource)
@@ -365,9 +365,9 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 break;
             }
 
-            case OBSCore::ProjectMetadata: // <project>
-                qDebug() << reqTypeStr << "ProjectList";
-                xmlReader->parseProjectMetadata(dataStr);
+            case OBSCore::PrjMetaConfig: // <project>
+                qDebug() << reqTypeStr << "PrjMetaConfig";
+                xmlReader->parsePrjMetaConfig(dataStr);
                 break;
 
             case OBSCore::PackageList: // <directory>
