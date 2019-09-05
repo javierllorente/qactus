@@ -21,7 +21,10 @@ set(LIBQOBS_SRC
     obsobject.cpp
     obslink.cpp
     obsperson.cpp
-    obsrepository.cpp)
+    obsrepository.cpp
+    obsmetaconfig.cpp
+    obsprjmetaconfig.cpp
+    obspkgmetaconfig.cpp)
 
 set(LIBQOBS_HDR
     obscore.h
@@ -37,7 +40,10 @@ set(LIBQOBS_HDR
     obsobject.h
     obslink.h
     obsperson.h
-    obsrepository.h)
+    obsrepository.h
+    obsmetaconfig.h
+    obsprjmetaconfig.h
+    obspkgmetaconfig.h)
 
 add_library(libqobs SHARED ${LIBQOBS_SRC})
 
