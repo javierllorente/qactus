@@ -22,6 +22,7 @@
 #define OBSREPOSITORY_H
 
 #include <QString>
+#include <QStringList>
 
 class OBSRepository
 {
@@ -37,14 +38,15 @@ public:
     QString getRepository() const;
     void setRepository(const QString &value);
 
-    QString getArch() const;
-    void setArch(const QString &value);
+    void appendArch(const QString &arch);
+    QStringList getArchs() const;
+    void setArchs(const QStringList &value);
 
 private:
     QString name;
     QString project;
     QString repository;
-    QString arch;
+    QStringList archs;
 };
 
 #endif // OBSREPOSITORY_H

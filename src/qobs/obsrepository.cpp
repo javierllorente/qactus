@@ -55,12 +55,19 @@ void OBSRepository::setRepository(const QString &value)
     repository = value;
 }
 
-QString OBSRepository::getArch() const
+void OBSRepository::appendArch(const QString &arch)
 {
-    return arch;
+    if (!archs.contains(arch)) {
+        archs.append(arch);
+    }
 }
 
-void OBSRepository::setArch(const QString &value)
+QStringList OBSRepository::getArchs() const
 {
-    arch = value;
+    return archs;
+}
+
+void OBSRepository::setArchs(const QStringList &value)
+{
+    archs = value;
 }
