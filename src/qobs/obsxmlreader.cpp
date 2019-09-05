@@ -100,8 +100,86 @@ void OBSXmlReader::parseProjectList(const QString &userHome, const QString &data
 void OBSXmlReader::parseProjectMetadata(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QStringList list = parseList(xml);
-    emit finishedParsingProjectMetadata(list);
+    OBSPrjMetaConfig *prjMetaConfig = nullptr;
+    OBSRepository *repository = nullptr;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+
+        if (xml.name()=="project" && xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            prjMetaConfig = new OBSPrjMetaConfig();
+            prjMetaConfig->setName(attrib.value("name").toString());
+        }
+
+        if (xml.name()=="title" && xml.isStartElement()) {
+            prjMetaConfig->setTitle(xml.readElementText());
+        }
+
+        if (xml.name()=="description" && xml.isStartElement()) {
+            prjMetaConfig->setDescription(xml.readElementText());
+        }
+
+        if (xml.name()=="person" && xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            prjMetaConfig->insertPerson(attrib.value("userid").toString(),
+                                        attrib.value("role").toString());
+        }
+
+        if (xml.name()=="group" && xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            prjMetaConfig->insertGroup(attrib.value("groupid").toString(),
+                                       attrib.value("role").toString());
+        }
+
+        if (xml.name()=="build" && xml.isStartElement()) {
+            prjMetaConfig->setBuildFlag(parseRepositoryFlags(xml));
+        }
+
+        if (xml.name()=="publish" && xml.isStartElement()) {
+            prjMetaConfig->setPublishFlag(parseRepositoryFlags(xml));
+        }
+
+        if (xml.name()=="useforbuild" && xml.isStartElement()) {
+            prjMetaConfig->setUseForBuildFlag(parseRepositoryFlags(xml));
+        }
+
+        if (xml.name()=="debuginfo" && xml.isStartElement()) {
+            prjMetaConfig->setDebugInfoFlag(parseRepositoryFlags(xml));
+        }
+
+
+        if (xml.name()=="repository" && xml.isStartElement()) {
+            repository = new OBSRepository();
+            QXmlStreamAttributes attrib = xml.attributes();
+            repository->setName(attrib.value("name").toString());
+
+            while (xml.readNextStartElement()) {
+                if (xml.name()=="path" && xml.isStartElement()) {
+                    QXmlStreamAttributes attrib = xml.attributes();
+                    repository->setProject(attrib.value("project").toString());
+                    repository->setRepository(attrib.value("repository").toString());
+                }
+            }
+
+            while (xml.readNextStartElement()) {
+                if (xml.name()=="arch" && xml.isStartElement()) {
+                    repository->appendArch(xml.readElementText());
+                }
+            }
+        }
+
+        if (xml.name()=="repository" && xml.isEndElement()) {
+            prjMetaConfig->appendRepository(repository);
+        }
+    }
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingProjectMetadata(prjMetaConfig);
 }
 
 void OBSXmlReader::parsePackageList(const QString &data)
@@ -719,6 +797,36 @@ QStringList OBSXmlReader::parseList(QXmlStreamReader &xml)
     }
 
     return list;
+}
+
+QHash<QString, bool> OBSXmlReader::parseRepositoryFlags(QXmlStreamReader &xml)
+{
+    QHash<QString, bool> flagHash;
+    while (xml.readNextStartElement()) {
+        if (xml.name() == "enable") {
+            QXmlStreamAttributes attrib = xml.attributes();
+            if (!attrib.hasAttribute("repository")) {
+                flagHash.insert("all", true);
+            } else {
+                QString repository = attrib.value("repository").toString();
+                flagHash.insert(repository, true);
+            }
+            xml.readNext();
+        }
+
+        if (xml.name() == "disable") {
+            QXmlStreamAttributes attrib = xml.attributes();
+            if (!attrib.hasAttribute("repository")) {
+                flagHash.insert("all", false);
+            } else {
+                QString repository = attrib.value("repository").toString();
+                flagHash.insert(repository, false);
+            }
+            xml.readNext();
+        }
+    }
+
+    return flagHash;
 }
 
 void OBSXmlReader::parseFileList(const QString &project, const QString &package, const QString &data)
