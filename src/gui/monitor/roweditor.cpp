@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -167,15 +167,21 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
 {
     ui->lineEditRepository->setFocus();
 
-    connect(mOBS, SIGNAL(finishedParsingProjectMetadata(QStringList)), this, SLOT(insertProjectMetadata(QStringList)));
+    connect(mOBS, &OBS::finishedParsingProjectMetadata, this, &RowEditor::insertProjectMetadata);
     QString project = ui->lineEditProject->text();
     mOBS->getProjectMetadata(project);
 }
 
-void RowEditor::insertProjectMetadata(const QStringList &list)
+void RowEditor::insertProjectMetadata(OBSPrjMetaConfig *prjMetaConfig)
 {
     qDebug() << "RowEditor::insertProjectMetadata()";
-    repositoryList = list;
+    repositories = prjMetaConfig->getRepositories();
+    delete prjMetaConfig;
+
+    for (auto repository : repositories) {
+        repositoryList.append(repository->getName());
+    }
+
     repositoryModel = new QStringListModel(repositoryList);
     repositoryCompleter = new QCompleter(repositoryModel, this);
 
@@ -196,13 +202,16 @@ void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
 {
     ui->lineEditArch->setFocus();
 
-    // FIXME: OBSXmlReader::parseProjectMetadata() needs to be refactored!
+    for (auto r : repositories) {
+        if (r->getName()==repository) {
+            archList = r->getArchs();
+        }
+    }
 
-//    archList = mOBS->getRepositoryArchs(repository);
-//    archModel = new QStringListModel(archList);
-//    archCompleter = new QCompleter(archModel, this);
+    archModel = new QStringListModel(archList);
+    archCompleter = new QCompleter(archModel, this);
 
-//    ui->lineEditArch->setCompleter(archCompleter);
+    ui->lineEditArch->setCompleter(archCompleter);
 
 //    connect(ui->lineEditArch, SIGNAL(textEdited(const QString&)),
 //            this, SLOT(refreshArchAutocompleter(const QString&)));

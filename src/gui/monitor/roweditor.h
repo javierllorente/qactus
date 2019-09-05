@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <QSettings>
 #include <QProgressDialog>
 #include "obs.h"
+#include "obsprjmetaconfig.h"
 
 namespace Ui {
 class RowEditor;
@@ -61,6 +62,7 @@ private:
     QStringList packageList;
     QStringListModel *packageModel;
     QCompleter *packageCompleter;
+    QList<OBSRepository *> repositories;
     QStringList repositoryList;
     QStringListModel *repositoryModel;
     QCompleter *repositoryCompleter;
@@ -75,7 +77,7 @@ private slots:
     void insertPackageList(const QStringList &list);
     void refreshPackageAutocompleter(const QString&);
     void autocompletedPackageName_clicked(const QString&);
-    void insertProjectMetadata(const QStringList &list);
+    void insertProjectMetadata(OBSPrjMetaConfig *prjMetaConfig);
     void refreshRepositoryAutocompleter(const QString&);
     void autocompletedRepositoryName_clicked(const QString&repository);
     void refreshArchAutocompleter(const QString&);
