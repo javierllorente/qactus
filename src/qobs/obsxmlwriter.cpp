@@ -66,7 +66,9 @@ void OBSXmlWriter::createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepos
     xmlWriter.writeEmptyElement("path");
     xmlWriter.writeAttribute("project", repository->getProject());
     xmlWriter.writeAttribute("repository", repository->getRepository());
-    xmlWriter.writeTextElement("arch", repository->getArch());
+    for (auto arch : repository->getArchs()) {
+        xmlWriter.writeTextElement("arch", arch);
+    }
     xmlWriter.writeEndElement();
 }
 
@@ -104,7 +106,7 @@ QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString
     twRepository->setName("openSUSE_Tumbleweed");
     twRepository->setProject("openSUSE:Factory");
     twRepository->setRepository("snapshot");
-    twRepository->setArch("x86_64");
+    twRepository->appendArch("x86_64");
     createRepositoryElement(xmlWriter, twRepository);
     delete twRepository;
 
@@ -113,7 +115,7 @@ QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString
     leapRepository->setName("openSUSE_Current");
     leapRepository->setProject("openSUSE:Current");
     leapRepository->setRepository("standard");
-    leapRepository->setArch("x86_64");
+    leapRepository->appendArch("x86_64");
     createRepositoryElement(xmlWriter, leapRepository);
     delete leapRepository;
 
