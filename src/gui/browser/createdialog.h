@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class CreateDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CreateDialog(OBS *obs, QWidget *parent = 0);
+    explicit CreateDialog(QWidget *parent = nullptr, OBS *obs = nullptr);
     ~CreateDialog();
     void setProjectMode(bool projectMode);
     void setProject(const QString &project);
@@ -57,7 +57,7 @@ private slots:
 
 private:
     Ui::CreateDialog *ui;
-    OBS *mOBS;
+    OBS *m_obs;
     bool projectMode;
 };
 

@@ -192,7 +192,7 @@ void Browser::newProject()
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    CreateDialog *createDialog = new CreateDialog(m_obs, this);
+    CreateDialog *createDialog = new CreateDialog(this, m_obs);
     createDialog->setProjectMode(true);
     createDialog->setProject(project);
     createDialog->exec();
@@ -206,7 +206,7 @@ void Browser::newPackage()
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    CreateDialog *createDialog = new CreateDialog(m_obs, this);
+    CreateDialog *createDialog = new CreateDialog(this, m_obs);
     createDialog->setProject(project);
     createDialog->exec();
     delete createDialog;
