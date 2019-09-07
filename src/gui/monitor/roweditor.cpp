@@ -167,14 +167,14 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
 {
     ui->lineEditRepository->setFocus();
 
-    connect(mOBS, &OBS::finishedParsingProjectMetadata, this, &RowEditor::insertProjectMetadata);
+    connect(mOBS, &OBS::finishedParsingProjectMetaConfig, this, &RowEditor::insertProjectMetaConfig);
     QString project = ui->lineEditProject->text();
     mOBS->getProjectMetaConfig(project);
 }
 
-void RowEditor::insertProjectMetadata(OBSPrjMetaConfig *prjMetaConfig)
+void RowEditor::insertProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
 {
-    qDebug() << "RowEditor::insertProjectMetadata()";
+    qDebug() << __PRETTY_FUNCTION__;
     repositories = prjMetaConfig->getRepositories();
     delete prjMetaConfig;
 

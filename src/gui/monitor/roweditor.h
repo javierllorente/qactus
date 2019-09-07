@@ -77,7 +77,7 @@ private slots:
     void insertPackageList(const QStringList &list);
     void refreshPackageAutocompleter(const QString&);
     void autocompletedPackageName_clicked(const QString&);
-    void insertProjectMetadata(OBSPrjMetaConfig *prjMetaConfig);
+    void insertProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
     void refreshRepositoryAutocompleter(const QString&);
     void autocompletedRepositoryName_clicked(const QString&repository);
     void refreshArchAutocompleter(const QString&);
