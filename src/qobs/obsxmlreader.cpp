@@ -179,7 +179,7 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
         return;
     }
 
-    emit finishedParsingProjectMetadata(prjMetaConfig);
+    emit finishedParsingProjectMetaConfig(prjMetaConfig);
 }
 
 void OBSXmlReader::parsePackageList(const QString &data)
