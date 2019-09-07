@@ -192,7 +192,7 @@ void OBSCore::getProjects()
     reply->setProperty("includehomeprjs", userHome);
 }
 
-void OBSCore::getProjectMetadata(const QString &resource)
+void OBSCore::getProjectMetaConfig(const QString &resource)
 {
     QNetworkReply *reply = requestSource(resource);
     reply->setProperty("reqtype", OBSCore::PrjMetaConfig);

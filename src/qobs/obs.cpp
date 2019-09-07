@@ -255,9 +255,9 @@ void OBS::getPackages(const QString &project)
     obsCore->getPackages("/" + project);
 }
 
-void OBS::getProjectMetadata(const QString &project)
+void OBS::getProjectMetaConfig(const QString &project)
 {
-    obsCore->getProjectMetadata("/" + project + "/_meta");
+    obsCore->getProjectMetaConfig("/" + project + "/_meta");
 }
 
 void OBS::getFiles(const QString &project, const QString &package)

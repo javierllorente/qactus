@@ -169,7 +169,7 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
 
     connect(mOBS, &OBS::finishedParsingProjectMetadata, this, &RowEditor::insertProjectMetadata);
     QString project = ui->lineEditProject->text();
-    mOBS->getProjectMetadata(project);
+    mOBS->getProjectMetaConfig(project);
 }
 
 void RowEditor::insertProjectMetadata(OBSPrjMetaConfig *prjMetaConfig)

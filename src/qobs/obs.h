@@ -57,7 +57,7 @@ public:
     void setIncludeHomeProjects(bool value);
     void getProjects();
     void getPackages(const QString &project);
-    void getProjectMetadata(const QString &project);
+    void getProjectMetaConfig(const QString &project);
     void getFiles(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);

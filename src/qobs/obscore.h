@@ -59,7 +59,7 @@ public:
     bool isIncludeHomeProjects() const;
     void setIncludeHomeProjects(bool value);
     void getProjects();
-    void getProjectMetadata(const QString &resource);
+    void getProjectMetaConfig(const QString &resource);
     void getPackages(const QString &resource);
     void getFiles(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
