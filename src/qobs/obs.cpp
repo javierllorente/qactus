@@ -94,6 +94,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, SIGNAL(finishedParsingProjectList(QStringList)),
             this, SIGNAL(finishedParsingProjectList(QStringList)));
     connect(xmlReader, &OBSXmlReader::finishedParsingProjectMetaConfig, this, &OBS::finishedParsingProjectMetaConfig);
+    connect(xmlReader, &OBSXmlReader::finishedParsingPackageMetaConfig, this, &OBS::finishedParsingPackageMetaConfig);
     connect(xmlReader, SIGNAL(finishedParsingPackageList(QStringList)),
             this, SIGNAL(finishedParsingPackageList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingList(QStringList)),
@@ -258,6 +259,11 @@ void OBS::getPackages(const QString &project)
 void OBS::getProjectMetaConfig(const QString &project)
 {
     obsCore->getProjectMetaConfig("/" + project + "/_meta");
+}
+
+void OBS::getPackageMetaConfig(const QString &project, const QString &package)
+{
+    obsCore->getPackageMetaConfig("/" + project + "/" + package + "/_meta");
 }
 
 void OBS::getFiles(const QString &project, const QString &package)

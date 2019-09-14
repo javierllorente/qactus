@@ -58,6 +58,7 @@ public:
     void getProjects();
     void getPackages(const QString &project);
     void getProjectMetaConfig(const QString &project);
+    void getPackageMetaConfig(const QString &project, const QString &package);
     void getFiles(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
@@ -118,6 +119,7 @@ signals:
     void finishedParsingProjectList(QStringList);
     void projectFetched(const QString &project);
     void finishedParsingProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
+    void finishedParsingPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
     void finishedParsingPackageList(QStringList);
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);

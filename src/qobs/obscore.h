@@ -60,6 +60,7 @@ public:
     void setIncludeHomeProjects(bool value);
     void getProjects();
     void getProjectMetaConfig(const QString &resource);
+    void getPackageMetaConfig(const QString &resource);
     void getPackages(const QString &resource);
     void getFiles(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
@@ -130,6 +131,7 @@ private:
         Login,
         ProjectList,
         PrjMetaConfig,
+        PkgMetaConfig,
         PackageList,
         FileList,
         Link,

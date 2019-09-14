@@ -198,6 +198,12 @@ void OBSCore::getProjectMetaConfig(const QString &resource)
     reply->setProperty("reqtype", OBSCore::PrjMetaConfig);
 }
 
+void OBSCore::getPackageMetaConfig(const QString &resource)
+{
+    QNetworkReply *reply = requestSource(resource);
+    reply->setProperty("reqtype", OBSCore::PkgMetaConfig);
+}
+
 void OBSCore::getPackages(const QString &resource)
 {
     QNetworkReply *reply = requestSource(resource);
@@ -368,6 +374,11 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             case OBSCore::PrjMetaConfig: // <project>
                 qDebug() << reqTypeStr << "PrjMetaConfig";
                 xmlReader->parsePrjMetaConfig(dataStr);
+                break;
+
+            case OBSCore::PkgMetaConfig: // <package>
+                qDebug() << reqTypeStr << "PkgMetaConfig";
+                xmlReader->parsePkgMetaConfig(dataStr);
                 break;
 
             case OBSCore::PackageList: // <directory>
