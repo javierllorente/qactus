@@ -50,6 +50,8 @@ public:
 public slots:
     void newProject();
     void newPackage();
+    void editProject();
+    void editPackage();
     void reloadPackages();
     void reloadFiles();
     void addResult(OBSResult *result);
