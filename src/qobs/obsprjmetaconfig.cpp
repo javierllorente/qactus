@@ -25,6 +25,11 @@ OBSPrjMetaConfig::OBSPrjMetaConfig()
 
 }
 
+OBSPrjMetaConfig::~OBSPrjMetaConfig()
+{
+
+}
+
 void OBSPrjMetaConfig::appendRepository(OBSRepository *repository)
 {
     repositories.append(repository);

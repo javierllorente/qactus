@@ -30,6 +30,7 @@ class OBSMetaConfig
 {
 public:
     OBSMetaConfig();
+    virtual ~OBSMetaConfig();
 
     QString getName() const;
     void setName(const QString &value);

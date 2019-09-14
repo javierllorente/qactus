@@ -30,6 +30,7 @@ class OBSPkgMetaConfig : public OBSMetaConfig
 
 public:
     OBSPkgMetaConfig();
+    ~OBSPkgMetaConfig();
 
     QUrl getUrl() const;
     void setUrl(const QUrl &value);

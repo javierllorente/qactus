@@ -31,6 +31,7 @@ class OBSPrjMetaConfig : public OBSMetaConfig
 
 public:
     OBSPrjMetaConfig();
+    ~OBSPrjMetaConfig();
 
     void appendRepository(OBSRepository *repository);
     QList<OBSRepository *> getRepositories() const;

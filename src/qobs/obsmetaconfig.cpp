@@ -25,6 +25,11 @@ OBSMetaConfig::OBSMetaConfig()
 
 }
 
+OBSMetaConfig::~OBSMetaConfig()
+{
+
+}
+
 QString OBSMetaConfig::getName() const
 {
     return name;

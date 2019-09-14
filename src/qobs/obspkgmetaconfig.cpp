@@ -25,6 +25,11 @@ OBSPkgMetaConfig::OBSPkgMetaConfig()
 
 }
 
+OBSPkgMetaConfig::~OBSPkgMetaConfig()
+{
+
+}
+
 QUrl OBSPkgMetaConfig::getUrl() const
 {
     return url;
