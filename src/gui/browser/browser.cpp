@@ -22,7 +22,7 @@
 #include "ui_browser.h"
 #include <QFileDialog>
 #include <QSettings>
-#include "createdialog.h"
+#include "metaconfigeditor.h"
 #include "createrequestdialog.h"
 #include "buildlogviewer.h"
 
@@ -192,9 +192,9 @@ void Browser::newProject()
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    CreateDialog *createDialog = new CreateDialog(this, m_obs, project, "", Mode::CreateProject);
-    createDialog->exec();
-    delete createDialog;
+    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", Mode::CreateProject);
+    metaConfigEditor->exec();
+    delete metaConfigEditor;
 }
 
 void Browser::newPackage()
@@ -203,9 +203,9 @@ void Browser::newPackage()
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    CreateDialog *createDialog = new CreateDialog(this, m_obs, project, "", Mode::CreatePackage);
-    createDialog->exec();
-    delete createDialog;
+    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", Mode::CreatePackage);
+    metaConfigEditor->exec();
+    delete metaConfigEditor;
 }
 
 void Browser::editProject()
@@ -214,9 +214,9 @@ void Browser::editProject()
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    CreateDialog *createDialog = new CreateDialog(this, m_obs, project, "", Mode::EditProject);
-    createDialog->exec();
-    delete createDialog;
+    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", Mode::EditProject);
+    metaConfigEditor->exec();
+    delete metaConfigEditor;
 }
 
 void Browser::editPackage()
@@ -226,9 +226,9 @@ void Browser::editPackage()
     QString project = ui->treeProjects->getCurrentProject();
     QString package = ui->treePackages->getCurrentPackage();
 
-    CreateDialog *createDialog = new CreateDialog(this, m_obs, project, package, Mode::EditPackage);
-    createDialog->exec();
-    delete createDialog;
+    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, package, Mode::EditPackage);
+    metaConfigEditor->exec();
+    delete metaConfigEditor;
 }
 
 void Browser::reloadPackages()

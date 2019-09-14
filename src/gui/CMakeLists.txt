@@ -18,7 +18,7 @@ set(QACTUS_SRC
     browser/browser.cpp
     browser/buildlogviewer.cpp
     browser/buildresulttreewidget.cpp
-    browser/createdialog.cpp
+    browser/metaconfigeditor.cpp
     browser/createrequestdialog.cpp
     browser/filetreewidget.cpp
     browser/loghighlighter.cpp
@@ -52,7 +52,7 @@ set(QACTUS_HDR
     browser/browser.h
     browser/buildlogviewer.h
     browser/buildresulttreewidget.h
-    browser/createdialog.h
+    browser/metaconfigeditor.h
     browser/createrequestdialog.h
     browser/filetreewidget.h
     browser/loghighlighter.h
@@ -84,7 +84,7 @@ set(QACTUS_HDR
 set(QACTUS_UI
     browser/browser.ui
     browser/buildlogviewer.ui
-    browser/createdialog.ui
+    browser/metaconfigeditor.ui
     browser/createrequestdialog.ui
     browser/searchwidget.ui
     monitor/monitor.ui

@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef CREATEDIALOG_H
-#define CREATEDIALOG_H
+#ifndef METACONFIGEDITOR_H
+#define METACONFIGEDITOR_H
 
 #include <QDialog>
 #include <QProgressDialog>
@@ -31,7 +31,7 @@
 #include "obspkgmetaconfig.h"
 
 namespace Ui {
-class CreateDialog;
+class MetaConfigEditor;
 }
 
 enum class Mode {
@@ -41,13 +41,13 @@ enum class Mode {
     EditPackage
 };
 
-class CreateDialog : public QDialog
+class MetaConfigEditor : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit CreateDialog(QWidget *parent = nullptr, OBS *obs = nullptr, const QString &project = QString(), const QString &package = QString(), Mode mode = Mode::EditPackage);
-    ~CreateDialog();
+    explicit MetaConfigEditor(QWidget *parent = nullptr, OBS *obs = nullptr, const QString &project = QString(), const QString &package = QString(), Mode mode = Mode::EditPackage);
+    ~MetaConfigEditor();
 
 signals:
     void createProject(QString, QByteArray);
@@ -63,11 +63,11 @@ private slots:
     void on_packageLineEdit_textChanged(const QString &package);
 
 private:
-    Ui::CreateDialog *ui;
+    Ui::MetaConfigEditor *ui;
     OBS *m_obs;
     QString m_project;
     QString m_package;
     Mode m_mode;
 };
 
-#endif // CREATEDIALOG_H
+#endif // METACONFIGEDITOR_H

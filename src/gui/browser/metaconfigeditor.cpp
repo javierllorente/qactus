@@ -18,12 +18,12 @@
  *
  */
 
-#include "createdialog.h"
-#include "ui_createdialog.h"
+#include "metaconfigeditor.h"
+#include "ui_metaconfigeditor.h"
 
-CreateDialog::CreateDialog(QWidget *parent, OBS *obs, const QString &project, const QString &package, Mode mode) :
+MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, Mode mode) :
     QDialog(parent),
-    ui(new Ui::CreateDialog),
+    ui(new Ui::MetaConfigEditor),
     m_obs(obs),
     m_project(project),
     m_package(package),
@@ -69,23 +69,23 @@ CreateDialog::CreateDialog(QWidget *parent, OBS *obs, const QString &project, co
 
     setWindowTitle(windowTitle);
 
-    connect(this, &CreateDialog::createProject, m_obs, &OBS::createProject);
-    connect(this, &CreateDialog::createPackage, m_obs, &OBS::createPackage);
-    connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, &CreateDialog::slotCreateResult);
-    connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, &CreateDialog::slotCreateResult);
-    connect(m_obs, &OBS::cannotCreateProject, this, &CreateDialog::slotCreateResult);
-    connect(m_obs, &OBS::cannotCreatePackage, this, &CreateDialog::slotCreateResult);
+    connect(this, &MetaConfigEditor::createProject, m_obs, &OBS::createProject);
+    connect(this, &MetaConfigEditor::createPackage, m_obs, &OBS::createPackage);
+    connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, &MetaConfigEditor::slotCreateResult);
+    connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, &MetaConfigEditor::slotCreateResult);
+    connect(m_obs, &OBS::cannotCreateProject, this, &MetaConfigEditor::slotCreateResult);
+    connect(m_obs, &OBS::cannotCreatePackage, this, &MetaConfigEditor::slotCreateResult);
 
-    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &CreateDialog::slotFetchedProjectMetaConfig);
-    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, this, &CreateDialog::slotFetchedPackageMetaConfig);
+    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &MetaConfigEditor::slotFetchedProjectMetaConfig);
+    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, this, &MetaConfigEditor::slotFetchedPackageMetaConfig);
 }
 
-CreateDialog::~CreateDialog()
+MetaConfigEditor::~MetaConfigEditor()
 {
     delete ui;
 }
 
-void CreateDialog::on_buttonBox_accepted()
+void MetaConfigEditor::on_buttonBox_accepted()
 {
     QProgressDialog progress(tr("Creating..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
@@ -116,12 +116,12 @@ void CreateDialog::on_buttonBox_accepted()
     delete xmlWriter;
 }
 
-void CreateDialog::on_buttonBox_rejected()
+void MetaConfigEditor::on_buttonBox_rejected()
 {
     close();
 }
 
-void CreateDialog::slotCreateResult(OBSStatus *obsStatus)
+void MetaConfigEditor::slotCreateResult(OBSStatus *obsStatus)
 {
    qDebug() << __PRETTY_FUNCTION__ << obsStatus->getCode();
    const QString title = tr("Warning");
@@ -137,7 +137,7 @@ void CreateDialog::slotCreateResult(OBSStatus *obsStatus)
 
 }
 
-void CreateDialog::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
+void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
 {
     ui->titleLineEdit->setText(prjMetaConfig->getTitle());
     ui->descriptionTextEdit->setText(prjMetaConfig->getDescription());
@@ -145,7 +145,7 @@ void CreateDialog::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
     delete prjMetaConfig;
 }
 
-void CreateDialog::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
+void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
 {
     ui->titleLineEdit->setText(pkgMetaConfig->getTitle());
     ui->descriptionTextEdit->setText(pkgMetaConfig->getDescription());
@@ -154,7 +154,7 @@ void CreateDialog::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
     delete pkgMetaConfig;
 }
 
-void CreateDialog::on_projectLineEdit_textChanged(const QString &project)
+void MetaConfigEditor::on_projectLineEdit_textChanged(const QString &project)
 {
     bool enable = false;
 
@@ -172,7 +172,7 @@ void CreateDialog::on_projectLineEdit_textChanged(const QString &project)
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
 }
 
-void CreateDialog::on_packageLineEdit_textChanged(const QString &package)
+void MetaConfigEditor::on_packageLineEdit_textChanged(const QString &package)
 {
     bool enable = (!ui->projectLineEdit->text().isEmpty() && !package.isEmpty());
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
