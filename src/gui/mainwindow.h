@@ -101,6 +101,9 @@ private:
     bool deletePackageConnected;
     bool deleteFileConnected;
 
+    QAction *actionProperties_project;
+    QAction *actionProperties_package;
+
     BrowserFilter *browserFilter;
     QAction *actionFilter;
     QAction *actionFilterSpacer;

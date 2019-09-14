@@ -479,6 +479,15 @@ void MainWindow::createActions()
     actionDelete_file->setIcon(QIcon::fromTheme("trash-empty"));
     connect(actionDelete_file, &QAction::triggered, browser, &Browser::deleteFile);
 
+    // Properties Action
+    actionProperties_project = new QAction(tr("&Properties"), this);
+    actionProperties_project->setIcon(QIcon::fromTheme("document-properties"));
+    connect(actionProperties_project, &QAction::triggered, browser, &Browser::editProject);
+
+    actionProperties_package = new QAction(tr("&Properties"), this);
+    actionProperties_package->setIcon(QIcon::fromTheme("document-properties"));
+    connect(actionProperties_package, &QAction::triggered, browser, &Browser::editPackage);
+
     // Browser filter actions
     QWidget *filterSpacer = new QWidget(this);
     filterSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -505,6 +514,7 @@ void MainWindow::createActions()
     treeProjectsMenu->addAction(actionNew_project);
     treeProjectsMenu->addAction(action_ReloadProjects);
     treeProjectsMenu->addAction(actionDelete_project);
+    treeProjectsMenu->addAction(actionProperties_project);
 
     QMenu *treePackagesMenu = new QMenu(this);
     treePackagesMenu->addAction(actionNew_package);
@@ -513,6 +523,7 @@ void MainWindow::createActions()
     treePackagesMenu->addAction(action_copyPackage);
     treePackagesMenu->addAction(action_ReloadPackages);
     treePackagesMenu->addAction(actionDelete_package);
+    treePackagesMenu->addAction(actionProperties_package);
 
     QMenu *treeFilesMenu = new QMenu(this);
     treeFilesMenu->addAction(ui->action_Upload_file);
