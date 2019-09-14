@@ -37,6 +37,7 @@
 #include "obsabout.h"
 #include "obsperson.h"
 #include "obsprjmetaconfig.h"
+#include "obspkgmetaconfig.h"
 
 class OBSXmlReader : public QObject
 {
@@ -48,6 +49,7 @@ public:
     void setPackageRow(int row);
     void parseProjectList(const QString &userHome, const QString &data);
     void parsePrjMetaConfig(const QString &data);
+    void parsePkgMetaConfig(const QString &data);
     void parseBuildStatus(const QString &data);
     OBSStatus *parseNotFoundStatus(const QString &data);
     void parsePackageList(const QString &data);
@@ -85,6 +87,7 @@ private:
     void parseCollection(QXmlStreamReader &xml);
     OBSRequest *parseRequest(QXmlStreamReader &xml);
     QStringList parseList(QXmlStreamReader &xml);
+    void parseMetaConfig(QXmlStreamReader &xml, OBSMetaConfig *metaConfig);
     QHash<QString, bool> parseRepositoryFlags(QXmlStreamReader &xml);
     QString requestNumber;
 
@@ -113,6 +116,7 @@ signals:
     void finishedParsingProjectList(QStringList);
     void projectFetched(const QString &project);
     void finishedParsingProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
+    void finishedParsingPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
     void finishedParsingPackageList(QStringList);
     void finishedParsingFile(OBSFile*);
     void finishedParsingFileList();

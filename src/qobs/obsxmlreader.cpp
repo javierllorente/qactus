@@ -107,47 +107,12 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
         xml.readNext();
 
         if (xml.name()=="project" && xml.isStartElement()) {
-            QXmlStreamAttributes attrib = xml.attributes();
             prjMetaConfig = new OBSPrjMetaConfig();
+            QXmlStreamAttributes attrib = xml.attributes();
             prjMetaConfig->setName(attrib.value("name").toString());
         }
 
-        if (xml.name()=="title" && xml.isStartElement()) {
-            prjMetaConfig->setTitle(xml.readElementText());
-        }
-
-        if (xml.name()=="description" && xml.isStartElement()) {
-            prjMetaConfig->setDescription(xml.readElementText());
-        }
-
-        if (xml.name()=="person" && xml.isStartElement()) {
-            QXmlStreamAttributes attrib = xml.attributes();
-            prjMetaConfig->insertPerson(attrib.value("userid").toString(),
-                                        attrib.value("role").toString());
-        }
-
-        if (xml.name()=="group" && xml.isStartElement()) {
-            QXmlStreamAttributes attrib = xml.attributes();
-            prjMetaConfig->insertGroup(attrib.value("groupid").toString(),
-                                       attrib.value("role").toString());
-        }
-
-        if (xml.name()=="build" && xml.isStartElement()) {
-            prjMetaConfig->setBuildFlag(parseRepositoryFlags(xml));
-        }
-
-        if (xml.name()=="publish" && xml.isStartElement()) {
-            prjMetaConfig->setPublishFlag(parseRepositoryFlags(xml));
-        }
-
-        if (xml.name()=="useforbuild" && xml.isStartElement()) {
-            prjMetaConfig->setUseForBuildFlag(parseRepositoryFlags(xml));
-        }
-
-        if (xml.name()=="debuginfo" && xml.isStartElement()) {
-            prjMetaConfig->setDebugInfoFlag(parseRepositoryFlags(xml));
-        }
-
+        parseMetaConfig(xml, prjMetaConfig);
 
         if (xml.name()=="repository" && xml.isStartElement()) {
             repository = new OBSRepository();
@@ -180,6 +145,36 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
     }
 
     emit finishedParsingProjectMetaConfig(prjMetaConfig);
+}
+
+void OBSXmlReader::parsePkgMetaConfig(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSPkgMetaConfig *pkgMetaConfig = nullptr;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+
+        if (xml.name()=="package" && xml.isStartElement()) {
+            pkgMetaConfig = new OBSPkgMetaConfig();
+            QXmlStreamAttributes attrib = xml.attributes();
+            pkgMetaConfig->setName(attrib.value("name").toString());
+        }
+
+        parseMetaConfig(xml, pkgMetaConfig);
+
+        if (xml.name()=="url" && xml.isStartElement()) {
+            pkgMetaConfig->setUrl(QUrl(xml.readElementText()));
+        }
+
+    }
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingPackageMetaConfig(pkgMetaConfig);
 }
 
 void OBSXmlReader::parsePackageList(const QString &data)
@@ -797,6 +792,45 @@ QStringList OBSXmlReader::parseList(QXmlStreamReader &xml)
     }
 
     return list;
+}
+
+void OBSXmlReader::parseMetaConfig(QXmlStreamReader &xml, OBSMetaConfig *metaConfig)
+{
+    if (xml.name()=="title" && xml.isStartElement()) {
+        metaConfig->setTitle(xml.readElementText());
+    }
+
+    if (xml.name()=="description" && xml.isStartElement()) {
+        metaConfig->setDescription(xml.readElementText());
+    }
+
+    if (xml.name()=="person" && xml.isStartElement()) {
+        QXmlStreamAttributes attrib = xml.attributes();
+        metaConfig->insertPerson(attrib.value("userid").toString(),
+                                 attrib.value("role").toString());
+    }
+
+    if (xml.name()=="group" && xml.isStartElement()) {
+        QXmlStreamAttributes attrib = xml.attributes();
+        metaConfig->insertGroup(attrib.value("groupid").toString(),
+                                attrib.value("role").toString());
+    }
+
+    if (xml.name()=="build" && xml.isStartElement()) {
+        metaConfig->setBuildFlag(parseRepositoryFlags(xml));
+    }
+
+    if (xml.name()=="publish" && xml.isStartElement()) {
+        metaConfig->setPublishFlag(parseRepositoryFlags(xml));
+    }
+
+    if (xml.name()=="useforbuild" && xml.isStartElement()) {
+        metaConfig->setUseForBuildFlag(parseRepositoryFlags(xml));
+    }
+
+    if (xml.name()=="debuginfo" && xml.isStartElement()) {
+        metaConfig->setDebugInfoFlag(parseRepositoryFlags(xml));
+    }
 }
 
 QHash<QString, bool> OBSXmlReader::parseRepositoryFlags(QXmlStreamReader &xml)
