@@ -27,20 +27,27 @@
 #include <QPushButton>
 #include "obs.h"
 #include "obsxmlwriter.h"
+#include "obsprjmetaconfig.h"
+#include "obspkgmetaconfig.h"
 
 namespace Ui {
 class CreateDialog;
 }
+
+enum class Mode {
+    CreateProject,
+    EditProject,
+    CreatePackage,
+    EditPackage
+};
 
 class CreateDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit CreateDialog(QWidget *parent = nullptr, OBS *obs = nullptr);
+    explicit CreateDialog(QWidget *parent = nullptr, OBS *obs = nullptr, const QString &project = QString(), const QString &package = QString(), Mode mode = Mode::EditPackage);
     ~CreateDialog();
-    void setProjectMode(bool projectMode);
-    void setProject(const QString &project);
 
 signals:
     void createProject(QString, QByteArray);
@@ -50,15 +57,17 @@ private slots:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
     void slotCreateResult(OBSStatus *obsStatus);
-
+    void slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
+    void slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
     void on_projectLineEdit_textChanged(const QString &project);
-
     void on_packageLineEdit_textChanged(const QString &package);
 
 private:
     Ui::CreateDialog *ui;
     OBS *m_obs;
-    bool projectMode;
+    QString m_project;
+    QString m_package;
+    Mode m_mode;
 };
 
 #endif // CREATEDIALOG_H

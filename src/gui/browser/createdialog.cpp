@@ -21,15 +21,53 @@
 #include "createdialog.h"
 #include "ui_createdialog.h"
 
-CreateDialog::CreateDialog(QWidget *parent, OBS *obs) :
+CreateDialog::CreateDialog(QWidget *parent, OBS *obs, const QString &project, const QString &package, Mode mode) :
     QDialog(parent),
     ui(new Ui::CreateDialog),
-    m_obs(obs)
+    m_obs(obs),
+    m_project(project),
+    m_package(package),
+    m_mode(mode)
 {
     ui->setupUi(this);
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-    projectMode = false;
-    setWindowTitle(tr("Create package"));
+    QString windowTitle;
+
+    switch (m_mode) {
+    case Mode::CreateProject:
+        windowTitle = tr("Create project");
+        ui->projectLineEdit->setText(project + ":");
+        ui->packageLabel->hide();
+        ui->packageLineEdit->hide();
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+        break;
+    case Mode::EditProject:
+        windowTitle = tr("Edit project");
+        ui->projectLineEdit->setText(m_project);
+        ui->projectLineEdit->setDisabled(true);
+        ui->packageLabel->hide();
+        ui->packageLineEdit->hide();
+        ui->titleLineEdit->setFocus();
+        m_obs->getProjectMetaConfig(m_project);
+        break;
+    case Mode::CreatePackage:
+        windowTitle = tr("Create package");
+        ui->projectLineEdit->setText(m_project);
+        ui->packageLineEdit->setFocus();
+        ui->projectLineEdit->setDisabled(true);
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+        break;
+    case Mode::EditPackage:
+        windowTitle = tr("Edit package");
+        ui->projectLineEdit->setText(m_project);
+        ui->projectLineEdit->setDisabled(true);
+        ui->packageLineEdit->setText("");
+        ui->packageLineEdit->setDisabled(true);
+        ui->titleLineEdit->setFocus();
+        m_obs->getPackageMetaConfig(m_project, m_package);
+        break;
+    }
+
+    setWindowTitle(windowTitle);
 
     connect(this, &CreateDialog::createProject, m_obs, &OBS::createProject);
     connect(this, &CreateDialog::createPackage, m_obs, &OBS::createPackage);
@@ -37,35 +75,14 @@ CreateDialog::CreateDialog(QWidget *parent, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, &CreateDialog::slotCreateResult);
     connect(m_obs, &OBS::cannotCreateProject, this, &CreateDialog::slotCreateResult);
     connect(m_obs, &OBS::cannotCreatePackage, this, &CreateDialog::slotCreateResult);
+
+    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &CreateDialog::slotFetchedProjectMetaConfig);
+    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, this, &CreateDialog::slotFetchedPackageMetaConfig);
 }
 
 CreateDialog::~CreateDialog()
 {
     delete ui;
-}
-
-void CreateDialog::setProjectMode(bool projectMode)
-{
-    this->projectMode = projectMode;
-    if (projectMode) {
-        setWindowTitle(tr("Create project"));
-        ui->packageLabel->hide();
-        ui->packageLineEdit->hide();
-    }
-}
-
-void CreateDialog::setProject(const QString &project)
-{
-    QString projectStr = project;
-    if (projectMode) {
-        projectStr += ":";
-    }
-    ui->projectLineEdit->setText(projectStr);
-
-   if (!projectMode && !project.isEmpty()) {
-       ui->packageLineEdit->setFocus();
-       ui->projectLineEdit->setDisabled(true);
-   }
 }
 
 void CreateDialog::on_buttonBox_accepted()
@@ -76,19 +93,24 @@ void CreateDialog::on_buttonBox_accepted()
     OBSXmlWriter *xmlWriter = new OBSXmlWriter(this);
     QByteArray data;
 
-    if (projectMode) {
+    switch (m_mode) {
+    case Mode::CreateProject:
+    case Mode::EditProject:
         data = xmlWriter->createProjectMeta(ui->projectLineEdit->text(),
-                                     ui->titleLineEdit->text(),
-                                     ui->descriptionTextEdit->toPlainText(),
-                                     m_obs->getUsername());
+                                            ui->titleLineEdit->text(),
+                                            ui->descriptionTextEdit->toPlainText(),
+                                            m_obs->getUsername());
         emit createProject(ui->projectLineEdit->text(), data);
-    } else {
+        break;
+    case Mode::CreatePackage:
+    case Mode::EditPackage:
         data = xmlWriter->createPackageMeta(ui->projectLineEdit->text(),
-                                     ui->packageLineEdit->text(),
-                                     ui->titleLineEdit->text(),
-                                     ui->descriptionTextEdit->toPlainText(),
-                                     m_obs->getUsername());
+                                            ui->packageLineEdit->text(),
+                                            ui->titleLineEdit->text(),
+                                            ui->descriptionTextEdit->toPlainText(),
+                                            m_obs->getUsername());
         emit createPackage(ui->projectLineEdit->text(), ui->packageLineEdit->text(), data);
+        break;
     }
 
     delete xmlWriter;
@@ -115,10 +137,38 @@ void CreateDialog::slotCreateResult(OBSStatus *obsStatus)
 
 }
 
+void CreateDialog::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
+{
+    ui->titleLineEdit->setText(prjMetaConfig->getTitle());
+    ui->descriptionTextEdit->setText(prjMetaConfig->getDescription());
+
+    delete prjMetaConfig;
+}
+
+void CreateDialog::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
+{
+    ui->titleLineEdit->setText(pkgMetaConfig->getTitle());
+    ui->descriptionTextEdit->setText(pkgMetaConfig->getDescription());
+    ui->packageLineEdit->setText(pkgMetaConfig->getName());
+
+    delete pkgMetaConfig;
+}
+
 void CreateDialog::on_projectLineEdit_textChanged(const QString &project)
 {
-    bool enable = (projectMode && !project.isEmpty()) ||
-            (!projectMode && !project.isEmpty() && !ui->packageLineEdit->text().isEmpty());
+    bool enable = false;
+
+    switch (m_mode) {
+    case Mode::CreateProject:
+    case Mode::EditProject:
+        enable = !project.isEmpty();
+        break;
+    case Mode::CreatePackage:
+    case Mode::EditPackage:
+        enable = !project.isEmpty() && !ui->packageLineEdit->text().isEmpty();
+        break;
+    }
+
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
 }
 
