@@ -192,7 +192,7 @@ void Browser::newProject()
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", Mode::CreateProject);
+    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", MCEMode::CreateProject);
     metaConfigEditor->exec();
     delete metaConfigEditor;
 }
@@ -203,7 +203,7 @@ void Browser::newPackage()
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", Mode::CreatePackage);
+    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", MCEMode::CreatePackage);
     metaConfigEditor->exec();
     delete metaConfigEditor;
 }
@@ -214,7 +214,7 @@ void Browser::editProject()
 
     QString project = ui->treeProjects->getCurrentProject();
 
-    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", Mode::EditProject);
+    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, "", MCEMode::EditProject);
     metaConfigEditor->exec();
     delete metaConfigEditor;
 }
@@ -226,7 +226,7 @@ void Browser::editPackage()
     QString project = ui->treeProjects->getCurrentProject();
     QString package = ui->treePackages->getCurrentPackage();
 
-    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, package, Mode::EditPackage);
+    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, project, package, MCEMode::EditPackage);
     metaConfigEditor->exec();
     delete metaConfigEditor;
 }

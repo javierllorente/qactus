@@ -34,7 +34,7 @@ namespace Ui {
 class MetaConfigEditor;
 }
 
-enum class Mode {
+enum class MCEMode {
     CreateProject,
     EditProject,
     CreatePackage,
@@ -46,7 +46,7 @@ class MetaConfigEditor : public QDialog
     Q_OBJECT
 
 public:
-    explicit MetaConfigEditor(QWidget *parent = nullptr, OBS *obs = nullptr, const QString &project = QString(), const QString &package = QString(), Mode mode = Mode::EditPackage);
+    explicit MetaConfigEditor(QWidget *parent = nullptr, OBS *obs = nullptr, const QString &project = QString(), const QString &package = QString(), MCEMode mode = MCEMode::EditPackage);
     ~MetaConfigEditor();
 
 signals:
@@ -67,7 +67,7 @@ private:
     OBS *m_obs;
     QString m_project;
     QString m_package;
-    Mode m_mode;
+    MCEMode m_mode;
 };
 
 #endif // METACONFIGEDITOR_H

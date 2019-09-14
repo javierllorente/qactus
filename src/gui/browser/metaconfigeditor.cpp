@@ -21,7 +21,7 @@
 #include "metaconfigeditor.h"
 #include "ui_metaconfigeditor.h"
 
-MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, Mode mode) :
+MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, MCEMode mode) :
     QDialog(parent),
     ui(new Ui::MetaConfigEditor),
     m_obs(obs),
@@ -33,14 +33,14 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     QString windowTitle;
 
     switch (m_mode) {
-    case Mode::CreateProject:
+    case MCEMode::CreateProject:
         windowTitle = tr("Create project");
         ui->projectLineEdit->setText(project + ":");
         ui->packageLabel->hide();
         ui->packageLineEdit->hide();
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
-    case Mode::EditProject:
+    case MCEMode::EditProject:
         windowTitle = tr("Edit project");
         ui->projectLineEdit->setText(m_project);
         ui->projectLineEdit->setDisabled(true);
@@ -49,14 +49,14 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         ui->titleLineEdit->setFocus();
         m_obs->getProjectMetaConfig(m_project);
         break;
-    case Mode::CreatePackage:
+    case MCEMode::CreatePackage:
         windowTitle = tr("Create package");
         ui->projectLineEdit->setText(m_project);
         ui->packageLineEdit->setFocus();
         ui->projectLineEdit->setDisabled(true);
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
-    case Mode::EditPackage:
+    case MCEMode::EditPackage:
         windowTitle = tr("Edit package");
         ui->projectLineEdit->setText(m_project);
         ui->projectLineEdit->setDisabled(true);
@@ -94,16 +94,16 @@ void MetaConfigEditor::on_buttonBox_accepted()
     QByteArray data;
 
     switch (m_mode) {
-    case Mode::CreateProject:
-    case Mode::EditProject:
+    case MCEMode::CreateProject:
+    case MCEMode::EditProject:
         data = xmlWriter->createProjectMeta(ui->projectLineEdit->text(),
                                             ui->titleLineEdit->text(),
                                             ui->descriptionTextEdit->toPlainText(),
                                             m_obs->getUsername());
         emit createProject(ui->projectLineEdit->text(), data);
         break;
-    case Mode::CreatePackage:
-    case Mode::EditPackage:
+    case MCEMode::CreatePackage:
+    case MCEMode::EditPackage:
         data = xmlWriter->createPackageMeta(ui->projectLineEdit->text(),
                                             ui->packageLineEdit->text(),
                                             ui->titleLineEdit->text(),
@@ -159,12 +159,12 @@ void MetaConfigEditor::on_projectLineEdit_textChanged(const QString &project)
     bool enable = false;
 
     switch (m_mode) {
-    case Mode::CreateProject:
-    case Mode::EditProject:
+    case MCEMode::CreateProject:
+    case MCEMode::EditProject:
         enable = !project.isEmpty();
         break;
-    case Mode::CreatePackage:
-    case Mode::EditPackage:
+    case MCEMode::CreatePackage:
+    case MCEMode::EditPackage:
         enable = !project.isEmpty() && !ui->packageLineEdit->text().isEmpty();
         break;
     }
