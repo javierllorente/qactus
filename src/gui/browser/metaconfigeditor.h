@@ -25,6 +25,7 @@
 #include <QProgressDialog>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTreeWidget>
 #include "obs.h"
 #include "obsxmlwriter.h"
 #include "obsprjmetaconfig.h"
@@ -64,6 +65,9 @@ private slots:
 
 private:
     Ui::MetaConfigEditor *ui;
+    void fillTabs(OBSMetaConfig *metaConfig);
+    QTreeWidget *createRepositoryTable(const QString &header, const QHash<QString, bool> &flag);
+    QTreeWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
     OBS *m_obs;
     QString m_project;
     QString m_package;

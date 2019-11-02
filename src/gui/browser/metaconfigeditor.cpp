@@ -20,6 +20,8 @@
 
 #include "metaconfigeditor.h"
 #include "ui_metaconfigeditor.h"
+#include <QTreeWidget>
+#include <QHeaderView>
 
 MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, MCEMode mode) :
     QDialog(parent),
@@ -134,23 +136,38 @@ void MetaConfigEditor::slotCreateResult(OBSStatus *obsStatus)
    }
    delete obsStatus;
    obsStatus = nullptr;
-
 }
 
 void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
 {
-    ui->titleLineEdit->setText(prjMetaConfig->getTitle());
-    ui->descriptionTextEdit->setText(prjMetaConfig->getDescription());
 
+    QTreeWidgetItem *item = nullptr;
+    QTreeWidget *tableRepositories = new QTreeWidget(ui->tabWidget);
+    tableRepositories->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    tableRepositories->setRootIsDecorated(false);
+    QStringList headers = QStringList() << "Repository" << "Arch" << "Path";
+    tableRepositories->setHeaderLabels(headers);
+    ui->tabWidget->insertTab(1, tableRepositories, "Repositories");
+
+    for (auto repository : prjMetaConfig->getRepositories()) {
+        for (auto arch : repository->getArchs()) {
+            item = new QTreeWidgetItem();
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+            item->setText(0, repository->getName());
+            item->setText(1, arch);
+            item->setText(2, repository->getProject() + "/" + repository->getRepository());
+            tableRepositories->addTopLevelItem(item);
+        }
+    }
+
+    fillTabs(prjMetaConfig);
     delete prjMetaConfig;
 }
 
 void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
 {
-    ui->titleLineEdit->setText(pkgMetaConfig->getTitle());
-    ui->descriptionTextEdit->setText(pkgMetaConfig->getDescription());
     ui->packageLineEdit->setText(pkgMetaConfig->getName());
-
+    fillTabs(pkgMetaConfig);
     delete pkgMetaConfig;
 }
 
@@ -176,4 +193,75 @@ void MetaConfigEditor::on_packageLineEdit_textChanged(const QString &package)
 {
     bool enable = (!ui->projectLineEdit->text().isEmpty() && !package.isEmpty());
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
+}
+
+void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
+{
+    ui->titleLineEdit->setText(metaConfig->getTitle());
+    ui->descriptionTextEdit->setText(metaConfig->getDescription());
+
+    QWidget *repositoryFlags = new QWidget();
+    QGridLayout *layoutRepositoryFlags = new QGridLayout();
+    repositoryFlags->setLayout(layoutRepositoryFlags);
+    ui->tabWidget->insertTab(2, repositoryFlags, "Repository flags");
+    layoutRepositoryFlags->addWidget(createRepositoryTable("Build repository", metaConfig->getBuildFlag()));
+    layoutRepositoryFlags->addWidget(createRepositoryTable("DebugInfo repository", metaConfig->getDebugInfoFlag()));
+    layoutRepositoryFlags->addWidget(createRepositoryTable("Publish repository", metaConfig->getPublishFlag()));
+    layoutRepositoryFlags->addWidget(createRepositoryTable("UseForBuild repository", metaConfig->getUseForBuildFlag()));
+
+    ui->tabWidget->insertTab(3, createRoleTable("User", metaConfig->getPersons()), "Users");
+    ui->tabWidget->insertTab(4, createRoleTable("Group", metaConfig->getGroups()), "Groups");
+}
+
+QTreeWidget *MetaConfigEditor::createRepositoryTable(const QString &header, const QHash<QString, bool> &flag)
+{
+    QTreeWidgetItem *item = nullptr;
+    QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
+    treeWidget->setColumnWidth(0, 325);
+    treeWidget->setRootIsDecorated(false);
+    QStringList headersRepositoryFlags = QStringList() << header << "Enabled";
+    treeWidget->setHeaderLabels(headersRepositoryFlags);
+
+    QStringList repositories = flag.keys();
+
+    for (auto repository : repositories) {
+        item = new QTreeWidgetItem();
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        item->setText(0, repository);
+        bool enabled = flag.value(repository);
+        item->setText(1, QVariant(enabled).toString());
+        treeWidget->addTopLevelItem(item);
+    }
+
+    return treeWidget;
+}
+
+QTreeWidget *MetaConfigEditor::createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles)
+{
+    QTreeWidgetItem *item = nullptr;
+    QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
+    treeWidget->setColumnWidth(0, 150);
+    treeWidget->setRootIsDecorated(false);
+    QStringList headersPersons = QStringList() << header << "Role";
+    treeWidget->setHeaderLabels(headersPersons);
+
+    QStringList users = userRoles.keys();
+    QString userAdded;
+
+    for (auto user : users) {
+        QStringList roles = userRoles.values(user);
+
+        if (user!=userAdded) {
+            for (auto role : roles) {
+                item = new QTreeWidgetItem();
+                item->setFlags(item->flags() | Qt::ItemIsEditable);
+                item->setText(0, user);
+                item->setText(1, role);
+                treeWidget->addTopLevelItem(item);
+            }
+            userAdded=user;
+        }
+    }
+    treeWidget->sortItems(1, Qt::AscendingOrder);
+    return treeWidget;
 }
