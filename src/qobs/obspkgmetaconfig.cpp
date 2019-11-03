@@ -30,6 +30,16 @@ OBSPkgMetaConfig::~OBSPkgMetaConfig()
 
 }
 
+QString OBSPkgMetaConfig::getProject() const
+{
+    return project;
+}
+
+void OBSPkgMetaConfig::setProject(const QString &value)
+{
+    project = value;
+}
+
 QUrl OBSPkgMetaConfig::getUrl() const
 {
     return url;
@@ -39,5 +49,3 @@ void OBSPkgMetaConfig::setUrl(const QUrl &value)
 {
     url = value;
 }
-
-

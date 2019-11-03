@@ -32,10 +32,14 @@ public:
     OBSPkgMetaConfig();
     ~OBSPkgMetaConfig();
 
+    QString getProject() const;
+    void setProject(const QString &value);
+
     QUrl getUrl() const;
     void setUrl(const QUrl &value);
 
 private:
+    QString project;
     QUrl url;
 };
 

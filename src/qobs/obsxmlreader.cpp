@@ -159,6 +159,7 @@ void OBSXmlReader::parsePkgMetaConfig(const QString &data)
             pkgMetaConfig = new OBSPkgMetaConfig();
             QXmlStreamAttributes attrib = xml.attributes();
             pkgMetaConfig->setName(attrib.value("name").toString());
+            pkgMetaConfig->setProject(attrib.value("project").toString());
         }
 
         parseMetaConfig(xml, pkgMetaConfig);
