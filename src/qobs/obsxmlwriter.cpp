@@ -85,21 +85,34 @@ void OBSXmlWriter::createWatchListElement(QXmlStreamWriter &xmlWriter, const QSt
     xmlWriter.writeEndElement(); // watchlist
 }
 
-QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const
+void OBSXmlWriter::createUserRoles(QXmlStreamWriter &xmlWriter, const QMultiHash<QString, QString> &userRoles, const QString &type) const
+{
+    xmlWriter.writeEmptyElement("person");
+    QStringList users = userRoles.keys();
+
+    for (auto user : users) {
+        QStringList roles = userRoles.values(user);
+        for (auto role : roles) {
+            xmlWriter.writeAttribute(type, user);
+            xmlWriter.writeAttribute("role", role);
+        }
+    }
+}
+
+QByteArray OBSXmlWriter::createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) const
 {
     QByteArray data;
     QXmlStreamWriter xmlWriter(&data);
     xmlWriter.setAutoFormatting(true);
 
     xmlWriter.writeStartElement("project");
-    xmlWriter.writeAttribute("name", project);
+    xmlWriter.writeAttribute("name", prjMetaConfig->getName());
 
-    xmlWriter.writeTextElement("title", title);
-    xmlWriter.writeTextElement("description", description);
+    xmlWriter.writeTextElement("title", prjMetaConfig->getTitle());
+    xmlWriter.writeTextElement("description", prjMetaConfig->getDescription());
 
-    xmlWriter.writeEmptyElement("person");
-    xmlWriter.writeAttribute("userid", username);
-    xmlWriter.writeAttribute("role", "maintainer");
+    createUserRoles(xmlWriter, prjMetaConfig->getPersons(), "userid");
+    createUserRoles(xmlWriter, prjMetaConfig->getGroups(), "groupid");
 
     // openSUSE Tumbleweed
     OBSRepository *twRepository = new OBSRepository();
@@ -124,22 +137,20 @@ QByteArray OBSXmlWriter::createProjectMeta(const QString &project, const QString
     return data;
 }
 
-QByteArray OBSXmlWriter::createPackageMeta(const QString &project, const QString &package, const QString &title, const QString &description, const QString &username) const
+QByteArray OBSXmlWriter::createPackageMeta(OBSPkgMetaConfig *pkgMetaConfig) const
 {
     QByteArray data;
     QXmlStreamWriter xmlWriter(&data);
     xmlWriter.setAutoFormatting(true);
 
     xmlWriter.writeStartElement("package");
-    xmlWriter.writeAttribute("name", package);
-    xmlWriter.writeAttribute("project", project);
+    xmlWriter.writeAttribute("name", pkgMetaConfig->getName());
+    xmlWriter.writeAttribute("project", pkgMetaConfig->getProject());
 
-    xmlWriter.writeTextElement("title", title);
-    xmlWriter.writeTextElement("description", description);
+    xmlWriter.writeTextElement("title", pkgMetaConfig->getTitle());
+    xmlWriter.writeTextElement("description", pkgMetaConfig->getDescription());
 
-    xmlWriter.writeEmptyElement("person");
-    xmlWriter.writeAttribute("userid", username);
-    xmlWriter.writeAttribute("role", "maintainer");
+    createUserRoles(xmlWriter, pkgMetaConfig->getPersons(), "userid");
 
     xmlWriter.writeEndElement(); // package
 

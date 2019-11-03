@@ -97,22 +97,28 @@ void MetaConfigEditor::on_buttonBox_accepted()
 
     switch (m_mode) {
     case MCEMode::CreateProject:
-    case MCEMode::EditProject:
-        data = xmlWriter->createProjectMeta(ui->projectLineEdit->text(),
-                                            ui->titleLineEdit->text(),
-                                            ui->descriptionTextEdit->toPlainText(),
-                                            m_obs->getUsername());
+    case MCEMode::EditProject: {
+        OBSPrjMetaConfig *prjMetaConfig = new OBSPrjMetaConfig();
+        prjMetaConfig->setName(ui->projectLineEdit->text());
+        prjMetaConfig->setTitle(ui->titleLineEdit->text());
+        prjMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
+        prjMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
+        data = xmlWriter->createProjectMeta(prjMetaConfig);
         emit createProject(ui->projectLineEdit->text(), data);
         break;
+    }
     case MCEMode::CreatePackage:
-    case MCEMode::EditPackage:
-        data = xmlWriter->createPackageMeta(ui->projectLineEdit->text(),
-                                            ui->packageLineEdit->text(),
-                                            ui->titleLineEdit->text(),
-                                            ui->descriptionTextEdit->toPlainText(),
-                                            m_obs->getUsername());
+    case MCEMode::EditPackage: {
+        OBSPkgMetaConfig *pkgMetaConfig = new OBSPkgMetaConfig();
+        pkgMetaConfig->setName(ui->packageLineEdit->text());
+        pkgMetaConfig->setProject(ui->projectLineEdit->text());
+        pkgMetaConfig->setTitle(ui->titleLineEdit->text());
+        pkgMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
+        pkgMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
+        data = xmlWriter->createPackageMeta(pkgMetaConfig);
         emit createPackage(ui->projectLineEdit->text(), ui->packageLineEdit->text(), data);
         break;
+    }
     }
 
     delete xmlWriter;

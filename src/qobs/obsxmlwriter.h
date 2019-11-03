@@ -26,6 +26,8 @@
 #include "obsrequest.h"
 #include "obsrepository.h"
 #include "obsperson.h"
+#include "obsprjmetaconfig.h"
+#include "obspkgmetaconfig.h"
 
 class OBSXmlWriter : public QObject
 {
@@ -33,13 +35,14 @@ class OBSXmlWriter : public QObject
 public:
     explicit OBSXmlWriter(QObject *parent = nullptr);
     QByteArray createRequest(OBSRequest *obsRequest);
-    QByteArray createProjectMeta(const QString &project, const QString &title, const QString &description, const QString &username) const;
-    QByteArray createPackageMeta(const QString &project, const QString &package, const QString &title, const QString &description, const QString &username) const;
+    QByteArray createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) const;
+    QByteArray createPackageMeta(OBSPkgMetaConfig *pkgMetaConfig) const;
     QByteArray createPerson(OBSPerson *obsPerson);
 
 private:
     void createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepository *repository) const;
     void createWatchListElement(QXmlStreamWriter &xmlWriter, const QStringList &watchList);
+    void createUserRoles(QXmlStreamWriter &xmlWriter, const QMultiHash<QString, QString> &userRoles, const QString &type) const;
 
 signals:
 
