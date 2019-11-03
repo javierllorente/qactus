@@ -158,7 +158,7 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
 
     QTreeWidgetItem *item = nullptr;
     QTreeWidget *tableRepositories = new QTreeWidget(ui->tabWidget);
-    tableRepositories->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    tableRepositories->setColumnWidth(0, 180);
     tableRepositories->setRootIsDecorated(false);
     QStringList headers = QStringList() << "Repository" << "Arch" << "Path";
     tableRepositories->setHeaderLabels(headers);
