@@ -114,23 +114,10 @@ QByteArray OBSXmlWriter::createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) cons
     createUserRoles(xmlWriter, prjMetaConfig->getPersons(), "userid");
     createUserRoles(xmlWriter, prjMetaConfig->getGroups(), "groupid");
 
-    // openSUSE Tumbleweed
-    OBSRepository *twRepository = new OBSRepository();
-    twRepository->setName("openSUSE_Tumbleweed");
-    twRepository->setProject("openSUSE:Factory");
-    twRepository->setRepository("snapshot");
-    twRepository->appendArch("x86_64");
-    createRepositoryElement(xmlWriter, twRepository);
-    delete twRepository;
 
-    // openSUSE Leap   
-    OBSRepository *leapRepository = new OBSRepository();
-    leapRepository->setName("openSUSE_Current");
-    leapRepository->setProject("openSUSE:Current");
-    leapRepository->setRepository("standard");
-    leapRepository->appendArch("x86_64");
-    createRepositoryElement(xmlWriter, leapRepository);
-    delete leapRepository;
+    for (auto repository : prjMetaConfig->getRepositories()) {
+        createRepositoryElement(xmlWriter, repository);
+    }
 
     xmlWriter.writeEndElement(); // project
 

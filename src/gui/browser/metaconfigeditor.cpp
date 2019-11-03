@@ -103,6 +103,15 @@ void MetaConfigEditor::on_buttonBox_accepted()
         prjMetaConfig->setTitle(ui->titleLineEdit->text());
         prjMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
         prjMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
+
+        // openSUSE Tumbleweed
+        OBSRepository *twRepository = new OBSRepository("openSUSE_Tumbleweed", "openSUSE:Factory", "snapshot", "x86_64");
+        prjMetaConfig->appendRepository(twRepository);
+
+        // openSUSE Leap
+        OBSRepository *leapRepository = new OBSRepository("openSUSE_Current", "openSUSE:Current", "standard", "x86_64");
+        prjMetaConfig->appendRepository(leapRepository);
+
         data = xmlWriter->createProjectMeta(prjMetaConfig);
         emit createProject(ui->projectLineEdit->text(), data);
         break;
