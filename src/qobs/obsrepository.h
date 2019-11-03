@@ -28,6 +28,8 @@ class OBSRepository
 {
 public:
     OBSRepository();
+    OBSRepository(const QString &name, const QString &project, const QString &repository, const QStringList &archs);
+    OBSRepository(const QString &name, const QString &project, const QString &repository, const QString &arch);
 
     QString getName() const;
     void setName(const QString &value);

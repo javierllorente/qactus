@@ -25,6 +25,22 @@ OBSRepository::OBSRepository()
 
 }
 
+OBSRepository::OBSRepository(const QString &name, const QString &project, const QString &repository, const QStringList &archs)
+{
+    this->name = name;
+    this->project = project;
+    this->repository = repository;
+    this->archs = archs;
+}
+
+OBSRepository::OBSRepository(const QString &name, const QString &project, const QString &repository, const QString &arch)
+{
+    this->name = name;
+    this->project = project;
+    this->repository = repository;
+    archs.append(arch);
+}
+
 QString OBSRepository::getName() const
 {
     return name;
