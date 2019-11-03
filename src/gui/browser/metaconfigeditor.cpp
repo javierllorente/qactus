@@ -160,6 +160,7 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
     QTreeWidget *tableRepositories = new QTreeWidget(ui->tabWidget);
     tableRepositories->setColumnWidth(0, 180);
     tableRepositories->setRootIsDecorated(false);
+    tableRepositories->setAlternatingRowColors(true);
     QStringList headers = QStringList() << "Repository" << "Arch" << "Path";
     tableRepositories->setHeaderLabels(headers);
     ui->tabWidget->insertTab(1, tableRepositories, "Repositories");
@@ -257,6 +258,7 @@ QTreeWidget *MetaConfigEditor::createRoleTable(const QString &header, const QMul
     QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
     treeWidget->setColumnWidth(0, 150);
     treeWidget->setRootIsDecorated(false);
+    treeWidget->setAlternatingRowColors(true);
     QStringList headersPersons = QStringList() << header << "Role";
     treeWidget->setHeaderLabels(headersPersons);
 
