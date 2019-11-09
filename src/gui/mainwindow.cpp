@@ -51,6 +51,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupProjectActions);
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupPackageActions);
     connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupFileActions);
+    connect(browser, &Browser::finishedLoadingProjects, [this](){
+        newButton->setEnabled(true);
+        ui->action_Home->setEnabled(true);
+        bookmarkButton->setEnabled(true);
+    });
 
     connect(ui->actionChange_request_state, &QAction::triggered, requestBox, &RequestBox::changeRequestState);
     connect(requestBox, &RequestBox::descriptionFetched, this, [=](){
@@ -65,7 +70,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
             this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
-
     connect(obs, SIGNAL(finishedParsingAbout(OBSAbout*)), this, SLOT(slotAbout(OBSAbout*)));
 
     ui->stackedWidget->addWidget(browser);
@@ -203,9 +207,6 @@ void MainWindow::isAuthenticated(bool authenticated)
     }
 
     ui->actionAPI_information->setEnabled(authenticated);
-    newButton->setEnabled(authenticated);
-    ui->action_Home->setEnabled(authenticated);
-    bookmarkButton->setEnabled(authenticated);
 }
 
 void MainWindow::setupProjectActions()

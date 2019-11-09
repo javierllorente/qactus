@@ -133,6 +133,7 @@ void Browser::addProjectList(const QStringList &projectList)
     ui->treeProjects->addProjectList(projectList);
 
     emit toggleBookmarkActions("");
+    emit finishedLoadingProjects();
     emit updateStatusBar(tr("Done"), true);
 }
 

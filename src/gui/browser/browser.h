@@ -119,6 +119,7 @@ signals:
     void getPackages(const QModelIndex &project);
     void updateStatusBar(QString message, bool progressBarHidden);
     void showTrayMessage(const QString &title, const QString &message);
+    void finishedLoadingProjects();
     void toggleBookmarkActions(const QString &project);
 };
 
