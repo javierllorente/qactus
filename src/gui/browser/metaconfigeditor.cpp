@@ -22,6 +22,7 @@
 #include "ui_metaconfigeditor.h"
 #include <QTreeWidget>
 #include <QHeaderView>
+#include <QTimer>
 
 MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, MCEMode mode) :
     QDialog(parent),
@@ -40,6 +41,10 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     case MCEMode::CreateProject:
         windowTitle = tr("Create project");
         ui->projectLineEdit->setText(project + ":");
+        ui->projectLineEdit->setFocus(); // setFocus() selects text!
+        QTimer::singleShot(0, ui->projectLineEdit, [this](){
+            ui->projectLineEdit->deselect();
+        });
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
     case MCEMode::EditProject:
