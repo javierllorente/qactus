@@ -30,6 +30,7 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     m_project(project),
     m_package(package),
     m_mode(mode),
+    packageLineEdit(nullptr),
     urlLineEdit(nullptr)
 {
     ui->setupUi(this);
@@ -39,23 +40,19 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     case MCEMode::CreateProject:
         windowTitle = tr("Create project");
         ui->projectLineEdit->setText(project + ":");
-        ui->packageLabel->hide();
-        ui->packageLineEdit->hide();
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
     case MCEMode::EditProject:
         windowTitle = tr("Edit project");
         ui->projectLineEdit->setText(m_project);
         ui->projectLineEdit->setDisabled(true);
-        ui->packageLabel->hide();
-        ui->packageLineEdit->hide();
         ui->titleLineEdit->setFocus();
         m_obs->getProjectMetaConfig(m_project);
         break;
     case MCEMode::CreatePackage:
         windowTitle = tr("Create package");
         ui->projectLineEdit->setText(m_project);
-        ui->packageLineEdit->setFocus();
+        packageLineEdit->setFocus();
         ui->projectLineEdit->setDisabled(true);
         createUrlField();
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -64,8 +61,8 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         windowTitle = tr("Edit package");
         ui->projectLineEdit->setText(m_project);
         ui->projectLineEdit->setDisabled(true);
-        ui->packageLineEdit->setText("");
-        ui->packageLineEdit->setDisabled(true);
+        packageLineEdit->setText("");
+        packageLineEdit->setDisabled(true);
         ui->titleLineEdit->setFocus();
         createUrlField();
         m_obs->getPackageMetaConfig(m_project, m_package);
@@ -122,14 +119,14 @@ void MetaConfigEditor::on_buttonBox_accepted()
     case MCEMode::CreatePackage:
     case MCEMode::EditPackage: {
         OBSPkgMetaConfig *pkgMetaConfig = new OBSPkgMetaConfig();
-        pkgMetaConfig->setName(ui->packageLineEdit->text());
+        pkgMetaConfig->setName(packageLineEdit->text());
         pkgMetaConfig->setProject(ui->projectLineEdit->text());
         pkgMetaConfig->setTitle(ui->titleLineEdit->text());
         pkgMetaConfig->setUrl(QUrl(urlLineEdit->text()));
         pkgMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
         pkgMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
         data = xmlWriter->createPackageMeta(pkgMetaConfig);
-        emit createPackage(ui->projectLineEdit->text(), ui->packageLineEdit->text(), data);
+        emit createPackage(ui->projectLineEdit->text(), packageLineEdit->text(), data);
         break;
     }
     }
@@ -186,7 +183,7 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
 
 void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
 {
-    ui->packageLineEdit->setText(pkgMetaConfig->getName());
+    packageLineEdit->setText(pkgMetaConfig->getName());
     urlLineEdit->setText(pkgMetaConfig->getUrl().toString());
     fillTabs(pkgMetaConfig);
     delete pkgMetaConfig;
@@ -203,7 +200,8 @@ void MetaConfigEditor::on_projectLineEdit_textChanged(const QString &project)
         break;
     case MCEMode::CreatePackage:
     case MCEMode::EditPackage:
-        enable = !project.isEmpty() && !ui->packageLineEdit->text().isEmpty();
+        createPackageField();
+        enable = !project.isEmpty() && !packageLineEdit->text().isEmpty();
         break;
     }
 
@@ -286,6 +284,13 @@ QTreeWidget *MetaConfigEditor::createRoleTable(const QString &header, const QMul
     }
     treeWidget->sortItems(1, Qt::AscendingOrder);
     return treeWidget;
+}
+
+void MetaConfigEditor::createPackageField()
+{
+    packageLineEdit = new QLineEdit(ui->tabGeneral);
+    QLabel *packageLabel = new QLabel(tr("Package:"), ui->tabGeneral);
+    ui->layoutGeneral->insertRow(3, packageLabel, packageLineEdit);
 }
 
 void MetaConfigEditor::createUrlField()

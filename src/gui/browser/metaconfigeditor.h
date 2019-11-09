@@ -68,11 +68,13 @@ private:
     void fillTabs(OBSMetaConfig *metaConfig);
     QTreeWidget *createRepositoryTable(const QString &header, const QHash<QString, bool> &flag);
     QTreeWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
+    void createPackageField();
     void createUrlField();
     OBS *m_obs;
     QString m_project;
     QString m_package;
     MCEMode m_mode;
+    QLineEdit *packageLineEdit;
     QLineEdit *urlLineEdit;
 };
 
