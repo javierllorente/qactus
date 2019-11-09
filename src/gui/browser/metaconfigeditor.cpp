@@ -29,7 +29,8 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     m_obs(obs),
     m_project(project),
     m_package(package),
-    m_mode(mode)
+    m_mode(mode),
+    urlLineEdit(nullptr)
 {
     ui->setupUi(this);
     QString windowTitle;
@@ -56,6 +57,7 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         ui->projectLineEdit->setText(m_project);
         ui->packageLineEdit->setFocus();
         ui->projectLineEdit->setDisabled(true);
+        createUrlField();
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
     case MCEMode::EditPackage:
@@ -65,6 +67,7 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         ui->packageLineEdit->setText("");
         ui->packageLineEdit->setDisabled(true);
         ui->titleLineEdit->setFocus();
+        createUrlField();
         m_obs->getPackageMetaConfig(m_project, m_package);
         break;
     }
@@ -122,6 +125,7 @@ void MetaConfigEditor::on_buttonBox_accepted()
         pkgMetaConfig->setName(ui->packageLineEdit->text());
         pkgMetaConfig->setProject(ui->projectLineEdit->text());
         pkgMetaConfig->setTitle(ui->titleLineEdit->text());
+        pkgMetaConfig->setUrl(QUrl(urlLineEdit->text()));
         pkgMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
         pkgMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
         data = xmlWriter->createPackageMeta(pkgMetaConfig);
@@ -183,6 +187,7 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
 void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
 {
     ui->packageLineEdit->setText(pkgMetaConfig->getName());
+    urlLineEdit->setText(pkgMetaConfig->getUrl().toString());
     fillTabs(pkgMetaConfig);
     delete pkgMetaConfig;
 }
@@ -281,4 +286,11 @@ QTreeWidget *MetaConfigEditor::createRoleTable(const QString &header, const QMul
     }
     treeWidget->sortItems(1, Qt::AscendingOrder);
     return treeWidget;
+}
+
+void MetaConfigEditor::createUrlField()
+{
+    urlLineEdit = new QLineEdit(ui->tabGeneral);
+    QLabel *urlLabel = new QLabel(tr("URL:"), ui->tabGeneral);
+    ui->layoutGeneral->insertRow(5, urlLabel, urlLineEdit);
 }
