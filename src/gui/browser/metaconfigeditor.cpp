@@ -213,7 +213,7 @@ void MetaConfigEditor::on_projectLineEdit_textChanged(const QString &project)
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
 }
 
-void MetaConfigEditor::on_packageLineEdit_textChanged(const QString &package)
+void MetaConfigEditor::packageTextChanged(const QString &package)
 {
     bool enable = (!ui->projectLineEdit->text().isEmpty() && !package.isEmpty());
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
@@ -296,6 +296,7 @@ void MetaConfigEditor::createPackageField()
     packageLineEdit = new QLineEdit(ui->tabGeneral);
     QLabel *packageLabel = new QLabel(tr("Package:"), ui->tabGeneral);
     ui->layoutGeneral->insertRow(3, packageLabel, packageLineEdit);
+    connect(packageLineEdit, &QLineEdit::textChanged, this, &MetaConfigEditor::packageTextChanged);
 }
 
 void MetaConfigEditor::createUrlField()

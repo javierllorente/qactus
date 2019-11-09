@@ -61,7 +61,7 @@ private slots:
     void slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
     void slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
     void on_projectLineEdit_textChanged(const QString &project);
-    void on_packageLineEdit_textChanged(const QString &package);
+    void packageTextChanged(const QString &package);
 
 private:
     Ui::MetaConfigEditor *ui;
