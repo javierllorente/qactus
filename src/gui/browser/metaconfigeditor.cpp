@@ -32,21 +32,37 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     m_package(package),
     m_mode(mode),
     packageLineEdit(nullptr),
-    urlLineEdit(nullptr)
+    urlLineEdit(nullptr),
+    m_prjMetaConfig(nullptr),
+    m_pkgMetaConfig(nullptr)
 {
     ui->setupUi(this);
     QString windowTitle;
 
     switch (m_mode) {
-    case MCEMode::CreateProject:
+    case MCEMode::CreateProject: {
         windowTitle = tr("Create project");
         ui->projectLineEdit->setText(project + ":");
         ui->projectLineEdit->setFocus(); // setFocus() selects text!
         QTimer::singleShot(0, ui->projectLineEdit, [this](){
             ui->projectLineEdit->deselect();
         });
+
+        m_prjMetaConfig = new OBSPrjMetaConfig();
+        m_prjMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
+
+        // openSUSE Tumbleweed
+        OBSRepository *twRepository = new OBSRepository("openSUSE_Tumbleweed", "openSUSE:Factory", "snapshot", "x86_64");
+        m_prjMetaConfig->appendRepository(twRepository);
+
+        // openSUSE Leap
+        OBSRepository *leapRepository = new OBSRepository("openSUSE_Current", "openSUSE:Current", "standard", "x86_64");
+        m_prjMetaConfig->appendRepository(leapRepository);
+
+        slotFetchedProjectMetaConfig(m_prjMetaConfig);
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
+    }
     case MCEMode::EditProject:
         windowTitle = tr("Edit project");
         ui->projectLineEdit->setText(m_project);
@@ -60,6 +76,11 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         packageLineEdit->setFocus();
         ui->projectLineEdit->setDisabled(true);
         createUrlField();
+
+        m_pkgMetaConfig = new OBSPkgMetaConfig();
+        m_pkgMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
+        slotFetchedPackageMetaConfig(m_pkgMetaConfig);
+
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
     case MCEMode::EditPackage:
@@ -90,6 +111,8 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
 MetaConfigEditor::~MetaConfigEditor()
 {
     delete ui;
+    delete m_prjMetaConfig;
+    delete m_pkgMetaConfig;
 }
 
 void MetaConfigEditor::on_buttonBox_accepted()
@@ -103,34 +126,21 @@ void MetaConfigEditor::on_buttonBox_accepted()
     switch (m_mode) {
     case MCEMode::CreateProject:
     case MCEMode::EditProject: {
-        OBSPrjMetaConfig *prjMetaConfig = new OBSPrjMetaConfig();
-        prjMetaConfig->setName(ui->projectLineEdit->text());
-        prjMetaConfig->setTitle(ui->titleLineEdit->text());
-        prjMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
-        prjMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
-
-        // openSUSE Tumbleweed
-        OBSRepository *twRepository = new OBSRepository("openSUSE_Tumbleweed", "openSUSE:Factory", "snapshot", "x86_64");
-        prjMetaConfig->appendRepository(twRepository);
-
-        // openSUSE Leap
-        OBSRepository *leapRepository = new OBSRepository("openSUSE_Current", "openSUSE:Current", "standard", "x86_64");
-        prjMetaConfig->appendRepository(leapRepository);
-
-        data = xmlWriter->createProjectMeta(prjMetaConfig);
+        m_prjMetaConfig->setName(ui->projectLineEdit->text());
+        m_prjMetaConfig->setTitle(ui->titleLineEdit->text());
+        m_prjMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
+        data = xmlWriter->createProjectMeta(m_prjMetaConfig);
         emit createProject(ui->projectLineEdit->text(), data);
         break;
     }
     case MCEMode::CreatePackage:
     case MCEMode::EditPackage: {
-        OBSPkgMetaConfig *pkgMetaConfig = new OBSPkgMetaConfig();
-        pkgMetaConfig->setName(packageLineEdit->text());
-        pkgMetaConfig->setProject(ui->projectLineEdit->text());
-        pkgMetaConfig->setTitle(ui->titleLineEdit->text());
-        pkgMetaConfig->setUrl(QUrl(urlLineEdit->text()));
-        pkgMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
-        pkgMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
-        data = xmlWriter->createPackageMeta(pkgMetaConfig);
+        m_pkgMetaConfig->setName(packageLineEdit->text());
+        m_pkgMetaConfig->setProject(ui->projectLineEdit->text());
+        m_pkgMetaConfig->setTitle(ui->titleLineEdit->text());
+        m_pkgMetaConfig->setUrl(QUrl(urlLineEdit->text()));
+        m_pkgMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
+        data = xmlWriter->createPackageMeta(m_pkgMetaConfig);
         emit createPackage(ui->projectLineEdit->text(), packageLineEdit->text(), data);
         break;
     }
@@ -161,7 +171,7 @@ void MetaConfigEditor::slotCreateResult(OBSStatus *obsStatus)
 
 void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
 {
-
+    m_prjMetaConfig = prjMetaConfig;
     QTreeWidgetItem *item = nullptr;
     QTreeWidget *tableRepositories = new QTreeWidget(ui->tabWidget);
     tableRepositories->setColumnWidth(0, 180);
@@ -171,7 +181,7 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
     tableRepositories->setHeaderLabels(headers);
     ui->tabWidget->insertTab(1, tableRepositories, "Repositories");
 
-    for (auto repository : prjMetaConfig->getRepositories()) {
+    for (auto repository : m_prjMetaConfig->getRepositories()) {
         for (auto arch : repository->getArchs()) {
             item = new QTreeWidgetItem();
             item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -182,16 +192,15 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
         }
     }
 
-    fillTabs(prjMetaConfig);
-    delete prjMetaConfig;
+    fillTabs(m_prjMetaConfig);
 }
 
 void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
 {
-    packageLineEdit->setText(pkgMetaConfig->getName());
-    urlLineEdit->setText(pkgMetaConfig->getUrl().toString());
-    fillTabs(pkgMetaConfig);
-    delete pkgMetaConfig;
+    m_pkgMetaConfig = pkgMetaConfig;
+    packageLineEdit->setText(m_pkgMetaConfig->getName());
+    urlLineEdit->setText(m_pkgMetaConfig->getUrl().toString());
+    fillTabs(m_pkgMetaConfig);
 }
 
 void MetaConfigEditor::on_projectLineEdit_textChanged(const QString &project)

@@ -76,6 +76,8 @@ private:
     MCEMode m_mode;
     QLineEdit *packageLineEdit;
     QLineEdit *urlLineEdit;
+    OBSPrjMetaConfig *m_prjMetaConfig;
+    OBSPkgMetaConfig *m_pkgMetaConfig;
 };
 
 #endif // METACONFIGEDITOR_H
