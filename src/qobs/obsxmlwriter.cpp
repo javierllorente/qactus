@@ -138,6 +138,7 @@ QByteArray OBSXmlWriter::createPackageMeta(OBSPkgMetaConfig *pkgMetaConfig) cons
     xmlWriter.writeTextElement("description", pkgMetaConfig->getDescription());
 
     createUserRoles(xmlWriter, pkgMetaConfig->getPersons(), "userid");
+    xmlWriter.writeTextElement("url", pkgMetaConfig->getUrl().toString());
 
     xmlWriter.writeEndElement(); // package
 
