@@ -87,14 +87,17 @@ void OBSXmlWriter::createWatchListElement(QXmlStreamWriter &xmlWriter, const QSt
 
 void OBSXmlWriter::createUserRoles(QXmlStreamWriter &xmlWriter, const QMultiHash<QString, QString> &userRoles, const QString &type) const
 {
-    xmlWriter.writeEmptyElement("person");
-    QStringList users = userRoles.keys();
+    if (!userRoles.isEmpty()) {
+        QString tag = (type == "userid") ? "person" : "group";
+        xmlWriter.writeEmptyElement(tag);
+        QStringList users = userRoles.keys();
 
-    for (auto user : users) {
-        QStringList roles = userRoles.values(user);
-        for (auto role : roles) {
-            xmlWriter.writeAttribute(type, user);
-            xmlWriter.writeAttribute("role", role);
+        for (auto user : users) {
+            QStringList roles = userRoles.values(user);
+            for (auto role : roles) {
+                xmlWriter.writeAttribute(type, user);
+                xmlWriter.writeAttribute("role", role);
+            }
         }
     }
 }
