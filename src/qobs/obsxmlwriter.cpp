@@ -89,14 +89,18 @@ void OBSXmlWriter::createUserRoles(QXmlStreamWriter &xmlWriter, const QMultiHash
 {
     if (!userRoles.isEmpty()) {
         QString tag = (type == "userid") ? "person" : "group";
-        xmlWriter.writeEmptyElement(tag);
         QStringList users = userRoles.keys();
+        QString userAdded;
 
         for (auto user : users) {
             QStringList roles = userRoles.values(user);
-            for (auto role : roles) {
-                xmlWriter.writeAttribute(type, user);
-                xmlWriter.writeAttribute("role", role);
+            if (user!=userAdded) {
+                for (auto role : roles) {
+                    xmlWriter.writeEmptyElement(tag);
+                    xmlWriter.writeAttribute(type, user);
+                    xmlWriter.writeAttribute("role", role);
+                }
+                userAdded=user;
             }
         }
     }
