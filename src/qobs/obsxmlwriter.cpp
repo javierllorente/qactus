@@ -106,6 +106,27 @@ void OBSXmlWriter::createUserRoles(QXmlStreamWriter &xmlWriter, const QMultiHash
     }
 }
 
+void OBSXmlWriter::createRepositoryFlags(QXmlStreamWriter &xmlWriter, const QHash<QString, bool> &flag, const QString &type) const
+{
+    QStringList repositories = flag.keys();
+
+    if (!flag.isEmpty()) {
+        xmlWriter.writeStartElement(type);
+
+        for (auto repository : repositories) {
+            bool enabled = flag.value(repository);
+            QString enabledStr = enabled ? "enable" : "disable";
+
+            xmlWriter.writeEmptyElement(enabledStr);
+
+            if (repository!="all") {
+                xmlWriter.writeAttribute("repository", repository);
+            }
+        }
+        xmlWriter.writeEndElement();
+    }
+}
+
 QByteArray OBSXmlWriter::createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) const
 {
     QByteArray data;
@@ -121,6 +142,10 @@ QByteArray OBSXmlWriter::createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) cons
     createUserRoles(xmlWriter, prjMetaConfig->getPersons(), "userid");
     createUserRoles(xmlWriter, prjMetaConfig->getGroups(), "groupid");
 
+    createRepositoryFlags(xmlWriter, prjMetaConfig->getBuildFlag(), "build");
+    createRepositoryFlags(xmlWriter, prjMetaConfig->getDebugInfoFlag(), "debuginfo");
+    createRepositoryFlags(xmlWriter, prjMetaConfig->getPublishFlag(), "publish");
+    createRepositoryFlags(xmlWriter, prjMetaConfig->getUseForBuildFlag(), "useforbuild");
 
     for (auto repository : prjMetaConfig->getRepositories()) {
         createRepositoryElement(xmlWriter, repository);

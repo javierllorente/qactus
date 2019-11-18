@@ -43,6 +43,7 @@ private:
     void createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepository *repository) const;
     void createWatchListElement(QXmlStreamWriter &xmlWriter, const QStringList &watchList);
     void createUserRoles(QXmlStreamWriter &xmlWriter, const QMultiHash<QString, QString> &userRoles, const QString &type) const;
+    void createRepositoryFlags(QXmlStreamWriter &xmlWriter, const QHash<QString, bool> &flag, const QString &type) const;
 
 signals:
 
