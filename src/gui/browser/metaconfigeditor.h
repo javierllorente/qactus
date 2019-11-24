@@ -65,6 +65,16 @@ private slots:
 
 private:
     Ui::MetaConfigEditor *ui;
+    OBS *m_obs;
+    QString m_project;
+    QString m_package;
+    MCEMode m_mode;
+    QLineEdit *packageLineEdit;
+    QLineEdit *urlLineEdit;
+    QTreeWidget *buildFlagTree;
+    QTreeWidget *debugInfoFlagTree;
+    QTreeWidget *publishFlagTree;
+    QTreeWidget *useForFlagTree;
     enum class RepositoryFlag { Build, DebugInfo, Publish, UseForBuild };
     void fillTabs(OBSMetaConfig *metaConfig);
     QTreeWidget *createRepositoryTable(const QString &header, const QHash<QString, bool> &flag);
@@ -76,16 +86,6 @@ private:
     void fillMetaConfigRoles(QTreeWidget *tree, OBSMetaConfig *metaConfig, const QString &type);
     void fillMetaConfigRepositoryFlags(QTreeWidget *tree, OBSMetaConfig *metaConfig, RepositoryFlag flag);
     void fillMetaConfigRepositories(QTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig);
-    OBS *m_obs;
-    QString m_project;
-    QString m_package;
-    MCEMode m_mode;
-    QLineEdit *packageLineEdit;
-    QLineEdit *urlLineEdit;
-    QTreeWidget *buildFlagTree;
-    QTreeWidget *debugInfoFlagTree;
-    QTreeWidget *publishFlagTree;
-    QTreeWidget *useForFlagTree;
 
 };
 
