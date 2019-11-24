@@ -33,8 +33,10 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     m_mode(mode),
     packageLineEdit(nullptr),
     urlLineEdit(nullptr),
-    m_prjMetaConfig(nullptr),
-    m_pkgMetaConfig(nullptr)
+    buildFlagTree(nullptr),
+    debugInfoFlagTree(nullptr),
+    publishFlagTree(nullptr),
+    useForFlagTree(nullptr)
 {
     ui->setupUi(this);
     QString windowTitle;
@@ -48,18 +50,11 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
             ui->projectLineEdit->deselect();
         });
 
-        m_prjMetaConfig = new OBSPrjMetaConfig();
-        m_prjMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
+        OBSPrjMetaConfig *prjMetaConfig = new OBSPrjMetaConfig();
+        addDefaultMaintainer(prjMetaConfig);
+        addDefaultRepositories(prjMetaConfig);
+        slotFetchedProjectMetaConfig(prjMetaConfig);
 
-        // openSUSE Tumbleweed
-        OBSRepository *twRepository = new OBSRepository("openSUSE_Tumbleweed", "openSUSE:Factory", "snapshot", "x86_64");
-        m_prjMetaConfig->appendRepository(twRepository);
-
-        // openSUSE Leap
-        OBSRepository *leapRepository = new OBSRepository("openSUSE_Current", "openSUSE:Current", "standard", "x86_64");
-        m_prjMetaConfig->appendRepository(leapRepository);
-
-        slotFetchedProjectMetaConfig(m_prjMetaConfig);
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
     }
@@ -70,19 +65,20 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         ui->titleLineEdit->setFocus();
         m_obs->getProjectMetaConfig(m_project);
         break;
-    case MCEMode::CreatePackage:
+    case MCEMode::CreatePackage: {
         windowTitle = tr("Create package");
         ui->projectLineEdit->setText(m_project);
         packageLineEdit->setFocus();
         ui->projectLineEdit->setDisabled(true);
         createUrlField();
 
-        m_pkgMetaConfig = new OBSPkgMetaConfig();
-        m_pkgMetaConfig->insertPerson(m_obs->getUsername(), "maintainer");
-        slotFetchedPackageMetaConfig(m_pkgMetaConfig);
+        OBSPkgMetaConfig *pkgMetaConfig = new OBSPkgMetaConfig();
+        addDefaultMaintainer(pkgMetaConfig);
+        slotFetchedPackageMetaConfig(pkgMetaConfig);
 
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
+    }
     case MCEMode::EditPackage:
         windowTitle = tr("Edit package");
         ui->projectLineEdit->setText(m_project);
@@ -111,8 +107,6 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
 MetaConfigEditor::~MetaConfigEditor()
 {
     delete ui;
-    delete m_prjMetaConfig;
-    delete m_pkgMetaConfig;
 }
 
 void MetaConfigEditor::on_buttonBox_accepted()
@@ -126,21 +120,52 @@ void MetaConfigEditor::on_buttonBox_accepted()
     switch (m_mode) {
     case MCEMode::CreateProject:
     case MCEMode::EditProject: {
-        m_prjMetaConfig->setName(ui->projectLineEdit->text());
-        m_prjMetaConfig->setTitle(ui->titleLineEdit->text());
-        m_prjMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
-        data = xmlWriter->createProjectMeta(m_prjMetaConfig);
+        OBSPrjMetaConfig *prjMetaConfig = new OBSPrjMetaConfig();
+        prjMetaConfig->setName(ui->projectLineEdit->text());
+        prjMetaConfig->setTitle(ui->titleLineEdit->text());
+        prjMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
+
+        QTreeWidget *usersTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(3));
+        QTreeWidget *groupsTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(4));
+
+        fillMetaConfigRoles(usersTree, prjMetaConfig, "userid");
+        fillMetaConfigRoles(groupsTree, prjMetaConfig, "groupid");
+
+        fillMetaConfigRepositoryFlags(buildFlagTree, prjMetaConfig, RepositoryFlag::Build);
+        fillMetaConfigRepositoryFlags(debugInfoFlagTree, prjMetaConfig, RepositoryFlag::DebugInfo);
+        fillMetaConfigRepositoryFlags(publishFlagTree, prjMetaConfig, RepositoryFlag::Publish);
+        fillMetaConfigRepositoryFlags(useForFlagTree, prjMetaConfig, RepositoryFlag::UseForBuild);
+
+        QTreeWidget *repositoryTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(1));
+        fillMetaConfigRepositories(repositoryTree, prjMetaConfig);
+
+        data = xmlWriter->createProjectMeta(prjMetaConfig);
+        delete prjMetaConfig;
         emit createProject(ui->projectLineEdit->text(), data);
         break;
     }
     case MCEMode::CreatePackage:
     case MCEMode::EditPackage: {
-        m_pkgMetaConfig->setName(packageLineEdit->text());
-        m_pkgMetaConfig->setProject(ui->projectLineEdit->text());
-        m_pkgMetaConfig->setTitle(ui->titleLineEdit->text());
-        m_pkgMetaConfig->setUrl(QUrl(urlLineEdit->text()));
-        m_pkgMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
-        data = xmlWriter->createPackageMeta(m_pkgMetaConfig);
+        OBSPkgMetaConfig *pkgMetaConfig = new OBSPkgMetaConfig();
+        pkgMetaConfig->setName(packageLineEdit->text());
+        pkgMetaConfig->setProject(ui->projectLineEdit->text());
+        pkgMetaConfig->setTitle(ui->titleLineEdit->text());
+        pkgMetaConfig->setUrl(QUrl(urlLineEdit->text()));
+        pkgMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
+
+        QTreeWidget *usersTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(2));
+        QTreeWidget *groupsTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(3));
+
+        fillMetaConfigRoles(usersTree, pkgMetaConfig, "userid");
+        fillMetaConfigRoles(groupsTree, pkgMetaConfig, "groupid");
+
+        fillMetaConfigRepositoryFlags(buildFlagTree, pkgMetaConfig, RepositoryFlag::Build);
+        fillMetaConfigRepositoryFlags(debugInfoFlagTree, pkgMetaConfig, RepositoryFlag::DebugInfo);
+        fillMetaConfigRepositoryFlags(publishFlagTree, pkgMetaConfig, RepositoryFlag::Publish);
+        fillMetaConfigRepositoryFlags(useForFlagTree, pkgMetaConfig, RepositoryFlag::UseForBuild);
+
+        data = xmlWriter->createPackageMeta(pkgMetaConfig);
+        delete pkgMetaConfig;
         emit createPackage(ui->projectLineEdit->text(), packageLineEdit->text(), data);
         break;
     }
@@ -171,7 +196,6 @@ void MetaConfigEditor::slotCreateResult(OBSStatus *obsStatus)
 
 void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
 {
-    m_prjMetaConfig = prjMetaConfig;
     QTreeWidgetItem *item = nullptr;
     QTreeWidget *tableRepositories = new QTreeWidget(ui->tabWidget);
     tableRepositories->setColumnWidth(0, 180);
@@ -181,7 +205,7 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
     tableRepositories->setHeaderLabels(headers);
     ui->tabWidget->insertTab(1, tableRepositories, "Repositories");
 
-    for (auto repository : m_prjMetaConfig->getRepositories()) {
+    for (auto repository : prjMetaConfig->getRepositories()) {
         for (auto arch : repository->getArchs()) {
             item = new QTreeWidgetItem();
             item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -192,15 +216,16 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
         }
     }
 
-    fillTabs(m_prjMetaConfig);
+    fillTabs(prjMetaConfig);
+    delete prjMetaConfig;
 }
 
 void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
 {
-    m_pkgMetaConfig = pkgMetaConfig;
-    packageLineEdit->setText(m_pkgMetaConfig->getName());
-    urlLineEdit->setText(m_pkgMetaConfig->getUrl().toString());
-    fillTabs(m_pkgMetaConfig);
+    packageLineEdit->setText(pkgMetaConfig->getName());
+    urlLineEdit->setText(pkgMetaConfig->getUrl().toString());
+    fillTabs(pkgMetaConfig);
+    delete pkgMetaConfig;
 }
 
 void MetaConfigEditor::on_projectLineEdit_textChanged(const QString &project)
@@ -237,10 +262,14 @@ void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
     QGridLayout *layoutRepositoryFlags = new QGridLayout();
     repositoryFlags->setLayout(layoutRepositoryFlags);
     ui->tabWidget->insertTab(2, repositoryFlags, "Repository flags");
-    layoutRepositoryFlags->addWidget(createRepositoryTable("Build repository", metaConfig->getBuildFlag()));
-    layoutRepositoryFlags->addWidget(createRepositoryTable("DebugInfo repository", metaConfig->getDebugInfoFlag()));
-    layoutRepositoryFlags->addWidget(createRepositoryTable("Publish repository", metaConfig->getPublishFlag()));
-    layoutRepositoryFlags->addWidget(createRepositoryTable("UseForBuild repository", metaConfig->getUseForBuildFlag()));
+    buildFlagTree = createRepositoryTable("Build repository", metaConfig->getBuildFlag());
+    debugInfoFlagTree = createRepositoryTable("DebugInfo repository", metaConfig->getDebugInfoFlag());
+    publishFlagTree = createRepositoryTable("Publish repository", metaConfig->getPublishFlag());
+    useForFlagTree = createRepositoryTable("UseForBuild repository", metaConfig->getUseForBuildFlag());
+    layoutRepositoryFlags->addWidget(buildFlagTree);
+    layoutRepositoryFlags->addWidget(debugInfoFlagTree);
+    layoutRepositoryFlags->addWidget(publishFlagTree);
+    layoutRepositoryFlags->addWidget(useForFlagTree);
 
     ui->tabWidget->insertTab(3, createRoleTable("User", metaConfig->getPersons()), "Users");
     ui->tabWidget->insertTab(4, createRoleTable("Group", metaConfig->getGroups()), "Groups");
@@ -313,4 +342,69 @@ void MetaConfigEditor::createUrlField()
     urlLineEdit = new QLineEdit(ui->tabGeneral);
     QLabel *urlLabel = new QLabel(tr("URL:"), ui->tabGeneral);
     ui->layoutGeneral->insertRow(5, urlLabel, urlLineEdit);
+}
+
+void MetaConfigEditor::addDefaultMaintainer(OBSMetaConfig *metaConfig)
+{
+    metaConfig->insertPerson(m_obs->getUsername(), "maintainer");
+}
+
+void MetaConfigEditor::addDefaultRepositories(OBSPrjMetaConfig *prjMetaConfig)
+{
+    OBSRepository *tumbleweed = new OBSRepository("openSUSE_Tumbleweed", "openSUSE:Factory", "snapshot", "x86_64");
+    prjMetaConfig->appendRepository(tumbleweed);
+
+    OBSRepository *leap = new OBSRepository("openSUSE_Current", "openSUSE:Current", "standard", "x86_64");
+    prjMetaConfig->appendRepository(leap);
+}
+
+void MetaConfigEditor::fillMetaConfigRoles(QTreeWidget *tree, OBSMetaConfig *metaConfig, const QString &type)
+{
+    int rows = tree->topLevelItemCount();
+    for (int i=0; i<rows; i++) {
+        if (type == "userid") {
+            metaConfig->insertPerson(tree->topLevelItem(i)->text(0), tree->topLevelItem(i)->text(1));
+        } else if (type == "groupid") {
+            metaConfig->insertGroup(tree->topLevelItem(i)->text(0), tree->topLevelItem(i)->text(1));
+        }
+    }
+}
+
+void MetaConfigEditor::fillMetaConfigRepositoryFlags(QTreeWidget *tree, OBSMetaConfig *metaConfig, RepositoryFlag flag)
+{
+    int rows = tree->topLevelItemCount();
+    for (int i=0; i<rows; i++) {
+        bool enabled =  QVariant(tree->topLevelItem(i)->text(1)).toBool();
+        switch (flag) {
+        case RepositoryFlag::Build:
+            metaConfig->insertBuildFlag(tree->topLevelItem(i)->text(0), enabled);
+            break;
+        case RepositoryFlag::DebugInfo:
+            metaConfig->insertDebugInfoFlag(tree->topLevelItem(i)->text(0), enabled);
+            break;
+        case RepositoryFlag::Publish:
+            metaConfig->insertPublishFlag(tree->topLevelItem(i)->text(0), enabled);
+            break;
+        case RepositoryFlag::UseForBuild:
+            metaConfig->insertUseForBuildFlag(tree->topLevelItem(i)->text(0), enabled);
+            break;
+        }
+    }
+}
+
+void MetaConfigEditor::fillMetaConfigRepositories(QTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig)
+{
+    int rows = tree->topLevelItemCount();
+    OBSRepository *repository = nullptr;
+    QStringList path;
+
+    for (int i=0; i<rows; i++) {
+        path = tree->topLevelItem(i)->text(2).split("/");
+        if (path.count()>1) {
+            repository = new OBSRepository(tree->topLevelItem(i)->text(0),
+                                           path.at(0), path.at(1),
+                                           tree->topLevelItem(i)->text(1));
+            prjMetaConfig->appendRepository(repository);
+        }
+    }
 }

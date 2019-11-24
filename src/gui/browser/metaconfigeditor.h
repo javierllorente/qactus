@@ -65,19 +65,28 @@ private slots:
 
 private:
     Ui::MetaConfigEditor *ui;
+    enum class RepositoryFlag { Build, DebugInfo, Publish, UseForBuild };
     void fillTabs(OBSMetaConfig *metaConfig);
     QTreeWidget *createRepositoryTable(const QString &header, const QHash<QString, bool> &flag);
     QTreeWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
     void createPackageField();
     void createUrlField();
+    void addDefaultMaintainer(OBSMetaConfig *metaConfig);
+    void addDefaultRepositories(OBSPrjMetaConfig *prjMetaConfig);
+    void fillMetaConfigRoles(QTreeWidget *tree, OBSMetaConfig *metaConfig, const QString &type);
+    void fillMetaConfigRepositoryFlags(QTreeWidget *tree, OBSMetaConfig *metaConfig, RepositoryFlag flag);
+    void fillMetaConfigRepositories(QTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig);
     OBS *m_obs;
     QString m_project;
     QString m_package;
     MCEMode m_mode;
     QLineEdit *packageLineEdit;
     QLineEdit *urlLineEdit;
-    OBSPrjMetaConfig *m_prjMetaConfig;
-    OBSPkgMetaConfig *m_pkgMetaConfig;
+    QTreeWidget *buildFlagTree;
+    QTreeWidget *debugInfoFlagTree;
+    QTreeWidget *publishFlagTree;
+    QTreeWidget *useForFlagTree;
+
 };
 
 #endif // METACONFIGEDITOR_H
