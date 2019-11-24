@@ -170,6 +170,13 @@ QByteArray OBSXmlWriter::createPackageMeta(OBSPkgMetaConfig *pkgMetaConfig) cons
     xmlWriter.writeTextElement("description", pkgMetaConfig->getDescription());
 
     createUserRoles(xmlWriter, pkgMetaConfig->getPersons(), "userid");
+    createUserRoles(xmlWriter, pkgMetaConfig->getGroups(), "groupid");
+
+    createRepositoryFlags(xmlWriter, pkgMetaConfig->getBuildFlag(), "build");
+    createRepositoryFlags(xmlWriter, pkgMetaConfig->getDebugInfoFlag(), "debuginfo");
+    createRepositoryFlags(xmlWriter, pkgMetaConfig->getPublishFlag(), "publish");
+    createRepositoryFlags(xmlWriter, pkgMetaConfig->getUseForBuildFlag(), "useforbuild");
+
     xmlWriter.writeTextElement("url", pkgMetaConfig->getUrl().toString());
 
     xmlWriter.writeEndElement(); // package
