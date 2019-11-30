@@ -464,7 +464,7 @@ void MainWindow::createActions()
 
     // Copy package action
     action_copyPackage = new QAction(tr("&Copy package"), this);
-    action_copyPackage->setIcon(QIcon::fromTheme("cloud-upload"));
+    action_copyPackage->setIcon(QIcon::fromTheme("edit-copy"));
     connect(action_copyPackage, &QAction::triggered, browser, &Browser::copyPackage);
 
     // Delete actions
