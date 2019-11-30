@@ -675,6 +675,25 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             OBSStatus *obsStatus = nullptr;
             switch(reply->property("reqtype").toInt()) {
 
+            case OBSCore::CopyPackage: {
+                obsStatus = new OBSStatus();
+                QString project;
+                QString package;
+                if (reply->property("destprj").isValid()) {
+                    project = reply->property("destprj").toString();
+                }
+                if (reply->property("destpkg").isValid()) {
+                    package = reply->property("destpkg").toString();
+                }
+                obsStatus->setProject(project);
+                obsStatus->setPackage(package);
+                obsStatus->setCode("error");
+                obsStatus->setSummary("Cannot copy");
+                obsStatus->setDetails(tr("You don't have the appropriate permissions to<br>copy %1 to %2<br>")
+                                      .arg(obsStatus->getPackage(), obsStatus->getProject()));
+                emit cannotCopyPackage(obsStatus);
+                break;
+            }
             case OBSCore::CreateProject: {
                 obsStatus = new OBSStatus();
                 QString project;
@@ -823,11 +842,10 @@ void OBSCore::branchPackage(const QString &project, const QString &package)
 }
 
 void OBSCore::copyPackage(const QString &originProject, const QString &originPackage,
-                          const QString &destProject, const QString &destPackage)
+                          const QString &destProject, const QString &destPackage, const QString &comments)
 {
-    QString comment = QString("osc copypac from project:%1 package:%2").arg(originProject, originPackage);
     QString resource = QString("/source/%1/%2?cmd=copy&oproject=%3&opackage=%4&comment=%5")
-            .arg(destProject, destPackage, originProject, originPackage, comment);
+            .arg(destProject, destPackage, originProject, originPackage, comments);
     QNetworkReply *reply = postRequest(resource, "", "application/x-www-form-urlencoded");
     reply->setProperty("reqtype", OBSCore::CopyPackage);
     reply->setProperty("destprj", destProject);

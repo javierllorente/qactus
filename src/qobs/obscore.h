@@ -70,7 +70,7 @@ public:
     void getSRDiff(const QString &resource);
     void branchPackage(const QString &project, const QString &package);
     void copyPackage(const QString &originProject, const QString &originPackage,
-                     const QString &destProject, const QString &destPackage);
+                     const QString &destProject, const QString &destPackage, const QString &comments);
     void createRequest(const QByteArray &data);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);
@@ -95,6 +95,7 @@ signals:
     void buildLogNotFound();
     void projectNotFound(OBSStatus *status);
     void packageNotFound(OBSStatus *status);
+    void cannotCopyPackage(OBSStatus *obsStatus);
     void cannotCreateProject(OBSStatus *obsStatus);
     void cannotCreatePackage(OBSStatus *obsStatus);
     void cannotUploadFile(OBSStatus *obsStatus);

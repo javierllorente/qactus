@@ -65,7 +65,7 @@ public:
     OBSXmlReader *getXmlReader();
     void branchPackage(const QString &project, const QString &package);
     void copyPackage(const QString &originProject, const QString &originPackage,
-                     const QString &destProject, const QString &destPackage);
+                     const QString &destProject, const QString &destPackage, const QString &comments);
     void deleteProject(const QString &project);
     void deletePackage(const QString &project, const QString &package);
     void deleteFile(const QString &project, const QString &package, const QString &fileName);
@@ -92,6 +92,7 @@ signals:
     void finishedParsingCreateRequestStatus(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
+    void cannotCopyPackage(OBSStatus *obsStatus);
     void cannotCreateProject(OBSStatus *obsStatus);
     void cannotCreatePackage(OBSStatus *obsStatus);
     void finishedParsingUploadFileRevision(OBSRevision*);
