@@ -270,6 +270,7 @@ void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
     QWidget *publishFlagWidget = createSideBar(publishFlagTree);
     QWidget *useForFlagWidget = createSideBar(useForFlagTree);
 
+    layoutRepositoryFlags->setSpacing(0);
     layoutRepositoryFlags->setContentsMargins(0, 0, 0, 0);
     layoutRepositoryFlags->addWidget(buildFlagWidget);
     layoutRepositoryFlags->addWidget(debugInfoFlagWidget);
@@ -306,6 +307,7 @@ QWidget *MetaConfigEditor::createButtonBar(QTreeWidget *treeWidget)
 
     QHBoxLayout *layoutButtonBar = new QHBoxLayout();
     layoutButtonBar->setSpacing(0);
+    layoutButtonBar->setContentsMargins(0, 0, 0, 0);
     layoutButtonBar->setAlignment(Qt::AlignLeft);
     layoutButtonBar->addWidget(buttonAdd);
     layoutButtonBar->addWidget(buttonRemove);
@@ -313,6 +315,7 @@ QWidget *MetaConfigEditor::createButtonBar(QTreeWidget *treeWidget)
 
     QVBoxLayout *layoutTab = new QVBoxLayout();
     layoutTab->setSpacing(0);
+    layoutTab->setContentsMargins(0, 0, 0, 2);
     layoutTab->addWidget(treeWidget);
     layoutTab->addWidget(widgetButtonBar);
     mainWidget->setLayout(layoutTab);
@@ -354,6 +357,7 @@ QWidget *MetaConfigEditor::createSideBar(QTreeWidget *treeWidget)
 
     QHBoxLayout *layoutSection = new QHBoxLayout();
     layoutSection->setSpacing(0);
+    layoutSection->setContentsMargins(0, 0, 2, 0);
     layoutSection->addWidget(treeWidget);
     layoutSection->addWidget(widgetSideBar);
     mainWidget->setLayout(layoutSection);
@@ -380,7 +384,7 @@ QTreeWidget *MetaConfigEditor::createRepositoryFlagsTable(const QString &header,
 {
     QTreeWidgetItem *item = nullptr;
     QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
-    treeWidget->setColumnWidth(0, 325);
+    treeWidget->setColumnWidth(0, 308);
     treeWidget->setRootIsDecorated(false);
     QStringList headersRepositoryFlags = QStringList() << header << "Enabled";
     treeWidget->setHeaderLabels(headersRepositoryFlags);
