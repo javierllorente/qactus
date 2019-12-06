@@ -196,26 +196,7 @@ void MetaConfigEditor::slotCreateResult(OBSStatus *obsStatus)
 
 void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
 {
-    QTreeWidgetItem *item = nullptr;
-    QTreeWidget *tableRepositories = new QTreeWidget(ui->tabWidget);
-    tableRepositories->setColumnWidth(0, 180);
-    tableRepositories->setRootIsDecorated(false);
-    tableRepositories->setAlternatingRowColors(true);
-    QStringList headers = QStringList() << "Repository" << "Arch" << "Path";
-    tableRepositories->setHeaderLabels(headers);
-    ui->tabWidget->insertTab(1, tableRepositories, "Repositories");
-
-    for (auto repository : prjMetaConfig->getRepositories()) {
-        for (auto arch : repository->getArchs()) {
-            item = new QTreeWidgetItem();
-            item->setFlags(item->flags() | Qt::ItemIsEditable);
-            item->setText(0, repository->getName());
-            item->setText(1, arch);
-            item->setText(2, repository->getProject() + "/" + repository->getRepository());
-            tableRepositories->addTopLevelItem(item);
-        }
-    }
-
+    fillRepositoryTab(prjMetaConfig);
     fillTabs(prjMetaConfig);
     delete prjMetaConfig;
 }
@@ -253,6 +234,23 @@ void MetaConfigEditor::packageTextChanged(const QString &package)
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
 }
 
+void MetaConfigEditor::fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig)
+{
+    QTreeWidget *tableRepositories = createRepositoryTable();
+    QTreeWidgetItem *item = nullptr;
+
+    for (auto repository : prjMetaConfig->getRepositories()) {
+        for (auto arch : repository->getArchs()) {
+            item = new QTreeWidgetItem();
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+            item->setText(0, repository->getName());
+            item->setText(1, arch);
+            item->setText(2, repository->getProject() + "/" + repository->getRepository());
+            tableRepositories->addTopLevelItem(item);
+        }
+    }
+}
+
 void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
 {
     ui->titleLineEdit->setText(metaConfig->getTitle());
@@ -273,6 +271,55 @@ void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
 
     ui->tabWidget->insertTab(3, createRoleTable("User", metaConfig->getPersons()), "Users");
     ui->tabWidget->insertTab(4, createRoleTable("Group", metaConfig->getGroups()), "Groups");
+}
+
+QTreeWidget *MetaConfigEditor::createRepositoryTable()
+{
+    QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
+    treeWidget->setColumnWidth(0, 180);
+    treeWidget->setRootIsDecorated(false);
+    treeWidget->setAlternatingRowColors(true);
+    QStringList headers = QStringList() << "Repository" << "Arch" << "Path";
+    treeWidget->setHeaderLabels(headers);
+
+    QWidget *widgetRepository = new QWidget(ui->tabWidget);
+    QWidget *widgetButtonBar = new QWidget(ui->tabWidget);
+
+    QPushButton *buttonAdd = new QPushButton(treeWidget);
+    buttonAdd->setIcon(QIcon::fromTheme("list-add"));
+    buttonAdd->setMaximumSize(25, 25);
+    connect(buttonAdd, &QPushButton::clicked, treeWidget, [treeWidget]() {
+        QTreeWidgetItem *item = new QTreeWidgetItem();
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        treeWidget->addTopLevelItem(item);
+        treeWidget->scrollToItem(item);
+        treeWidget->setCurrentItem(item);
+    });
+    QPushButton *buttonRemove = new QPushButton(treeWidget);
+    buttonRemove->setIcon(QIcon::fromTheme("list-remove"));
+    buttonRemove->setMaximumSize(25, 25);
+    connect(buttonRemove, &QPushButton::clicked, treeWidget, [treeWidget]() {
+        QModelIndex modelIndex = treeWidget->selectionModel()->currentIndex();
+        int index = modelIndex.row();
+        treeWidget->takeTopLevelItem(index);
+    });
+
+    QHBoxLayout *layoutButtonBar = new QHBoxLayout();
+    layoutButtonBar->setSpacing(0);
+    layoutButtonBar->setAlignment(Qt::AlignLeft);
+    layoutButtonBar->addWidget(buttonAdd);
+    layoutButtonBar->addWidget(buttonRemove);
+    widgetButtonBar->setLayout(layoutButtonBar);
+
+    QVBoxLayout *layoutRepository = new QVBoxLayout();
+    layoutRepository->setSpacing(0);
+    layoutRepository->addWidget(treeWidget);
+    layoutRepository->addWidget(widgetButtonBar);
+    widgetRepository->setLayout(layoutRepository);
+
+    ui->tabWidget->insertTab(1, widgetRepository, "Repositories");
+
+    return treeWidget;
 }
 
 QTreeWidget *MetaConfigEditor::createRepositoryFlagsTable(const QString &header, const QHash<QString, bool> &flag)
