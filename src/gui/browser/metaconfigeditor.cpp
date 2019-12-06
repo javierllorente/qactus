@@ -264,10 +264,17 @@ void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
     debugInfoFlagTree = createRepositoryFlagsTable("DebugInfo repository", metaConfig->getDebugInfoFlag());
     publishFlagTree = createRepositoryFlagsTable("Publish repository", metaConfig->getPublishFlag());
     useForFlagTree = createRepositoryFlagsTable("UseForBuild repository", metaConfig->getUseForBuildFlag());
-    layoutRepositoryFlags->addWidget(buildFlagTree);
-    layoutRepositoryFlags->addWidget(debugInfoFlagTree);
-    layoutRepositoryFlags->addWidget(publishFlagTree);
-    layoutRepositoryFlags->addWidget(useForFlagTree);
+
+    QWidget *buildFlagWidget = createSideBar(buildFlagTree);
+    QWidget *debugInfoFlagWidget = createSideBar(debugInfoFlagTree);
+    QWidget *publishFlagWidget = createSideBar(publishFlagTree);
+    QWidget *useForFlagWidget = createSideBar(useForFlagTree);
+
+    layoutRepositoryFlags->setContentsMargins(0, 0, 0, 0);
+    layoutRepositoryFlags->addWidget(buildFlagWidget);
+    layoutRepositoryFlags->addWidget(debugInfoFlagWidget);
+    layoutRepositoryFlags->addWidget(publishFlagWidget);
+    layoutRepositoryFlags->addWidget(useForFlagWidget);
 
     ui->tabWidget->insertTab(3, createRoleTable("User", metaConfig->getPersons()), "Users");
     ui->tabWidget->insertTab(4, createRoleTable("Group", metaConfig->getGroups()), "Groups");
@@ -309,6 +316,47 @@ QWidget *MetaConfigEditor::createButtonBar(QTreeWidget *treeWidget)
     layoutTab->addWidget(treeWidget);
     layoutTab->addWidget(widgetButtonBar);
     mainWidget->setLayout(layoutTab);
+
+    return mainWidget;
+}
+
+QWidget *MetaConfigEditor::createSideBar(QTreeWidget *treeWidget)
+{
+    QWidget *mainWidget = new QWidget(ui->tabWidget);
+    QWidget *widgetSideBar = new QWidget(ui->tabWidget);
+
+    QPushButton *buttonAdd = new QPushButton(treeWidget);
+    buttonAdd->setIcon(QIcon::fromTheme("list-add"));
+    buttonAdd->setMaximumSize(25, 25);
+    connect(buttonAdd, &QPushButton::clicked, treeWidget, [treeWidget]() {
+        QTreeWidgetItem *item = new QTreeWidgetItem();
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        treeWidget->addTopLevelItem(item);
+        treeWidget->scrollToItem(item);
+        treeWidget->setCurrentItem(item);
+    });
+    QPushButton *buttonRemove = new QPushButton(treeWidget);
+    buttonRemove->setIcon(QIcon::fromTheme("list-remove"));
+    buttonRemove->setMaximumSize(25, 25);
+    connect(buttonRemove, &QPushButton::clicked, treeWidget, [treeWidget]() {
+        QModelIndex modelIndex = treeWidget->selectionModel()->currentIndex();
+        int index = modelIndex.row();
+        treeWidget->takeTopLevelItem(index);
+    });
+
+    QVBoxLayout *layoutButtonBar = new QVBoxLayout();
+    layoutButtonBar->setSpacing(0);
+    layoutButtonBar->setContentsMargins(0, 0, 0, 0);
+    layoutButtonBar->setAlignment(Qt::AlignTop);
+    layoutButtonBar->addWidget(buttonAdd);
+    layoutButtonBar->addWidget(buttonRemove);
+    widgetSideBar->setLayout(layoutButtonBar);
+
+    QHBoxLayout *layoutSection = new QHBoxLayout();
+    layoutSection->setSpacing(0);
+    layoutSection->addWidget(treeWidget);
+    layoutSection->addWidget(widgetSideBar);
+    mainWidget->setLayout(layoutSection);
 
     return mainWidget;
 }

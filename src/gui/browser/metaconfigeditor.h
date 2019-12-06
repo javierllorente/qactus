@@ -79,6 +79,7 @@ private:
     void fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig);
     void fillTabs(OBSMetaConfig *metaConfig);
     QWidget *createButtonBar(QTreeWidget *treeWidget);
+    QWidget *createSideBar(QTreeWidget *treeWidget);
     QTreeWidget *createRepositoryTable();
     QTreeWidget *createRepositoryFlagsTable(const QString &header, const QHash<QString, bool> &flag);
     QWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
