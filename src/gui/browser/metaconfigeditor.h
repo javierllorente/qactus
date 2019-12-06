@@ -81,7 +81,7 @@ private:
     QWidget *createButtonBar(QTreeWidget *treeWidget);
     QTreeWidget *createRepositoryTable();
     QTreeWidget *createRepositoryFlagsTable(const QString &header, const QHash<QString, bool> &flag);
-    QTreeWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
+    QWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
     void createPackageField();
     void createUrlField();
     void addDefaultMaintainer(OBSMetaConfig *metaConfig);
