@@ -77,7 +77,7 @@ private:
     QTreeWidget *useForFlagTree;
     enum class RepositoryFlag { Build, DebugInfo, Publish, UseForBuild };
     void fillTabs(OBSMetaConfig *metaConfig);
-    QTreeWidget *createRepositoryTable(const QString &header, const QHash<QString, bool> &flag);
+    QTreeWidget *createRepositoryFlagsTable(const QString &header, const QHash<QString, bool> &flag);
     QTreeWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
     void createPackageField();
     void createUrlField();

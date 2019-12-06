@@ -262,10 +262,10 @@ void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
     QGridLayout *layoutRepositoryFlags = new QGridLayout();
     repositoryFlags->setLayout(layoutRepositoryFlags);
     ui->tabWidget->insertTab(2, repositoryFlags, "Repository flags");
-    buildFlagTree = createRepositoryTable("Build repository", metaConfig->getBuildFlag());
-    debugInfoFlagTree = createRepositoryTable("DebugInfo repository", metaConfig->getDebugInfoFlag());
-    publishFlagTree = createRepositoryTable("Publish repository", metaConfig->getPublishFlag());
-    useForFlagTree = createRepositoryTable("UseForBuild repository", metaConfig->getUseForBuildFlag());
+    buildFlagTree = createRepositoryFlagsTable("Build repository", metaConfig->getBuildFlag());
+    debugInfoFlagTree = createRepositoryFlagsTable("DebugInfo repository", metaConfig->getDebugInfoFlag());
+    publishFlagTree = createRepositoryFlagsTable("Publish repository", metaConfig->getPublishFlag());
+    useForFlagTree = createRepositoryFlagsTable("UseForBuild repository", metaConfig->getUseForBuildFlag());
     layoutRepositoryFlags->addWidget(buildFlagTree);
     layoutRepositoryFlags->addWidget(debugInfoFlagTree);
     layoutRepositoryFlags->addWidget(publishFlagTree);
@@ -275,7 +275,7 @@ void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
     ui->tabWidget->insertTab(4, createRoleTable("Group", metaConfig->getGroups()), "Groups");
 }
 
-QTreeWidget *MetaConfigEditor::createRepositoryTable(const QString &header, const QHash<QString, bool> &flag)
+QTreeWidget *MetaConfigEditor::createRepositoryFlagsTable(const QString &header, const QHash<QString, bool> &flag)
 {
     QTreeWidgetItem *item = nullptr;
     QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
