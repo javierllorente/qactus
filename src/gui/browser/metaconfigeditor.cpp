@@ -273,16 +273,8 @@ void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
     ui->tabWidget->insertTab(4, createRoleTable("Group", metaConfig->getGroups()), "Groups");
 }
 
-QTreeWidget *MetaConfigEditor::createRepositoryTable()
+QWidget *MetaConfigEditor::createButtonBar(QTreeWidget *treeWidget)
 {
-    QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
-    treeWidget->setColumnWidth(0, 180);
-    treeWidget->setRootIsDecorated(false);
-    treeWidget->setAlternatingRowColors(true);
-    QStringList headers = QStringList() << "Repository" << "Arch" << "Path";
-    treeWidget->setHeaderLabels(headers);
-
-    QWidget *widgetRepository = new QWidget(ui->tabWidget);
     QWidget *widgetButtonBar = new QWidget(ui->tabWidget);
 
     QPushButton *buttonAdd = new QPushButton(treeWidget);
@@ -310,6 +302,21 @@ QTreeWidget *MetaConfigEditor::createRepositoryTable()
     layoutButtonBar->addWidget(buttonAdd);
     layoutButtonBar->addWidget(buttonRemove);
     widgetButtonBar->setLayout(layoutButtonBar);
+
+    return widgetButtonBar;
+}
+
+QTreeWidget *MetaConfigEditor::createRepositoryTable()
+{
+    QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
+    treeWidget->setColumnWidth(0, 180);
+    treeWidget->setRootIsDecorated(false);
+    treeWidget->setAlternatingRowColors(true);
+    QStringList headers = QStringList() << "Repository" << "Arch" << "Path";
+    treeWidget->setHeaderLabels(headers);
+
+    QWidget *widgetRepository = new QWidget(ui->tabWidget);
+    QWidget *widgetButtonBar = createButtonBar(treeWidget);
 
     QVBoxLayout *layoutRepository = new QVBoxLayout();
     layoutRepository->setSpacing(0);
