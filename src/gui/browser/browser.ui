@@ -11,6 +11,21 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_7">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QSplitter" name="hSplitterBrowser">
      <property name="orientation">
@@ -19,7 +34,7 @@
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0">
        <property name="spacing">
-        <number>3</number>
+        <number>0</number>
        </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
@@ -56,6 +71,9 @@
      </widget>
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLineEdit" name="lineEditFilter">
          <property name="placeholderText">
