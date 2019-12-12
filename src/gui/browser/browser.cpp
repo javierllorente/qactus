@@ -35,12 +35,26 @@ Browser::Browser(QWidget *parent, OBS *obs) :
     m_projectsMenu(nullptr),
     m_packagesMenu(nullptr),
     m_filesMenu(nullptr),
-    m_resultsMenu(nullptr)
+    m_resultsMenu(nullptr),
+    m_projectsToolbar(new QToolBar(this)),
+    m_packagesToolbar(new QToolBar(this)),
+    m_filesToolbar(new QToolBar(this)),
+    m_resultsToolbar(new QToolBar(this))
 {
     ui->setupUi(this);
 
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
+
+    m_projectsToolbar->setIconSize(QSize(15, 15));
+    m_packagesToolbar->setIconSize(QSize(15, 15));
+    m_filesToolbar->setIconSize(QSize(15, 15));
+    m_resultsToolbar->setIconSize(QSize(15, 15));
+
+    ui->verticalLayout_6->addWidget(m_projectsToolbar);
+    ui->verticalLayout_5->insertWidget(1, m_packagesToolbar);
+    ui->verticalLayout_4->addWidget(m_filesToolbar);
+    ui->verticalLayout_2->addWidget(m_resultsToolbar);
 
     connect(m_obs, &OBS::finishedParsingProjectList, this, &Browser::addProjectList);
 
@@ -141,21 +155,25 @@ void Browser::addProjectList(const QStringList &projectList)
 void Browser::createProjectsContextMenu(QMenu *projectsMenu)
 {
     m_projectsMenu = projectsMenu;
+    m_projectsToolbar->addActions(m_projectsMenu->actions());
 }
 
 void Browser::createPackagesContextMenu(QMenu *packagesMenu)
 {
     m_packagesMenu = packagesMenu;
+    m_packagesToolbar->addActions(m_packagesMenu->actions());
 }
 
 void Browser::createFilesContextMenu(QMenu *filesMenu)
 {
     m_filesMenu = filesMenu;
+    m_filesToolbar->addActions(m_filesMenu->actions());
 }
 
 void Browser::createResultsContextMenu(QMenu *resultsMenu)
 {
     m_resultsMenu = resultsMenu;
+    m_resultsToolbar->addActions(m_resultsMenu->actions());
 }
 
 bool Browser::hasProjectSelection()

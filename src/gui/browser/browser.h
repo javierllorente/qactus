@@ -24,6 +24,7 @@
 #include <QWidget>
 #include <QItemSelectionModel>
 #include <QMenu>
+#include <QToolBar>
 #include "obs.h"
 
 namespace Ui {
@@ -83,6 +84,10 @@ private:
     QMenu *m_packagesMenu;
     QMenu *m_filesMenu;
     QMenu *m_resultsMenu;
+    QToolBar *m_projectsToolbar;
+    QToolBar *m_packagesToolbar;
+    QToolBar *m_filesToolbar;
+    QToolBar *m_resultsToolbar;
     void setupModels();
     void getPackages(const QString &project);
 
