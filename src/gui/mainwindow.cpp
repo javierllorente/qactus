@@ -49,11 +49,11 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupActions);
-    connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupProjectActions);
+    connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupProjectShortcuts);
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupActions);
-    connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupPackageActions);
+    connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupPackageShortcuts);
     connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupActions);
-    connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupFileActions);
+    connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupFileShortcuts);
     connect(browser, &Browser::buildResultSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::finishedLoadingProjects, [this](){
         newButton->setEnabled(true);
@@ -239,7 +239,7 @@ void MainWindow::setupActions()
     action_getBuildLog->setEnabled(enableBuildResultActions);
 }
 
-void MainWindow::setupProjectActions()
+void MainWindow::setupProjectShortcuts()
 {
     qDebug() << __PRETTY_FUNCTION__;
     actionDelete_package->setShortcut(QKeySequence());
@@ -261,7 +261,7 @@ void MainWindow::setupProjectActions()
     actionNew_package->setShortcut(QKeySequence());
 }
 
-void MainWindow::setupPackageActions()
+void MainWindow::setupPackageShortcuts()
 {
     qDebug() << __PRETTY_FUNCTION__;
     actionDelete_project->setShortcut(QKeySequence());
@@ -283,7 +283,7 @@ void MainWindow::setupPackageActions()
     actionNew_package->setShortcut(QKeySequence::New);
 }
 
-void MainWindow::setupFileActions()
+void MainWindow::setupFileShortcuts()
 {
     qDebug() << __PRETTY_FUNCTION__;
     actionDelete_project->setShortcut(QKeySequence());
@@ -824,7 +824,7 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
 void MainWindow::on_tabWidgetPackages_currentChanged(int index)
 {
     if (index==0 && browser->hasFileSelection()) {
-        setupFileActions();
+        setupFileShortcuts();
     }
 }
 

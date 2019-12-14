@@ -114,8 +114,8 @@ private:
     Browser *browser;
     bool firstTimeFileListDisplayed;
     bool firstTimeBuildResultsDisplayed;
-    void setupPackageActions();
-    void setupFileActions();
+    void setupPackageShortcuts();
+    void setupFileShortcuts();
     QString currentProject;
     QString currentPackage;
     Monitor *monitor;
@@ -161,7 +161,7 @@ private slots:
     void slotCredentialsRestored(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
     void setupActions();
-    void setupProjectActions();
+    void setupProjectShortcuts();
     void getPackages(QModelIndex index);
     void setNotify(bool notify);
     void slotEnableRemoveRow();
