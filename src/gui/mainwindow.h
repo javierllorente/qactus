@@ -85,7 +85,6 @@ private:
     QAction *actionBookmarks;
 
     QAction *separatorHome;
-    QAction *separatorUpload;
 
     QAction *action_ReloadProjects;
     QAction *action_ReloadPackages;
