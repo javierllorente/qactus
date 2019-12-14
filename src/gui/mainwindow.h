@@ -161,6 +161,7 @@ private slots:
     void slotErrorReadingPassword(const QString &error);
     void slotCredentialsRestored(const QString &username, const QString &password);
     void isAuthenticated(bool authenticated);
+    void setupActions();
     void setupProjectActions();
     void getPackages(QModelIndex index);
     void setNotify(bool notify);

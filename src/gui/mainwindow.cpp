@@ -48,9 +48,13 @@ MainWindow::MainWindow(QWidget *parent) :
         trayIcon->showMessage(title, message);
     });
 
+    connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupProjectActions);
+    connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupPackageActions);
+    connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupFileActions);
+    connect(browser, &Browser::buildResultSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::finishedLoadingProjects, [this](){
         newButton->setEnabled(true);
         ui->action_Home->setEnabled(true);
@@ -209,15 +213,35 @@ void MainWindow::isAuthenticated(bool authenticated)
     ui->actionAPI_information->setEnabled(authenticated);
 }
 
+void MainWindow::setupActions()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool enableProjectActions = browser->hasProjectSelection();
+    actionNew_project->setEnabled(enableProjectActions);
+    actionDelete_project->setEnabled(enableProjectActions);
+    actionProperties_project->setEnabled(enableProjectActions);
+
+    bool enablePackageActions = browser->hasPackageSelection();
+    actionNew_package->setEnabled(enablePackageActions);
+    ui->action_Branch_package->setEnabled(enablePackageActions);
+    action_createRequest->setEnabled(enablePackageActions);
+    action_copyPackage->setEnabled(enablePackageActions);
+    ui->action_Upload_file->setEnabled(enablePackageActions);
+    actionDelete_package->setEnabled(enablePackageActions);
+    actionProperties_package->setEnabled(enablePackageActions);
+
+    bool enableFileActions = browser->hasFileSelection();
+    ui->action_Download_file->setEnabled(enableFileActions);
+    actionDelete_file->setEnabled(enableFileActions);
+
+    bool enableBuildResultActions = browser->hasBuildResultSelection();
+    action_getBuildLog->setEnabled(enableBuildResultActions);
+}
+
 void MainWindow::setupProjectActions()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    ui->action_Branch_package->setEnabled(false);
-    ui->action_Upload_file->setEnabled(false);
-    ui->action_Download_file->setEnabled(false);
-    actionDelete_file->setEnabled(false);
-    actionDelete_package->setEnabled(false);
-    actionDelete_project->setEnabled(true);
     actionDelete_package->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence());
     actionDelete_project->setShortcut(QKeySequence::Delete);
@@ -240,11 +264,6 @@ void MainWindow::setupProjectActions()
 void MainWindow::setupPackageActions()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    ui->action_Branch_package->setEnabled(true);
-    ui->action_Upload_file->setEnabled(browser->hasPackageSelection());
-    ui->action_Download_file->setEnabled(false);
-    actionDelete_file->setEnabled(false);
-    actionDelete_package->setEnabled(true);
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence::Delete);
@@ -267,8 +286,6 @@ void MainWindow::setupPackageActions()
 void MainWindow::setupFileActions()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    ui->action_Download_file->setEnabled(true);
-    actionDelete_file->setEnabled(browser->hasFileSelection());
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence::Delete);
@@ -777,17 +794,7 @@ void MainWindow::slotUpdatePerson(OBSPerson *obsPerson)
 void MainWindow::on_iconBar_currentRowChanged(int index)
 {
     // Enable/disable the branch/delete button if there is a file/package/project selected
-    bool enableFilActions = browser->hasFileSelection();
-    ui->action_Download_file->setEnabled(enableFilActions);
-    actionDelete_file->setEnabled(enableFilActions);
-
-    bool enablePkgActions = browser->hasPackageSelection();
-    ui->action_Branch_package->setEnabled(enablePkgActions);
-    ui->action_Upload_file->setEnabled(enablePkgActions);
-    actionDelete_package->setEnabled(enablePkgActions);
-
-    bool enablePrjActions = browser->hasProjectSelection();
-    actionDelete_project->setEnabled(enablePrjActions);
+    setupActions();
 
     bool browserTabVisible = (index==0);
     actionNew->setVisible(browserTabVisible);
