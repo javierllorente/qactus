@@ -520,7 +520,8 @@ void Browser::slotProjectSelectionChanged(const QItemSelection &selected, const 
 
     QString selectedProjectStr;
 
-    // Clean up files and build results on project click
+    // Clean up packages, files and build results on project click
+    ui->treePackages->clearModel();
     ui->treeFiles->clearModel();
     ui->treeBuildResults->clearModel();
 
