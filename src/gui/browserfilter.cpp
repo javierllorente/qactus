@@ -21,6 +21,7 @@
 #include "browserfilter.h"
 #include "ui_browserfilter.h"
 #include <QDebug>
+#include <QTimer>
 
 BrowserFilter::BrowserFilter(QWidget *parent) :
     QWidget(parent),
@@ -29,6 +30,9 @@ BrowserFilter::BrowserFilter(QWidget *parent) :
     m_projectCompleter(nullptr)
 {
     ui->setupUi(this);
+    QTimer::singleShot(0, ui->lineEditFilter, [this](){
+        ui->lineEditFilter->setFocus();
+    });
 }
 
 BrowserFilter::~BrowserFilter()
