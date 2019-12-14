@@ -50,6 +50,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupProjectShortcuts);
+    connect(browser, &Browser::projectSelectionChanged, this, [&]() {
+        if (!browserFilter->text().isEmpty()) {
+            browserFilter->clear();
+        }
+    });
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupPackageShortcuts);
     connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupActions);
