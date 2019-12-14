@@ -433,7 +433,6 @@ void MainWindow::createActions()
 
     actionBookmarks = ui->toolBar->insertWidget(ui->action_Upload_file, bookmarkButton);
     separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
-    separatorUpload = ui->toolBar->insertSeparator(ui->action_Upload_file);
 
     // Reload actions
     action_ReloadProjects = new QAction(tr("&Reload project list"), this);
@@ -496,7 +495,7 @@ void MainWindow::createActions()
     actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
 
     browserFilter = new BrowserFilter(this);
-    actionFilter = ui->toolBar->addWidget(browserFilter);
+    actionFilter = ui->toolBar->insertWidget(ui->action_Upload_file, browserFilter);
     connect(obs, &OBS::finishedParsingProjectList, browserFilter, &BrowserFilter::addProjectList);
     connect(browserFilter, &BrowserFilter::setCurrentProject, browser, &Browser::setCurrentProject);
 
@@ -796,7 +795,6 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     separatorHome->setVisible(browserTabVisible);
     ui->action_Home->setVisible(browserTabVisible);
     actionBookmarks->setVisible(browserTabVisible);
-    separatorUpload->setVisible(browserTabVisible);
     ui->action_Upload_file->setVisible(browserTabVisible);
     ui->action_Download_file->setVisible(browserTabVisible);
     ui->action_Delete->setVisible(browserTabVisible);
