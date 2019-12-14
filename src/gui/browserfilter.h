@@ -34,7 +34,7 @@ class BrowserFilter : public QWidget
     Q_OBJECT
 
 public:
-    explicit BrowserFilter(QWidget *parent = 0);
+    explicit BrowserFilter(QWidget *parent = nullptr);
     ~BrowserFilter();
 
     QString text() const;
