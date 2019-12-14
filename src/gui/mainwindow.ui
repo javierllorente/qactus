@@ -29,7 +29,7 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>72</width>
+        <width>78</width>
         <height>16777215</height>
        </size>
       </property>
@@ -116,7 +116,7 @@
      <x>0</x>
      <y>0</y>
      <width>1018</width>
-     <height>30</height>
+     <height>32</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -352,8 +352,8 @@
    </property>
   </action>
   <action name="action_Home">
-    <property name="enabled">
-     <bool>false</bool>
+   <property name="enabled">
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset theme="user-home">
