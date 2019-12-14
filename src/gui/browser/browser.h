@@ -47,6 +47,7 @@ public:
     bool hasProjectSelection();
     bool hasPackageSelection();
     bool hasFileSelection();
+    bool hasBuildResultSelection();
 
 public slots:
     void newProject();
@@ -121,6 +122,7 @@ signals:
     void projectSelectionChanged();
     void packageSelectionChanged();
     void fileSelectionChanged();
+    void buildResultSelectionChanged();
     void getPackages(const QModelIndex &project);
     void updateStatusBar(QString message, bool progressBarHidden);
     void showTrayMessage(const QString &title, const QString &message);

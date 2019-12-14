@@ -123,6 +123,9 @@ Browser::Browser(QWidget *parent, OBS *obs) :
     filesSelectionModel = ui->treeFiles->selectionModel();
     connect(filesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::fileSelectionChanged);
 
+    QItemSelectionModel *buildResultsSelectionModel = ui->treeBuildResults->selectionModel();
+    connect(buildResultsSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::buildResultSelectionChanged);
+
     connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->treePackages, &PackageTreeWidget::filterPackages);
 
     readSettings();
@@ -201,6 +204,16 @@ bool Browser::hasFileSelection()
     QItemSelectionModel *treeFilesSelectionModel = ui->treeFiles->selectionModel();
     if (treeFilesSelectionModel) {
         return treeFilesSelectionModel->hasSelection();
+    } else {
+        return false;
+    }
+}
+
+bool Browser::hasBuildResultSelection()
+{
+    QItemSelectionModel *treeBuildResultsSelectionModel = ui->treeBuildResults->selectionModel();
+    if (treeBuildResultsSelectionModel) {
+        return treeBuildResultsSelectionModel->hasSelection();
     } else {
         return false;
     }
