@@ -36,7 +36,7 @@ BrowserFilter::~BrowserFilter()
     delete ui;
 }
 
-QString BrowserFilter::getText() const
+QString BrowserFilter::text() const
 {
     return ui->lineEditFilter->text();
 }

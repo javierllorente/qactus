@@ -37,7 +37,7 @@ public:
     explicit BrowserFilter(QWidget *parent = 0);
     ~BrowserFilter();
 
-    QString getText() const;
+    QString text() const;
     void clear();
     void setFocus();
 
