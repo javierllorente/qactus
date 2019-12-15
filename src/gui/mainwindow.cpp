@@ -411,7 +411,7 @@ void MainWindow::createActions()
 
     newMenu = new QMenu(newButton);
     actionNew_package = new QAction(tr("New p&ackage"), this);
-    actionNew_package->setIcon(QIcon::fromTheme("application-x-source-rpm"));
+    actionNew_package->setIcon(QIcon::fromTheme("package"));
     connect(actionNew_package, &QAction::triggered, browser, &Browser::newPackage);
 
     actionNew_project = new QAction(tr("New pr&oject"), this);
