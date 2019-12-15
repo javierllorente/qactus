@@ -235,6 +235,8 @@ void MainWindow::setupActions()
     ui->action_Upload_file->setEnabled(enablePackageActions);
     actionDelete_package->setEnabled(enablePackageActions);
     actionProperties_package->setEnabled(enablePackageActions);
+    action_ReloadFiles->setEnabled(enablePackageActions);
+    action_ReloadResults->setEnabled(enablePackageActions);
 
     bool enableFileActions = browser->hasFileSelection();
     ui->action_Download_file->setEnabled(enableFileActions);
