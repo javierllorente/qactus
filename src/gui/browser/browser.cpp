@@ -46,6 +46,9 @@ Browser::Browser(QWidget *parent, OBS *obs) :
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 0);
 
+    QIcon filterIcon(QIcon::fromTheme("view-filter"));
+    ui->lineEditFilter->addAction(filterIcon, QLineEdit::LeadingPosition);
+
     m_projectsToolbar->setIconSize(QSize(15, 15));
     m_packagesToolbar->setIconSize(QSize(15, 15));
     m_filesToolbar->setIconSize(QSize(15, 15));
