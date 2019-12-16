@@ -223,29 +223,29 @@ void MainWindow::setupActions()
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    bool enableProjectActions = browser->hasProjectSelection();
-    actionNew_project->setEnabled(enableProjectActions);
-    actionDelete_project->setEnabled(enableProjectActions);
-    actionProperties_project->setEnabled(enableProjectActions);
-    action_ReloadPackages->setEnabled(enableProjectActions);
+    bool projectSelected = browser->hasProjectSelection();
+    actionNew_project->setEnabled(projectSelected);
+    actionDelete_project->setEnabled(projectSelected);
+    actionProperties_project->setEnabled(projectSelected);
+    action_ReloadPackages->setEnabled(projectSelected);
 
-    bool enablePackageActions = browser->hasPackageSelection();
-    actionNew_package->setEnabled(enablePackageActions);
-    ui->action_Branch_package->setEnabled(enablePackageActions);
-    action_createRequest->setEnabled(enablePackageActions);
-    action_copyPackage->setEnabled(enablePackageActions);
-    ui->action_Upload_file->setEnabled(enablePackageActions);
-    actionDelete_package->setEnabled(enablePackageActions);
-    actionProperties_package->setEnabled(enablePackageActions);
-    action_ReloadFiles->setEnabled(enablePackageActions);
-    action_ReloadResults->setEnabled(enablePackageActions);
+    bool packageSelected = browser->hasPackageSelection();
+    actionNew_package->setEnabled(packageSelected);
+    ui->action_Branch_package->setEnabled(packageSelected);
+    action_createRequest->setEnabled(packageSelected);
+    action_copyPackage->setEnabled(packageSelected);
+    ui->action_Upload_file->setEnabled(packageSelected);
+    actionDelete_package->setEnabled(packageSelected);
+    actionProperties_package->setEnabled(packageSelected);
+    action_ReloadFiles->setEnabled(packageSelected);
+    action_ReloadResults->setEnabled(packageSelected);
 
-    bool enableFileActions = browser->hasFileSelection();
-    ui->action_Download_file->setEnabled(enableFileActions);
-    actionDelete_file->setEnabled(enableFileActions);
+    bool fileSelected = browser->hasFileSelection();
+    ui->action_Download_file->setEnabled(fileSelected);
+    actionDelete_file->setEnabled(fileSelected);
 
-    bool enableBuildResultActions = browser->hasBuildResultSelection();
-    action_getBuildLog->setEnabled(enableBuildResultActions);
+    bool buildResultSelected = browser->hasBuildResultSelection();
+    action_getBuildLog->setEnabled(buildResultSelected);
 }
 
 void MainWindow::setupProjectShortcuts()
