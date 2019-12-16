@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
         newButton->setEnabled(true);
         ui->action_Home->setEnabled(true);
         bookmarkButton->setEnabled(true);
+        action_ReloadProjects->setEnabled(true);
     });
 
     connect(ui->actionChange_request_state, &QAction::triggered, requestBox, &RequestBox::changeRequestState);
@@ -462,6 +463,7 @@ void MainWindow::createActions()
     // Reload actions
     action_ReloadProjects = new QAction(tr("&Reload project list"), this);
     action_ReloadProjects->setIcon(QIcon::fromTheme("view-refresh"));
+    action_ReloadProjects->setEnabled(false);
     connect(action_ReloadProjects, &QAction::triggered, browser, &Browser::getProjects);
 
     action_ReloadPackages = new QAction(tr("&Reload package list"), this);
