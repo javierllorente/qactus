@@ -226,6 +226,7 @@ void MainWindow::setupActions()
     actionNew_project->setEnabled(enableProjectActions);
     actionDelete_project->setEnabled(enableProjectActions);
     actionProperties_project->setEnabled(enableProjectActions);
+    action_ReloadPackages->setEnabled(enableProjectActions);
 
     bool enablePackageActions = browser->hasPackageSelection();
     actionNew_package->setEnabled(enablePackageActions);
