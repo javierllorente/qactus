@@ -227,10 +227,10 @@ void MainWindow::setupActions()
     actionNew_project->setEnabled(projectSelected);
     actionDelete_project->setEnabled(projectSelected);
     actionProperties_project->setEnabled(projectSelected);
+    actionNew_package->setEnabled(projectSelected);
     action_ReloadPackages->setEnabled(projectSelected);
 
     bool packageSelected = browser->hasPackageSelection();
-    actionNew_package->setEnabled(packageSelected);
     ui->action_Branch_package->setEnabled(packageSelected);
     action_createRequest->setEnabled(packageSelected);
     action_copyPackage->setEnabled(packageSelected);
