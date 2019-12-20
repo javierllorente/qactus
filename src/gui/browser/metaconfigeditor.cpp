@@ -33,10 +33,13 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     m_mode(mode),
     packageLineEdit(nullptr),
     urlLineEdit(nullptr),
+    tableRepositories(nullptr),
     buildFlagTree(nullptr),
     debugInfoFlagTree(nullptr),
     publishFlagTree(nullptr),
-    useForFlagTree(nullptr)
+    useForFlagTree(nullptr),
+    usersTree(nullptr),
+    groupsTree(nullptr)
 {
     ui->setupUi(this);
     QString windowTitle;
@@ -125,9 +128,6 @@ void MetaConfigEditor::on_buttonBox_accepted()
         prjMetaConfig->setTitle(ui->titleLineEdit->text());
         prjMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
 
-        QTreeWidget *usersTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(3));
-        QTreeWidget *groupsTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(4));
-
         fillMetaConfigRoles(usersTree, prjMetaConfig, "userid");
         fillMetaConfigRoles(groupsTree, prjMetaConfig, "groupid");
 
@@ -136,8 +136,7 @@ void MetaConfigEditor::on_buttonBox_accepted()
         fillMetaConfigRepositoryFlags(publishFlagTree, prjMetaConfig, RepositoryFlag::Publish);
         fillMetaConfigRepositoryFlags(useForFlagTree, prjMetaConfig, RepositoryFlag::UseForBuild);
 
-        QTreeWidget *repositoryTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(1));
-        fillMetaConfigRepositories(repositoryTree, prjMetaConfig);
+        fillMetaConfigRepositories(tableRepositories, prjMetaConfig);
 
         data = xmlWriter->createProjectMeta(prjMetaConfig);
         delete prjMetaConfig;
@@ -152,9 +151,6 @@ void MetaConfigEditor::on_buttonBox_accepted()
         pkgMetaConfig->setTitle(ui->titleLineEdit->text());
         pkgMetaConfig->setUrl(QUrl(urlLineEdit->text()));
         pkgMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
-
-        QTreeWidget *usersTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(2));
-        QTreeWidget *groupsTree = static_cast<QTreeWidget *>(ui->tabWidget->widget(3));
 
         fillMetaConfigRoles(usersTree, pkgMetaConfig, "userid");
         fillMetaConfigRoles(groupsTree, pkgMetaConfig, "groupid");
@@ -236,7 +232,7 @@ void MetaConfigEditor::packageTextChanged(const QString &package)
 
 void MetaConfigEditor::fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig)
 {
-    QTreeWidget *tableRepositories = createRepositoryTable();
+    tableRepositories = createRepositoryTable();
     QTreeWidgetItem *item = nullptr;
 
     for (auto repository : prjMetaConfig->getRepositories()) {
@@ -277,8 +273,15 @@ void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
     layoutRepositoryFlags->addWidget(publishFlagWidget);
     layoutRepositoryFlags->addWidget(useForFlagWidget);
 
-    ui->tabWidget->insertTab(3, createRoleTable("User", metaConfig->getPersons()), "Users");
-    ui->tabWidget->insertTab(4, createRoleTable("Group", metaConfig->getGroups()), "Groups");
+
+    usersTree = createRoleTable("User", metaConfig->getPersons());
+    QWidget *usersWidget = createButtonBar(usersTree);
+
+    groupsTree = createRoleTable("Group", metaConfig->getGroups());
+    QWidget *groupsWidget = createButtonBar(groupsTree);
+
+    ui->tabWidget->insertTab(3, usersWidget, "Users");
+    ui->tabWidget->insertTab(4, groupsWidget, "Groups");
 }
 
 QWidget *MetaConfigEditor::createButtonBar(QTreeWidget *treeWidget)
@@ -403,7 +406,7 @@ QTreeWidget *MetaConfigEditor::createRepositoryFlagsTable(const QString &header,
     return treeWidget;
 }
 
-QWidget *MetaConfigEditor::createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles)
+QTreeWidget *MetaConfigEditor::createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles)
 {
     QTreeWidgetItem *item = nullptr;
     QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
@@ -412,8 +415,6 @@ QWidget *MetaConfigEditor::createRoleTable(const QString &header, const QMultiHa
     treeWidget->setAlternatingRowColors(true);
     QStringList headersPersons = QStringList() << header << "Role";
     treeWidget->setHeaderLabels(headersPersons);
-
-    QWidget *widgetRole = createButtonBar(treeWidget);
 
     QStringList users = userRoles.keys();
     QString userAdded;
@@ -434,7 +435,7 @@ QWidget *MetaConfigEditor::createRoleTable(const QString &header, const QMultiHa
     }
     treeWidget->sortItems(1, Qt::AscendingOrder);
 
-    return widgetRole;
+    return treeWidget;
 }
 
 void MetaConfigEditor::createPackageField()

@@ -71,10 +71,13 @@ private:
     MCEMode m_mode;
     QLineEdit *packageLineEdit;
     QLineEdit *urlLineEdit;
+    QTreeWidget *tableRepositories;
     QTreeWidget *buildFlagTree;
     QTreeWidget *debugInfoFlagTree;
     QTreeWidget *publishFlagTree;
     QTreeWidget *useForFlagTree;
+    QTreeWidget *usersTree;
+    QTreeWidget *groupsTree;
     enum class RepositoryFlag { Build, DebugInfo, Publish, UseForBuild };
     void fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig);
     void fillTabs(OBSMetaConfig *metaConfig);
@@ -82,7 +85,7 @@ private:
     QWidget *createSideBar(QTreeWidget *treeWidget);
     QTreeWidget *createRepositoryTable();
     QTreeWidget *createRepositoryFlagsTable(const QString &header, const QHash<QString, bool> &flag);
-    QWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
+    QTreeWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
     void createPackageField();
     void createUrlField();
     void addDefaultMaintainer(OBSMetaConfig *metaConfig);
