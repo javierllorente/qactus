@@ -184,6 +184,29 @@ QByteArray OBSXmlWriter::createPackageMeta(OBSPkgMetaConfig *pkgMetaConfig) cons
     return data;
 }
 
+QByteArray OBSXmlWriter::createLink(const QString &project, const QString &package) const
+{
+    QByteArray data;
+    QXmlStreamWriter xmlWriter(&data);
+    xmlWriter.setAutoFormatting(true);
+
+    xmlWriter.writeStartElement("link");
+    xmlWriter.writeAttribute("project", project);
+    xmlWriter.writeAttribute("package", package);
+
+    xmlWriter.writeStartElement("patches");
+    xmlWriter.writeComment("<branch /> for a full copy, default case");
+    xmlWriter.writeComment("<apply name=\"patch\" /> apply a patch on the source directory");
+    xmlWriter.writeComment("<topadd>%define build_with_feature_x 1</topadd> add a line on the top (spec file only)");
+    xmlWriter.writeComment("<add name=\"file.patch\" /> add a patch to be applied after %setup (spec file only)");
+    xmlWriter.writeComment("<delete name=\"filename\" /> delete a file");
+    xmlWriter.writeEndElement();
+
+    xmlWriter.writeEndElement(); // link
+
+    return data;
+}
+
 QByteArray OBSXmlWriter::createPerson(OBSPerson *obsPerson)
 {
     QByteArray data;

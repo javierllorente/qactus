@@ -37,6 +37,7 @@ public:
     QByteArray createRequest(OBSRequest *obsRequest);
     QByteArray createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) const;
     QByteArray createPackageMeta(OBSPkgMetaConfig *pkgMetaConfig) const;
+    QByteArray createLink(const QString &project, const QString &package) const;
     QByteArray createPerson(OBSPerson *obsPerson);
 
 private:
