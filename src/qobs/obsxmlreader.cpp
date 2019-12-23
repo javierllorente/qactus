@@ -346,6 +346,27 @@ void OBSXmlReader::parseBranchPackage(const QString &project, const QString &pac
     emit finishedParsingBranchPackage(obsStatus);
 }
 
+void OBSXmlReader::parseLinkPackage(const QString &project, const QString &package, const QString &data)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    QXmlStreamReader xml(data);
+    OBSRevision *obsRevision = new OBSRevision();
+    obsRevision->setProject(project);
+    obsRevision->setPackage(package);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseRevision(xml, obsRevision);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+
+    emit finishedParsingLinkPkgRevision(obsRevision);
+}
+
 void OBSXmlReader::parseCopyPackage(const QString &project, const QString &package, const QString &data)
 {
     qDebug() << __PRETTY_FUNCTION__;
