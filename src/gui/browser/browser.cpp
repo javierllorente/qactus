@@ -24,7 +24,7 @@
 #include <QSettings>
 #include "metaconfigeditor.h"
 #include "createrequestdialog.h"
-#include "copypackagedialog.h"
+#include "packageactiondialog.h"
 #include "buildlogviewer.h"
 
 Browser::Browser(QWidget *parent, OBS *obs) :
@@ -422,14 +422,14 @@ void Browser::createRequest()
 void Browser::copyPackage()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    CopyPackageDialog *copyPackageDialog = new CopyPackageDialog(this, m_obs,
+    PackageActionDialog *packageActionDialog = new PackageActionDialog(this, m_obs,
                                                                  ui->treeProjects->getCurrentProject(),
                                                                  ui->treePackages->getCurrentPackage());
-    copyPackageDialog->addProjectList(ui->treeProjects->getProjectList());
-    connect(copyPackageDialog, &CopyPackageDialog::showTrayMessage, this, &Browser::showTrayMessage);
-    connect(copyPackageDialog, &CopyPackageDialog::updateStatusBar, this, &Browser::updateStatusBar);
-    copyPackageDialog->exec();
-    delete copyPackageDialog;
+    packageActionDialog->addProjectList(ui->treeProjects->getProjectList());
+    connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
+    connect(packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
+    packageActionDialog->exec();
+    delete packageActionDialog;
 }
 
 void Browser::deleteProject()

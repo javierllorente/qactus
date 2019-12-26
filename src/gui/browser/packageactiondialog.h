@@ -18,29 +18,29 @@
  *
  */
 
-#ifndef COPYPACKAGEDIALOG_H
-#define COPYPACKAGEDIALOG_H
+#ifndef PACKAGEACTIONDIALOG_H
+#define PACKAGEACTIONDIALOG_H
 
 #include <QDialog>
 #include "obs.h"
 
 namespace Ui {
-class CopyPackageDialog;
+class PackageActionDialog;
 }
 
-class CopyPackageDialog : public QDialog
+class PackageActionDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit CopyPackageDialog(QWidget *parent = nullptr, OBS *obs = nullptr, const QString &sourcePrj = QString(), const QString &sourcePkg = QString());
-    ~CopyPackageDialog();
+    explicit PackageActionDialog(QWidget *parent = nullptr, OBS *obs = nullptr, const QString &sourcePrj = QString(), const QString &sourcePkg = QString());
+    ~PackageActionDialog();
 
 public slots:
     void addProjectList(const QStringList &projectList);
 
 private:
-    Ui::CopyPackageDialog *ui;
+    Ui::PackageActionDialog *ui;
     OBS *m_obs;
 
 private slots:
@@ -54,4 +54,4 @@ signals:
     void showTrayMessage(const QString &title, const QString &message);
 };
 
-#endif // COPYPACKAGEDIALOG_H
+#endif // PACKAGEACTIONDIALOG_H

@@ -18,17 +18,17 @@
  *
  */
 
-#include "copypackagedialog.h"
-#include "ui_copypackagedialog.h"
+#include "packageactiondialog.h"
+#include "ui_packageactiondialog.h"
 #include <QPushButton>
 #include <QStringListModel>
 #include <QCompleter>
 #include <QMessageBox>
 #include <QDebug>
 
-CopyPackageDialog::CopyPackageDialog(QWidget *parent, OBS *obs, const QString &sourcePrj, const QString &sourcePkg) :
+PackageActionDialog::PackageActionDialog(QWidget *parent, OBS *obs, const QString &sourcePrj, const QString &sourcePkg) :
     QDialog(parent),
-    ui(new Ui::CopyPackageDialog),
+    ui(new Ui::PackageActionDialog),
     m_obs(obs)
 {
     ui->setupUi(this);
@@ -38,30 +38,30 @@ CopyPackageDialog::CopyPackageDialog(QWidget *parent, OBS *obs, const QString &s
     ui->sourcePackageLineEdit->setEnabled(false);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
-    connect(ui->targetProjectLineEdit, &QLineEdit::textChanged, this, &CopyPackageDialog::toggleOkButton);
-    connect(m_obs, &OBS::finishedParsingCopyPkgRevision, this, &CopyPackageDialog::revisionFetched);
-    connect(m_obs, &OBS::cannotCopyPackage, this, &CopyPackageDialog::slotCannotCopyPackage);
+    connect(ui->targetProjectLineEdit, &QLineEdit::textChanged, this, &PackageActionDialog::toggleOkButton);
+    connect(m_obs, &OBS::finishedParsingCopyPkgRevision, this, &PackageActionDialog::revisionFetched);
+    connect(m_obs, &OBS::cannotCopyPackage, this, &PackageActionDialog::slotCannotCopyPackage);
 }
 
-CopyPackageDialog::~CopyPackageDialog()
+PackageActionDialog::~PackageActionDialog()
 {
     delete ui;
 }
 
-void CopyPackageDialog::addProjectList(const QStringList &projectList)
+void PackageActionDialog::addProjectList(const QStringList &projectList)
 {
     QStringListModel *m_projectModel = new QStringListModel(projectList, this);
     QCompleter *m_projectCompleter = new QCompleter(m_projectModel, this);
     ui->targetProjectLineEdit->setCompleter(m_projectCompleter);
 }
 
-void CopyPackageDialog::toggleOkButton()
+void PackageActionDialog::toggleOkButton()
 {
     bool enable = !ui->targetProjectLineEdit->text().isEmpty();
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
 }
 
-void CopyPackageDialog::on_buttonBox_accepted()
+void PackageActionDialog::on_buttonBox_accepted()
 {
     qDebug() << __PRETTY_FUNCTION__;
     // FIXME: Overwrites package without asking!
@@ -71,16 +71,15 @@ void CopyPackageDialog::on_buttonBox_accepted()
     emit updateStatusBar("Copying package...", false);
 }
 
-void CopyPackageDialog::revisionFetched(OBSRevision *revision)
+void PackageActionDialog::revisionFetched(OBSRevision *revision)
 {
     close();
     emit updateStatusBar("Done", true);
     emit showTrayMessage(APP_NAME, tr("Package %1 has been copied to %2").arg(revision->getPackage(),
                                                                          revision->getProject()));
-    delete revision;
-}
+    delete revision;}
 
-void CopyPackageDialog::slotCannotCopyPackage(OBSStatus *status)
+void PackageActionDialog::slotCannotCopyPackage(OBSStatus *status)
 {
     qDebug() << __PRETTY_FUNCTION__ << status->getCode();
     emit updateStatusBar("Cannot copy", true);
