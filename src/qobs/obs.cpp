@@ -39,6 +39,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
 
     connect(xmlReader, SIGNAL(finishedParsingBranchPackage(OBSStatus*)),
             this, SIGNAL(finishedParsingBranchPackage(OBSStatus*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingLinkPkgRevision,
+            this, &OBS::finishedParsingLinkPkgRevision);
     connect(xmlReader, &OBSXmlReader::finishedParsingCopyPkgRevision,
             this, &OBS::finishedParsingCopyPkgRevision);
     connect(xmlReader, SIGNAL(finishedParsingCreateRequest(OBSRequest*)),
@@ -49,6 +51,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingCreatePrjStatus(OBSStatus*)));
     connect(xmlReader, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)),
             this, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)));
+    connect(obsCore, &OBSCore::cannotLinkPackage, this, &OBS::cannotLinkPackage);
     connect(obsCore, &OBSCore::cannotCopyPackage, this, &OBS::cannotCopyPackage);
     connect(obsCore, SIGNAL(cannotCreateProject(OBSStatus*)),
             this, SIGNAL(cannotCreateProject(OBSStatus*)));
@@ -290,6 +293,11 @@ OBSXmlReader* OBS::getXmlReader()
 void OBS::branchPackage(const QString &project, const QString &package)
 {
     obsCore->branchPackage(project, package);
+}
+
+void OBS::linkPackage(const QString &srcProject, const QString &srcPackage, const QString &dstProject)
+{
+    obsCore->linkPackage(srcProject, srcPackage, dstProject);
 }
 
 void OBS::copyPackage(const QString &originProject, const QString &originPackage,

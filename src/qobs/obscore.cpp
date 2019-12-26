@@ -20,6 +20,7 @@
  */
 
 #include "obscore.h"
+#include "obsstatus.h"
 
 OBSCore *OBSCore::instance = nullptr;
 const QString userAgent = APP_NAME + QString(" ") + QACTUS_VERSION;
@@ -30,6 +31,7 @@ OBSCore::OBSCore()
     xmlReader = OBSXmlReader::getInstance();
     manager = nullptr;
     includeHomeProjects = false;
+    linkHelper = nullptr;
 }
 
 void OBSCore::createManager()
@@ -63,6 +65,22 @@ void OBSCore::setCredentials(const QString& username, const QString& password)
 
     curUsername = username;
     curPassword = password;
+}
+
+void OBSCore::slotLinkPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    QString resource = QString("/source/%1/%2/_link").arg(dstProject, dstPackage);
+
+    QNetworkReply *reply = putRequest(resource, data);
+    reply->setProperty("reqtype", OBSCore::LinkPackage);
+    reply->setProperty("destprj", dstProject);
+    reply->setProperty("destpkg", dstPackage);
+
+    if (linkHelper) {
+        delete linkHelper;
+        linkHelper = nullptr;
+    }
 }
 
 QString OBSCore::getUsername()
@@ -455,6 +473,20 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 break;
             }
 
+            case OBSCore::LinkPackage: {
+                qDebug() << reqTypeStr << "LinkPackage";
+                QString project;
+                QString package;
+                if (reply->property("destprj").isValid()) {
+                    project = reply->property("destprj").toString();
+                }
+                if (reply->property("destpkg").isValid()) {
+                    package = reply->property("destpkg").toString();
+                }
+                xmlReader->parseLinkPackage(project, package, dataStr);
+                break;
+            }
+
             case OBSCore::CopyPackage: {
                 qDebug() << reqTypeStr << "CopyPackage";
                 QString project;
@@ -639,6 +671,28 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             case OBSCore::CreateRequest:
                 xmlReader->parseCreateRequestStatus(data);
                 break;
+
+            case OBSCore::LinkPackage: {
+                qDebug() << reqTypeStr << "LinkPackage";
+                QString project;
+                QString package;
+                if (reply->property("destprj").isValid()) {
+                    project = reply->property("destprj").toString();
+                }
+                if (reply->property("destpkg").isValid()) {
+                    package = reply->property("destpkg").toString();
+                }
+                OBSStatus *status = new OBSStatus();
+                QString details = QString("The package %2 in project %1 does NOT exist.").arg(project, package);
+                status->setDetails(details);
+                status->setSummary("Cannot link");
+                status->setCode("error");
+                status->setProject(project);
+                status->setPackage(package);
+
+                emit cannotLinkPackage(status);
+                break;
+            }
 
             case OBSCore::BuildLog: {
                 qDebug() << reqTypeStr << "BuildLog";
@@ -839,6 +893,34 @@ void OBSCore::branchPackage(const QString &project, const QString &package)
     reply->setProperty("reqtype", OBSCore::BranchPackage);
     reply->setProperty("branchprj", project);
     reply->setProperty("branchpkg", package);
+}
+
+void OBSCore::linkPackage(const QString &srcProject, const QString &srcPackage, const QString &dstProject)
+{
+    linkHelper = new OBSLinkHelper(this);
+
+    connect(xmlReader, &OBSXmlReader::finishedParsingPackageMetaConfig,
+            linkHelper, &OBSLinkHelper::slotFetchedPackageMetaConfig);
+    connect(xmlReader, &OBSXmlReader::finishedParsingCreatePkgStatus,
+            linkHelper, &OBSLinkHelper::slotFetchedCreatePkgStatus);
+
+    connect(linkHelper, &OBSLinkHelper::getPackageMetaConfig, this, [&](const QString &resource) {
+        getPackageMetaConfig(resource);
+    });
+    connect(linkHelper, &OBSLinkHelper::createPackage, this, [&](const QString &dstProject,
+            const QString &dstPackage, const QByteArray &data) {
+        createPackage(dstProject, dstPackage, data);
+    });
+    connect(linkHelper, &OBSLinkHelper::readyToLinkPackage, this, &OBSCore::slotLinkPackage);
+    connect(this, &OBSCore::cannotCreatePackage, linkHelper, [&](OBSStatus *status) {
+        QString details = QString("You don't have the appropriate permissions to create a link in %1/%2")
+                .arg(dstProject, srcPackage);
+        status->setDetails(details);
+        status->setSummary("Cannot link");
+        emit cannotLinkPackage(status);
+    });
+
+    linkHelper->linkPackage(srcProject, srcPackage, dstProject);
 }
 
 void OBSCore::copyPackage(const QString &originProject, const QString &originPackage,

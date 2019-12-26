@@ -64,6 +64,8 @@ public:
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     OBSXmlReader *getXmlReader();
     void branchPackage(const QString &project, const QString &package);
+    void linkPackage(const QString &srcProject, const QString &srcPackage,
+                     const QString &dstProject);
     void copyPackage(const QString &originProject, const QString &originPackage,
                      const QString &destProject, const QString &destPackage, const QString &comments);
     void deleteProject(const QString &project);
@@ -87,11 +89,13 @@ signals:
     void networkError(const QString&);
     void finishedParsingPackage(OBSStatus*, int);
     void finishedParsingBranchPackage(OBSStatus*);
+    void finishedParsingLinkPkgRevision(OBSRevision *revision);
     void finishedParsingCopyPkgRevision(OBSRevision *revision);
     void finishedParsingCreateRequest(OBSRequest*);
     void finishedParsingCreateRequestStatus(OBSStatus*);
     void finishedParsingCreatePrjStatus(OBSStatus*);
     void finishedParsingCreatePkgStatus(OBSStatus*);
+    void cannotLinkPackage(OBSStatus *obsStatus);
     void cannotCopyPackage(OBSStatus *obsStatus);
     void cannotCreateProject(OBSStatus *obsStatus);
     void cannotCreatePackage(OBSStatus *obsStatus);

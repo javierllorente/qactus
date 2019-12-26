@@ -31,8 +31,7 @@
 #include <QDebug>
 #include <QEventLoop>
 #include "obsxmlreader.h"
-
-class OBSXmlReader;
+#include "obslinkhelper.h"
 
 class OBSCore : public QObject
 {
@@ -69,6 +68,7 @@ public:
     void request(const QString &resource, int row);
     void getSRDiff(const QString &resource);
     void branchPackage(const QString &project, const QString &package);
+    void linkPackage(const QString &srcProject, const QString &srcPackage, const QString &dstProject);
     void copyPackage(const QString &originProject, const QString &originPackage,
                      const QString &destProject, const QString &destPackage, const QString &comments);
     void createRequest(const QByteArray &data);
@@ -95,6 +95,7 @@ signals:
     void buildLogNotFound();
     void projectNotFound(OBSStatus *status);
     void packageNotFound(OBSStatus *status);
+    void cannotLinkPackage(OBSStatus *obsStatus);
     void cannotCopyPackage(OBSStatus *obsStatus);
     void cannotCreateProject(OBSStatus *obsStatus);
     void cannotCreatePackage(OBSStatus *obsStatus);
@@ -105,6 +106,7 @@ signals:
 
 public slots:
     void setCredentials(const QString&, const QString&);
+    void slotLinkPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data);
 
 private slots:
     void provideAuthentication(QNetworkReply *reply, QAuthenticator* ator);
@@ -144,6 +146,7 @@ private:
         ChangeRequestState,
         SRDiff,
         BranchPackage,
+        LinkPackage,
         CopyPackage,
         CreateRequest,
         CreateProject,
@@ -161,6 +164,7 @@ private:
     bool authenticated;
     OBSXmlReader *xmlReader;
     bool includeHomeProjects;
+    OBSLinkHelper *linkHelper;
     QString createReqResourceStr(const QString &states, const QString &roles) const;
     void getRequests(OBSCore::RequestType type);
 };

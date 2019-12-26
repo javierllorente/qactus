@@ -20,6 +20,7 @@ set(LIBQOBS_SRC
     obsxmlwriter.cpp
     obsobject.cpp
     obslink.cpp
+    obslinkhelper.cpp
     obsperson.cpp
     obsrepository.cpp
     obsmetaconfig.cpp
@@ -39,6 +40,7 @@ set(LIBQOBS_HDR
     obsxmlwriter.h
     obsobject.h
     obslink.h
+    obslinkhelper.h
     obsperson.h
     obsrepository.h
     obsmetaconfig.h
