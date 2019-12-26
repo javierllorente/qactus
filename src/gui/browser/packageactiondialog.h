@@ -28,12 +28,20 @@ namespace Ui {
 class PackageActionDialog;
 }
 
+enum class PackageAction {
+    Unknown = -1,
+    LinkPackage,
+    CopyPackage
+};
+
 class PackageActionDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit PackageActionDialog(QWidget *parent = nullptr, OBS *obs = nullptr, const QString &sourcePrj = QString(), const QString &sourcePkg = QString());
+    explicit PackageActionDialog(QWidget *parent = nullptr, OBS *obs = nullptr,
+                                 const QString &srcProject = QString(), const QString &srcPackage = QString(),
+                                 PackageAction action = PackageAction::Unknown);
     ~PackageActionDialog();
 
 public slots:
@@ -42,12 +50,14 @@ public slots:
 private:
     Ui::PackageActionDialog *ui;
     OBS *m_obs;
+    PackageAction m_action;
+
 
 private slots:
     void toggleOkButton();
     void on_buttonBox_accepted();
     void revisionFetched(OBSRevision *revision);
-    void slotCannotCopyPackage(OBSStatus *status);
+    void slotCannot(OBSStatus *status);
 
 signals:
     void updateStatusBar(QString message, bool progressBarHidden);
