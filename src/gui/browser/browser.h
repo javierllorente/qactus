@@ -77,7 +77,6 @@ private:
     OBS *m_obs;
     QItemSelectionModel *packagesSelectionModel;
     QItemSelectionModel *filesSelectionModel;
-    bool firstTimeFileListDisplayed;
     QString currentProject;
     QString currentPackage;
     QMenu *m_projectsMenu;
