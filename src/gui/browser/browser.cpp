@@ -419,6 +419,20 @@ void Browser::createRequest()
             ui->treePackages, &PackageTreeWidget::addPackageList);
 }
 
+void Browser::linkPackage()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    PackageActionDialog *packageActionDialog = new PackageActionDialog(this, m_obs,
+                                                                       ui->treeProjects->getCurrentProject(),
+                                                                       ui->treePackages->getCurrentPackage(),
+                                                                       PackageAction::LinkPackage);
+    packageActionDialog->addProjectList(ui->treeProjects->getProjectList());
+    connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
+    connect(packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
+    packageActionDialog->exec();
+    delete packageActionDialog;
+}
+
 void Browser::copyPackage()
 {
     qDebug() << __PRETTY_FUNCTION__;
