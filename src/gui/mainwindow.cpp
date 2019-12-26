@@ -233,6 +233,7 @@ void MainWindow::setupActions()
     bool packageSelected = browser->hasPackageSelection();
     ui->action_Branch_package->setEnabled(packageSelected);
     action_createRequest->setEnabled(packageSelected);
+    action_linkPackage->setEnabled(packageSelected);
     action_copyPackage->setEnabled(packageSelected);
     ui->action_Upload_file->setEnabled(packageSelected);
     actionDelete_package->setEnabled(packageSelected);
@@ -488,6 +489,11 @@ void MainWindow::createActions()
     action_createRequest->setIcon(QIcon::fromTheme("cloud-upload"));
     connect(action_createRequest, &QAction::triggered, browser, &Browser::createRequest);
 
+    // Link package action
+    action_linkPackage = new QAction(tr("&Link package"), this);
+    action_linkPackage->setIcon(QIcon::fromTheme("edit-link"));
+    connect(action_linkPackage, &QAction::triggered, browser, &Browser::linkPackage);
+
     // Copy package action
     action_copyPackage = new QAction(tr("&Copy package"), this);
     action_copyPackage->setIcon(QIcon::fromTheme("edit-copy"));
@@ -547,6 +553,7 @@ void MainWindow::createActions()
     treePackagesMenu->addAction(actionNew_package);
     treePackagesMenu->addAction(ui->action_Branch_package);
     treePackagesMenu->addAction(action_createRequest);
+    treePackagesMenu->addAction(action_linkPackage);
     treePackagesMenu->addAction(action_copyPackage);
     treePackagesMenu->addAction(action_ReloadPackages);
     treePackagesMenu->addAction(actionDelete_package);
