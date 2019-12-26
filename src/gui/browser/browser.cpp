@@ -437,8 +437,9 @@ void Browser::copyPackage()
 {
     qDebug() << __PRETTY_FUNCTION__;
     PackageActionDialog *packageActionDialog = new PackageActionDialog(this, m_obs,
-                                                                 ui->treeProjects->getCurrentProject(),
-                                                                 ui->treePackages->getCurrentPackage());
+                                                                       ui->treeProjects->getCurrentProject(),
+                                                                       ui->treePackages->getCurrentPackage(),
+                                                                       PackageAction::CopyPackage);
     packageActionDialog->addProjectList(ui->treeProjects->getProjectList());
     connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
     connect(packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
