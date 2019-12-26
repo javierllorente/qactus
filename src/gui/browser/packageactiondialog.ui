@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Copy package</string>
+   <string>Unknown action</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
