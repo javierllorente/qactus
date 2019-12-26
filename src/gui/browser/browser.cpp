@@ -31,7 +31,6 @@ Browser::Browser(QWidget *parent, OBS *obs) :
     QWidget(parent),
     ui(new Ui::Browser),
     m_obs(obs),
-    firstTimeBuildResultsDisplayed(true),
     m_projectsMenu(nullptr),
     m_packagesMenu(nullptr),
     m_filesMenu(nullptr),
@@ -112,6 +111,7 @@ Browser::Browser(QWidget *parent, OBS *obs) :
     connect(ui->treePackages, &PackageTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     connect(m_obs, &OBS::finishedParsingResult, this, &Browser::addResult);
+    connect(m_obs, &OBS::finishedParsingResultList, ui->treeBuildResults, &BuildResultTreeWidget::finishedAddingResults);
     connect(m_obs, &OBS::finishedParsingResultList, this, &Browser::finishedAddingResults);
 
     // Model selection's signals-slots
@@ -871,14 +871,6 @@ void Browser::slotDeleteFile(OBSStatus *status)
 void Browser::finishedAddingResults()
 {
    qDebug() << __PRETTY_FUNCTION__;
-   if (firstTimeBuildResultsDisplayed) {
-       ui->treeBuildResults->sortByColumn(0, Qt::AscendingOrder);
-       firstTimeBuildResultsDisplayed = false;
-   } else {
-       int column = ui->treeBuildResults->header()->sortIndicatorSection();
-       ui->treeBuildResults->sortByColumn(-1);
-       ui->treeBuildResults->sortByColumn(column);
-   }
 
    if (!currentProject.isEmpty() && !currentPackage.isEmpty()) {
        currentProject = "";

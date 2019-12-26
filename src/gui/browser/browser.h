@@ -78,7 +78,6 @@ private:
     QItemSelectionModel *packagesSelectionModel;
     QItemSelectionModel *filesSelectionModel;
     bool firstTimeFileListDisplayed;
-    bool firstTimeBuildResultsDisplayed;
     QString currentProject;
     QString currentPackage;
     QMenu *m_projectsMenu;

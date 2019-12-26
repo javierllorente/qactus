@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,12 +19,21 @@
  */
 
 #include "buildresulttreewidget.h"
+#include <QHeaderView>
+#include <QDebug>
 
 BuildResultTreeWidget::BuildResultTreeWidget(QWidget *parent) :
-    QTreeView(parent)
+    QTreeView(parent),
+    firstTimeBuildResultsDisplayed(true)
 {
     createModel();
     setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(header(), &QHeaderView::sortIndicatorChanged, this,
+            [&](int logicalIndex, Qt::SortOrder order) {
+        m_logicalIndex = logicalIndex;
+        m_order = order;
+    });
 }
 
 void BuildResultTreeWidget::createModel()
@@ -82,4 +91,19 @@ QString BuildResultTreeWidget::getCurrentArch() const
 {
     QModelIndexList indexList = selectionModel()->selectedIndexes();
     return indexList.at(1).data().toString();
+}
+
+void BuildResultTreeWidget::finishedAddingResults()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    if (firstTimeBuildResultsDisplayed) {
+        model()->sort(0, Qt::AscendingOrder);
+        header()->setSortIndicator(0, Qt::AscendingOrder);
+        firstTimeBuildResultsDisplayed = false;
+    } else {
+        model()->sort(m_logicalIndex, m_order);
+        header()->setSortIndicator(m_logicalIndex, m_order);
+    }
+    m_logicalIndex = header()->sortIndicatorSection();
+    m_order = header()->sortIndicatorOrder();
 }
