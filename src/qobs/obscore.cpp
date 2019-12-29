@@ -140,7 +140,7 @@ void OBSCore::getBuildStatus(const QStringList &build, int row)
 
 QNetworkReply *OBSCore::requestSource(const QString &resource)
 {
-    return request("/source/" + resource);
+    return request("/source" + resource);
 }
 
 QString OBSCore::createReqResourceStr(const QString &states, const QString &roles) const
