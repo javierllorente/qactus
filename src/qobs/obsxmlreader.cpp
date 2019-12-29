@@ -922,7 +922,6 @@ OBSDistribution *OBSXmlReader::parseDistribution(QXmlStreamReader &xml)
 
         if (xml.name()=="icon" && xml.isStartElement()) {
             QXmlStreamAttributes attrib = xml.attributes();
-            qDebug() << __PRETTY_FUNCTION__ << "icon:" << attrib.value("url").toString();
             distribution->appendIcon(QUrl(attrib.value("url").toString()));
         }
 
