@@ -38,6 +38,7 @@
 #include "obsperson.h"
 #include "obsprjmetaconfig.h"
 #include "obspkgmetaconfig.h"
+#include "obsdistribution.h"
 
 class OBSXmlReader : public QObject
 {
@@ -75,6 +76,7 @@ public:
     void parseAbout(const QString &data);
     void parsePerson(const QString &data);
     void parseUpdatePerson(const QString &data);
+    void parseDistributions(const QString &data);
 
 private:
     static OBSXmlReader *instance;
@@ -90,6 +92,7 @@ private:
     QStringList parseList(QXmlStreamReader &xml);
     void parseMetaConfig(QXmlStreamReader &xml, OBSMetaConfig *metaConfig);
     QHash<QString, bool> parseRepositoryFlags(QXmlStreamReader &xml);
+    OBSDistribution *parseDistribution(QXmlStreamReader &xml);
     QString requestNumber;
 
 signals:
@@ -127,6 +130,7 @@ signals:
     void finishedParsingAbout(OBSAbout *obsAbout);
     void finishedParsingPerson(OBSPerson *obsPerson);
     void finishedParsingUpdatePerson(OBSStatus *obsStatus);
+    void finishedParsingDistribution(OBSDistribution *distribution);
 };
 
 #endif // OBSXMLREADER_H

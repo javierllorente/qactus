@@ -885,6 +885,55 @@ QHash<QString, bool> OBSXmlReader::parseRepositoryFlags(QXmlStreamReader &xml)
     return flagHash;
 }
 
+OBSDistribution *OBSXmlReader::parseDistribution(QXmlStreamReader &xml)
+{
+    OBSDistribution *distribution = nullptr;
+
+    if (xml.name()=="distribution" && xml.isStartElement()) {
+        distribution = new OBSDistribution();
+        QXmlStreamAttributes attrib = xml.attributes();
+        distribution->setVendor(attrib.value("vendor").toString());
+        distribution->setVersion(attrib.value("version").toString());
+        distribution->setId(attrib.value("id").toString());
+    }
+
+    while (!(xml.name()=="distribution" && xml.isEndElement())) {
+        xml.readNext();
+
+        if (xml.name()=="name" && xml.isStartElement()) {
+            distribution->setName(xml.readElementText());
+        }
+
+        if (xml.name()=="project" && xml.isStartElement()) {
+            distribution->setProject(xml.readElementText());
+        }
+
+        if (xml.name()=="reponame" && xml.isStartElement()) {
+            distribution->setRepoName(xml.readElementText());
+        }
+
+        if (xml.name()=="repository" && xml.isStartElement()) {
+            distribution->setRepository(xml.readElementText());
+        }
+
+        if (xml.name()=="link" && xml.isStartElement()) {
+            distribution->setLink(QUrl(xml.readElementText()));
+        }
+
+        if (xml.name()=="icon" && xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            qDebug() << __PRETTY_FUNCTION__ << "icon:" << attrib.value("url").toString();
+            distribution->appendIcon(QUrl(attrib.value("url").toString()));
+        }
+
+        if (xml.name()=="architecture" && xml.isStartElement()) {
+            distribution->appendArch(xml.readElementText());
+        }
+    }
+
+    return distribution;
+}
+
 void OBSXmlReader::parseFileList(const QString &project, const QString &package, const QString &data)
 {
     qDebug() << "OBSXmlReader::parseFileList()";
@@ -1046,6 +1095,28 @@ void OBSXmlReader::parseUpdatePerson(const QString &data)
     }
 
     emit finishedParsingUpdatePerson(obsStatus);
+}
+
+void OBSXmlReader::parseDistributions(const QString &data)
+{
+    QXmlStreamReader xml(data);
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        if (xml.name()=="distributions" && xml.isStartElement()) {
+            xml.readNextStartElement();
+        }
+        if (xml.name()=="distribution" && xml.isStartElement()) {
+            OBSDistribution *distribution = parseDistribution(xml);
+            emit finishedParsingDistribution(distribution);
+        }
+
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        return;
+    }
 }
 
 int OBSXmlReader::getRequestNumber()
