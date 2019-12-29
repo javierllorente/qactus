@@ -621,6 +621,11 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 qDebug() << reqTypeStr << "UpdatePerson";
                 xmlReader->parseUpdatePerson(dataStr);
                 break;
+
+            case OBSCore::Distributions:
+                qDebug() << reqTypeStr << "Distributions";
+                xmlReader->parseDistributions(dataStr);
+                break;
             }
             return;
         }
@@ -1031,6 +1036,13 @@ void OBSCore::updatePerson(const QByteArray &data)
     QString resource = "/person/" + curUsername;
     QNetworkReply *reply = putRequest(resource, data);
     reply->setProperty("reqtype", OBSCore::UpdatePerson);
+}
+
+void OBSCore::getDistributions()
+{
+    QString resource = "/distributions";
+    QNetworkReply *reply = request(resource);
+    reply->setProperty("reqtype", OBSCore::Distributions);
 }
 
 void OBSCore::onSslErrors(QNetworkReply *reply, const QList<QSslError> &list)

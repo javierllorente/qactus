@@ -83,6 +83,7 @@ public:
     void about();
     void getPerson();
     void updatePerson(const QByteArray &data);
+    void getDistributions();
 
 signals:
     void apiNotFound(QUrl url);
@@ -159,7 +160,8 @@ private:
         DeleteFile,
         About,
         Person,
-        UpdatePerson
+        UpdatePerson,
+        Distributions
     };
     bool authenticated;
     OBSXmlReader *xmlReader;

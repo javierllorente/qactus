@@ -74,6 +74,7 @@ public:
     void about();
     void getPerson();
     void updatePerson(const QByteArray &data);
+    void getDistributions();
 
 private:
     OBSCore *obsCore;
@@ -135,6 +136,7 @@ signals:
     void finishedParsingAbout(OBSAbout *obsAbout);
     void finishedParsingPerson(OBSPerson *obsPerson);
     void finishedParsingUpdatePerson(OBSStatus *obsStatus);
+    void finishedParsingDistribution(OBSDistribution *distribution);
 
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);
