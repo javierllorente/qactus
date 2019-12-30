@@ -30,6 +30,8 @@
 #include "obsxmlwriter.h"
 #include "obsprjmetaconfig.h"
 #include "obspkgmetaconfig.h"
+#include "repositorycompleter.h"
+#include "repositoryflagscompleter.h"
 
 namespace Ui {
 class MetaConfigEditor;
@@ -59,6 +61,7 @@ private slots:
     void on_buttonBox_rejected();
     void slotCreateResult(OBSStatus *obsStatus);
     void slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
+    void slotSetupRepositoryFlagsCompleter(OBSPrjMetaConfig *prjMetaConfig);
     void slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
     void on_projectLineEdit_textChanged(const QString &project);
     void packageTextChanged(const QString &package);
@@ -76,6 +79,8 @@ private:
     QTreeWidget *debugInfoFlagTree;
     QTreeWidget *publishFlagTree;
     QTreeWidget *useForFlagTree;
+    RepositoryCompleter *repositoryCompleter;
+    RepositoryFlagsCompleter *repositoryFlagsCompleter;
     QTreeWidget *usersTree;
     QTreeWidget *groupsTree;
     enum class RepositoryFlag { Build, DebugInfo, Publish, UseForBuild };

@@ -38,6 +38,8 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     debugInfoFlagTree(nullptr),
     publishFlagTree(nullptr),
     useForFlagTree(nullptr),
+    repositoryCompleter(new RepositoryCompleter),
+    repositoryFlagsCompleter(new RepositoryFlagsCompleter),
     usersTree(nullptr),
     groupsTree(nullptr)
 {
@@ -57,6 +59,7 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         addDefaultMaintainer(prjMetaConfig);
         addDefaultRepositories(prjMetaConfig);
         slotFetchedProjectMetaConfig(prjMetaConfig);
+        m_obs->getDistributions();
 
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         break;
@@ -66,7 +69,10 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         ui->projectLineEdit->setText(m_project);
         ui->projectLineEdit->setDisabled(true);
         ui->titleLineEdit->setFocus();
+
+        connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &MetaConfigEditor::slotFetchedProjectMetaConfig);
         m_obs->getProjectMetaConfig(m_project);
+        m_obs->getDistributions();
         break;
     case MCEMode::CreatePackage: {
         windowTitle = tr("Create package");
@@ -90,7 +96,11 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         packageLineEdit->setDisabled(true);
         ui->titleLineEdit->setFocus();
         createUrlField();
+
+        connect(m_obs, &OBS::finishedParsingPackageMetaConfig, this, &MetaConfigEditor::slotFetchedPackageMetaConfig);
         m_obs->getPackageMetaConfig(m_project, m_package);
+        connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &MetaConfigEditor::slotSetupRepositoryFlagsCompleter);
+        m_obs->getProjectMetaConfig(m_project);
         break;
     }
 
@@ -102,9 +112,6 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
     connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, &MetaConfigEditor::slotCreateResult);
     connect(m_obs, &OBS::cannotCreateProject, this, &MetaConfigEditor::slotCreateResult);
     connect(m_obs, &OBS::cannotCreatePackage, this, &MetaConfigEditor::slotCreateResult);
-
-    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &MetaConfigEditor::slotFetchedProjectMetaConfig);
-    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, this, &MetaConfigEditor::slotFetchedPackageMetaConfig);
 }
 
 MetaConfigEditor::~MetaConfigEditor()
@@ -197,6 +204,16 @@ void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaCon
     delete prjMetaConfig;
 }
 
+void MetaConfigEditor::slotSetupRepositoryFlagsCompleter(OBSPrjMetaConfig *prjMetaConfig)
+{
+    for (auto repository : prjMetaConfig->getRepositories()) {
+        for (auto arch : repository->getArchs()) {
+            repositoryFlagsCompleter->appendRepository(repository->getName());
+        }
+    }
+    delete prjMetaConfig;
+}
+
 void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
 {
     packageLineEdit->setText(pkgMetaConfig->getName());
@@ -235,11 +252,20 @@ void MetaConfigEditor::fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig)
     tableRepositories = createRepositoryTable();
     QTreeWidgetItem *item = nullptr;
 
+    tableRepositories->setItemDelegate(repositoryCompleter);
+    connect(tableRepositories, &QTreeWidget::itemChanged, repositoryCompleter, &RepositoryCompleter::slotItemChanged);
+    connect(tableRepositories, &QTreeWidget::itemChanged, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotItemChanged);
+    connect(tableRepositories->selectionModel(), &QItemSelectionModel::currentRowChanged, repositoryCompleter, &RepositoryCompleter::slotCurrentChanged);
+    connect(tableRepositories->selectionModel(), &QItemSelectionModel::currentRowChanged, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotCurrentChanged);
+    connect(tableRepositories->model(), &QAbstractItemModel::rowsRemoved, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotRowsRemoved);
+    connect(m_obs, &OBS::finishedParsingDistribution, repositoryCompleter, &RepositoryCompleter::slotFetchedDistribution);
+
     for (auto repository : prjMetaConfig->getRepositories()) {
         for (auto arch : repository->getArchs()) {
             item = new QTreeWidgetItem();
             item->setFlags(item->flags() | Qt::ItemIsEditable);
             item->setText(0, repository->getName());
+            repositoryFlagsCompleter->appendRepository(repository->getName());
             item->setText(1, arch);
             item->setText(2, repository->getProject() + "/" + repository->getRepository());
             tableRepositories->addTopLevelItem(item);
@@ -391,6 +417,7 @@ QTreeWidget *MetaConfigEditor::createRepositoryFlagsTable(const QString &header,
     treeWidget->setRootIsDecorated(false);
     QStringList headersRepositoryFlags = QStringList() << header << "Enabled";
     treeWidget->setHeaderLabels(headersRepositoryFlags);
+    treeWidget->setItemDelegate(repositoryFlagsCompleter);
 
     QStringList repositories = flag.keys();
 
