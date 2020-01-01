@@ -19,6 +19,7 @@ set(QACTUS_SRC
     browser/buildlogviewer.cpp
     browser/buildresulttreewidget.cpp
     browser/metaconfigeditor.cpp
+    browser/repositorytreewidget.cpp
     browser/repositorycompleter.cpp
     browser/repositoryflagscompleter.cpp
     browser/packageactiondialog.cpp
@@ -56,6 +57,7 @@ set(QACTUS_HDR
     browser/buildlogviewer.h
     browser/buildresulttreewidget.h
     browser/metaconfigeditor.h
+    browser/repositorytreewidget.cpp
     browser/repositorycompleter.h
     browser/repositoryflagscompleter.h
     browser/packageactiondialog.h
