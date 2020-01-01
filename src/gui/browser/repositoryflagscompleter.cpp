@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ RepositoryFlagsCompleter::RepositoryFlagsCompleter(QWidget *parent) :
     QStyledItemDelegate(parent)
 {
     m_repositoryList = QStringList() << "all";
+    m_itemCount = QList<int>() << 1;
 }
 
 QWidget *RepositoryFlagsCompleter::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -74,7 +75,14 @@ void RepositoryFlagsCompleter::setModelData(QWidget *editor, QAbstractItemModel 
 
 void RepositoryFlagsCompleter::appendRepository(const QString &repository)
 {
-    m_repositoryList.append(repository);
+    int index = m_repositoryList.indexOf(repository);
+    if (index==-1) {
+        m_repositoryList.append(repository);
+        m_itemCount.append(1);
+    } else {
+        int count = m_itemCount.at(index);
+        m_itemCount.replace(index, ++count);
+    }
 }
 
 void RepositoryFlagsCompleter::slotItemActivated(QTreeWidgetItem *item, int column)
@@ -84,16 +92,36 @@ void RepositoryFlagsCompleter::slotItemActivated(QTreeWidgetItem *item, int colu
       }
 }
 
-void RepositoryFlagsCompleter::slotItemChanged(QTreeWidgetItem *item, int column)
+void RepositoryFlagsCompleter::slotItemChanged(QStandardItem *item)
 {
-    qDebug() << __PRETTY_FUNCTION__ << item->text(0);
-    if (column==0) {
+    qDebug() << __PRETTY_FUNCTION__ << item->text() << item->column();
+
+    if (item->column()==0) {
         int index = m_repositoryList.indexOf(m_currentItem);
+        int count = -1;
         if (index!=-1) {
-            m_repositoryList.replace(index, item->text(0));
-        } else {
-            m_repositoryList.append(item->text(0));
+            count = m_itemCount.at(index);
         }
+
+        if (index>=0) {
+            if (count==1) {
+                m_repositoryList.replace(index, item->text());
+                m_itemCount.replace(index, --count);
+            }
+
+            if (count>1) {
+                m_repositoryList.append(item->text());
+                m_itemCount.append(1);
+                m_itemCount.replace(index, --count);
+            }
+
+        } else {
+            // Not found
+            m_repositoryList.append(item->text());
+            m_itemCount.append(1);
+        }
+
+        m_currentItem = item->text();
     }
 }
 
@@ -107,10 +135,32 @@ void RepositoryFlagsCompleter::slotCurrentChanged(const QModelIndex &current, co
     }
 }
 
-void RepositoryFlagsCompleter::slotRowsRemoved(const QModelIndex &parent, int first, int last)
+void RepositoryFlagsCompleter::slotCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
-    Q_UNUSED(parent)
-    Q_UNUSED(last)
-    qDebug() << __PRETTY_FUNCTION__ << first;
-    m_repositoryList.removeAt(first+1); // +1 for "all"
+    Q_UNUSED(previous)
+    m_currentItem = current->text(0);
+}
+
+void RepositoryFlagsCompleter::slotRepositoryRemoved(const QString &repository)
+{
+    qDebug() << __PRETTY_FUNCTION__ << repository;
+
+    if (!repository.isEmpty()) {
+        int index = m_repositoryList.indexOf(repository);
+        int count = m_itemCount.at(index);
+
+        if (count==1) {
+            m_repositoryList.removeAt(index);
+            m_itemCount.removeAt(index);
+        } else {
+            m_itemCount.replace(index, --count);
+        }
+    }
+}
+
+void RepositoryFlagsCompleter::slotSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    Q_UNUSED(deselected)
+    QModelIndex index = selected.indexes().at(0);
+    m_currentItem = index.data(Qt::DisplayRole).toString();
 }

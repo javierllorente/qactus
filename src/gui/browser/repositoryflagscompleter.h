@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include <QStyledItemDelegate>
 #include <QTreeWidgetItem>
+#include <QStandardItem>
 #include <QList>
 #include "obsdistribution.h"
 
@@ -40,13 +41,16 @@ public:
 
 private:
     QStringList m_repositoryList;
+    QList<int> m_itemCount;
     QString m_currentItem;
 
 public slots:
     void slotItemActivated(QTreeWidgetItem *item, int column);
-    void slotItemChanged(QTreeWidgetItem *item, int column);
+    void slotItemChanged(QStandardItem *item);
     void slotCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
-    void slotRowsRemoved(const QModelIndex &parent, int first, int last);
+    void slotCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+    void slotRepositoryRemoved(const QString &repository);
+    void slotSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 };
 
 #endif // REPOSITORYFLAGSCOMPLETER_H
