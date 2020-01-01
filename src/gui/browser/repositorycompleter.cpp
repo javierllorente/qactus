@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -75,12 +75,12 @@ void RepositoryCompleter::setModelData(QWidget *editor, QAbstractItemModel *mode
     QStyledItemDelegate::setModelData(editor, model, index);
 }
 
-void RepositoryCompleter::slotItemChanged(QTreeWidgetItem *item, int column)
+void RepositoryCompleter::slotItemChanged(QStandardItem *item)
 {
-    qDebug() << __PRETTY_FUNCTION__ << item->text(0);
+    qDebug() << __PRETTY_FUNCTION__ << item->text();
 
-    if (column==0) {
-        int index = m_repoNames.indexOf(item->text(0));
+    if (item->column()==0) {
+        int index = m_repoNames.indexOf(item->text());
         if (index!=-1) {
             m_archs = QStringList() << m_distributions.at(index)->getArchs();
             m_path = QStringList() << QString("%1/%2").arg(m_distributions.at(index)->getRepoName(),
