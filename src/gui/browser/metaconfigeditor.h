@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "obspkgmetaconfig.h"
 #include "repositorycompleter.h"
 #include "repositoryflagscompleter.h"
+#include "repositorytreewidget.h"
 
 namespace Ui {
 class MetaConfigEditor;
@@ -74,7 +75,7 @@ private:
     MCEMode m_mode;
     QLineEdit *packageLineEdit;
     QLineEdit *urlLineEdit;
-    QTreeWidget *tableRepositories;
+    RepositoryTreeWidget *tableRepositories;
     QTreeWidget *buildFlagTree;
     QTreeWidget *debugInfoFlagTree;
     QTreeWidget *publishFlagTree;
@@ -88,7 +89,7 @@ private:
     void fillTabs(OBSMetaConfig *metaConfig);
     QWidget *createButtonBar(QTreeWidget *treeWidget);
     QWidget *createSideBar(QTreeWidget *treeWidget);
-    QTreeWidget *createRepositoryTable();
+    RepositoryTreeWidget *createRepositoryTable();
     QTreeWidget *createRepositoryFlagsTable(const QString &header, const QHash<QString, bool> &flag);
     QTreeWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
     void createPackageField();
@@ -97,7 +98,7 @@ private:
     void addDefaultRepositories(OBSPrjMetaConfig *prjMetaConfig);
     void fillMetaConfigRoles(QTreeWidget *tree, OBSMetaConfig *metaConfig, const QString &type);
     void fillMetaConfigRepositoryFlags(QTreeWidget *tree, OBSMetaConfig *metaConfig, RepositoryFlag flag);
-    void fillMetaConfigRepositories(QTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig);
+    void fillMetaConfigRepositories(RepositoryTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig);
 
 };
 

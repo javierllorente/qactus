@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QTreeWidget>
 #include <QHeaderView>
 #include <QTimer>
+#include <QStandardItemModel>
 
 MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, MCEMode mode) :
     QDialog(parent),
@@ -250,25 +251,21 @@ void MetaConfigEditor::packageTextChanged(const QString &package)
 void MetaConfigEditor::fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig)
 {
     tableRepositories = createRepositoryTable();
-    QTreeWidgetItem *item = nullptr;
+
+    connect(tableRepositories, &RepositoryTreeWidget::repositoryRemoved, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotRepositoryRemoved);
+    connect(tableRepositories, &RepositoryTreeWidget::itemChanged, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotItemChanged);
+    connect(tableRepositories->selectionModel(), &QItemSelectionModel::selectionChanged, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotSelectionChanged);
 
     tableRepositories->setItemDelegate(repositoryCompleter);
-    connect(tableRepositories, &QTreeWidget::itemChanged, repositoryCompleter, &RepositoryCompleter::slotItemChanged);
-    connect(tableRepositories, &QTreeWidget::itemChanged, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotItemChanged);
-    connect(tableRepositories->selectionModel(), &QItemSelectionModel::currentRowChanged, repositoryCompleter, &RepositoryCompleter::slotCurrentChanged);
-    connect(tableRepositories->selectionModel(), &QItemSelectionModel::currentRowChanged, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotCurrentChanged);
-    connect(tableRepositories->model(), &QAbstractItemModel::rowsRemoved, repositoryFlagsCompleter, &RepositoryFlagsCompleter::slotRowsRemoved);
     connect(m_obs, &OBS::finishedParsingDistribution, repositoryCompleter, &RepositoryCompleter::slotFetchedDistribution);
+    connect(tableRepositories, &RepositoryTreeWidget::itemChanged, repositoryCompleter, &RepositoryCompleter::slotItemChanged);
+    connect(tableRepositories->selectionModel(), &QItemSelectionModel::currentRowChanged, repositoryCompleter, &RepositoryCompleter::slotCurrentChanged);
 
     for (auto repository : prjMetaConfig->getRepositories()) {
+        tableRepositories->addRepository(repository);
+
         for (auto arch : repository->getArchs()) {
-            item = new QTreeWidgetItem();
-            item->setFlags(item->flags() | Qt::ItemIsEditable);
-            item->setText(0, repository->getName());
             repositoryFlagsCompleter->appendRepository(repository->getName());
-            item->setText(1, arch);
-            item->setText(2, repository->getProject() + "/" + repository->getRepository());
-            tableRepositories->addTopLevelItem(item);
         }
     }
 }
@@ -329,7 +326,7 @@ QWidget *MetaConfigEditor::createButtonBar(QTreeWidget *treeWidget)
     buttonRemove->setIcon(QIcon::fromTheme("list-remove"));
     buttonRemove->setMaximumSize(25, 25);
     connect(buttonRemove, &QPushButton::clicked, treeWidget, [treeWidget]() {
-        QModelIndex modelIndex = treeWidget->selectionModel()->currentIndex();
+        QModelIndex modelIndex = treeWidget->currentIndex();
         int index = modelIndex.row();
         treeWidget->takeTopLevelItem(index);
     });
@@ -394,16 +391,10 @@ QWidget *MetaConfigEditor::createSideBar(QTreeWidget *treeWidget)
     return mainWidget;
 }
 
-QTreeWidget *MetaConfigEditor::createRepositoryTable()
+RepositoryTreeWidget *MetaConfigEditor::createRepositoryTable()
 {
-    QTreeWidget *treeWidget = new QTreeWidget(ui->tabWidget);
-    treeWidget->setColumnWidth(0, 180);
-    treeWidget->setRootIsDecorated(false);
-    treeWidget->setAlternatingRowColors(true);
-    QStringList headers = QStringList() << "Repository" << "Arch" << "Path";
-    treeWidget->setHeaderLabels(headers);
-
-    QWidget *widgetTab = createButtonBar(treeWidget);
+    RepositoryTreeWidget *treeWidget = new RepositoryTreeWidget(ui->tabWidget);
+    QWidget *widgetTab = treeWidget->createButtonBar();
     ui->tabWidget->insertTab(1, widgetTab, "Repositories");
 
     return treeWidget;
@@ -528,19 +519,9 @@ void MetaConfigEditor::fillMetaConfigRepositoryFlags(QTreeWidget *tree, OBSMetaC
     }
 }
 
-void MetaConfigEditor::fillMetaConfigRepositories(QTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig)
+void MetaConfigEditor::fillMetaConfigRepositories(RepositoryTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig)
 {
-    int rows = tree->topLevelItemCount();
-    OBSRepository *repository = nullptr;
-    QStringList path;
-
-    for (int i=0; i<rows; i++) {
-        path = tree->topLevelItem(i)->text(2).split("/");
-        if (path.count()>1) {
-            repository = new OBSRepository(tree->topLevelItem(i)->text(0),
-                                           path.at(0), path.at(1),
-                                           tree->topLevelItem(i)->text(1));
-            prjMetaConfig->appendRepository(repository);
-        }
+    for (auto repository : tree->getRepositories()) {
+        prjMetaConfig->appendRepository(repository);
     }
 }
