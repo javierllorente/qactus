@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -581,7 +581,7 @@ void OBSXmlReader::parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision
 void OBSXmlReader::parseRevisionList(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSRevision *obsRevision = NULL;
+    OBSRevision *obsRevision = nullptr;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
