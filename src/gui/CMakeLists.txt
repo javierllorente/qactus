@@ -22,6 +22,7 @@ set(QACTUS_SRC
     browser/repositorytreewidget.cpp
     browser/repositorycompleter.cpp
     browser/repositoryflagscompleter.cpp
+    browser/focusfilter.cpp
     browser/packageactiondialog.cpp
     browser/createrequestdialog.cpp
     browser/filetreewidget.cpp
@@ -60,6 +61,7 @@ set(QACTUS_HDR
     browser/repositorytreewidget.cpp
     browser/repositorycompleter.h
     browser/repositoryflagscompleter.h
+    browser/focusfilter.h
     browser/packageactiondialog.h
     browser/createrequestdialog.h
     browser/filetreewidget.h
