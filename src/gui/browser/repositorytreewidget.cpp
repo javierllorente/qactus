@@ -114,6 +114,7 @@ QWidget *RepositoryTreeWidget::createButtonBar()
         QPushButton *buttonRemove = new QPushButton(this);
         buttonRemove->setIcon(QIcon::fromTheme("list-remove"));
         buttonRemove->setMaximumSize(25, 25);
+        buttonRemove->setShortcut(QKeySequence::Delete);
         connect(buttonRemove, &QPushButton::clicked, this, [&]() {
             removeRow(currentIndex());
         });

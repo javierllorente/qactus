@@ -24,6 +24,7 @@
 #include <QHeaderView>
 #include <QTimer>
 #include <QStandardItemModel>
+#include "focusfilter.h"
 
 MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, MCEMode mode) :
     QDialog(parent),
@@ -325,6 +326,7 @@ QWidget *MetaConfigEditor::createButtonBar(QTreeWidget *treeWidget)
     QPushButton *buttonRemove = new QPushButton(treeWidget);
     buttonRemove->setIcon(QIcon::fromTheme("list-remove"));
     buttonRemove->setMaximumSize(25, 25);
+    buttonRemove->setShortcut(QKeySequence::Delete);
     connect(buttonRemove, &QPushButton::clicked, treeWidget, [treeWidget]() {
         QModelIndex modelIndex = treeWidget->currentIndex();
         int index = modelIndex.row();
@@ -363,10 +365,18 @@ QWidget *MetaConfigEditor::createSideBar(QTreeWidget *treeWidget)
         treeWidget->addTopLevelItem(item);
         treeWidget->scrollToItem(item);
         treeWidget->setCurrentItem(item);
+        treeWidget->setFocus();
     });
     QPushButton *buttonRemove = new QPushButton(treeWidget);
     buttonRemove->setIcon(QIcon::fromTheme("list-remove"));
     buttonRemove->setMaximumSize(25, 25);
+
+    FocusFilter *focusFilter = new FocusFilter(treeWidget);
+    treeWidget->installEventFilter(focusFilter);
+    connect(focusFilter, &FocusFilter::hasFocus, this, [buttonRemove](bool focus) {
+        buttonRemove->setShortcut(focus ? QKeySequence::Delete : QKeySequence());
+    });
+
     connect(buttonRemove, &QPushButton::clicked, treeWidget, [treeWidget]() {
         QModelIndex modelIndex = treeWidget->selectionModel()->currentIndex();
         int index = modelIndex.row();
