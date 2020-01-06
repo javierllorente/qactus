@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2010-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -396,7 +396,7 @@ void MainWindow::on_action_About_triggered()
     aboutHtml += QString("<big>%1</big>").arg(QCoreApplication::applicationName()) + "<br>";
     aboutHtml += "<b>" + tr("Version %1").arg(QCoreApplication::applicationVersion()) + "</b><br><br>";
     aboutHtml += tr("A Qt-based Open Build Service client")+ "<br>";
-    aboutHtml += "<div align=\"left\">&copy; 2010-2019 Javier Llorente</div>";
+    aboutHtml += "<div align=\"left\">&copy; 2010-2020 Javier Llorente</div>";
     aboutHtml += "<br><a href='https://github.com/javierllorente/qactus'>https://github.com/javierllorente/qactus</a> </p>";
     aboutHtml += "<p><b>" + tr("License") + "</b><br>";
     aboutHtml += "<nobr>" + tr("This program is under the GPLv3") + "</nobr></p></div>";

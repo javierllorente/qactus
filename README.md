@@ -3,7 +3,7 @@ qactus
 
 Qactus is a Qt-based OBS client
 
-Copyright (C) 2010-2019 Javier Llorente <javier@opensuse.org>
+Copyright (C) 2010-2020 Javier Llorente <javier@opensuse.org>
 
 Qactus enables desktop users to explore and maintain an OBS server's projects and packages, be notified on builds' status changes and manage requests.
 The name Qactus sprung into existence when Javier and Sivan were discussing the name and scope of the project (will it just provide status?) which through Sivan's IRC winter typing turned out as "staqtus" which sounded like Qactus to Javier.
