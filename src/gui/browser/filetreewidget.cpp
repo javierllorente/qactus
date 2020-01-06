@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,6 +27,12 @@ FileTreeWidget::FileTreeWidget(QWidget *parent) :
 {
     createModel();
     setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(header(), &QHeaderView::sortIndicatorChanged, this,
+            [&](int logicalIndex, Qt::SortOrder order) {
+        m_logicalIndex = logicalIndex;
+        m_order = order;
+    });
 }
 
 void FileTreeWidget::createModel()
@@ -76,13 +82,15 @@ void FileTreeWidget::filesAdded()
 {
     qDebug() << __PRETTY_FUNCTION__;
     if (firstTimeFileListDisplayed) {
-        sortByColumn(0, Qt::AscendingOrder);
+        model()->sort(0, Qt::AscendingOrder);
+        header()->setSortIndicator(0, Qt::AscendingOrder);
         firstTimeFileListDisplayed = false;
-        return;
+    } else {
+        model()->sort(m_logicalIndex, m_order);
+        header()->setSortIndicator(m_logicalIndex, m_order);
     }
-    int column = header()->sortIndicatorSection();
-    sortByColumn(-1);
-    sortByColumn(column);
+    m_logicalIndex = header()->sortIndicatorSection();
+    m_order = header()->sortIndicatorOrder();
 
     selectionModel()->clear(); // Emits selectionChanged() and currentChanged()
     emit updateStatusBar(tr("Done"), true);
