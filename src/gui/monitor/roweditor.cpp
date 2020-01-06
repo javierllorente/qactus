@@ -24,7 +24,7 @@
 RowEditor::RowEditor(QWidget *parent, OBS *obs) :
     QDialog(parent),
     ui(new Ui::RowEditor),
-    mOBS(obs),
+    m_obs(obs),
     projectModel(nullptr),
     projectCompleter(nullptr),
     packageModel(nullptr),
@@ -112,8 +112,8 @@ void RowEditor::setArch(const QString &arch)
 void RowEditor::initProjectAutocompleter()
 {
     qDebug() << "RowEditor::initProjectAutocompleter()";
-    connect(mOBS, SIGNAL(finishedParsingProjectList(QStringList)), this, SLOT(insertProjectList(QStringList)));
-    mOBS->getProjects();
+    connect(m_obs, SIGNAL(finishedParsingProjectList(QStringList)), this, SLOT(insertProjectList(QStringList)));
+    m_obs->getProjects();
 }
 
 void RowEditor::insertProjectList(const QStringList &list)
@@ -140,8 +140,8 @@ void RowEditor::autocompletedProjectName_clicked(const QString &projectName)
 {
     ui->lineEditPackage->setFocus();
 
-    connect(mOBS, SIGNAL(finishedParsingPackageList(QStringList)), this, SLOT(insertPackageList(QStringList)));
-    mOBS->getPackages(projectName);
+    connect(m_obs, SIGNAL(finishedParsingPackageList(QStringList)), this, SLOT(insertPackageList(QStringList)));
+    m_obs->getPackages(projectName);
 }
 
 void RowEditor::insertPackageList(const QStringList &list)
@@ -168,9 +168,9 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
 {
     ui->lineEditRepository->setFocus();
 
-    connect(mOBS, &OBS::finishedParsingProjectMetaConfig, this, &RowEditor::insertProjectMetaConfig);
+    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &RowEditor::insertProjectMetaConfig);
     QString project = ui->lineEditProject->text();
-    mOBS->getProjectMetaConfig(project);
+    m_obs->getProjectMetaConfig(project);
 }
 
 void RowEditor::insertProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
