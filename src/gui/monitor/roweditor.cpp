@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,17 +24,18 @@
 RowEditor::RowEditor(QWidget *parent, OBS *obs) :
     QDialog(parent),
     ui(new Ui::RowEditor),
-    mOBS(obs)
+    mOBS(obs),
+    projectModel(nullptr),
+    projectCompleter(nullptr),
+    packageModel(nullptr),
+    packageCompleter(nullptr),
+    repositoryModel(nullptr),
+    repositoryCompleter(nullptr),
+    archModel(nullptr),
+    archCompleter(nullptr)
 {
     ui->setupUi(this);
-    projectModel = NULL;
-    projectCompleter = NULL;
-    packageModel = NULL;
-    packageCompleter = NULL;
-    repositoryModel = NULL;
-    repositoryCompleter = NULL;
-    archModel = NULL;
-    archCompleter = NULL;
+
     initProjectAutocompleter();
 }
 
