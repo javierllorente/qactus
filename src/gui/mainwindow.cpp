@@ -118,7 +118,7 @@ void MainWindow::slotCredentialsRestored(const QString &username, const QString 
 {
     qDebug() << "MainWindow::slotCredentialsRestored()";
     slotLogin(username, password);
-    QProgressDialog progress(tr("Logging in..."), 0, 0, 0, this);
+    QProgressDialog progress(tr("Logging in..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
     emit updateStatusBar(tr("Logging in..."), false);
@@ -142,7 +142,7 @@ void MainWindow::showNetworkError(const QString &networkError)
         int ret = errorBox->exec();
         if (ret) {
             delete errorBox;
-            errorBox = NULL;
+            errorBox = nullptr;
         }
     }
 }
