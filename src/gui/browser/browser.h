@@ -49,6 +49,8 @@ public:
     bool hasFileSelection();
     bool hasBuildResultSelection();
     void setFilterPackageFocus();
+    QString packageFilterText() const;
+    void clearPackageFilter();
 
 public slots:
     void newProject();

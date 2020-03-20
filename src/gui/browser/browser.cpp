@@ -231,6 +231,16 @@ void Browser::setFilterPackageFocus()
     ui->lineEditFilter->setFocus();
 }
 
+QString Browser::packageFilterText() const
+{
+    return ui->lineEditFilter->text();
+}
+
+void Browser::clearPackageFilter()
+{
+    ui->lineEditFilter->clear();
+}
+
 void Browser::newProject()
 {
     qDebug() << __PRETTY_FUNCTION__;

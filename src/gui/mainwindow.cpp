@@ -54,6 +54,9 @@ MainWindow::MainWindow(QWidget *parent) :
         if (!browserFilter->text().isEmpty()) {
             browserFilter->clear();
         }
+        if (!browser->packageFilterText().isEmpty()) {
+            browser->clearPackageFilter();
+        }
     });
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupPackageShortcuts);
@@ -531,6 +534,9 @@ void MainWindow::createActions()
     actionFilter = ui->toolBar->insertWidget(ui->action_Upload_file, browserFilter);
     connect(obs, &OBS::finishedParsingProjectList, browserFilter, &BrowserFilter::addProjectList);
     connect(browserFilter, &BrowserFilter::setCurrentProject, browser, &Browser::setCurrentProject);
+    connect(browserFilter, &BrowserFilter::setCurrentProject, [&]() {
+        browser->clearPackageFilter();
+    });
 
     // Tray icon actions
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
