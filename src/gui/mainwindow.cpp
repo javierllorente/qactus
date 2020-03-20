@@ -590,7 +590,7 @@ void MainWindow::createActions()
     QAction *actionFilterPackages = new QAction(tr("Filter packages"), this);
     actionFilterPackages->setShortcut(QKeySequence(Qt::ALT + Qt::Key_Q));
     connect(actionFilterPackages, &QAction::triggered, this, [&](){
-        browser->setFilterPackageFocus();
+        browser->setPackageFilterFocus();
     });
     addAction(actionFilterPackages);
 

@@ -226,7 +226,7 @@ bool Browser::hasBuildResultSelection()
     }
 }
 
-void Browser::setFilterPackageFocus()
+void Browser::setPackageFilterFocus()
 {
     ui->lineEditFilter->setFocus();
 }

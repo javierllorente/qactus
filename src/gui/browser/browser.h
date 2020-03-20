@@ -48,7 +48,7 @@ public:
     bool hasPackageSelection();
     bool hasFileSelection();
     bool hasBuildResultSelection();
-    void setFilterPackageFocus();
+    void setPackageFilterFocus();
     QString packageFilterText() const;
     void clearPackageFilter();
 
