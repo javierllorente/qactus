@@ -48,6 +48,7 @@ public:
     bool hasPackageSelection();
     bool hasFileSelection();
     bool hasBuildResultSelection();
+    void setFilterPackageFocus();
 
 public slots:
     void newProject();

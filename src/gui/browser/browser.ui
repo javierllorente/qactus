@@ -63,7 +63,7 @@
           <bool>true</bool>
          </attribute>
          <attribute name="headerDefaultSectionSize">
-          <number>49</number>
+          <number>63</number>
          </attribute>
         </widget>
        </item>
@@ -77,7 +77,7 @@
        <item>
         <widget class="QLineEdit" name="lineEditFilter">
          <property name="placeholderText">
-          <string>Filter packages</string>
+          <string>Filter packages &lt;Alt+Q&gt;</string>
          </property>
          <property name="clearButtonEnabled">
           <bool>true</bool>
@@ -109,7 +109,7 @@
            <bool>false</bool>
           </attribute>
           <attribute name="headerDefaultSectionSize">
-           <number>49</number>
+           <number>63</number>
           </attribute>
          </widget>
          <widget class="QTabWidget" name="tabWidgetPackages">

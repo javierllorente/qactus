@@ -22,6 +22,7 @@
 #include "ui_browserfilter.h"
 #include <QDebug>
 #include <QTimer>
+#include <QIcon>
 
 BrowserFilter::BrowserFilter(QWidget *parent) :
     QWidget(parent),
@@ -30,6 +31,10 @@ BrowserFilter::BrowserFilter(QWidget *parent) :
     m_projectCompleter(nullptr)
 {
     ui->setupUi(this);
+
+    QIcon filterIcon(QIcon::fromTheme("go-next"));
+    ui->lineEditFilter->addAction(filterIcon, QLineEdit::LeadingPosition);
+
     QTimer::singleShot(0, ui->lineEditFilter, [this](){
         ui->lineEditFilter->setFocus();
     });

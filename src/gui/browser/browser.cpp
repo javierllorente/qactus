@@ -226,6 +226,11 @@ bool Browser::hasBuildResultSelection()
     }
 }
 
+void Browser::setFilterPackageFocus()
+{
+    ui->lineEditFilter->setFocus();
+}
+
 void Browser::newProject()
 {
     qDebug() << __PRETTY_FUNCTION__;
