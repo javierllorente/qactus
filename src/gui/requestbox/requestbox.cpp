@@ -21,6 +21,7 @@
 #include "requestbox.h"
 #include "ui_requestbox.h"
 #include "requeststateeditor.h"
+#include <QSettings>
 
 RequestBox::RequestBox(QWidget *parent, OBS *obs) :
     QWidget(parent),
@@ -28,6 +29,9 @@ RequestBox::RequestBox(QWidget *parent, OBS *obs) :
     m_obs(obs)
 {
     ui->setupUi(this);
+
+    ui->horizontalSplitter->setSizes((QList<int>({100, 500})));
+    ui->verticalSplitter->setSizes((QList<int>({240, 400})));
 
     connect(ui->treeRequests, &RequestTreeWidget::descriptionFetched, this, &RequestBox::descriptionFetched);
     connect(ui->treeRequests, &RequestTreeWidget::changeRequestState, this, &RequestBox::changeRequestState);
@@ -46,11 +50,32 @@ RequestBox::RequestBox(QWidget *parent, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingDeclinedRequest, ui->treeRequests, &RequestTreeWidget::addDeclinedRequest);
     connect(m_obs, &OBS::finishedParsingDeclinedRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
     connect(m_obs, &OBS::srStatus, this, &RequestBox::slotSrStatus);
+
+    readSettings();
 }
 
 RequestBox::~RequestBox()
 {
+    writeSettings();
     delete ui;
+}
+
+void RequestBox::readSettings()
+{
+    QSettings settings;
+    settings.beginGroup("RequestBox");
+    ui->horizontalSplitter->restoreState(settings.value("horizontalSplitterSizes").toByteArray());
+    ui->verticalSplitter->restoreState(settings.value("verticalSplitterSizes").toByteArray());
+    settings.endGroup();
+}
+
+void RequestBox::writeSettings()
+{
+    QSettings settings;
+    settings.beginGroup("RequestBox");
+    settings.setValue("horizontalSplitterSizes", ui->horizontalSplitter->saveState());
+    settings.setValue("verticalSplitterSizes", ui->verticalSplitter->saveState());
+    settings.endGroup();
 }
 
 void RequestBox::changeRequestState()

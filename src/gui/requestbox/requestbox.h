@@ -40,6 +40,8 @@ public:
 private:
     Ui::RequestBox *ui;
     OBS *m_obs;
+    void readSettings();
+    void writeSettings();
 
 signals:
     void updateStatusBar(const QString &message, bool progressBarHidden);
