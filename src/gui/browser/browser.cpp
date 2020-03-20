@@ -42,8 +42,9 @@ Browser::Browser(QWidget *parent, OBS *obs) :
 {
     ui->setupUi(this);
 
+    ui->hSplitterBrowser->setSizes((QList<int>({160, 400})));
     ui->hSplitterBrowser->setStretchFactor(1, 1);
-    ui->hSplitterBrowser->setStretchFactor(0, 0);
+    ui->hSplitterBrowser->setStretchFactor(0, 1);
 
     QIcon filterIcon(QIcon::fromTheme("view-filter"));
     ui->lineEditFilter->addAction(filterIcon, QLineEdit::LeadingPosition);
@@ -136,6 +137,7 @@ Browser::Browser(QWidget *parent, OBS *obs) :
 
 Browser::~Browser()
 {
+    writeSettings();
     delete ui;
 }
 
@@ -145,6 +147,8 @@ void Browser::readSettings()
     settings.beginGroup("Browser");
     bool includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
     m_obs->setIncludeHomeProjects(includeHomeProjects);
+    ui->hSplitterBrowser->restoreState(settings.value("horizontalSplitterSizes").toByteArray());
+    ui->vSplitterBrowser->restoreState(settings.value("verticalSplitterSizes").toByteArray());
     settings.endGroup();
 }
 
@@ -508,6 +512,15 @@ void Browser::deleteFile()
         const QString statusText = tr("Deleting %1...").arg(fileName);
         emit updateStatusBar(statusText, false);
     }
+}
+
+void Browser::writeSettings()
+{
+    QSettings settings;
+    settings.beginGroup("Browser");
+    settings.setValue("horizontalSplitterSizes", ui->hSplitterBrowser->saveState());
+    settings.setValue("verticalSplitterSizes", ui->vSplitterBrowser->saveState());
+    settings.endGroup();
 }
 
 void Browser::setupModels()

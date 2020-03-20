@@ -88,6 +88,7 @@ private:
     QToolBar *m_packagesToolbar;
     QToolBar *m_filesToolbar;
     QToolBar *m_resultsToolbar;
+    void writeSettings();
     void setupModels();
     void getPackages(const QString &project);
 
