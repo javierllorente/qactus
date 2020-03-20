@@ -60,15 +60,12 @@ public:
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
      {
-         if (!index.isValid() || !index.internalPointer()) {
-             return QSize();
-         }
+        Q_UNUSED(option)
+        if (!index.isValid() || !index.internalPointer()) {
+            return QSize();
+        }
 
-         QStyleOptionViewItem optionCopy(*static_cast<const QStyleOptionViewItem *>(&option));
-         optionCopy.decorationSize = QSize(iconSize, iconSize);
-         optionCopy.textElideMode = Qt::ElideNone;
-
-         return QStyledItemDelegate::sizeHint(optionCopy, index);
+        return QSize(m_listWidget->width() - (m_listWidget->style()->pixelMetric(QStyle::PM_FocusFrameVMargin)*2), 70);
  }
 
 private:
