@@ -27,8 +27,8 @@
 BrowserFilter::BrowserFilter(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::BrowserFilter),
-    m_projectModel(nullptr),
-    m_projectCompleter(nullptr)
+    m_projectModel(new QStringListModel(this)),
+    m_projectCompleter(new QCompleter(m_projectModel, this))
 {
     ui->setupUi(this);
 
@@ -38,6 +38,12 @@ BrowserFilter::BrowserFilter(QWidget *parent) :
     QTimer::singleShot(0, ui->lineEditFilter, [this](){
         ui->lineEditFilter->setFocus();
     });
+
+    m_projectCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    ui->lineEditFilter->setCompleter(m_projectCompleter);
+
+    connect(m_projectCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+            this, &BrowserFilter::autocompletedProject_clicked);
 }
 
 BrowserFilter::~BrowserFilter()
@@ -63,13 +69,7 @@ void BrowserFilter::setFocus()
 void BrowserFilter::addProjectList(const QStringList &projectList)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    m_projectModel = new QStringListModel(projectList);
-    m_projectCompleter = new QCompleter(m_projectModel, this);
-    m_projectCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-    ui->lineEditFilter->setCompleter(m_projectCompleter);
-
-    connect(m_projectCompleter, QOverload<const QString &>::of(&QCompleter::activated),
-            this, &BrowserFilter::autocompletedProject_clicked);
+    m_projectModel->setStringList(projectList);
 }
 
 void BrowserFilter::autocompletedProject_clicked(const QString &project)
