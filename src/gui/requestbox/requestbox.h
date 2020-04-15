@@ -54,7 +54,7 @@ private slots:
     void getIncomingRequests();
     void getOutgoingRequests();
     void getDeclinedRequests();
-    void slotSrStatus(const QString &status);
+    void slotRequestStatusFetched(const QString &status);
 
 };
 

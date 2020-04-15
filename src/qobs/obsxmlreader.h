@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ public:
     void parseIncomingRequests(const QString &data);
     void parseOutgoingRequests(const QString &data);
     void parseDeclinedRequests(const QString &data);
-    void parseSubmitRequest(const QString &data);
+    void parseRequestStatus(const QString &data);
     void parseBranchPackage(const QString &project, const QString &package, const QString &data);
     void parseLinkPackage(const QString &project, const QString &package, const QString &data);
     void parseCopyPackage(const QString &project, const QString &package, const QString &data);
@@ -126,7 +126,7 @@ signals:
     void finishedParsingFile(OBSFile*);
     void finishedParsingFileList();
     void finishedParsingLink(OBSLink *obsLink);
-    void finishedParsingSR(OBSStatus *obsStatus);
+    void finishedParsingRequestStatus(OBSStatus *obsStatus);
     void finishedParsingAbout(OBSAbout *obsAbout);
     void finishedParsingPerson(OBSPerson *obsPerson);
     void finishedParsingUpdatePerson(OBSStatus *obsStatus);

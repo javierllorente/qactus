@@ -307,7 +307,7 @@ void OBSXmlReader::parseResultList(const QString &data)
     }
 }
 
-void OBSXmlReader::parseSubmitRequest(const QString &data)
+void OBSXmlReader::parseRequestStatus(const QString &data)
 {
     QXmlStreamReader xml(data);
     OBSStatus *obsStatus = new OBSStatus();
@@ -322,7 +322,7 @@ void OBSXmlReader::parseSubmitRequest(const QString &data)
         return;
     }
 
-    emit finishedParsingSR(obsStatus);
+    emit finishedParsingRequestStatus(obsStatus);
 }
 
 void OBSXmlReader::parseBranchPackage(const QString &project, const QString &package, const QString &data)

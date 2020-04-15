@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -108,8 +108,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, SIGNAL(finishedParsingFileList()),
             this, SIGNAL(finishedParsingFileList()));
     connect(xmlReader, &OBSXmlReader::finishedParsingLink, this, &OBS::finishedParsingLink);
-    connect(xmlReader, SIGNAL(finishedParsingSR(OBSStatus *)),
-            this, SLOT(srChangeResult(OBSStatus *)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingRequestStatus, this, &OBS::requestChangeResult);
     connect(obsCore, SIGNAL(srDiffFetched(QString)),
             this, SIGNAL(srDiffFetched(QString)));
     connect(xmlReader, SIGNAL(finishedParsingAbout(OBSAbout*)),
@@ -219,12 +218,12 @@ void OBS::slotChangeSubmitRequest(const QString &id, const QString &comments, bo
     changeSubmitRequest(resource, data);
 }
 
-void OBS::srChangeResult(OBSStatus *obsStatus)
+void OBS::requestChangeResult(OBSStatus *obsStatus)
 {
     QString code = obsStatus->getCode();
     delete obsStatus;
     obsStatus = nullptr;
-    emit srStatus(code);
+    emit requestStatusFetched(code);
 }
 
 void OBS::createRequest(const QByteArray &data)
