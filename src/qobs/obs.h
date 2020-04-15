@@ -131,7 +131,7 @@ signals:
     void finishedParsingFile(OBSFile*);
     void finishedParsingFileList();
     void finishedParsingLink(OBSLink *obsLink);
-    void requestStatusFetched(const QString &);
+    void finishedParsingRequestStatus(OBSStatus *status);
     void srDiffFetched(const QString &);
     void finishedParsingAbout(OBSAbout *obsAbout);
     void finishedParsingPerson(OBSPerson *obsPerson);
@@ -141,7 +141,6 @@ signals:
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);
     void slotChangeSubmitRequest(const QString &id, const QString &comments, bool accepted);
-    void requestChangeResult(OBSStatus *obsStatus);
     void createRequest(const QByteArray &data);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);

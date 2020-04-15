@@ -108,7 +108,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, SIGNAL(finishedParsingFileList()),
             this, SIGNAL(finishedParsingFileList()));
     connect(xmlReader, &OBSXmlReader::finishedParsingLink, this, &OBS::finishedParsingLink);
-    connect(xmlReader, &OBSXmlReader::finishedParsingRequestStatus, this, &OBS::requestChangeResult);
+    connect(xmlReader, &OBSXmlReader::finishedParsingRequestStatus, this, &OBS::finishedParsingRequestStatus);
     connect(obsCore, SIGNAL(srDiffFetched(QString)),
             this, SIGNAL(srDiffFetched(QString)));
     connect(xmlReader, SIGNAL(finishedParsingAbout(OBSAbout*)),
@@ -216,14 +216,6 @@ void OBS::slotChangeSubmitRequest(const QString &id, const QString &comments, bo
     QByteArray data;
     data.append(comments);
     changeSubmitRequest(resource, data);
-}
-
-void OBS::requestChangeResult(OBSStatus *obsStatus)
-{
-    QString code = obsStatus->getCode();
-    delete obsStatus;
-    obsStatus = nullptr;
-    emit requestStatusFetched(code);
 }
 
 void OBS::createRequest(const QByteArray &data)

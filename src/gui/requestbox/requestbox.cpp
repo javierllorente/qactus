@@ -49,7 +49,7 @@ RequestBox::RequestBox(QWidget *parent, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingOutgoingRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
     connect(m_obs, &OBS::finishedParsingDeclinedRequest, ui->treeRequests, &RequestTreeWidget::addDeclinedRequest);
     connect(m_obs, &OBS::finishedParsingDeclinedRequestList, ui->treeRequests, &RequestTreeWidget::orListFetched);
-    connect(m_obs, &OBS::requestStatusFetched, this, &RequestBox::slotRequestStatusFetched);
+    connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestBox::slotRequestStatusFetched);
 
     readSettings();
 }
@@ -111,13 +111,14 @@ void RequestBox::getDeclinedRequests()
     m_obs->getDeclinedRequests();
 }
 
-void RequestBox::slotRequestStatusFetched(const QString &status)
+void RequestBox::slotRequestStatusFetched(OBSStatus *status)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    if (status=="ok") {
+    if (status->getCode()=="ok") {
         OBSRequest *request = ui->treeRequests->currentRequest();
         ui->treeRequests->removeIncomingRequest(request->getId());
         ui->textBrowser->clear();
         delete request;
     }
+    delete status;
 }
