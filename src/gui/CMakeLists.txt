@@ -45,13 +45,13 @@ set(QACTUS_SRC
     requestbox/requesttreewidget.cpp
     requestbox/syntaxhighlighter.cpp
     utils/utils.cpp
+    utils/autotooltipdelegate.cpp
     main.cpp
     mainwindow.cpp
     iconbar.cpp
     trayicon.cpp
     configure.cpp
     login.cpp
-    autotooltipdelegate.cpp
     credentials.cpp)
 
 set(QACTUS_HDR
@@ -84,6 +84,7 @@ set(QACTUS_HDR
     requestbox/requesttreewidget.h
     requestbox/syntaxhighlighter.h
     utils/utils.h
+    utils/autotooltipdelegate.h
     mainwindow.h
     iconbar.h
     trayicon.h
