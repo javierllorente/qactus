@@ -12,6 +12,7 @@ include_directories(
     browser
     monitor
     requestbox
+    utils
 )
 
 set(QACTUS_SRC
@@ -43,6 +44,7 @@ set(QACTUS_SRC
     requestbox/requeststateeditor.cpp
     requestbox/requesttreewidget.cpp
     requestbox/syntaxhighlighter.cpp
+    utils/utils.cpp
     main.cpp
     mainwindow.cpp
     iconbar.cpp
@@ -50,7 +52,6 @@ set(QACTUS_SRC
     configure.cpp
     login.cpp
     autotooltipdelegate.cpp
-    utils.cpp
     credentials.cpp)
 
 set(QACTUS_HDR
@@ -82,13 +83,13 @@ set(QACTUS_HDR
     requestbox/requeststateeditor.h
     requestbox/requesttreewidget.h
     requestbox/syntaxhighlighter.h
+    utils/utils.h
     mainwindow.h
     iconbar.h
     trayicon.h
     configure.h
     login.h
     autotooltipdelegate.h
-    utils.h
     credentials.h)
 
 set(QACTUS_UI
