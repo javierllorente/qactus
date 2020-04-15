@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -95,11 +95,11 @@ bool RequestItemModel::removeRequest(const QString &id)
 void RequestItemModel::syncRequests()
 {
     if (oldIdList.size()>0) {
-        QSet<QString> currentSet = idList.toSet();
-        QSet<QString> oldSet = oldIdList.toSet();
+        QSet<QString> currentSet = QSet<QString>(idList.begin(), idList.end());
+        QSet<QString> oldSet = QSet<QString>(oldIdList.begin(), oldIdList.end());
 
         // For code's clarity sake (substraction is perfomed on oldSet)
-        QStringList removedRequests = oldSet.subtract(currentSet).toList();
+        QStringList removedRequests = oldSet.subtract(currentSet).values();
 
         foreach (auto requestId, removedRequests) {
             removeRequest(requestId);
