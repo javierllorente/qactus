@@ -95,12 +95,19 @@ bool RequestItemModel::removeRequest(const QString &id)
 void RequestItemModel::syncRequests()
 {
     if (oldIdList.size()>0) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         QSet<QString> currentSet = QSet<QString>(idList.begin(), idList.end());
         QSet<QString> oldSet = QSet<QString>(oldIdList.begin(), oldIdList.end());
-
+#else
+        QSet<QString> currentSet = idList.toSet();
+        QSet<QString> oldSet = oldIdList.toSet();
+#endif
         // For code's clarity sake (substraction is perfomed on oldSet)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         QStringList removedRequests = oldSet.subtract(currentSet).values();
-
+#else
+        QStringList removedRequests = oldSet.subtract(currentSet).toList();
+#endif
         foreach (auto requestId, removedRequests) {
             removeRequest(requestId);
         }
