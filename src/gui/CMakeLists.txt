@@ -32,6 +32,7 @@ set(QACTUS_SRC
     browser/projectlistmodel.cpp
     browser/projecttreewidget.cpp
     browser/searchwidget.cpp
+    browser/browserfilter.cpp
     monitor/monitor.cpp
     monitor/monitortreewidget.cpp
     monitor/roweditor.cpp
@@ -50,7 +51,6 @@ set(QACTUS_SRC
     autotooltipdelegate.cpp
     utils.cpp
     credentials.cpp
-    browserfilter.cpp
     bookmarks.cpp)
 
 set(QACTUS_HDR
@@ -71,6 +71,7 @@ set(QACTUS_HDR
     browser/projectlistmodel.h
     browser/projecttreewidget.h
     browser/searchwidget.h
+    browser/browserfilter.h
     monitor/monitor.h
     monitor/monitortreewidget.h
     monitor/roweditor.h
@@ -88,7 +89,6 @@ set(QACTUS_HDR
     autotooltipdelegate.h
     utils.h
     credentials.h
-    browserfilter.h
     bookmarks.h)
 
 set(QACTUS_UI
@@ -98,14 +98,14 @@ set(QACTUS_UI
     browser/packageactiondialog.ui
     browser/createrequestdialog.ui
     browser/searchwidget.ui
+    browser/browserfilter.ui
     monitor/monitor.ui
     monitor/roweditor.ui
     requestbox/requestbox.ui
     requestbox/requeststateeditor.ui
     mainwindow.ui
     configure.ui
-    login.ui
-    browserfilter.ui)
+    login.ui)
 
 set(QACTUS_RC
     ../../application.qrc)
