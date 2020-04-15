@@ -1,5 +1,90 @@
 Qactus ChangeLog
 ================
+v2.0.0 (2020-04-XX)
+
+libqobs:
+- OBS/OBSCore: Implement getDistributions()
+- OBSXmlReader: Implement parseDistributions()
+- New class: OBSDistribution
+- OBS/OBSCore: Implement linkPackage() and friends (OBSLinkHelper)
+- OBSXmlWriter: Implement createLink()
+- Implemented createRepositoryFlags() 
+- Implement getPackageMetaConfig()
+- Implement parseMetaConfig() and parsePkgMetaConfig() 
+- Rename getProjectMetadata() to getProjectMetaConfig()
+- Refactored parseProjectMetadata() to use OBSPrjMetaConfig, so that 
+  it returns much more data
+- New classes: OBSMetaConfig, OBSPkgMetaConfig, OBSPrjMetaConfig
+- Implement copying a package
+- Handle unknown project/package error (404)
+- Implement OBSCore::updatePerson()
+- Implement OBSPerson::removeWatchItem()
+- Implement OBSXmlReader::parseUpdatePerson()
+- Implement createWatchListElement() and createPerson() to translate 
+  OBSPerson into XML
+- Implement createRepositoryElement()
+- New class: OBSRepository
+- New class: OBSPerson
+- Implement getting declined requests
+- OBSCore is now in charge of creating the request resource string and
+  making the appropriate request
+- Implement getLink()
+- Refactored OBSXmlReader; do not save the XML to disk - instead parse 
+  it directly
+- Handle submit request errors (400, 404) and parse the status received to 
+  get the exact error
+- Add support for <sourceupdate>
+- OBSXmlReader improvements
+- Output data to console in case of error 400
+gui:
+- Use range constructors only if Qt >= 5.14.0
+- Refactor request status related methods/signals
+- Move Utils and AutoToolTipDelegate to utils directory
+- Move BrowserFilter and Bookmarks to browser directory
+- BrowserFilter: Do not create model & completer each time addProjectList() is called.
+  Instead call setStringList() on the model.
+- Clear package filter's text on projectSelectionChanged() or setCurrentProject()
+- Add shortcuts for the project bar and package filter, make project bar wider
+- RequestBox: save/restore horizontal & vertical splitter's sizes
+- Browser: save/restore horizontal & vertical splitter's sizes
+- Set the delete key as shortcut for the buttonRemove, install FilterFocus for
+  buttonRemove on sidebar as there are multiple remove buttons.
+- New class: FocusFilter
+- MetaConfigEditor: Switch to RepositoryTreeWidget * 
+- New class: RepositoryTreeWidget
+- Implement initial versions of RepositoryCompleter and RepositoryFlagsCompleter
+(for the MetaConfigEditor)
+- PackageActionDialog: add room for linking a package :) 
+- Refactoring: rename CopyPackageDialog to PackageActionDialog
+- Implement adding/removing repositories from the repository tab
+- Implemented new class: CopyPackageDialog 
+- Add tabs for repositories, repository flags, users and groups so that 
+  all data from an OBSMetaConfig is displayed
+- Renamed CreateDialog to MetaConfigEditor to better reflect its duties :)
+- CreateDialog: implemented editing a project/package 
+- Enhancement: add project/package to model after it has been created/branched in OBS
+- Make BrowserFilter a project quick access bar
+- RequestStateEditor: enable the accept and decline buttons and writing comments, only 
+  if the request's state is new
+- Refactoring: new class Monitor
+- ProjectTreeWidget: clear selectionModel on addProjectList() 
+- Refactoring. New class: Browser
+- PackageTreeWidget: Use PackageListModel instead of QStringListModel
+- ProjectTreeWidget: Use ProjectListModel instead of QStringListModel
+- New feature: bookmarks :)
+- New class: IconBar. Paint the icons Kontact-style
+- Implement getDeclinedRequests()
+- Instantiate a new model for declined requests
+- Remove unneeded class RequestTreeWidgetItem
+- Refactoring: move RequestTreeWidget and RequestStateEditor code out from
+  MainWindow
+- Fix crash caused by filter: make sure there is a selection
+- If there is a link in the file list, get it for filling the submit request's 
+  target project/package automatically
+- Implement CreateRequestDialog
+- Miscellaneous RequestStateEditor enhancements
+- BuildLogViewer enhancement: implement a search widget with highlighting
+
 v1.0.1 (2018-12-01)
 - Bugfix: some user's home subprojects are missing in the project list if
 "include home projects" is unchecked.
