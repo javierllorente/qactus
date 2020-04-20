@@ -10,6 +10,8 @@ The name Qactus sprung into existence when Javier and Sivan were discussing the 
 
 This project was originally hosted on Nokia Developer Projects until 2013, when the service was discontinued.
 
+![screenshot](Qactus_screenshot.png)
+
 Installation
 ------------
 RPM packages are available at http://software.opensuse.org/package/qactus
