@@ -1,6 +1,6 @@
 Qactus ChangeLog
 ================
-v2.0.0 (2020-04-XX)
+v2.0.0 (2020-04-20)
 
 libqobs:
 - OBS/OBSCore: Implement getDistributions()
