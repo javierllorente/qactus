@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, OBSRequest *re
     ui->dateLabelText->setText(m_request->getDate());
 
     connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), m_obs, SLOT(slotChangeSubmitRequest(QString,QString,bool)));
-    connect(m_obs, SIGNAL(srStatus(QString)), this, SLOT(slotSrStatus(QString)));
+    connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestStateEditor::slotRequestStatusFetched);
     connect(m_obs, SIGNAL(srDiffFetched(QString)), this, SLOT(slotSrDiffFetched(QString)));
     connect(m_obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(slotAddBuildResults(OBSResult*)));
 
@@ -111,9 +111,9 @@ void RequestStateEditor::on_declinePushButton_clicked()
     emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), false);
 }
 
-void RequestStateEditor::slotSrStatus(const QString &status)
+void RequestStateEditor::slotRequestStatusFetched(const QString &status)
 {
-   qDebug() << "RequestStateEditor::slotSrStatus" << status;
+   qDebug() << __PRETTY_FUNCTION__ << status;
    QString errorStr = tr("Error changing SR!");
    if (status == "ok") {
        close();

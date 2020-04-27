@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ signals:
 private slots:
     void on_acceptPushButton_clicked();
     void on_declinePushButton_clicked();
-    void slotSrStatus(const QString &status);
+    void slotRequestStatusFetched(const QString &status);
     void slotSrDiffFetched(const QString &diff);
     void slotAddBuildResults(OBSResult *obsResult);
 
