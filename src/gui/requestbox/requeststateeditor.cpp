@@ -111,15 +111,16 @@ void RequestStateEditor::on_declinePushButton_clicked()
     emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), false);
 }
 
-void RequestStateEditor::slotRequestStatusFetched(const QString &status)
+void RequestStateEditor::slotRequestStatusFetched(OBSStatus *status)
 {
-   qDebug() << __PRETTY_FUNCTION__ << status;
+   qDebug() << __PRETTY_FUNCTION__ << status->getCode();
    QString errorStr = tr("Error changing SR!");
-   if (status == "ok") {
+   if (status->getCode() == "ok") {
        close();
    } else {
-       QMessageBox::critical(this, errorStr, status, QMessageBox::Ok);
+       QMessageBox::critical(this, errorStr, status->getCode(), QMessageBox::Ok);
    }
+   delete status;
 }
 
 void RequestStateEditor::slotSrDiffFetched(const QString &diff)

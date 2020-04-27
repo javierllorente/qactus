@@ -51,7 +51,7 @@ signals:
 private slots:
     void on_acceptPushButton_clicked();
     void on_declinePushButton_clicked();
-    void slotRequestStatusFetched(const QString &status);
+    void slotRequestStatusFetched(OBSStatus *status);
     void slotSrDiffFetched(const QString &diff);
     void slotAddBuildResults(OBSResult *obsResult);
 
