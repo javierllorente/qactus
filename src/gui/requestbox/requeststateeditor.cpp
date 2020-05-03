@@ -49,7 +49,7 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, OBSRequest *re
 
     if (m_request->getActionType()=="submit") {
         // Get SR diff
-        m_obs->getRequestDiff(m_request->getSource());
+        m_obs->getRequestDiff(m_request->getId());
 
         // Setup build results tree view
         QStandardItemModel *sourceModelBuildResults = new QStandardItemModel(ui->treeBuildResults);

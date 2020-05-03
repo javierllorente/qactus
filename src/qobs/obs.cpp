@@ -225,9 +225,8 @@ void OBS::createRequest(const QByteArray &data)
 
 void OBS::getRequestDiff(const QString &source)
 {
-    qDebug() << "OBS::getRequestDiff()";
-    QString resource = QString("/source/%1?unified=1&tarlimit=0&cmd=diff&filelimit=0&expand=1")
-            .arg(source);
+    qDebug() << __PRETTY_FUNCTION__;
+    QString resource = QString("/request/%1?cmd=diff").arg(source);
     obsCore->getSRDiff(resource);
 }
 
