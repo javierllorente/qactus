@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2017-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2017-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -53,8 +53,6 @@ private:
     uint time;
     QString user;
     QString comment;
-    QString project;
-    QString package;
     QString file;
 };
 
