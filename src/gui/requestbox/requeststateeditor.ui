@@ -243,7 +243,7 @@
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
-        <string>Accept</string>
+        <string>&amp;Accept</string>
        </property>
        <property name="icon">
         <iconset theme="dialog-ok-apply">
@@ -260,7 +260,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Decline</string>
+        <string>&amp;Decline</string>
        </property>
        <property name="icon">
         <iconset theme="dialog-cancel">
@@ -271,7 +271,7 @@
      <item>
       <widget class="QPushButton" name="closePushButton">
        <property name="text">
-        <string>Close</string>
+        <string>&amp;Close</string>
        </property>
        <property name="icon">
         <iconset theme="application-exit">
