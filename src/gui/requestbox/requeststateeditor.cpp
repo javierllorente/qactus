@@ -32,7 +32,6 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, OBSRequest *re
     ui->setupUi(this);
 
     ui->commentsTextBrowser->setFocus();
-    ui->diffTextBrowser->setFocusPolicy(Qt::NoFocus);
     showTabBuildResults(false);
 
     // Fill in the fields

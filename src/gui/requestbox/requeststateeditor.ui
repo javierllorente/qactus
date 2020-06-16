@@ -149,6 +149,9 @@
          <property name="frameShadow">
           <enum>QFrame::Plain</enum>
          </property>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
       </layout>
@@ -198,6 +201,9 @@
      </property>
      <property name="inputMethodHints">
       <set>Qt::ImhNone</set>
+     </property>
+     <property name="tabChangesFocus">
+      <bool>true</bool>
      </property>
      <property name="undoRedoEnabled">
       <bool>true</bool>
