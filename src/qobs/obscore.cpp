@@ -107,6 +107,7 @@ void OBSCore::login()
 QNetworkReply *OBSCore::request(const QString &resource)
 {
     QNetworkRequest request;
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     request.setUrl(QUrl(apiUrl + resource));
     qDebug() << "User-Agent:" << userAgent;
     request.setRawHeader("User-Agent", userAgent.toLatin1());  
@@ -339,7 +340,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
     qDebug() << "OBSCore::replyFinished() HTTP status code:" << httpStatusCode;
 //    qDebug() << "Network Reply: " << data;
 
-    if (httpStatusCode==302) {
+    if (httpStatusCode==200 && !authenticated) {
         authenticated = true;
         emit isAuthenticated(authenticated);
     } else if (httpStatusCode==401) {
