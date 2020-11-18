@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ public slots:
     void clearCredentials();
 
 private slots:
-    void on_pushButton_Login_clicked();
+    void on_buttonBox_accepted();
     void slotCredentialsRestored(const QString &username, const QString &password);
 
 signals:

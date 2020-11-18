@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@ Login::Login(QWidget *parent) :
     ui->setupUi(this);
 
     setTabOrder(ui->lineEdit_Username, ui->lineEdit_Password);
-    setTabOrder(ui->lineEdit_Password, ui->checkBox_AutoLogin);
-    setTabOrder(ui->checkBox_AutoLogin, ui->pushButton_Login);
+    setTabOrder(ui->lineEdit_Password, ui->buttonBox);
 
     readSettings();
 }
@@ -64,21 +63,19 @@ QString Login::getPassword()
     return ui->lineEdit_Password->text();
 }
 
-bool Login::isAutoLoginEnabled()
-{
-    return ui->checkBox_AutoLogin->isChecked();
-}
-
-void Login::setAutoLoginEnabled(bool check)
-{
-    ui->checkBox_AutoLogin->setChecked(check);
-}
-
 void Login::readSettings()
 {
     qDebug() << "Login::readSettings()";
     QSettings settings;
     settings.beginGroup("Auth");
+
+    QString apiUrl = settings.value("ApiUrl").toString();
+    QStringList apiUrlSplitted = apiUrl.split("https://");
+    if (apiUrl.size()>1) {
+        apiUrl = apiUrlSplitted.at(1);
+    }
+    ui->label_API->setText(apiUrl);
+
     QString username = settings.value("Username").toString();
     setUsername(username);
     Credentials *credentials = new Credentials();
@@ -87,7 +84,6 @@ void Login::readSettings()
     credentials->readPassword(username);
     delete credentials;
     qDebug() << "Login::readSettings() AutoLogin:" << settings.value("AutoLogin").toBool();
-    setAutoLoginEnabled(settings.value("AutoLogin").toBool());
     settings.endGroup();
 }
 
@@ -96,7 +92,6 @@ void Login::writeSettings()
     qDebug() << "Login::writeSettings()";
     QSettings settings;
     settings.beginGroup("Auth");
-    settings.setValue("AutoLogin", isAutoLoginEnabled());
     settings.setValue("Username", getUsername());
     Credentials *credentials = new Credentials();
     credentials->writeCredentials(getUsername(), getPassword());
@@ -106,8 +101,7 @@ void Login::writeSettings()
 
 void Login::configureMode()
 {
-    ui->pushButton_Login->hide();
-    ui->line->hide();
+    ui->buttonBox->hide();
 }
 
 void Login::clearCredentials()
@@ -117,7 +111,7 @@ void Login::clearCredentials()
     ui->lineEdit_Username->setFocus();
 }
 
-void Login::on_pushButton_Login_clicked()
+void Login::on_buttonBox_accepted()
 {
     if (getUsername().isEmpty() || getPassword().isEmpty()) {
         QMessageBox::warning(parentWidget(), tr("Error"), tr("Empty username/password"), QMessageBox::Ok);
