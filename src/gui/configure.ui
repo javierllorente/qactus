@@ -9,14 +9,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>491</width>
-    <height>368</height>
+    <width>671</width>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Configure Qactus</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <item row="2" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
     <widget class="QListWidget" name="listWidget">
      <property name="sizePolicy">
@@ -51,6 +61,15 @@
      </property>
      <item>
       <property name="text">
+       <string>Authentication</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../application.qrc">
+        <normaloff>:/icons/dialog-password.png</normaloff>:/icons/dialog-password.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>General</string>
       </property>
       <property name="icon">
@@ -71,16 +90,6 @@
      </item>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="sizePolicy">
@@ -89,9 +98,77 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="authenticationPage">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Authentication</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0">
+           <layout class="QFormLayout" name="formLayout">
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEditPassword">
+              <property name="echoMode">
+               <enum>QLineEdit::Password</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="labelPassword">
+              <property name="text">
+               <string>Password:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="lineEditUsername"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelUsername">
+              <property name="text">
+               <string>Username: </string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelApiUrl">
+              <property name="text">
+               <string>OBS server:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="lineEditApiUrl"/>
+            </item>
+            <item row="3" column="1">
+             <widget class="QCheckBox" name="checkBoxAutoLogin">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="labelAutoLogin">
+              <property name="text">
+               <string>Auto login:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="generalPage">
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="2" column="2">
+       <item row="0" column="2">
         <layout class="QVBoxLayout" name="verticalLayoutGeneral">
          <item>
           <widget class="QCheckBox" name="checkBoxTimer">
@@ -115,51 +192,19 @@
          </item>
         </layout>
        </item>
-       <item row="13" column="2">
-        <spacer name="verticalSpacerBrowser">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="2">
-        <layout class="QFormLayout" name="formLayoutApiUrl">
-         <property name="verticalSpacing">
-          <number>6</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="labelApiUrl">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+       <item row="5" column="2">
+        <layout class="QVBoxLayout" name="verticalLayoutBrowser">
+         <item>
+          <widget class="QCheckBox" name="checkBoxHomeProjects">
            <property name="text">
-            <string>OBS API:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEditApiUrl">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+            <string>Include home projects in browser</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="2">
-        <spacer name="verticalSpacerApi">
+       <item row="2" column="2">
+        <spacer name="verticalSpacerTimer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -174,7 +219,20 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="2">
+       <item row="11" column="2">
+        <spacer name="verticalSpacerBrowser">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="2">
         <layout class="QFormLayout" name="formLayoutTimer">
          <item row="0" column="1">
           <widget class="QSpinBox" name="spinBoxTimer">
@@ -203,33 +261,6 @@
           </widget>
          </item>
         </layout>
-       </item>
-       <item row="7" column="2">
-        <layout class="QVBoxLayout" name="verticalLayoutBrowser">
-         <item>
-          <widget class="QCheckBox" name="checkBoxHomeProjects">
-           <property name="text">
-            <string>Include home projects in browser</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="4" column="2">
-        <spacer name="verticalSpacerTimer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -393,7 +424,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../application.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

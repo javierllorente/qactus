@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include "configure.h"
 #include "ui_configure.h"
+#include "credentials.h"
 
 Configure::Configure(QWidget *parent, OBS *obs) :
     QDialog(parent),
@@ -36,21 +37,8 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
     proxySettingsSetup();
 
-//    loginDialog = new Login(ui->authPage);
-//    ui->stackedWidget->insertWidget(0, loginDialog);
-
-    login = new Login();
-    login->configureMode();
-    QListWidgetItem *loginItem = new QListWidgetItem();
-    loginItem->setText("Authentication");
-    loginItem->setIcon(QIcon(":/icons/dialog-password.png"));
-
-    // Note: Ownership of widget is passed onto the stacked/list widget
-    ui->stackedWidget->insertWidget(0, login);
-    ui->listWidget->insertItem(0, loginItem);
-
     for (int i = 0; i < ui->listWidget->count(); ++i) {
-        ui->listWidget->item(i)->setSizeHint(QSize(97,60));
+        ui->listWidget->item(i)->setSizeHint(QSize(115, 70));
     }
 
     ui->listWidget->setMaximumWidth(ui->listWidget->sizeHintForColumn(0)+4);
@@ -59,6 +47,7 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
     ui->listWidget->setCurrentRow(0);
 
+    readAuthSettings();
     readProxySettings();
     readSettings();
     readTimerSettings();
@@ -103,11 +92,8 @@ void Configure::writeSettings()
     qDebug() << "Configure::writeSettings()";
     QSettings settings;
 
+    writeAuthSettings();
     writeProxySettings();
-
-    settings.beginGroup("Auth");
-    settings.setValue("ApiUrl", mOBS->getApiUrl());
-    settings.endGroup();
 
     settings.beginGroup("Timer");
     settings.setValue("Active", ui->checkBoxTimer->isChecked());
@@ -116,6 +102,20 @@ void Configure::writeSettings()
 
     settings.beginGroup("Browser");
     settings.setValue("IncludeHomeProjects", ui->checkBoxHomeProjects->isChecked());
+    settings.endGroup();
+}
+
+void Configure::writeAuthSettings()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    QSettings settings;
+    settings.beginGroup("Auth");
+    settings.setValue("ApiUrl", mOBS->getApiUrl());
+    settings.setValue("Username", ui->lineEditUsername->text());
+    Credentials *credentials = new Credentials();
+    credentials->writeCredentials(ui->lineEditUsername->text(), ui->lineEditPassword->text());
+    delete credentials;
+    settings.setValue("AutoLogin", ui->checkBoxAutoLogin->isChecked());
     settings.endGroup();
 }
 
@@ -157,13 +157,31 @@ void Configure::readSettings()
     qDebug() << "Configure::readSettings()";
     QSettings settings;
 
-    settings.beginGroup("Auth");
-    setApiUrl(settings.value("ApiUrl").toString());
-    settings.endGroup();
-
     settings.beginGroup("Browser");
     includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
     ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
+    settings.endGroup();
+}
+
+void Configure::readAuthSettings()
+{
+    qDebug() << "Configure::readAuthSettings()";
+    QSettings settings;
+
+    settings.beginGroup("Auth");
+    setApiUrl(settings.value("ApiUrl").toString());
+
+    QString username = settings.value("Username").toString();
+    ui->lineEditUsername->setText(username);
+    Credentials *credentials = new Credentials();
+    connect(credentials, &Credentials::credentialsRestored,
+            [&](const QString &/*username*/, const QString &password) {
+        ui->lineEditPassword->setText(password);
+    });
+    credentials->readPassword(username);
+    delete credentials;
+    ui->checkBoxAutoLogin->setChecked((settings.value("AutoLogin", true).toBool()));
+
     settings.endGroup();
 }
 
@@ -229,7 +247,7 @@ void Configure::on_buttonBox_accepted()
     }
     includeHomeProjects = ui->checkBoxHomeProjects->isChecked();
 
-    login->writeSettings();
+    writeAuthSettings();
     emit timerChanged();
 }
 

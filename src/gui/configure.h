@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include <QNetworkProxy>
 #include <QSettings>
 #include "obs.h"
-#include "login.h"
 
 namespace Ui {
     class Configure;
@@ -62,14 +61,15 @@ private:
     Ui::Configure *ui;
     OBS *mOBS;
     void setOBSApiUrl(const QString &apiUrlStr);
+    void readAuthSettings();
     void readProxySettings();
     void readTimerSettings();
-    Login *login;
     void proxySettingsSetup();
     QNetworkProxy proxy;
     bool includeHomeProjects;
     enum ProxyType { NoProxy, SystemProxy, ManualProxy };
     void writeSettings();
+    void writeAuthSettings();
     void writeProxySettings();
 };
 
