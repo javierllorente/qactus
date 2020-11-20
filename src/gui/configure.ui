@@ -94,7 +94,7 @@
      <widget class="QWidget" name="authenticationPage">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="groupBoxAuthentication">
          <property name="title">
           <string>Authentication</string>
          </property>
@@ -159,7 +159,7 @@
      <widget class="QWidget" name="generalPage">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QGroupBox" name="groupBoxTimer">
+        <widget class="QGroupBox" name="groupBoxGeneral">
          <property name="title">
           <string>General</string>
          </property>
