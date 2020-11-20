@@ -74,7 +74,6 @@ void Login::readSettings()
     if (apiUrl.size()>1) {
         apiUrl = apiUrlSplitted.at(1);
     }
-    ui->label_API->setText(apiUrl);
 
     QString username = settings.value("Username").toString();
     setUsername(username);
