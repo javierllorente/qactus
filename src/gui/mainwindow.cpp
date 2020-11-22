@@ -706,7 +706,7 @@ void MainWindow::readAuthSettings()
         settings.setValue("ApiUrl", defaultApiUrl);
     }
     obs->setApiUrl(apiUrl);
-    if (settings.value("AutoLogin").toBool()) {
+    if (settings.value("AutoLogin", true).toBool()) {
         Credentials *credentials = new Credentials(this);
         connect(credentials, SIGNAL(errorReadingPassword(QString)),
                 this, SLOT(slotErrorReadingPassword(QString)));
