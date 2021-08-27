@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -310,13 +310,15 @@ void Browser::addResult(OBSResult *result)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    currentProject = ui->treeProjects->getCurrentProject();
-    currentPackage = ui->treePackages->getCurrentPackage();
-    QString resultProject = result->getProject();
-    QString resultPackage = result->getStatus()->getPackage();
+    if (!result->getStatusList().isEmpty()) {
+        currentProject = ui->treeProjects->getCurrentProject();
+        currentPackage = ui->treePackages->getCurrentPackage();
+        QString resultProject = result->getProject();
+        QString resultPackage = result->getStatusList().first()->getPackage();
 
-    if (currentProject==resultProject && currentPackage==resultPackage) {
-        ui->treeBuildResults->addResult(result);
+        if (currentProject==resultProject && currentPackage==resultPackage) {
+            ui->treeBuildResults->addResult(result);
+        }
     }
 
 //  FIXME: The last slot connected is in charge of deleting result

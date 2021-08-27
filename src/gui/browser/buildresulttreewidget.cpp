@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -61,18 +61,21 @@ void BuildResultTreeWidget::addResult(OBSResult *obsResult)
     if (resultModel) {
         QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
         QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
-        QStandardItem *itemBuildResult = new QStandardItem(obsResult->getStatus()->getCode());
-        itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
 
-        if (!obsResult->getStatus()->getDetails().isEmpty()) {
-            QString details = obsResult->getStatus()->getDetails();
-            details = Utils::breakLine(details, 250);
-            itemBuildResult->setToolTip(details);
+        if (!obsResult->getStatusList().isEmpty()) {
+            QStandardItem *itemBuildResult = new QStandardItem(obsResult->getStatusList().first()->getCode());
+            itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
+
+            if (!obsResult->getStatusList().first()->getDetails().isEmpty()) {
+                QString details = obsResult->getStatusList().first()->getDetails();
+                details = Utils::breakLine(details, 250);
+                itemBuildResult->setToolTip(details);
+            }
+
+            QList<QStandardItem *> items;
+            items << itemRepository << itemArch << itemBuildResult;
+            resultModel->appendRow(items);
         }
-
-        QList<QStandardItem *> items;
-        items << itemRepository << itemArch << itemBuildResult;
-        resultModel->appendRow(items);
     }
 }
 
