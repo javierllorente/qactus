@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -261,6 +261,7 @@ void OBSXmlReader::parseResultList(const QString &data)
 {
     qDebug() << "OBSXmlReader::parseResultList()";
     QXmlStreamReader xml(data);
+    QList<OBSResult *> resultList;
     OBSResult *obsResult = nullptr;
     OBSStatus *obsStatus = nullptr;
 
@@ -274,13 +275,13 @@ void OBSXmlReader::parseResultList(const QString &data)
 
             if (xml.name()=="result") {
                 obsResult = new OBSResult();
-                obsStatus = obsResult->getStatus();
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsResult->setProject(attrib.value("project").toString());
                 obsResult->setRepository(attrib.value("repository").toString());
                 obsResult->setArch(attrib.value("arch").toString());
                 obsResult->setCode(attrib.value("code").toString());
                 obsResult->setState(attrib.value("state").toString());
+                resultList.append(obsResult);
                 qDebug() << obsResult->getProject()
                          << obsResult->getRepository()
                          << obsResult->getArch()
@@ -288,13 +289,13 @@ void OBSXmlReader::parseResultList(const QString &data)
                          << obsResult->getState();
             }
 
-            parseStatus(xml, obsStatus);
 
-            if (xml.name()=="details") {
-                xml.readNext();
-                obsResult->getStatus()->setDetails(xml.text().toString());
-                qDebug() << "Details:" << obsResult->getStatus()->getDetails();
+            if (xml.name()=="status") {
+                obsStatus = new OBSStatus();
+                obsResult->appendStatus(obsStatus);
             }
+
+            parseStatus(xml, obsStatus);
         }
 
         if (xml.name()=="result" && xml.isEndElement()) {
@@ -302,7 +303,7 @@ void OBSXmlReader::parseResultList(const QString &data)
         }
 
         if (xml.name()=="resultlist" && xml.isEndElement()) {
-            emit finishedParsingResultList();
+            emit finishedParsingResultList(resultList);
         }
     }
 }

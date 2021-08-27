@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -81,8 +81,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
 
     connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SIGNAL(finishedParsingResult(OBSResult*)));
-    connect(xmlReader, SIGNAL(finishedParsingResultList()),
-            this, SIGNAL(finishedParsingResultList()));
+    connect(xmlReader, &OBSXmlReader::finishedParsingResultList, this, &OBS::finishedParsingResultList);
     connect(xmlReader, SIGNAL(finishedParsingRevision(OBSRevision*)),
             this, SIGNAL(finishedParsingRevision(OBSRevision*)));
 
@@ -178,6 +177,13 @@ void OBS::getAllBuildStatus(const QString &project, const QString &package)
 {
     //    URL format: https://api.opensuse.org/build/<project>/_result?package=<package>
     QString resource = QString("%1/%2%3").arg(project, "_result?package=", package);
+    obsCore->getAllBuildStatus(resource);
+}
+
+void OBS::getProjectResults(const QString &project)
+{
+    //    URL format: https://api.opensuse.org/build/<project>/_result
+    QString resource = QString("%1/%2").arg(project, "_result");
     obsCore->getAllBuildStatus(resource);
 }
 

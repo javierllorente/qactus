@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ signals:
     void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingDeleteFileStatus(OBSStatus*);
     void finishedParsingResult(OBSResult*);
-    void finishedParsingResultList();
+    void finishedParsingResultList(QList<OBSResult *> resultList);
     void finishedParsingRevision(OBSRevision*);
     void finishedParsingIncomingRequest(OBSRequest *request);
     void finishedParsingIncomingRequestList();
