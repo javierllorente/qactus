@@ -31,6 +31,13 @@ public:
     OBSResult();
     ~OBSResult();
 
+    inline bool operator==(const OBSResult &other)
+    {
+        return (project == other.getProject()
+                && repository == other.getRepository()
+                && arch == other.getArch());
+    }
+
     QString getProject() const;
     void setProject(const QString &value);
 
