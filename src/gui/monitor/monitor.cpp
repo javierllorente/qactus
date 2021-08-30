@@ -53,7 +53,7 @@ bool Monitor::hasPackageSelection()
             dynamic_cast<MonitorTab *>(ui->tabWidget->widget(0))->hasSelection();
 }
 
-void Monitor::refresh()q
+void Monitor::refresh()
 {
     for (int i=0; i<ui->tabWidget->count(); i++) {
         dynamic_cast<MonitorTab *>(ui->tabWidget->widget(i))->refresh();
