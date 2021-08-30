@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2010-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -92,6 +92,7 @@ private:
     QAction *action_ReloadFiles;
     QAction *action_ReloadResults;
 
+    QAction *action_MonitorProject;
     QAction *action_getBuildLog;
 
     QAction *actionDelete_project;
@@ -122,6 +123,8 @@ private:
     Monitor *monitor;
     void setupTreeMonitor();
     RequestBox *requestBox;
+
+    void monitorProject();
 
     void createStatusBar();
 
@@ -165,6 +168,7 @@ private slots:
     void setupProjectShortcuts();
     void getPackages(QModelIndex index);
     void setNotify(bool notify);
+    void slotToggleAddRow(int index);
     void slotEnableRemoveRow();
     void on_action_Refresh_triggered();
     void slotLogin(const QString &username, const QString &password);

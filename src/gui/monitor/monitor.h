@@ -23,6 +23,7 @@
 
 #include <QWidget>
 #include "obs.h"
+#include "monitortab.h"
 
 namespace Ui {
 class Monitor;
@@ -35,21 +36,32 @@ class Monitor : public QWidget
 public:
     explicit Monitor(QWidget *parent = nullptr, OBS *obs = nullptr);
     ~Monitor();
-    bool hasSelection();
-    void getBuildStatus();
+    bool hasPackageSelection();
+    void refresh();
+    bool tabWidgetContains(const QString &tabText);
+    int addTab(const QString &title);
 
 private:
     Ui::Monitor *ui;
     OBS *m_obs;
+    void readSettings();
+    void writeSettings();
+    void setupTabConnections(MonitorTab *tab);
+    void setupPackagesTab();
+    void setupConnections(MonitorTab *monitorTab);
 
 signals:
     void addDroppedPackage(OBSResult *result);
     void addRow();
     void itemSelectionChanged();
+    void currentTabChanged(int index);
     void removeRow();
     void markAllRead();
     void notifyChanged(bool change);
     void updateStatusBar(QString message, bool progressBarHidden);
+
+private slots:
+    void closeTab(int index);
 };
 
 #endif // MONITOR_H

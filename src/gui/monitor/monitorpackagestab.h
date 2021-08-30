@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,40 +18,32 @@
  *
  */
 
-#ifndef MONITORTREEWIDGET_H
-#define MONITORTREEWIDGET_H
+#ifndef MONITORPACKAGESTAB_H
+#define MONITORPACKAGESTAB_H
 
 #include <QObject>
 #include <QTreeWidget>
-#include <QDropEvent>
-#include <QMimeData>
 #include <QTreeWidgetItem>
+#include <QDebug>
 #include "obs.h"
 #include "obsresult.h"
-#include <QDebug>
-#include "utils.h"
-#include "autotooltipdelegate.h"
-#include "roweditor.h"
+#include "monitortab.h"
 
-class MonitorTreeWidget : public QTreeWidget
+class MonitorPackagesTab : public MonitorTab
 {
     Q_OBJECT
 
 public:
-    MonitorTreeWidget(QWidget *parent = 0);
-    ~MonitorTreeWidget();
-    void setOBS(OBS *obs);
-    void getBuildStatus();
-
-protected:
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dropEvent(QDropEvent *event);
+    explicit MonitorPackagesTab(QWidget *parent = nullptr, const QString &title = "untitled", OBS *obs = nullptr);
+    virtual ~MonitorPackagesTab();
+    void refresh();
+    bool hasSelection();
 
 signals:
     void obsUrlDropped(const QString &project, const QString &package);
     void updateStatusBar(QString message, bool progressBarHidden);
     void notifyChanged(bool change);
+    void itemSelectionChanged();
 
 public slots:
     void addDroppedPackage(OBSResult *result);
@@ -59,15 +51,15 @@ public slots:
     void slotInsertStatus(OBSStatus *obsStatus, int row);
     void slotAddRow();
     void slotRemoveRow();
-    void slotMarkAllRead();
 
 private:
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dropEvent(QDropEvent *event);
     QString droppedProject;
     QString droppedPackage;
-    OBS *obs;
     void readSettings();
     void writeSettings();
-    bool hasStatusChanged(const QString &oldStatus, const QString &newStatus);
 
 private slots:
     void slotEditRow(QTreeWidgetItem *item, int column);
@@ -75,4 +67,4 @@ private slots:
 
 };
 
-#endif // MONITORTREEWIDGET_H
+#endif // MONITORPACKAGESTAB_H

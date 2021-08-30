@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2010-2020 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -232,6 +232,7 @@ void MainWindow::setupActions()
     actionProperties_project->setEnabled(projectSelected);
     actionNew_package->setEnabled(projectSelected);
     action_ReloadPackages->setEnabled(projectSelected);
+    action_MonitorProject->setEnabled(projectSelected);
 
     bool packageSelected = browser->hasPackageSelection();
     ui->action_Branch_package->setEnabled(packageSelected);
@@ -328,20 +329,23 @@ void MainWindow::getPackages(QModelIndex index)
     }
 }
 
+void MainWindow::slotToggleAddRow(int index)
+{
+    // Enable if current tab is "My packages"
+    ui->action_Add->setEnabled(index == 0);
+}
+
 void MainWindow::slotEnableRemoveRow()
 {
-    if (!monitor->hasSelection()) {
-        ui->action_Remove->setEnabled(false);
-    } else if (!ui->action_Remove->isEnabled()) {
-        ui->action_Remove->setEnabled(true);
-    }
+    qDebug() << __PRETTY_FUNCTION__;
+    ui->action_Remove->setEnabled(monitor->hasPackageSelection());
 }
 
 void MainWindow::on_action_Refresh_triggered()
 {
     qDebug() << "MainWindow::refreshView()";
     emit updateStatusBar(tr("Getting build statuses..."), false);
-    monitor->getBuildStatus();
+    monitor->refresh();
 
     emit updateStatusBar(tr("Getting requests..."), false);
     obs->getIncomingRequests();
@@ -351,6 +355,7 @@ void MainWindow::on_action_Refresh_triggered()
 void MainWindow::setupTreeMonitor()
 {
     connect(ui->action_Add, &QAction::triggered, monitor, &Monitor::addRow);
+    connect(monitor, &Monitor::currentTabChanged, this, &MainWindow::slotToggleAddRow);
     connect(monitor, &Monitor::itemSelectionChanged, this, &MainWindow::slotEnableRemoveRow);
     connect(ui->action_Remove, &QAction::triggered, monitor, &Monitor::removeRow);
     connect(ui->action_Mark_all_as_read, &QAction::triggered, monitor, &Monitor::markAllRead);
@@ -482,6 +487,11 @@ void MainWindow::createActions()
     action_ReloadResults->setIcon(QIcon::fromTheme("view-refresh"));
     connect(action_ReloadResults, &QAction::triggered, browser, &Browser::reloadResults);
 
+    // Monitor project action
+    action_MonitorProject = new QAction(tr("&Monitor project"), this);
+    action_MonitorProject->setIcon(QIcon::fromTheme("mail-thread-watch"));
+    connect(action_MonitorProject, &QAction::triggered, this, &MainWindow::monitorProject);
+
     // Get build log action
     action_getBuildLog = new QAction(tr("&Get build log"), this);
     action_getBuildLog->setIcon(QIcon::fromTheme("text-x-log"));
@@ -552,6 +562,7 @@ void MainWindow::createActions()
     QMenu *treeProjectsMenu = new QMenu(this);
     treeProjectsMenu->addAction(actionNew_project);
     treeProjectsMenu->addAction(action_ReloadProjects);
+    treeProjectsMenu->addAction(action_MonitorProject);
     treeProjectsMenu->addAction(actionDelete_project);
     treeProjectsMenu->addAction(actionProperties_project);
 
@@ -594,6 +605,18 @@ void MainWindow::createActions()
     });
     addAction(actionFilterPackages);
 
+}
+
+void MainWindow::monitorProject()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    if (!monitor->tabWidgetContains(browser->getCurrentProject())) {
+        monitor->addTab(browser->getCurrentProject());
+    }
+
+    obs->getProjectResults(browser->getCurrentProject());
+    emit updateStatusBar(tr("Adding project to monitor..."), false);
 }
 
 void MainWindow::createStatusBar()

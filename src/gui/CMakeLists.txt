@@ -36,7 +36,9 @@ set(QACTUS_SRC
     browser/browserfilter.cpp
     browser/bookmarks.cpp
     monitor/monitor.cpp
-    monitor/monitortreewidget.cpp
+    monitor/monitortab.cpp
+    monitor/monitorpackagestab.cpp
+    monitor/monitorrepositorytab.cpp
     monitor/roweditor.cpp
     requestbox/requestbox.cpp
     requestbox/requestboxtreewidget.cpp
@@ -75,7 +77,9 @@ set(QACTUS_HDR
     browser/browserfilter.h
     browser/bookmarks.h
     monitor/monitor.h
-    monitor/monitortreewidget.h
+    monitor/monitortab.h
+    monitor/monitorpackagestab.h
+    monitor/monitorrepositorytab.h
     monitor/roweditor.h
     requestbox/requestbox.h
     requestbox/requestboxtreewidget.h
@@ -102,6 +106,7 @@ set(QACTUS_UI
     browser/searchwidget.ui
     browser/browserfilter.ui
     monitor/monitor.ui
+    monitor/monitortab.ui
     monitor/roweditor.ui
     requestbox/requestbox.ui
     requestbox/requeststateeditor.ui

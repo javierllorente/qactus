@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2015-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2021 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,122 +18,120 @@
  *
  */
 
-#include "monitortreewidget.h"
+#include "monitorpackagestab.h"
+#include "ui_monitortab.h"
 
-MonitorTreeWidget::MonitorTreeWidget(QWidget *parent) :
-    QTreeWidget(parent)
+MonitorPackagesTab::MonitorPackagesTab(QWidget *parent, const QString &title, OBS *obs) :
+    MonitorTab(parent, title, obs)
 {
     setAcceptDrops(true);
 
-    setColumnCount(5);
-    setColumnWidth(0, 185); // Project
-    setColumnWidth(1, 160); // Package
-    setColumnWidth(2, 140); // Repository
-    setColumnWidth(3, 75); // Arch
-    setColumnWidth(4, 100); // Status
+    connect(this, &MonitorPackagesTab::obsUrlDropped, m_obs, &OBS::getAllBuildStatus);
+    connect(m_obs, &OBS::finishedParsingResult, this, &MonitorPackagesTab::addDroppedPackage);
 
-    setItemDelegate(new AutoToolTipDelegate(this));
+    connect(m_obs, &OBS::finishedParsingPackage, this, &MonitorPackagesTab::slotInsertStatus);
+    connect(ui->treeWidget, &QTreeWidget::itemDoubleClicked, this, &MonitorPackagesTab::slotEditRow);
+    connect(m_obs, &OBS::finishedParsingResultList, this, &MonitorPackagesTab::finishedAddingPackages);
+    connect(ui->treeWidget, &QTreeWidget::itemSelectionChanged, this, &MonitorPackagesTab::itemSelectionChanged);
 
-    connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
-            this, SLOT(slotEditRow(QTreeWidgetItem*, int)));
-    connect(this, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
-            this, SLOT(slotMarkRead(QTreeWidgetItem*, int)));
-
-    obs = nullptr;
     readSettings();
 }
 
-MonitorTreeWidget::~MonitorTreeWidget()
+MonitorPackagesTab::~MonitorPackagesTab()
 {
     writeSettings();
 }
 
-void MonitorTreeWidget::readSettings()
+void MonitorPackagesTab::readSettings()
 {
     QSettings settings;
     int size = settings.beginReadArray("Monitor");
     for (int i=0; i<size; ++i)
     {
         settings.setArrayIndex(i);
-        QTreeWidgetItem *item = new QTreeWidgetItem(this);
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
         item->setText(0, settings.value("Project").toString());
         item->setText(1, settings.value("Package").toString());
         item->setText(2, settings.value("Repository").toString());
         item->setText(3, settings.value("Arch").toString());
-        insertTopLevelItem(i, item);
+        ui->treeWidget->insertTopLevelItem(i, item);
     }
     settings.endArray();
 }
 
-void MonitorTreeWidget::writeSettings()
+void MonitorPackagesTab::writeSettings()
 {
     QSettings settings;
-    int rows = topLevelItemCount();
+    int rows = ui->treeWidget->topLevelItemCount();
     settings.beginWriteArray("Monitor");
     settings.remove("");
     for (int i=0; i<rows; ++i) {
         settings.setArrayIndex(i);
 //        Save settings only if all the items in a row have text
-        if (!topLevelItem(i)->text(0).isEmpty() &&
-                !topLevelItem(i)->text(1).isEmpty() &&
-                !topLevelItem(i)->text(2).isEmpty() &&
-                !topLevelItem(i)->text(3).isEmpty())
+        if (!ui->treeWidget->topLevelItem(i)->text(0).isEmpty() &&
+                !ui->treeWidget->topLevelItem(i)->text(1).isEmpty() &&
+                !ui->treeWidget->topLevelItem(i)->text(2).isEmpty() &&
+                !ui->treeWidget->topLevelItem(i)->text(3).isEmpty())
         {
-            settings.setValue("Project", topLevelItem(i)->text(0));
-            settings.setValue("Package", topLevelItem(i)->text(1));
-            settings.setValue("Repository", topLevelItem(i)->text(2));
-            settings.setValue("Arch", topLevelItem(i)->text(3));
+            settings.setValue("Project", ui->treeWidget->topLevelItem(i)->text(0));
+            settings.setValue("Package", ui->treeWidget->topLevelItem(i)->text(1));
+            settings.setValue("Repository", ui->treeWidget->topLevelItem(i)->text(2));
+            settings.setValue("Arch", ui->treeWidget->topLevelItem(i)->text(3));
         }
     }
     settings.endArray();
 }
 
-
-void MonitorTreeWidget::setOBS(OBS *obs)
+void MonitorPackagesTab::refresh()
 {
-    this->obs = obs;
-}
-
-void MonitorTreeWidget::getBuildStatus()
-{
-    qDebug() << "MonitorTreeWidget::getBuildStatus()";
-    int rows = topLevelItemCount();
+    qDebug() << __PRETTY_FUNCTION__;
+        int rows = ui->treeWidget->topLevelItemCount();
     for (int r=0; r<rows; r++) {
 //        Ignore rows with empty cells and process rows with data
-        if (!topLevelItem(r)->text(0).isEmpty() ||
-                !topLevelItem(r)->text(1).isEmpty() ||
-                !topLevelItem(r)->text(2).isEmpty() ||
-                !topLevelItem(r)->text(3).isEmpty()) {
+        if (!ui->treeWidget->topLevelItem(r)->text(0).isEmpty() ||
+                !ui->treeWidget->topLevelItem(r)->text(1).isEmpty() ||
+                !ui->treeWidget->topLevelItem(r)->text(2).isEmpty() ||
+                !ui->treeWidget->topLevelItem(r)->text(3).isEmpty()) {
             QStringList tableStringList;
-            tableStringList.append(QString(topLevelItem(r)->text(0)));
-            tableStringList.append(QString(topLevelItem(r)->text(2)));
-            tableStringList.append(QString(topLevelItem(r)->text(3)));
-            tableStringList.append(QString(topLevelItem(r)->text(1)));
+            tableStringList.append(QString(ui->treeWidget->topLevelItem(r)->text(0)));
+            tableStringList.append(QString(ui->treeWidget->topLevelItem(r)->text(2)));
+            tableStringList.append(QString(ui->treeWidget->topLevelItem(r)->text(3)));
+            tableStringList.append(QString(ui->treeWidget->topLevelItem(r)->text(1)));
 //            Get build status
-            obs->getBuildStatus(tableStringList, r);
+            m_obs->getBuildStatus(tableStringList, r);
         }
     }
 }
 
-void MonitorTreeWidget::dragEnterEvent(QDragEnterEvent *event)
+bool MonitorPackagesTab::hasSelection()
+{
+    QItemSelectionModel *treeWidgetSelectionModel = ui->treeWidget->selectionModel();
+    if (treeWidgetSelectionModel) {
+        return treeWidgetSelectionModel->hasSelection();
+    } else {
+        return false;
+    }
+}
+
+void MonitorPackagesTab::dragEnterEvent(QDragEnterEvent *event)
 {
     event->acceptProposedAction();
 }
 
-void MonitorTreeWidget::dragMoveEvent(QDragMoveEvent *event)
+void MonitorPackagesTab::dragMoveEvent(QDragMoveEvent *event)
 {
     event->acceptProposedAction();
 }
 
-void MonitorTreeWidget::dropEvent(QDropEvent *event)
+void MonitorPackagesTab::dropEvent(QDropEvent *event)
 {
-    qDebug() << "MonitorTreeWidget::dropEvent()";
+    qDebug() << __PRETTY_FUNCTION__;
     const QMimeData *mimeData = event->mimeData();
     if (mimeData->hasUrls()) {
         QList<QUrl> urlList = mimeData->urls();
         QString urlStr = urlList.at(0).toString();
 
-        qDebug () << "Dropped url:" << urlStr;
+        qDebug () << __PRETTY_FUNCTION__ << "Dropped url:" << urlStr;
         QRegExp rx("^(?:http|https)://(\\S+)/package/show/(\\S+)/(\\S+)");
         if(urlStr.contains(rx)) {
             qDebug () << "Valid OBS URL found!";
@@ -145,12 +143,12 @@ void MonitorTreeWidget::dropEvent(QDropEvent *event)
     }
 }
 
-void MonitorTreeWidget::addDroppedPackage(OBSResult *result)
+void MonitorPackagesTab::addDroppedPackage(OBSResult *result)
 {
-    qDebug() << "MonitorTreeWidget::addDroppedPackage()";
+    qDebug() << __PRETTY_FUNCTION__;
 
     if (droppedProject==result->getProject() && droppedPackage==result->getStatus()->getPackage()) {
-        QTreeWidgetItem *item = new QTreeWidgetItem(this);
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
         item->setText(0, result->getProject());
         item->setText(1, result->getStatus()->getPackage());
         item->setText(2, result->getRepository());
@@ -164,8 +162,8 @@ void MonitorTreeWidget::addDroppedPackage(OBSResult *result)
         }
         item->setForeground(4, Utils::getColorForStatus(status));
 
-        addTopLevelItem(item);
-        int index = indexOfTopLevelItem(item);
+        ui->treeWidget->addTopLevelItem(item);
+        int index = ui->treeWidget->indexOfTopLevelItem(item);
         qDebug() << "Package" << item->text(1)
                  << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
                  << "added at" << index;
@@ -176,16 +174,16 @@ void MonitorTreeWidget::addDroppedPackage(OBSResult *result)
     }
 }
 
-void MonitorTreeWidget::finishedAddingPackages()
+void MonitorPackagesTab::finishedAddingPackages()
 {
-    qDebug() << "MonitorTreeWidget::finishedAddingPackages()";
+    qDebug() << __PRETTY_FUNCTION__;
     if (!droppedProject.isEmpty() && !droppedPackage.isEmpty()) {
         droppedProject = "";
         droppedPackage = "";
     }
 }
 
-void MonitorTreeWidget::slotInsertStatus(OBSStatus *obsStatus, int row)
+void MonitorPackagesTab::slotInsertStatus(OBSStatus *obsStatus, int row)
 {
     qDebug() << __PRETTY_FUNCTION__;
     QString details = obsStatus->getDetails();
@@ -199,7 +197,7 @@ void MonitorTreeWidget::slotInsertStatus(OBSStatus *obsStatus, int row)
         qDebug() << "Details string size: " << details.size();
     }
 
-    QTreeWidgetItem *item = topLevelItem(row);
+    QTreeWidgetItem *item = ui->treeWidget->topLevelItem(row);
     if (item) {
         QString oldStatus = item->text(4);
         item->setText(4, status);
@@ -209,7 +207,7 @@ void MonitorTreeWidget::slotInsertStatus(OBSStatus *obsStatus, int row)
         item->setForeground(4, Utils::getColorForStatus(status));
 
         qDebug() << "Build status" << status << "inserted in" << row
-                 << "(Total rows:" << topLevelItemCount() << ")";
+                 << "(Total rows:" << ui->treeWidget->topLevelItemCount() << ")";
 
         //    If the old status is not empty and it is different from latest one,
         //    change the tray icon and enable the "Mark all as read" button
@@ -217,7 +215,7 @@ void MonitorTreeWidget::slotInsertStatus(OBSStatus *obsStatus, int row)
             Utils::setItemBoldFont(item, true);
         }
 
-        if (row == topLevelItemCount()-1) {
+        if (row == ui->treeWidget->topLevelItemCount()-1) {
             emit updateStatusBar(tr("Done"), true);
         }
     } else {
@@ -225,61 +223,49 @@ void MonitorTreeWidget::slotInsertStatus(OBSStatus *obsStatus, int row)
     }
 }
 
-void MonitorTreeWidget::slotAddRow()
+void MonitorPackagesTab::slotAddRow()
 {
-    qDebug() << "MonitorTreeWidget::slotAddRow()";
-    RowEditor *rowEditor = new RowEditor(this, obs);
+    qDebug() << __PRETTY_FUNCTION__;
+    RowEditor *rowEditor = new RowEditor(this, m_obs);
 
     if (rowEditor->exec()) {
-        QTreeWidgetItem *item = new QTreeWidgetItem(this);
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
         item->setText(0, rowEditor->getProject());
         item->setText(1, rowEditor->getPackage());
         item->setText(2, rowEditor->getRepository());
         item->setText(3, rowEditor->getArch());
-        addTopLevelItem(item);
-        int index = indexOfTopLevelItem(item);
+        ui->treeWidget->addTopLevelItem(item);
+        int index = ui->treeWidget->indexOfTopLevelItem(item);
         qDebug() << "Build" << item->text(1) << "added at" << index;
     }
     delete rowEditor;
     rowEditor = nullptr;
 }
 
-void MonitorTreeWidget::slotRemoveRow()
+void MonitorPackagesTab::slotRemoveRow()
 {
-    qDebug () << "MonitorTreeWidget::slotRemoveRow()";
-    QList<QTreeWidgetItem *> items = selectedItems();
-    QList<QModelIndex> list = selectionModel()->selectedIndexes();
+    qDebug () << __PRETTY_FUNCTION__;
+    QList<QTreeWidgetItem *> items = ui->treeWidget->selectedItems();
+    QList<QModelIndex> list = ui->treeWidget->selectionModel()->selectedIndexes();
     foreach (QTreeWidgetItem *item, items) {
         delete item;
         item = nullptr;
     }
 
     if (!list.isEmpty()) {
-        QTreeWidgetItem *curItem = currentItem();
+        QTreeWidgetItem *curItem = ui->treeWidget->currentItem();
         if (curItem) {
             curItem->setSelected(true);
         }
     }
 }
 
-void MonitorTreeWidget::slotMarkAllRead()
-{
-    qDebug() << "MonitorTreeWidget::slotMarkAllRead()";
-    for (int i=0; i<topLevelItemCount(); i++) {
-        if (topLevelItem(i)->font(0).bold()) {
-            Utils::setItemBoldFont(topLevelItem(i), false);
-        }
-    }
-
-    emit notifyChanged(false);
-}
-
-void MonitorTreeWidget::slotEditRow(QTreeWidgetItem *item, int column)
+void MonitorPackagesTab::slotEditRow(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column)
 
-    qDebug() << "MonitorTreeWidget::slotEditRow()";
-    RowEditor *rowEditor = new RowEditor(this, obs);
+    qDebug() << __PRETTY_FUNCTION__;
+    RowEditor *rowEditor = new RowEditor(this, m_obs);
     rowEditor->setProject(item->text(0));
     rowEditor->setPackage(item->text(1));
     rowEditor->setRepository(item->text(2));
@@ -287,13 +273,13 @@ void MonitorTreeWidget::slotEditRow(QTreeWidgetItem *item, int column)
     rowEditor->show();
 
     if (rowEditor->exec()) {
-        int index = indexOfTopLevelItem(item);
+        int index = ui->treeWidget->indexOfTopLevelItem(item);
         item->setText(0, rowEditor->getProject());
         item->setText(1, rowEditor->getPackage());
         item->setText(2, rowEditor->getRepository());
         item->setText(3, rowEditor->getArch());
         item->setText(4, "");
-        insertTopLevelItem(index, item);
+        ui->treeWidget->insertTopLevelItem(index, item);
         qDebug() << "Build edited:" << index;
         qDebug() << "Status at" << index << item->text(4) << "(it should be empty)";
     }
@@ -301,25 +287,12 @@ void MonitorTreeWidget::slotEditRow(QTreeWidgetItem *item, int column)
     rowEditor = nullptr;
 }
 
-bool MonitorTreeWidget::hasStatusChanged(const QString &oldStatus, const QString &newStatus)
-{
-    qDebug() << "MonitorTreeWidget::hasBuildStatusChanged()"
-             << "Old status:" << oldStatus << "New status:" << newStatus;
-    bool change = false;
-    if (!oldStatus.isEmpty() && oldStatus != newStatus) {
-        change = true;
-        qDebug() << "MonitorTreeWidget::hasBuildStatusChanged()" << change;
-        emit notifyChanged(change);
-    }
-    return change;
-}
-
-void MonitorTreeWidget::slotMarkRead(QTreeWidgetItem *item, int column)
+void MonitorPackagesTab::slotMarkRead(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column)
 
-    qDebug() << "MonitorTreeWidget::markRead() " << "Row: " + QString::number(indexOfTopLevelItem(item));
-    for (int i=0; i<columnCount(); i++) {
+    qDebug() << __PRETTY_FUNCTION__ << "Row: " + QString::number(ui->treeWidget->indexOfTopLevelItem(item));
+    for (int i=0; i<ui->treeWidget->columnCount(); i++) {
         if (item->font(0).bold()) {
             Utils::setItemBoldFont(item, false);
         }
@@ -327,3 +300,4 @@ void MonitorTreeWidget::slotMarkRead(QTreeWidgetItem *item, int column)
 
     emit notifyChanged(false);
 }
+
