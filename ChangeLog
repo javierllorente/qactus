@@ -1,5 +1,8 @@
 Qactus ChangeLog
 ================
+v2.1.0 (2021-09-17)
+- New feature: monitor an entire project
+
 v2.0.3 (2020-11-28)
 - Minor fixes:
     * follow redirects
