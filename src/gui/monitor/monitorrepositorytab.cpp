@@ -90,8 +90,14 @@ void MonitorRepositoryTab::slotAddResultList(const QList<OBSResult *> &resultLis
 void MonitorRepositoryTab::checkForResultListChanges(const QList<OBSResult *> &resultList)
 {
     // FIXME: intersect always returns 0
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QSet<OBSResult *> old_resultSet(m_resultList.begin(), m_resultList.end());
     QSet<OBSResult *> new_resultSet(resultList.begin(), resultList.end());
+#else
+    QSet<OBSResult *> old_resultSet = m_resultList.toSet();
+    QSet<OBSResult *> new_resultSet= resultList.toSet();
+#endif
+
     QList<OBSResult *> commonResults = old_resultSet.intersect(new_resultSet).values();
 
     for (OBSResult *oldResult : commonResults) {
