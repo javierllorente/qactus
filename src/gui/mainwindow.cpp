@@ -130,6 +130,7 @@ void MainWindow::slotCredentialsRestored(const QString &username, const QString 
 void MainWindow::showNetworkError(const QString &networkError)
 {
     qDebug() << "MainWindow::showNetworkError()";
+    progressBar->setHidden(true);
 
     // The QMessageBox is only displayed once if there are
     // repeated errors (queued requests, probably same error)
