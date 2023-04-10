@@ -719,6 +719,18 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             case OBSCore::CreateRequest:
                 xmlReader->parseCreateRequestStatus(data);
                 break;
+            case OBSCore::BranchPackage: {
+                QString project;
+                QString package;
+                if (reply->property("branchprj").isValid()) {
+                    project = reply->property("branchprj").toString();
+                }
+                if (reply->property("branchpkg").isValid()) {
+                    package = reply->property("branchpkg").toString();
+                }
+                xmlReader->parseBranchPackage(project, package, data);
+                break;
+            }
             default:
                 qDebug() << "OBSCore::replyFinished() Request failed! Error:" << reply->errorString();
                 qDebug() << data;
