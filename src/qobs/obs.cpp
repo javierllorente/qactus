@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2021 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -220,7 +220,7 @@ void OBS::slotChangeSubmitRequest(const QString &id, const QString &comments, bo
     QString newState = accepted ? "accepted" : "declined";
     QString resource = QString("/request/%1?cmd=changestate&newstate=%2").arg(id, newState);
     QByteArray data;
-    data.append(comments);
+    data.append(comments.toUtf8());
     changeSubmitRequest(resource, data);
 }
 

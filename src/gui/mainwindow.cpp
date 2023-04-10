@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2010-2021 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2010-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -169,7 +169,8 @@ void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
         QByteArray byteArray = file.readAll();
         file.close();
         QSslCertificate sslCertificate(byteArray);
-        QSslSocket::addDefaultCaCertificate(sslCertificate);
+        auto sslConfiguration = QSslConfiguration::defaultConfiguration();
+        sslConfiguration.addCaCertificate(sslCertificate);
         reply->ignoreSslErrors();
         return;
     } else {
@@ -191,7 +192,8 @@ void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
             file.write(sslCertificate.toPem());
             file.close();
 
-            QSslSocket::addDefaultCaCertificate(sslCertificate);
+            auto sslConfiguration = QSslConfiguration::defaultConfiguration();
+            sslConfiguration.addCaCertificate(sslCertificate);
             obs->request(reply);
             reply->ignoreSslErrors();
         }
