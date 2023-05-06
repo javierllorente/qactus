@@ -462,15 +462,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
 
             case OBSCore::BranchPackage: {
                 qDebug() << reqTypeStr << "BranchPackage";
-                QString project;
-                QString package;
-                if (reply->property("branchprj").isValid()) {
-                    project = reply->property("branchprj").toString();
-                }
-                if (reply->property("branchpkg").isValid()) {
-                    package = reply->property("branchpkg").toString();
-                }
-                xmlReader->parseBranchPackage(project, package, dataStr);
+                xmlReader->parseBranchPackage(dataStr);
                 break;
             }
 
@@ -720,15 +712,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 xmlReader->parseCreateRequestStatus(data);
                 break;
             case OBSCore::BranchPackage: {
-                QString project;
-                QString package;
-                if (reply->property("branchprj").isValid()) {
-                    project = reply->property("branchprj").toString();
-                }
-                if (reply->property("branchpkg").isValid()) {
-                    package = reply->property("branchpkg").toString();
-                }
-                xmlReader->parseBranchPackage(project, package, data);
+                xmlReader->parseBranchPackage(data);
                 break;
             }
             default:
@@ -909,8 +893,6 @@ void OBSCore::branchPackage(const QString &project, const QString &package)
     QString resource = QString("/source/%1/%2?cmd=branch").arg(project, package);
     QNetworkReply *reply = postRequest(resource, "", "application/x-www-form-urlencoded");
     reply->setProperty("reqtype", OBSCore::BranchPackage);
-    reply->setProperty("branchprj", project);
-    reply->setProperty("branchpkg", package);
 }
 
 void OBSCore::linkPackage(const QString &srcProject, const QString &srcPackage, const QString &dstProject)

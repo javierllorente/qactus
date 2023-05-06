@@ -1,7 +1,7 @@
 /* 
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2021 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -217,6 +217,19 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
         qDebug() << "Status details:" << obsStatus->getDetails();
     } // end details
 
+    if (xml.name()=="data" && xml.isStartElement()) {
+        if (xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            if (attrib.hasAttribute("name")) {
+                xml.readNext();
+                if (attrib.value("name").toString() == "targetproject") {
+                    obsStatus->setProject(xml.text().toString());
+                } else if (attrib.value("name").toString() == "targetpackage") {
+                    obsStatus->setPackage(xml.text().toString());
+                }
+            }
+        }
+    } // end data
 }
 
 void OBSXmlReader::parseBuildStatus(const QString &data)
@@ -326,13 +339,12 @@ void OBSXmlReader::parseRequestStatus(const QString &data)
     emit finishedParsingRequestStatus(obsStatus);
 }
 
-void OBSXmlReader::parseBranchPackage(const QString &project, const QString &package, const QString &data)
+void OBSXmlReader::parseBranchPackage(const QString &data)
 {
     qDebug() << "OBSXmlReader::parseBranchPackage()";
+    qDebug() << data;
     QXmlStreamReader xml(data);
     OBSStatus *obsStatus = new OBSStatus();
-    obsStatus->setProject(project);
-    obsStatus->setPackage(package);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
