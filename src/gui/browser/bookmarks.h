@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ private:
     QAction *m_actionDeleteBookmark;
     int m_initialCount;
     OBSPerson *m_person;
+    void addMenuActions();
     void addItem(const QString &entry);
 
 };

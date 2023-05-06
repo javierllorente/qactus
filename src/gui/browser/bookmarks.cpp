@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,17 @@ Bookmarks::Bookmarks(QWidget *parent)
     : QMenu(parent),
       m_person(nullptr)
 {
+    addMenuActions();
+    m_initialCount = actions().count();
+}
+
+Bookmarks::~Bookmarks()
+{
+    delete m_person;
+}
+
+void Bookmarks::addMenuActions()
+{
     m_actionAddBookmark = new QAction(tr("Add bookmark"));
     m_actionAddBookmark->setIcon(QIcon::fromTheme("list-add"));
     m_actionAddBookmark->setVisible(false);
@@ -37,18 +48,14 @@ Bookmarks::Bookmarks(QWidget *parent)
     connect(m_actionDeleteBookmark, &QAction::triggered, this, &Bookmarks::deleteBookmarkClicked);
 
     addSeparator();
-    m_initialCount = actions().count();
 }
 
-Bookmarks::~Bookmarks()
-{
-    delete m_person;
-}
 
 void Bookmarks::slotLoadBookmarks(OBSPerson *person)
 {
     m_person = person;
     clear();
+    addMenuActions();
 
     for (QString entry : person->getWatchList()) {
         addItem(entry);
