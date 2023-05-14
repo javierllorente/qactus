@@ -333,10 +333,12 @@ void OBSXmlReader::parseRequestStatus(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsStatus;
         return;
     }
 
     emit finishedParsingRequestStatus(obsStatus);
+    delete obsStatus;
 }
 
 void OBSXmlReader::parseBranchPackage(const QString &data)

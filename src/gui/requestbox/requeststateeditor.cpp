@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2015-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -119,7 +119,6 @@ void RequestStateEditor::slotRequestStatusFetched(OBSStatus *status)
    } else {
        QMessageBox::critical(this, errorStr, status->getCode(), QMessageBox::Ok);
    }
-   delete status;
 }
 
 void RequestStateEditor::slotSrDiffFetched(const QString &diff)
