@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2016-2021 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2016-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ OBSResult::OBSResult()
 
 OBSResult::~OBSResult()
 {
-
+    qDeleteAll(statusList);
+    statusList.clear();
 }
 
 QString OBSResult::getProject() const
