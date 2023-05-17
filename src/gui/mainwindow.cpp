@@ -64,7 +64,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupFileShortcuts);
     connect(browser, &Browser::buildResultSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::finishedLoadingProjects, [this](){
-        newButton->setEnabled(true);
         ui->action_Home->setEnabled(true);
         bookmarkButton->setEnabled(true);
         action_ReloadProjects->setEnabled(true);
@@ -230,6 +229,7 @@ void MainWindow::setupActions()
     qDebug() << __PRETTY_FUNCTION__;
 
     bool projectSelected = browser->hasProjectSelection();
+    newButton->setEnabled(projectSelected);
     actionNew_project->setEnabled(projectSelected);
     actionDelete_project->setEnabled(projectSelected);
     actionProperties_project->setEnabled(projectSelected);
