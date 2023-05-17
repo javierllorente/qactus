@@ -320,10 +320,6 @@ void Browser::addResult(OBSResult *result)
             ui->treeBuildResults->addResult(result);
         }
     }
-
-//  FIXME: The last slot connected is in charge of deleting result
-//    delete result;
-//    result = nullptr;
 }
 
 void Browser::reloadResults()
@@ -667,8 +663,6 @@ void Browser::addFile(OBSFile *file)
     if (currentProject==fileProject && currentPackage==filePackage) {
         ui->treeFiles->addFile(file);
     }
-    delete file;
-    file = nullptr;
 }
 
 void Browser::uploadFile(const QString &path)
@@ -711,9 +705,6 @@ void Browser::slotUploadFile(OBSRevision *revision)
     }
     showTrayMessage(APP_NAME, tr("The file %1 has been uploaded").arg(revision->getFile()));
 
-    delete revision;
-    revision = nullptr;
-
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -724,9 +715,6 @@ void Browser::slotUploadFileError(OBSStatus *status)
     QString text = status->getSummary() + "<br>" + status->getDetails();
     QMessageBox::warning(this, title, text);
     QString statusText = tr("Error uploading to %1/%2").arg(status->getProject(), status->getPackage());
-
-    delete status;
-    status = nullptr;
 
     emit updateStatusBar(statusText, true);
 }
@@ -745,8 +733,6 @@ void Browser::slotCreateRequest(OBSRequest *obsRequest)
 
     QString message = tr("Request created successfully. %1").arg(obsRequest->getId());
     emit showTrayMessage(APP_NAME, message);
-    delete obsRequest;
-
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -758,8 +744,6 @@ void Browser::slotCreateRequestStatus(OBSStatus *status)
     const QString text = QString("<b>%1</b><br>%2<br>%3").arg(
                 status->getCode(), status->getSummary(), status->getDetails());
     QMessageBox::critical(this, title, text);
-
-    delete status;
 
     emit updateStatusBar(tr("Done"), true);
 }
@@ -773,15 +757,11 @@ void Browser::slotBranchPackage(OBSStatus *status)
         ui->treeProjects->addProject(newBranch);
         ui->treeProjects->setCurrentProject(newBranch);
         showTrayMessage(APP_NAME, tr("The package %1 has been branched").arg(status->getPackage()));
-
     } else {
         const QString title = tr("Warning");
         const QString text = status->getSummary() + "<br>" + status->getDetails();
         QMessageBox::warning(this, title, text);
     }
-
-    delete status;
-    status = nullptr;
 
     emit updateStatusBar(tr("Done"), true);
 }
@@ -825,7 +805,6 @@ void Browser::slotProjectNotFound(OBSStatus *status)
     const QString title = tr("Project not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
     QMessageBox::information(this, title, text);
-    delete status;
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -834,7 +813,6 @@ void Browser::slotPackageNotFound(OBSStatus *status)
     const QString title = tr("Package not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
     QMessageBox::information(this, title, text);
-    delete status;
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -850,9 +828,6 @@ void Browser::slotDeleteProject(OBSStatus *status)
         const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getDetails());
         QMessageBox::warning(this, title, text);
     }
-
-    delete status;
-    status = nullptr;
 
     emit updateStatusBar(tr("Done"), true);
 }
@@ -873,9 +848,6 @@ void Browser::slotDeletePackage(OBSStatus *status)
         const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getDetails());
         QMessageBox::warning(this, title, text);
     }
-
-    delete status;
-    status = nullptr;
 
     emit updateStatusBar(tr("Done"), true);
 }
@@ -906,9 +878,6 @@ void Browser::slotDeleteFile(OBSStatus *status)
         const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getDetails());
         QMessageBox::warning(this, title, text);
     }
-
-    delete status;
-    status = nullptr;
 
     emit updateStatusBar(tr("Done"), true);
 }

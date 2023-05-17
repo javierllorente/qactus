@@ -145,6 +145,4 @@ void RequestStateEditor::slotAddBuildResults(OBSResult *obsResult)
         QList<QStandardItem *> items = {itemRepository, itemArch, itemBuildResult};
         model->appendRow(items);
     }
-    delete obsResult;
-    obsResult = nullptr;
 }

@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -74,7 +74,6 @@ void RequestTreeWidget::addIncomingRequest(OBSRequest *request)
 {
     qDebug() << "RequestTreeWidget::addIncomingRequest()";
     irModel->appendRequest(request);
-    delete request;
 }
 
 void RequestTreeWidget::irListFetched()
@@ -87,7 +86,6 @@ void RequestTreeWidget::addOutgoingRequest(OBSRequest *request)
 {
     qDebug() << "RequestTreeWidget::addOutgoingRequest()";
     orModel->appendRequest(request);
-    delete request;
 }
 
 void RequestTreeWidget::orListFetched()
@@ -100,7 +98,6 @@ void RequestTreeWidget::addDeclinedRequest(OBSRequest *request)
 {
     qDebug() << "RequestTreeWidget::addDeclinedRequest()";
     drModel->appendRequest(request);
-    delete request;
 }
 
 void RequestTreeWidget::drListFetched()

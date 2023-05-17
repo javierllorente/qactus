@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -128,7 +128,6 @@ void PackageActionDialog::revisionFetched(OBSRevision *revision)
 
     emit updateStatusBar("Done", true);
     emit showTrayMessage(APP_NAME, message);
-    delete revision;
     close();
 }
 
@@ -152,5 +151,4 @@ void PackageActionDialog::slotCannot(OBSStatus *status)
     QString title = tr("Warning");
     QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getDetails());
     QMessageBox::warning(this, title, text);
-    delete status;
 }

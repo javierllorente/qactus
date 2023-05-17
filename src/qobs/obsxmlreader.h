@@ -109,7 +109,7 @@ signals:
     void finishedParsingDeletePkgStatus(OBSStatus*);
     void finishedParsingDeleteFileStatus(OBSStatus*);
     void finishedParsingResult(OBSResult*);
-    void finishedParsingResultList(QList<OBSResult *> resultList);
+    void finishedParsingResultList(const QList<OBSResult *> &resultList);
     void finishedParsingRevision(OBSRevision*);
     void finishedParsingIncomingRequest(OBSRequest *request);
     void finishedParsingIncomingRequestList();

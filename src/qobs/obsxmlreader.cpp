@@ -141,10 +141,12 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete prjMetaConfig;
         return;
     }
 
     emit finishedParsingProjectMetaConfig(prjMetaConfig);
+    delete prjMetaConfig;
 }
 
 void OBSXmlReader::parsePkgMetaConfig(const QString &data)
@@ -172,10 +174,12 @@ void OBSXmlReader::parsePkgMetaConfig(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete pkgMetaConfig;
         return;
     }
 
     emit finishedParsingPackageMetaConfig(pkgMetaConfig);
+    delete pkgMetaConfig;
 }
 
 void OBSXmlReader::parsePackageList(const QString &data)
@@ -244,9 +248,11 @@ void OBSXmlReader::parseBuildStatus(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsStatus;
         return;
     }
     emit finishedParsingPackage(obsStatus, row);
+    delete obsStatus;
 }
 
 OBSStatus *OBSXmlReader::parseNotFoundStatus(const QString &data)
@@ -317,6 +323,8 @@ void OBSXmlReader::parseResultList(const QString &data)
 
         if (xml.name()=="resultlist" && xml.isEndElement()) {
             emit finishedParsingResultList(resultList);
+            qDeleteAll(resultList);
+            resultList.clear();
         }
     }
 }
@@ -355,10 +363,12 @@ void OBSXmlReader::parseBranchPackage(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsStatus;
         return;
     }
 
     emit finishedParsingBranchPackage(obsStatus);
+    delete obsStatus;
 }
 
 void OBSXmlReader::parseLinkPackage(const QString &project, const QString &package, const QString &data)
@@ -376,10 +386,12 @@ void OBSXmlReader::parseLinkPackage(const QString &project, const QString &packa
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsRevision;
         return;
     }
 
     emit finishedParsingLinkPkgRevision(obsRevision);
+    delete obsRevision;
 }
 
 void OBSXmlReader::parseCopyPackage(const QString &project, const QString &package, const QString &data)
@@ -397,10 +409,12 @@ void OBSXmlReader::parseCopyPackage(const QString &project, const QString &packa
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsRevision;
         return;
     }
 
     emit finishedParsingCopyPkgRevision(obsRevision);
+    delete obsRevision;
 }
 
 void OBSXmlReader::parseCreateRequest(const QString &data)
@@ -418,10 +432,12 @@ void OBSXmlReader::parseCreateRequest(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsRequest;
         return;
     }
 
     emit finishedParsingCreateRequest(obsRequest);
+    delete obsRequest;
 }
 
 void OBSXmlReader::parseCreateRequestStatus(const QString &data)
@@ -441,6 +457,7 @@ void OBSXmlReader::parseCreateRequestStatus(const QString &data)
     }
 
     emit finishedParsingCreateRequestStatus(obsStatus);
+    delete obsStatus;
 }
 
 void OBSXmlReader::parseCreateProject(const QString &project, const QString &data)
@@ -457,10 +474,12 @@ void OBSXmlReader::parseCreateProject(const QString &project, const QString &dat
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsStatus;
         return;
     }
 
     emit finishedParsingCreatePrjStatus(obsStatus);
+    delete obsStatus;
 }
 
 void OBSXmlReader::parseCreatePackage(const QString &project, const QString &package,const QString &data)
@@ -478,10 +497,12 @@ void OBSXmlReader::parseCreatePackage(const QString &project, const QString &pac
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsStatus;
         return;
     }
 
     emit finishedParsingCreatePkgStatus(obsStatus);
+    delete obsStatus;
 }
 
 void OBSXmlReader::parseUploadFile(const QString &project, const QString &package, const QString &file, const QString &data)
@@ -500,10 +521,12 @@ void OBSXmlReader::parseUploadFile(const QString &project, const QString &packag
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsRevision;
         return;
     }
 
     emit finishedParsingUploadFileRevision(obsRevision);
+    delete obsRevision;
 }
 
 void OBSXmlReader::parseDeleteProject(const QString &project, const QString &data)
@@ -520,10 +543,12 @@ void OBSXmlReader::parseDeleteProject(const QString &project, const QString &dat
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsStatus;
         return;
     }
 
     emit finishedParsingDeletePrjStatus(obsStatus);
+    delete obsStatus;
 }
 
 void OBSXmlReader::parseDeletePackage(const QString &project, const QString &package, const QString &data)
@@ -541,10 +566,12 @@ void OBSXmlReader::parseDeletePackage(const QString &project, const QString &pac
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsStatus;
         return;
     }
 
     emit finishedParsingDeletePkgStatus(obsStatus);
+    delete obsStatus;
 }
 
 void OBSXmlReader::parseDeleteFile(const QString &project, const QString &package, const QString &fileName, const QString &data)
@@ -563,10 +590,12 @@ void OBSXmlReader::parseDeleteFile(const QString &project, const QString &packag
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsStatus;
         return;
     }
 
     emit finishedParsingDeleteFileStatus(obsStatus);
+    delete obsStatus;
 }
 
 void OBSXmlReader::parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision)
@@ -613,6 +642,7 @@ void OBSXmlReader::parseRevisionList(const QString &data)
 
         if (xml.name()=="revision" && xml.isEndElement()) {
             emit finishedParsingRevision(obsRevision);
+            delete obsRevision;
         }
     }
 }
@@ -645,6 +675,7 @@ void OBSXmlReader::parseIncomingRequests(const QString &data)
             obsRequest = parseRequest(xml);
             if (xml.name()=="request" && xml.isEndElement()) {
                 emit finishedParsingIncomingRequest(obsRequest);
+                delete obsRequest;
             }
         } // request
 
@@ -673,6 +704,7 @@ void OBSXmlReader::parseOutgoingRequests(const QString &data)
             obsRequest = parseRequest(xml);
             if (xml.name()=="request" && xml.isEndElement()) {
                 emit finishedParsingOutgoingRequest(obsRequest);
+                delete obsRequest;
             }
         } // request
 
@@ -684,6 +716,7 @@ void OBSXmlReader::parseOutgoingRequests(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsRequest;
         return;
     }
 }
@@ -702,6 +735,7 @@ void OBSXmlReader::parseDeclinedRequests(const QString &data)
             obsRequest = parseRequest(xml);
             if (xml.name()=="request" && xml.isEndElement()) {
                 emit finishedParsingDeclinedRequest(obsRequest);
+                delete obsRequest;
             }
         } // request
 
@@ -713,6 +747,7 @@ void OBSXmlReader::parseDeclinedRequests(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsRequest;
         return;
     }
 }
@@ -971,6 +1006,7 @@ void OBSXmlReader::parseFileList(const QString &project, const QString &package,
                 obsFile->setSize(attrib.value("size").toString());
                 obsFile->setLastModified(attrib.value("mtime").toString());
                 emit finishedParsingFile(obsFile);
+                delete obsFile;
             }
         } // end entry
 

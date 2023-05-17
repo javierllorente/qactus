@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2021 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2021-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -52,9 +52,8 @@ bool MonitorRepositoryTab::hasSelection()
 void MonitorRepositoryTab::slotAddResultList(const QList<OBSResult *> &resultList)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    QTreeWidgetItem *item = nullptr;
 
-    if (m_title == resultList.first()->getProject()) {
+    if (!resultList.isEmpty() && m_title == resultList.first()->getProject()) {
 
         if (ui->treeWidget->topLevelItemCount() > 0) {
             checkForResultListChanges(resultList);
@@ -62,7 +61,7 @@ void MonitorRepositoryTab::slotAddResultList(const QList<OBSResult *> &resultLis
         }
 
         m_resultList = resultList;
-
+        QTreeWidgetItem *item = nullptr;
 
         for (OBSResult *result : resultList) {
             for (OBSStatus *status : result->getStatusList()) {

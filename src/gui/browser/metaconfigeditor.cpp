@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2018-2020 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2018-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -195,15 +195,12 @@ void MetaConfigEditor::slotCreateResult(OBSStatus *obsStatus)
    } else {
        QMessageBox::warning(this, title, text);
    }
-   delete obsStatus;
-   obsStatus = nullptr;
 }
 
 void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
 {
     fillRepositoryTab(prjMetaConfig);
     fillTabs(prjMetaConfig);
-    delete prjMetaConfig;
 }
 
 void MetaConfigEditor::slotSetupRepositoryFlagsCompleter(OBSPrjMetaConfig *prjMetaConfig)
@@ -221,7 +218,6 @@ void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaCon
     packageLineEdit->setText(pkgMetaConfig->getName());
     urlLineEdit->setText(pkgMetaConfig->getUrl().toString());
     fillTabs(pkgMetaConfig);
-    delete pkgMetaConfig;
 }
 
 void MetaConfigEditor::on_projectLineEdit_textChanged(const QString &project)

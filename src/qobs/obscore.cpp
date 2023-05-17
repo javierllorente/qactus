@@ -689,6 +689,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 status->setPackage(package);
 
                 emit cannotLinkPackage(status);
+                delete status;
                 break;
             }
 
@@ -748,6 +749,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 obsStatus->setDetails(tr("You don't have the appropriate permissions to<br>copy %1 to %2<br>")
                                       .arg(obsStatus->getPackage(), obsStatus->getProject()));
                 emit cannotCopyPackage(obsStatus);
+                delete obsStatus;
                 break;
             }
             case OBSCore::CreateProject: {
@@ -762,6 +764,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 obsStatus->setDetails(tr("You don't have the appropriate permissions to create<br>%1")
                                       .arg(obsStatus->getProject()));
                 emit cannotCreateProject(obsStatus);
+                delete obsStatus;
                 break;
             }
 
@@ -782,6 +785,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 obsStatus->setDetails(tr("You don't have the appropriate permissions to create<br>%1/%2")
                                       .arg(obsStatus->getProject(), obsStatus->getPackage()));
                 emit cannotCreatePackage(obsStatus);
+                delete obsStatus;
                 break;
             }
 
@@ -802,6 +806,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 obsStatus->setDetails(tr("You don't have the appropriate permissions to upload to <br>%1/%2")
                                       .arg(obsStatus->getProject(), obsStatus->getPackage()));
                 emit cannotUploadFile(obsStatus);
+                delete obsStatus;
                 break;
             }
 
@@ -817,6 +822,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1")
                                       .arg(obsStatus->getProject()));
                 emit cannotDeleteProject(obsStatus);
+                delete obsStatus;
                 break;
             }
 
@@ -837,6 +843,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1/%2")
                                       .arg(obsStatus->getProject(), obsStatus->getPackage()));
                 emit cannotDeletePackage(obsStatus);
+                delete obsStatus;
                 break;
             }
 
@@ -861,6 +868,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1/%2/%3")
                                       .arg(obsStatus->getProject(), obsStatus->getPackage(), fileName));
                 emit cannotDeleteFile(obsStatus);
+                delete obsStatus;
                 break;
             }
 

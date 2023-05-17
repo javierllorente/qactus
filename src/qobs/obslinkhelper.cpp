@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2019-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ void OBSLinkHelper::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig
     newPkgMetaConfig->setUrl(pkgMetaConfig->getUrl());
     newPkgMetaConfig->setDescription(pkgMetaConfig->getDescription());
     newPkgMetaConfig->setBuildFlag(pkgMetaConfig->getBuildFlag());
-    delete pkgMetaConfig;
 
     OBSXmlWriter *xmlWriter = new OBSXmlWriter();
     QByteArray metaConfigData = xmlWriter->createPackageMeta(newPkgMetaConfig);
@@ -67,5 +66,4 @@ void OBSLinkHelper::slotFetchedCreatePkgStatus(OBSStatus *status)
         delete xmlWriter;
         emit readyToLinkPackage(m_dstProject, m_dstPackage, data);
     }
-    delete status;
 }

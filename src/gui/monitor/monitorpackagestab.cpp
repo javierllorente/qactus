@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt based OBS notifier
  *
- *  Copyright (C) 2021 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2021-2023 Javier Llorente <javier@opensuse.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -167,10 +167,6 @@ void MonitorPackagesTab::addDroppedPackage(OBSResult *result)
         qDebug() << "Package" << item->text(1)
                  << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
                  << "added at" << index;
-        delete result;
-        result = nullptr;
-//        FIXME: The last slot connected is in charge of deleting result
-
     }
 }
 
@@ -188,8 +184,6 @@ void MonitorPackagesTab::slotInsertStatus(OBSStatus *obsStatus, int row)
     qDebug() << __PRETTY_FUNCTION__;
     QString details = obsStatus->getDetails();
     QString status = obsStatus->getCode();
-    delete obsStatus;
-    obsStatus = nullptr;
 
 //    If the line is too long (>250), break it
     details = Utils::breakLine(details, 250);
