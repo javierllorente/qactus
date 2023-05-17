@@ -1,7 +1,7 @@
 /*
  *  Qactus - A Qt-based OBS client
  *
- *  Copyright (C) 2013-2019 Javier Llorente <javier@opensuse.org>
+ *  Copyright (C) 2013-2023 Javier Llorente <javier@opensuse.org>
  *  Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@ public slots:
     void slotLinkPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data);
 
 private slots:
-    void provideAuthentication(QNetworkReply *reply, QAuthenticator* ator);
+    void provideAuthentication(QNetworkReply *reply, QAuthenticator *authenticator);
     void replyFinished(QNetworkReply *reply);
     void onSslErrors(QNetworkReply *reply, const QList<QSslError> &list);
 
@@ -126,10 +126,8 @@ private:
     void createManager();
     OBSCore();
     static OBSCore *instance;
-    QString curUsername;
-    QString curPassword;
-    QString prevPassword;
-    QString prevUsername;
+    QString username;
+    QString password;
     QString apiUrl;
     enum RequestType {
         Login,

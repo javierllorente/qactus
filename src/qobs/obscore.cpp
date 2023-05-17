@@ -36,13 +36,12 @@ OBSCore::OBSCore()
 
 void OBSCore::createManager()
 {
-    qDebug() << "OBSCore::createManager()";
+    qDebug() << Q_FUNC_INFO;
     manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
-            SLOT(provideAuthentication(QNetworkReply*,QAuthenticator*)));
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
-    connect(manager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> &)),
-            this, SLOT(onSslErrors(QNetworkReply*, const QList<QSslError> &)));
+    connect(manager, &QNetworkAccessManager::authenticationRequired,
+            this, &OBSCore::provideAuthentication);
+    connect(manager, &QNetworkAccessManager::finished, this, &OBSCore::replyFinished);
+    connect(manager, &QNetworkAccessManager::sslErrors, this, &OBSCore::onSslErrors);
 }
 
 OBSCore *OBSCore::getInstance()
@@ -57,14 +56,14 @@ void OBSCore::setCredentials(const QString& username, const QString& password)
 {
     qDebug() << "OBSCore::setCredentials()";
 //    Allow login with another username/password
-    if (manager!=nullptr) {
+    if (manager) {
         delete manager;
         manager = nullptr;
     }
     createManager();
 
-    curUsername = username;
-    curPassword = password;
+    this->username = username;
+    this->password = password;
 }
 
 void OBSCore::slotLinkPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data)
@@ -85,7 +84,7 @@ void OBSCore::slotLinkPackage(const QString &dstProject, const QString &dstPacka
 
 QString OBSCore::getUsername()
 {
-    return curUsername;
+    return username;
 }
 
 void OBSCore::setApiUrl(const QString &apiUrl)
@@ -147,7 +146,7 @@ QNetworkReply *OBSCore::requestSource(const QString &resource)
 QString OBSCore::createReqResourceStr(const QString &states, const QString &roles) const
 {
     return  QString("/request/?view=collection&states=%1&roles=%2&user=%3")
-            .arg(states).arg(roles).arg(curUsername);
+            .arg(states).arg(roles).arg(username);
 }
 
 void OBSCore::getRequests(OBSCore::RequestType type)
@@ -207,7 +206,7 @@ void OBSCore::getProjects()
 {
     QNetworkReply *reply = requestSource("");
     reply->setProperty("reqtype", OBSCore::ProjectList);
-    QString userHome = includeHomeProjects ? "" : "home:" + curUsername;
+    QString userHome = includeHomeProjects ? "" : "home:" + username;
     reply->setProperty("includehomeprjs", userHome);
 }
 
@@ -298,28 +297,12 @@ void OBSCore::changeSubmitRequest(const QString &resource, const QByteArray &dat
     reply->setProperty("reqtype", OBSCore::ChangeRequestState);
 }
 
-void OBSCore::provideAuthentication(QNetworkReply *reply, QAuthenticator *ator)
+void OBSCore::provideAuthentication(QNetworkReply *reply, QAuthenticator *authenticator)
 {
-    qDebug() << "OBSCore::provideAuthentication() for" << reply->request().url().toString();
+    qDebug() << Q_FUNC_INFO << "URL =" << reply->request().url().toString();
 //    qDebug() << reply->readAll();
-
-    if ((curPassword != prevPassword) || (curUsername != prevUsername)) {
-        prevPassword = curPassword;
-        prevUsername = curUsername;
-        ator->setUser(curUsername);
-        ator->setPassword(curPassword);
-    } else {
-        qDebug() << "OBSCore::provideAuthentication() same credentials provided!";
-        // FIXME: Workaround to accept the same credentials
-        // Not calling ator->setUser() or ator->setPassword() results in a signal
-        // being emitted with a QNetworkReply with error AuthenticationRequiredError.
-        // So, first time auth with same credentials fails, second time doesn't.
-        // If we call ator->setUser()/ator->setPassword() directly (no if) with the
-        // correct username and wrong password, it ends up in an infinite loop and
-        // probably a blocked openSUSE account :-(
-        prevUsername = "";
-        prevPassword = "";
-    }
+    authenticator->setUser(username);
+    authenticator->setPassword(password);
 }
 
 bool OBSCore::isAuthenticated()
@@ -1029,14 +1012,14 @@ void OBSCore::about()
 
 void OBSCore::getPerson()
 {
-    QString resource = "/person/" + curUsername;
+    QString resource = "/person/" + username;
     QNetworkReply *reply = request(resource);
     reply->setProperty("reqtype", OBSCore::Person);
 }
 
 void OBSCore::updatePerson(const QByteArray &data)
 {
-    QString resource = "/person/" + curUsername;
+    QString resource = "/person/" + username;
     QNetworkReply *reply = putRequest(resource, data);
     reply->setProperty("reqtype", OBSCore::UpdatePerson);
 }
