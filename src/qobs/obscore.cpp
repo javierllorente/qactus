@@ -628,6 +628,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                     OBSStatus *status = xmlReader->parseNotFoundStatus(dataStr);
                     qDebug() << "OBSCore::replyFinished() Project not found!" << status->getSummary() << status->getCode();
                     emit projectNotFound(status);
+                    delete status;
                 }
                 break;
 
@@ -638,6 +639,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                     OBSStatus *status = xmlReader->parseNotFoundStatus(dataStr);
                     qDebug() << "OBSCore::replyFinished() Package not found!" << status->getSummary() << status->getCode();
                     emit packageNotFound(status);
+                    delete status;
                 }
                 break;
 
