@@ -1,0 +1,16 @@
+Qactus is a Qt-based Open Build Service client
+Copyright (C) 2010-2023 Javier Llorente <javier@opensuse.org>
+
+Contributors:
+Copyright (C) 2010-2011 Sivan Greenberg <sivan@omniqueue.com>
+
+
+The icons are part of the Oxygen project.
+License: LGPL-2.1+.
+Copyright (C) 2013 The Oxygen Team
+http://www.kde.org/
+
+The tray icon comes from the Open Build Service.
+License: GPLv2
+Copyright (C) 2013 SUSE LINUX Products GmbH
+http://openbuildservice.org/
