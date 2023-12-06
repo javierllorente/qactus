@@ -25,7 +25,7 @@ Name:           qactus
 Version:        2.1.0
 Release:        0
 Summary:        A GUI client for OBS
-License:        GPL-2.0 or GPL-3.0
+License:        Apache-2.0
 Group:          Development/Tools/Building
 URL:            https://github.com/javierllorente/qactus
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -84,13 +84,13 @@ Open Build Service (OBS) library
 
 %files
 %doc README.md
-%license COPYING gpl-*.txt
+%license LICENSE NOTICE
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/128x128/apps/%{name}.png
 
 %files -n %{libname}
-%license COPYING gpl-*.txt
+%license LICENSE NOTICE
 %{_libdir}/%{libprefix}.so.%{libmajor}
 %{_libdir}/%{libprefix}.so.%{libmajor}.*
 
