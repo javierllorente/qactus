@@ -1047,7 +1047,7 @@ void OBSCore::onSslErrors(QNetworkReply *reply, const QList<QSslError> &list)
     if (list.count() == 1) {
         message=tr("An SSL error has occured: %1");
     } else {
-        message=list.count()+tr(" SSL errors have occured: %1");
+        message=QString::number(list.count())+tr(" SSL errors have occured: %1");
     }
 
    qDebug() << "OBSCore::onSslErrors() url:" << reply->url() << "row:" << reply->property("row").toInt();
