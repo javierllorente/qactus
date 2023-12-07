@@ -18,7 +18,7 @@ RPM packages are available at http://software.opensuse.org/package/qactus
 
 Dependencies
 ------------
-Qt5
+Qt6
 QtKeychain
 
 Building Qactus
