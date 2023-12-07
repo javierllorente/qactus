@@ -54,8 +54,7 @@
        <string>Authentication</string>
       </property>
       <property name="icon">
-       <iconset resource="../../application.qrc">
-        <normaloff>:/icons/dialog-password.png</normaloff>:/icons/dialog-password.png</iconset>
+       <iconset theme="dialog-password"/>
       </property>
      </item>
      <item>
@@ -63,9 +62,7 @@
        <string>General</string>
       </property>
       <property name="icon">
-       <iconset>
-        <normalon>:/icons/32x32/configure.png</normalon>
-       </iconset>
+       <iconset theme="preferences-system"/>
       </property>
      </item>
      <item>
@@ -73,9 +70,7 @@
        <string>Network</string>
       </property>
       <property name="icon">
-       <iconset>
-        <normalon>:/icons/32x32/preferences-system-network.png</normalon>
-       </iconset>
+       <iconset theme="preferences-system-network"/>
       </property>
      </item>
     </widget>
@@ -429,9 +424,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../application.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

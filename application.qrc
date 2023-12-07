@@ -3,8 +3,6 @@
         <file>icons/view-refresh.png</file>
         <file>icons/application-exit.png</file>
         <file>icons/chronometer.png</file>
-        <file>icons/configure.png</file>
-        <file>icons/dialog-password.png</file>
         <file>icons/help-about.png</file>
         <file>icons/list-add.png</file>
         <file>icons/list-remove.png</file>
@@ -17,7 +15,5 @@
         <file>icons/32x32/browser.png</file>
         <file>icons/32x32/monitor.png</file>
         <file>icons/32x32/requests.png</file>
-        <file>icons/32x32/configure.png</file>
-        <file>icons/32x32/preferences-system-network.png</file>
     </qresource>
 </RCC>
