@@ -127,10 +127,10 @@ void MonitorPackagesTab::dropEvent(QDropEvent *event)
         QString urlStr = urlList.at(0).toString();
 
         qDebug () << __PRETTY_FUNCTION__ << "Dropped url:" << urlStr;
-        QRegExp rx("^(?:http|https)://(\\S+)/package/show/(\\S+)/(\\S+)");
+        QRegularExpression rx("^(?:http|https)://(\\S+)/package/show/(\\S+)/(\\S+)");
         if(urlStr.contains(rx)) {
             qDebug () << "Valid OBS URL found!";
-            QStringList list = rx.capturedTexts();
+            QStringList list = rx.namedCaptureGroups();
             droppedProject = list[2];
             droppedPackage = list[3];
             emit obsUrlDropped(droppedProject, droppedPackage);

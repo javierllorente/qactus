@@ -38,15 +38,15 @@ void OBSXmlReader::addData(const QString &data)
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
 
-        if (xml.name()=="resultlist" && xml.isStartElement()) {
+        if (xml.name().toString() == "resultlist" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: resultlist tag found";
             parseResultList(data);
             break;
 
-        } else if (xml.name()=="revisionlist" && xml.isStartElement()) {
+        } else if (xml.name().toString() == "revisionlist" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: revisionlist tag found";
             parseRevisionList(data);
-        } else if (xml.name()=="status" && xml.isStartElement()) {
+        } else if (xml.name().toString() == "status" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: status tag found";
             parseBuildStatus(data);
         }
@@ -62,7 +62,7 @@ void OBSXmlReader::parseProjectList(const QString &userHome, const QString &data
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
 
-        if (xml.name()=="entry") {
+        if (xml.name().toString() == "entry") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 QString entry = attrib.value("name").toString();
@@ -101,7 +101,7 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
 
-        if (xml.name()=="project" && xml.isStartElement()) {
+        if (xml.name().toString() == "project" && xml.isStartElement()) {
             prjMetaConfig = new OBSPrjMetaConfig();
             QXmlStreamAttributes attrib = xml.attributes();
             prjMetaConfig->setName(attrib.value("name").toString());
@@ -109,13 +109,13 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
 
         parseMetaConfig(xml, prjMetaConfig);
 
-        if (xml.name()=="repository" && xml.isStartElement()) {
+        if (xml.name().toString() == "repository" && xml.isStartElement()) {
             repository = new OBSRepository();
             QXmlStreamAttributes attrib = xml.attributes();
             repository->setName(attrib.value("name").toString());
 
             while (xml.readNextStartElement()) {
-                if (xml.name()=="path" && xml.isStartElement()) {
+                if (xml.name().toString() == "path" && xml.isStartElement()) {
                     QXmlStreamAttributes attrib = xml.attributes();
                     repository->setProject(attrib.value("project").toString());
                     repository->setRepository(attrib.value("repository").toString());
@@ -123,13 +123,13 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
             }
 
             while (xml.readNextStartElement()) {
-                if (xml.name()=="arch" && xml.isStartElement()) {
+                if (xml.name().toString() ==" arch" && xml.isStartElement()) {
                     repository->appendArch(xml.readElementText());
                 }
             }
         }
 
-        if (xml.name()=="repository" && xml.isEndElement()) {
+        if (xml.name().toString() == "repository" && xml.isEndElement()) {
             prjMetaConfig->appendRepository(repository);
         }
     }
@@ -152,7 +152,7 @@ void OBSXmlReader::parsePkgMetaConfig(const QString &data)
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
 
-        if (xml.name()=="package" && xml.isStartElement()) {
+        if (xml.name().toString() == "package" && xml.isStartElement()) {
             pkgMetaConfig = new OBSPkgMetaConfig();
             QXmlStreamAttributes attrib = xml.attributes();
             pkgMetaConfig->setName(attrib.value("name").toString());
@@ -161,7 +161,7 @@ void OBSXmlReader::parsePkgMetaConfig(const QString &data)
 
         parseMetaConfig(xml, pkgMetaConfig);
 
-        if (xml.name()=="url" && xml.isStartElement()) {
+        if (xml.name().toString() == "url" && xml.isStartElement()) {
             pkgMetaConfig->setUrl(QUrl(xml.readElementText()));
         }
 
@@ -188,7 +188,7 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
 {
     qDebug() << "OBSXmlReader::parseStatus()";
 
-    if (xml.name()=="status") {
+    if (xml.name().toString() == "status") {
         if (xml.isStartElement()) {
             QXmlStreamAttributes attrib = xml.attributes();
             if (attrib.hasAttribute("package")) {
@@ -200,7 +200,7 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
         }
     } // end status
 
-    if (xml.name()=="summary" && xml.isStartElement()) {
+    if (xml.name().toString() == "summary" && xml.isStartElement()) {
         xml.readNext();
         obsStatus->setSummary(xml.text().toString());
         qDebug() << "Status summary:" << obsStatus->getSummary();
@@ -210,13 +210,13 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
         }
     } // end summary
 
-    if (xml.name()=="details" && xml.isStartElement()) {
+    if (xml.name().toString() == "details" && xml.isStartElement()) {
         xml.readNext();
         obsStatus->setDetails(xml.text().toString());
         qDebug() << "Status details:" << obsStatus->getDetails();
     } // end details
 
-    if (xml.name()=="data" && xml.isStartElement()) {
+    if (xml.name().toString() == "data" && xml.isStartElement()) {
         if (xml.isStartElement()) {
             QXmlStreamAttributes attrib = xml.attributes();
             if (attrib.hasAttribute("name")) {
@@ -283,11 +283,11 @@ void OBSXmlReader::parseResultList(const QString &data)
         xml.readNext();
         if (xml.isStartElement()) {
 
-            if (xml.name()=="resultlist") {
+            if (xml.name().toString() == "resultlist") {
                 xml.readNextStartElement();
             }
 
-            if (xml.name()=="result") {
+            if (xml.name().toString() == "result") {
                 obsResult = new OBSResult();
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsResult->setProject(attrib.value("project").toString());
@@ -304,7 +304,7 @@ void OBSXmlReader::parseResultList(const QString &data)
             }
 
 
-            if (xml.name()=="status") {
+            if (xml.name().toString() == "status") {
                 obsStatus = new OBSStatus();
                 obsResult->appendStatus(obsStatus);
             }
@@ -312,11 +312,11 @@ void OBSXmlReader::parseResultList(const QString &data)
             parseStatus(xml, obsStatus);
         }
 
-        if (xml.name()=="result" && xml.isEndElement()) {
+        if (xml.name().toString() == "result" && xml.isEndElement()) {
             emit finishedParsingResult(obsResult);
         }
 
-        if (xml.name()=="resultlist" && xml.isEndElement()) {
+        if (xml.name().toString() == "resultlist" && xml.isEndElement()) {
             emit finishedParsingResultList(resultList);
             qDeleteAll(resultList);
             resultList.clear();
@@ -420,7 +420,7 @@ void OBSXmlReader::parseCreateRequest(const QString &data)
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        if (xml.name()=="request") {
+        if (xml.name().toString() == "request") {
             obsRequest = parseRequest(xml);
         }
     } // end while
@@ -595,23 +595,23 @@ void OBSXmlReader::parseDeleteFile(const QString &project, const QString &packag
 
 void OBSXmlReader::parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision)
 {
-    if (xml.name()=="revision") {
+    if (xml.name().toString() == "revision") {
         QXmlStreamAttributes attrib = xml.attributes();
         obsRevision->setRev(attrib.value("rev").toUInt());
     }
-    if (xml.name()==("version")) {
+    if (xml.name().toString() == "version") {
         xml.readNext();
         obsRevision->setVersion(xml.text().toString());
     }
-    if (xml.name()==("time")) {
+    if (xml.name().toString() == "time") {
         xml.readNext();
         obsRevision->setTime(xml.text().toUInt());
     }
-    if (xml.name()==("user")) {
+    if (xml.name().toString() == "user") {
         xml.readNext();
         obsRevision->setUser(xml.text().toString());
     }
-    if (xml.name()==("comment")) {
+    if (xml.name().toString() == "comment") {
         xml.readNext();
         obsRevision->setComment(xml.text().toString());
     }
@@ -626,7 +626,7 @@ void OBSXmlReader::parseRevisionList(const QString &data)
         xml.readNext();
         if (xml.isStartElement()) {
 
-            if (xml.name()=="revisionlist") {
+            if (xml.name().toString() == "revisionlist") {
                 xml.readNextStartElement();
             }
 
@@ -635,7 +635,7 @@ void OBSXmlReader::parseRevisionList(const QString &data)
 
         }
 
-        if (xml.name()=="revision" && xml.isEndElement()) {
+        if (xml.name().toString() == "revision" && xml.isEndElement()) {
             emit finishedParsingRevision(obsRevision);
             delete obsRevision;
         }
@@ -644,11 +644,11 @@ void OBSXmlReader::parseRevisionList(const QString &data)
 
 void OBSXmlReader::parseCollection(QXmlStreamReader &xml)
 {
-    if (xml.name()=="collection") {
+    if (xml.name().toString() == "collection") {
         if (xml.isStartElement()) {
             QXmlStreamAttributes attrib = xml.attributes();
-            QStringRef matches = attrib.value("matches");
-            QStringRef code = attrib.value("code");
+            QStringView matches = attrib.value("matches");
+            QStringView code = attrib.value("code");
             requestNumber = matches.toString();
 
             qDebug() << "Collection matches:" << requestNumber;
@@ -666,15 +666,15 @@ void OBSXmlReader::parseIncomingRequests(const QString &data)
 
         parseCollection(xml);
 
-        if (xml.name()=="request" && xml.isStartElement()) {
+        if (xml.name().toString() == "request" && xml.isStartElement()) {
             obsRequest = parseRequest(xml);
-            if (xml.name()=="request" && xml.isEndElement()) {
+            if (xml.name().toString() == "request" && xml.isEndElement()) {
                 emit finishedParsingIncomingRequest(obsRequest);
                 delete obsRequest;
             }
         } // request
 
-        if (xml.name()=="collection" && xml.isEndElement()) {
+        if (xml.name().toString() == "collection" && xml.isEndElement()) {
             emit finishedParsingIncomingRequestList();
         }
     }
@@ -695,15 +695,15 @@ void OBSXmlReader::parseOutgoingRequests(const QString &data)
 
         parseCollection(xml);
 
-        if (xml.name()=="request" && xml.isStartElement()) {
+        if (xml.name().toString() == "request" && xml.isStartElement()) {
             obsRequest = parseRequest(xml);
-            if (xml.name()=="request" && xml.isEndElement()) {
+            if (xml.name().toString() == "request" && xml.isEndElement()) {
                 emit finishedParsingOutgoingRequest(obsRequest);
                 delete obsRequest;
             }
         } // request
 
-        if (xml.name()=="collection" && xml.isEndElement()) {
+        if (xml.name().toString() == "collection" && xml.isEndElement()) {
             emit finishedParsingOutgoingRequestList();
         }
 
@@ -726,15 +726,15 @@ void OBSXmlReader::parseDeclinedRequests(const QString &data)
 
         parseCollection(xml);
 
-        if (xml.name()=="request" && xml.isStartElement()) {
+        if (xml.name().toString() == "request" && xml.isStartElement()) {
             obsRequest = parseRequest(xml);
-            if (xml.name()=="request" && xml.isEndElement()) {
+            if (xml.name().toString() == "request" && xml.isEndElement()) {
                 emit finishedParsingDeclinedRequest(obsRequest);
                 delete obsRequest;
             }
         } // request
 
-        if (xml.name()=="collection" && xml.isEndElement()) {
+        if (xml.name().toString() == "collection" && xml.isEndElement()) {
             emit finishedParsingDeclinedRequestList();
         }
 
@@ -751,7 +751,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
 {
     OBSRequest *obsRequest = nullptr;
 
-    if (xml.name()=="request") {
+    if (xml.name().toString() == "request") {
         if (xml.isStartElement()) {
             obsRequest = new OBSRequest();
             QXmlStreamAttributes attrib = xml.attributes();
@@ -759,10 +759,10 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
         }
     } // request
 
-    while (!(xml.name()=="request" && xml.isEndElement())) {
+    while (!(xml.name().toString() == "request" && xml.isEndElement())) {
         xml.readNext();
 
-        if (xml.name()=="action")  {
+        if (xml.name().toString() == "action")  {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest->setActionType(attrib.value("type").toString());
@@ -770,7 +770,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             }
         } // action
 
-        if (xml.name()=="source") {
+        if (xml.name().toString() == "source") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest->setSourceProject(attrib.value("project").toString());
@@ -779,7 +779,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             }
         } // source
 
-        if (xml.name()=="target") {
+        if (xml.name().toString() == "target") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest->setTargetProject(attrib.value("project").toString());
@@ -788,7 +788,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             }
         } // target
 
-        if (xml.name()=="state") {
+        if (xml.name().toString() == "state") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest->setState(attrib.value("name").toString());
@@ -803,7 +803,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             }
         } // state
 
-        if (xml.name()=="description") {
+        if (xml.name().toString() == "description") {
             if (xml.isStartElement()) {
                 xml.readNext();
                 obsRequest->setDescription(xml.text().toString());
@@ -826,7 +826,7 @@ QStringList OBSXmlReader::parseList(QXmlStreamReader &xml)
 
         xml.readNext();
 
-        if (xml.name()=="entry") {
+        if (xml.name().toString() == "entry") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
 
@@ -839,7 +839,7 @@ QStringList OBSXmlReader::parseList(QXmlStreamReader &xml)
             }
         } // end entry
 
-        if (xml.name()=="repository") {
+        if (xml.name().toString() == "repository") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
 
@@ -863,39 +863,39 @@ QStringList OBSXmlReader::parseList(QXmlStreamReader &xml)
 
 void OBSXmlReader::parseMetaConfig(QXmlStreamReader &xml, OBSMetaConfig *metaConfig)
 {
-    if (xml.name()=="title" && xml.isStartElement()) {
+    if (xml.name().toString() == "title" && xml.isStartElement()) {
         metaConfig->setTitle(xml.readElementText());
     }
 
-    if (xml.name()=="description" && xml.isStartElement()) {
+    if (xml.name().toString() == "description" && xml.isStartElement()) {
         metaConfig->setDescription(xml.readElementText());
     }
 
-    if (xml.name()=="person" && xml.isStartElement()) {
+    if (xml.name().toString() == "person" && xml.isStartElement()) {
         QXmlStreamAttributes attrib = xml.attributes();
         metaConfig->insertPerson(attrib.value("userid").toString(),
                                  attrib.value("role").toString());
     }
 
-    if (xml.name()=="group" && xml.isStartElement()) {
+    if (xml.name().toString() == "group" && xml.isStartElement()) {
         QXmlStreamAttributes attrib = xml.attributes();
         metaConfig->insertGroup(attrib.value("groupid").toString(),
                                 attrib.value("role").toString());
     }
 
-    if (xml.name()=="build" && xml.isStartElement()) {
+    if (xml.name().toString() == "build" && xml.isStartElement()) {
         metaConfig->setBuildFlag(parseRepositoryFlags(xml));
     }
 
-    if (xml.name()=="publish" && xml.isStartElement()) {
+    if (xml.name().toString() == "publish" && xml.isStartElement()) {
         metaConfig->setPublishFlag(parseRepositoryFlags(xml));
     }
 
-    if (xml.name()=="useforbuild" && xml.isStartElement()) {
+    if (xml.name().toString() == "useforbuild" && xml.isStartElement()) {
         metaConfig->setUseForBuildFlag(parseRepositoryFlags(xml));
     }
 
-    if (xml.name()=="debuginfo" && xml.isStartElement()) {
+    if (xml.name().toString() == "debuginfo" && xml.isStartElement()) {
         metaConfig->setDebugInfoFlag(parseRepositoryFlags(xml));
     }
 }
@@ -904,7 +904,7 @@ QHash<QString, bool> OBSXmlReader::parseRepositoryFlags(QXmlStreamReader &xml)
 {
     QHash<QString, bool> flagHash;
     while (xml.readNextStartElement()) {
-        if (xml.name() == "enable") {
+        if (xml.name().toString() == "enable") {
             QXmlStreamAttributes attrib = xml.attributes();
             if (!attrib.hasAttribute("repository")) {
                 flagHash.insert("all", true);
@@ -915,7 +915,7 @@ QHash<QString, bool> OBSXmlReader::parseRepositoryFlags(QXmlStreamReader &xml)
             xml.readNext();
         }
 
-        if (xml.name() == "disable") {
+        if (xml.name().toString() == "disable") {
             QXmlStreamAttributes attrib = xml.attributes();
             if (!attrib.hasAttribute("repository")) {
                 flagHash.insert("all", false);
@@ -934,7 +934,7 @@ OBSDistribution *OBSXmlReader::parseDistribution(QXmlStreamReader &xml)
 {
     OBSDistribution *distribution = nullptr;
 
-    if (xml.name()=="distribution" && xml.isStartElement()) {
+    if (xml.name().toString() == "distribution" && xml.isStartElement()) {
         distribution = new OBSDistribution();
         QXmlStreamAttributes attrib = xml.attributes();
         distribution->setVendor(attrib.value("vendor").toString());
@@ -942,35 +942,35 @@ OBSDistribution *OBSXmlReader::parseDistribution(QXmlStreamReader &xml)
         distribution->setId(attrib.value("id").toString());
     }
 
-    while (!(xml.name()=="distribution" && xml.isEndElement())) {
+    while (!(xml.name().toString() == "distribution" && xml.isEndElement())) {
         xml.readNext();
 
-        if (xml.name()=="name" && xml.isStartElement()) {
+        if (xml.name().toString() == "name" && xml.isStartElement()) {
             distribution->setName(xml.readElementText());
         }
 
-        if (xml.name()=="project" && xml.isStartElement()) {
+        if (xml.name().toString() == "project" && xml.isStartElement()) {
             distribution->setProject(xml.readElementText());
         }
 
-        if (xml.name()=="reponame" && xml.isStartElement()) {
+        if (xml.name().toString() == "reponame" && xml.isStartElement()) {
             distribution->setRepoName(xml.readElementText());
         }
 
-        if (xml.name()=="repository" && xml.isStartElement()) {
+        if (xml.name().toString() == "repository" && xml.isStartElement()) {
             distribution->setRepository(xml.readElementText());
         }
 
-        if (xml.name()=="link" && xml.isStartElement()) {
+        if (xml.name().toString() == "link" && xml.isStartElement()) {
             distribution->setLink(QUrl(xml.readElementText()));
         }
 
-        if (xml.name()=="icon" && xml.isStartElement()) {
+        if (xml.name().toString() == "icon" && xml.isStartElement()) {
             QXmlStreamAttributes attrib = xml.attributes();
             distribution->appendIcon(QUrl(attrib.value("url").toString()));
         }
 
-        if (xml.name()=="architecture" && xml.isStartElement()) {
+        if (xml.name().toString() == "architecture" && xml.isStartElement()) {
             distribution->appendArch(xml.readElementText());
         }
     }
@@ -987,7 +987,7 @@ void OBSXmlReader::parseFileList(const QString &project, const QString &package,
 
         xml.readNext();
 
-        if (xml.name()=="entry") {
+        if (xml.name().toString() == "entry") {
             OBSFile *obsFile = nullptr;
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
@@ -1019,7 +1019,7 @@ void OBSXmlReader::parseLink(const QString &data)
 
         xml.readNext();
 
-        if (xml.name()=="link") {
+        if (xml.name().toString() == "link") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsLink->setProject(attrib.value("project").toString());
@@ -1047,22 +1047,22 @@ void OBSXmlReader::parseAbout(const QString &data)
 
         xml.readNext();
 
-        if (xml.name()=="title" && xml.isStartElement()) {
+        if (xml.name().toString() == "title" && xml.isStartElement()) {
             xml.readNext();
             obsAbout->setTitle(xml.text().toString());
         }
 
-        if (xml.name()=="description" && xml.isStartElement()) {
+        if (xml.name().toString() == "description" && xml.isStartElement()) {
             xml.readNext();
             obsAbout->setDescription(xml.text().toString());
         }
 
-        if (xml.name()=="revision" && xml.isStartElement()) {
+        if (xml.name().toString() == "revision" && xml.isStartElement()) {
             xml.readNext();
             obsAbout->setRevision(xml.text().toString());
         }
 
-        if (xml.name()=="last_deployment" && xml.isStartElement()) {
+        if (xml.name().toString() == "last_deployment" && xml.isStartElement()) {
             xml.readNext();
             obsAbout->setLastDeployment(xml.text().toString());
         }
@@ -1086,27 +1086,27 @@ void OBSXmlReader::parsePerson(const QString &data)
 
         xml.readNext();
 
-        if (xml.name()=="login" && xml.isStartElement()) {
+        if (xml.name().toString() == "login" && xml.isStartElement()) {
             xml.readNext();
             obsPerson->setLogin(xml.text().toString());
         }
 
-        if (xml.name()=="email" && xml.isStartElement()) {
+        if (xml.name().toString() == "email" && xml.isStartElement()) {
             xml.readNext();
             obsPerson->setEmail(xml.text().toString());
         }
 
-        if (xml.name()=="realname" && xml.isStartElement()) {
+        if (xml.name().toString() == "realname" && xml.isStartElement()) {
             xml.readNext();
             obsPerson->setRealName(xml.text().toString());
         }
 
-        if (xml.name()=="state" && xml.isStartElement()) {
+        if (xml.name().toString() == "state" && xml.isStartElement()) {
             xml.readNext();
             obsPerson->setState(xml.text().toString());
         }
 
-        if (xml.name()=="project") {
+        if (xml.name().toString() == "project") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsPerson->appendWatchItem(attrib.value("name").toString());
@@ -1148,10 +1148,10 @@ void OBSXmlReader::parseDistributions(const QString &data)
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        if (xml.name()=="distributions" && xml.isStartElement()) {
+        if (xml.name().toString() == "distributions" && xml.isStartElement()) {
             xml.readNextStartElement();
         }
-        if (xml.name()=="distribution" && xml.isStartElement()) {
+        if (xml.name().toString() == "distribution" && xml.isStartElement()) {
             OBSDistribution *distribution = parseDistribution(xml);
             emit finishedParsingDistribution(distribution);
         }

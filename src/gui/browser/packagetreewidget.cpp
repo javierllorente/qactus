@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2023 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,8 @@ bool PackageTreeWidget::setCurrentPackage(const QString &package)
 void PackageTreeWidget::filterPackages(const QString &item)
 {
     qDebug() << __PRETTY_FUNCTION__ << item;
-    proxyModelPackages->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive));
+    proxyModelPackages->setFilterRegularExpression(QRegularExpression(item));
+    proxyModelPackages->setFilterCaseSensitivity(Qt::CaseInsensitive);
     proxyModelPackages->setFilterKeyColumn(0);
 }
 

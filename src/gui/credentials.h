@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2017-2023 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 #ifndef CREDENTIALS_H
 #define CREDENTIALS_H
 
-#include <qt5keychain/keychain.h>
+#include <qt6keychain/keychain.h>
 #include <QEventLoop>
 #include <QDebug>
 

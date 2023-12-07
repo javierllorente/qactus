@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2016-2023 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 QString Utils::unixTimeToDate(const QString &unixTime)
 {
-    QDateTime dateTime = QDateTime::fromTime_t(unixTime.toUInt());
+    QDateTime dateTime = QDateTime:: fromSecsSinceEpoch(unixTime.toUInt());
     return dateTime.toString("dd/MM/yyyy H:mm");
 }
 

@@ -3,7 +3,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 COMPONENTS Core Gui Network REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui Network REQUIRED)
 
 configure_file(libqobs.pc.in ${CMAKE_CURRENT_BINARY_DIR}/libqobs.pc @ONLY)
 
@@ -53,7 +53,7 @@ add_library(libqobs SHARED ${LIBQOBS_SRC})
 
 target_compile_definitions(libqobs PRIVATE -DQOBS_LIBRARY)
 
-target_link_libraries(libqobs Qt5::Core Qt5::Gui Qt5::Network)
+target_link_libraries(libqobs Qt6::Core Qt6::Gui Qt6::Network)
 
 set_target_properties(libqobs PROPERTIES OUTPUT_NAME "qobs"
                               VERSION ${PROJECT_VERSION}

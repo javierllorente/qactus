@@ -590,14 +590,14 @@ void MainWindow::createActions()
     browser->createResultsContextMenu(treeResultsMenu);
 
     QAction *actionQuickSearch = new QAction(tr("Quick Project"), this);
-    actionQuickSearch->setShortcut(QKeySequence(Qt::ALT + Qt::Key_P));
+    actionQuickSearch->setShortcut(QKeySequence(Qt::ALT | Qt::Key_P));
     connect(actionQuickSearch, &QAction::triggered, this, [&](){
         browserFilter->setFocus();
     });
     addAction(actionQuickSearch);
 
     QAction *actionFilterPackages = new QAction(tr("Filter packages"), this);
-    actionFilterPackages->setShortcut(QKeySequence(Qt::ALT + Qt::Key_Q));
+    actionFilterPackages->setShortcut(QKeySequence(Qt::ALT | Qt::Key_Q));
     connect(actionFilterPackages, &QAction::triggered, this, [&](){
         browser->setPackageFilterFocus();
     });

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2023 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,8 @@ bool ProjectTreeWidget::removeProject(const QString &project)
 
 void ProjectTreeWidget::filterProjects(const QString &item)
 {
-    proxyModelProjects->setFilterRegExp(QRegExp(item, Qt::CaseInsensitive));
+    proxyModelProjects->setFilterRegularExpression(QRegularExpression(item));
+    proxyModelProjects->setFilterCaseSensitivity(Qt::CaseInsensitive);
     proxyModelProjects->setFilterKeyColumn(0);
 
     scrollToCurrentIndex();
