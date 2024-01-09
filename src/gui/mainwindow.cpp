@@ -207,6 +207,7 @@ void MainWindow::isAuthenticated(bool authenticated)
     ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         browser->getProjects();
+        slotToggleAddRow(ui->stackedWidget->currentIndex());
         obs->getPerson();
         on_action_Refresh_triggered();
         delete loginDialog;
@@ -330,7 +331,7 @@ void MainWindow::getPackages(QModelIndex index)
 void MainWindow::slotToggleAddRow(int index)
 {
     // Enable if current tab is "My packages"
-    ui->action_Add->setEnabled(index == 0);
+    ui->action_Add->setEnabled(index == 0 && obs->isAuthenticated());
 }
 
 void MainWindow::slotEnableRemoveRow()
