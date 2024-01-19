@@ -29,7 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
     deleteProjectConnected(false),
     deletePackageConnected(false),
     deleteFileConnected(false),
-    browser(new Browser(this, obs)),
+    browserFilter(new BrowserFilter(this)),
+    browser(new Browser(this, browserFilter, obs)),
     monitor(new Monitor(this, obs)),
     requestBox(new RequestBox(this, obs)),
     errorBox(nullptr),
@@ -45,14 +46,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupProjectShortcuts);
-    connect(browser, &Browser::projectSelectionChanged, this, [&]() {
-        if (!browserFilter->text().isEmpty()) {
-            browserFilter->clear();
-        }
-        if (!browser->packageFilterText().isEmpty()) {
-            browser->clearPackageFilter();
-        }
-    });
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupPackageShortcuts);
     connect(browser, &Browser::fileSelectionChanged, this, &MainWindow::setupActions);
@@ -468,6 +461,15 @@ void MainWindow::createActions()
     actionBookmarks = ui->toolBar->insertWidget(ui->action_Upload_file, bookmarkButton);
     separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
 
+    // Project actions
+    projectButton = new QToolButton();
+    projectButton->setPopupMode(QToolButton::MenuButtonPopup);
+    projectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    projectButton->setText(tr("&Project"));
+    projectButton->setIcon(QIcon::fromTheme("folder-development"));
+    projectMenu = new QMenu(projectButton);
+    ui->toolBar->addWidget(projectButton);
+
     // Reload actions
     action_ReloadProjects = new QAction(tr("&Reload project list"), this);
     action_ReloadProjects->setIcon(QIcon::fromTheme("view-refresh"));
@@ -539,13 +541,7 @@ void MainWindow::createActions()
     filterSpacer->setVisible(true);
     actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
 
-    browserFilter = new BrowserFilter(this);
     actionFilter = ui->toolBar->insertWidget(ui->action_Upload_file, browserFilter);
-    connect(obs, &OBS::finishedParsingProjectList, browserFilter, &BrowserFilter::addProjectList);
-    connect(browserFilter, &BrowserFilter::setCurrentProject, browser, &Browser::setCurrentProject);
-    connect(browserFilter, &BrowserFilter::setCurrentProject, [&]() {
-        browser->clearPackageFilter();
-    });
 
     // Tray icon actions
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
@@ -557,13 +553,12 @@ void MainWindow::createActions()
     connect(action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     trayIcon->trayIconMenu->addAction(action_Quit);
 
-
-    QMenu *treeProjectsMenu = new QMenu(this);
-    treeProjectsMenu->addAction(actionNew_project);
-    treeProjectsMenu->addAction(action_ReloadProjects);
-    treeProjectsMenu->addAction(action_MonitorProject);
-    treeProjectsMenu->addAction(actionDelete_project);
-    treeProjectsMenu->addAction(actionProperties_project);
+    projectMenu->addAction(actionNew_project);
+    projectMenu->addAction(action_ReloadProjects);
+    projectMenu->addAction(action_MonitorProject);
+    projectMenu->addAction(actionDelete_project);
+    projectMenu->addAction(actionProperties_project);
+    projectButton->setMenu(projectMenu);
 
     QMenu *treePackagesMenu = new QMenu(this);
     treePackagesMenu->addAction(actionNew_package);
@@ -585,7 +580,6 @@ void MainWindow::createActions()
     treeResultsMenu->addAction(action_getBuildLog);
     treeResultsMenu->addAction(action_ReloadResults);
 
-    browser->createProjectsContextMenu(treeProjectsMenu);
     browser->createPackagesContextMenu(treePackagesMenu);
     browser->createFilesContextMenu(treeFilesMenu);
     browser->createResultsContextMenu(treeResultsMenu);
@@ -603,7 +597,6 @@ void MainWindow::createActions()
         browser->setPackageFilterFocus();
     });
     addAction(actionFilterPackages);
-
 }
 
 void MainWindow::monitorProject()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,11 @@ QString BrowserFilter::text() const
     return ui->lineEditFilter->text();
 }
 
+void BrowserFilter::setText(const QString &text)
+{
+    ui->lineEditFilter->setText(text);
+}
+
 void BrowserFilter::clear()
 {
     ui->lineEditFilter->clear();
@@ -61,9 +66,34 @@ void BrowserFilter::setFocus()
     ui->lineEditFilter->setFocus();
 }
 
+QStringList BrowserFilter::getProjectList() const
+{
+    return m_projectModel->stringList();
+}
+
+bool BrowserFilter::addProject(const QString &project)
+{
+   if (m_projectModel->insertRow(m_projectModel->rowCount())) {
+       QModelIndex index = m_projectModel->index(m_projectModel->rowCount() - 1, 0);
+       return m_projectModel->setData(index, project);
+   }
+   return false;
+}
+
+bool BrowserFilter::removeProject(const QString &project)
+{
+    int index = m_projectModel->stringList().indexOf(project);
+    if (index == -1) {
+        return false;
+    }
+    m_projectModel->removeRow(index);
+    return true;
+}
+
 void BrowserFilter::addProjectList(const QStringList &projectList)
 {
     qDebug() << __PRETTY_FUNCTION__;
+    ui->lineEditFilter->clear();
     m_projectModel->setStringList(projectList);
 }
 

@@ -82,6 +82,9 @@ private:
 
     QAction *separatorHome;
 
+    QToolButton *projectButton;
+    QMenu *projectMenu;
+
     QAction *action_ReloadProjects;
     QAction *action_ReloadPackages;
     QAction *action_ReloadFiles;

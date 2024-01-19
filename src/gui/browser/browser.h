@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #include <QItemSelectionModel>
 #include <QMenu>
 #include <QToolBar>
+#include "browserfilter.h"
 #include "obs.h"
 
 namespace Ui {
@@ -31,11 +32,10 @@ class Browser : public QWidget
     Q_OBJECT
 
 public:
-    explicit Browser(QWidget *parent = nullptr, OBS *obs = nullptr);
+    explicit Browser(QWidget *parent = nullptr, BrowserFilter *browserFilter = nullptr, OBS *obs = nullptr);
     ~Browser();
     void readSettings();
     void addProjectList(const QStringList &projectList);
-    void createProjectsContextMenu(QMenu *projectsMenu);
     void createPackagesContextMenu(QMenu *packagesMenu);
     void createFilesContextMenu(QMenu *filesMenu);
     void createResultsContextMenu(QMenu *resultsMenu);
@@ -46,6 +46,7 @@ public:
     void setPackageFilterFocus();
     QString packageFilterText() const;
     void clearPackageFilter();
+    void clearOverview();
 
 public slots:
     void newProject();
@@ -73,16 +74,15 @@ public slots:
 
 private:
     Ui::Browser *ui;
+    BrowserFilter *m_browserFilter;
     OBS *m_obs;
     QItemSelectionModel *packagesSelectionModel;
     QItemSelectionModel *filesSelectionModel;
     QString currentProject;
     QString currentPackage;
-    QMenu *m_projectsMenu;
     QMenu *m_packagesMenu;
     QMenu *m_filesMenu;
     QMenu *m_resultsMenu;
-    QToolBar *m_projectsToolbar;
     QToolBar *m_packagesToolbar;
     QToolBar *m_filesToolbar;
     QToolBar *m_resultsToolbar;
@@ -91,10 +91,10 @@ private:
     void getPackages(const QString &project);
 
 private slots:
-    void slotContextMenuProjects(const QPoint &point);
     void slotProjectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotContextMenuPackages(const QPoint &point);
     void slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void slotPkgMetaConfigFetched(OBSPkgMetaConfig *pkgMetaConfig);
     void getPackageFiles(const QString &package);
     void getBuildResults(const QString &project, const QString &package);
     void slotContextMenuFiles(const QPoint &point);
