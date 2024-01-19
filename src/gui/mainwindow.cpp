@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2010-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,14 +231,14 @@ void MainWindow::setupActions()
     action_createRequest->setEnabled(packageSelected);
     action_linkPackage->setEnabled(packageSelected);
     action_copyPackage->setEnabled(packageSelected);
-    ui->action_Upload_file->setEnabled(packageSelected);
+    action_UploadFile->setEnabled(packageSelected);
     actionDelete_package->setEnabled(packageSelected);
     actionProperties_package->setEnabled(packageSelected);
     action_ReloadFiles->setEnabled(packageSelected);
     action_ReloadResults->setEnabled(packageSelected);
 
     bool fileSelected = browser->hasFileSelection();
-    ui->action_Download_file->setEnabled(fileSelected);
+    action_DownloadFile->setEnabled(fileSelected);
     actionDelete_file->setEnabled(fileSelected);
 
     bool buildResultSelected = browser->hasBuildResultSelection();
@@ -407,6 +407,8 @@ void MainWindow::on_action_About_triggered()
 
 void MainWindow::createActions()
 {
+    qDebug() << __PRETTY_FUNCTION__;
+
     // New button actions
     newButton = new QToolButton(this);
     newButton->setPopupMode(QToolButton::MenuButtonPopup);
@@ -433,8 +435,6 @@ void MainWindow::createActions()
 
     connect(ui->action_Branch_package, &QAction::triggered, browser, &Browser::branchSelectedPackage);
     connect(ui->action_Home, &QAction::triggered, browser, &Browser::goHome);
-    connect(ui->action_Download_file, &QAction::triggered, browser, &Browser::downloadFile);
-    connect(ui->action_Upload_file, &QAction::triggered, browser, &Browser::uploadSelectedFile);
 
     // WatchList actions
     bookmarkButton = new QToolButton(this);
@@ -458,7 +458,7 @@ void MainWindow::createActions()
         bookmarks->deleteBookmark(browser->getCurrentProject());
     });
 
-    actionBookmarks = ui->toolBar->insertWidget(ui->action_Upload_file, bookmarkButton);
+    actionBookmarks = ui->toolBar->insertWidget(ui->action_Delete, bookmarkButton);
     separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
 
     // Project actions
@@ -487,6 +487,16 @@ void MainWindow::createActions()
     action_ReloadResults = new QAction(tr("&Reload result list"), this);
     action_ReloadResults->setIcon(QIcon::fromTheme("view-refresh"));
     connect(action_ReloadResults, &QAction::triggered, browser, &Browser::reloadResults);
+
+    // Upload action
+    action_UploadFile = new QAction(tr("&Upload file"));
+    action_UploadFile->setIcon(QIcon::fromTheme("cloud-upload"));
+    connect(action_UploadFile, &QAction::triggered, browser, &Browser::uploadSelectedFile);
+
+    // Download action
+    action_DownloadFile = new QAction(tr("&Download file"));
+    action_DownloadFile->setIcon(QIcon::fromTheme("download"));
+    connect(action_DownloadFile, &QAction::triggered, browser, &Browser::downloadFile);
 
     // Monitor project action
     action_MonitorProject = new QAction(tr("&Monitor project"), this);
@@ -541,7 +551,7 @@ void MainWindow::createActions()
     filterSpacer->setVisible(true);
     actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
 
-    actionFilter = ui->toolBar->insertWidget(ui->action_Upload_file, browserFilter);
+    actionFilter = ui->toolBar->insertWidget(ui->action_Delete, browserFilter);
 
     // Tray icon actions
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
@@ -571,8 +581,8 @@ void MainWindow::createActions()
     treePackagesMenu->addAction(actionProperties_package);
 
     QMenu *treeFilesMenu = new QMenu(this);
-    treeFilesMenu->addAction(ui->action_Upload_file);
-    treeFilesMenu->addAction(ui->action_Download_file);
+    treeFilesMenu->addAction(action_UploadFile);
+    treeFilesMenu->addAction(action_DownloadFile);
     treeFilesMenu->addAction(action_ReloadFiles);
     treeFilesMenu->addAction(actionDelete_file);
 
@@ -855,8 +865,9 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     separatorHome->setVisible(browserTabVisible);
     ui->action_Home->setVisible(browserTabVisible);
     actionBookmarks->setVisible(browserTabVisible);
-    ui->action_Upload_file->setVisible(browserTabVisible);
-    ui->action_Download_file->setVisible(browserTabVisible);
+    action_UploadFile->setVisible(browserTabVisible);
+    action_DownloadFile->setVisible(browserTabVisible);
+
     ui->action_Delete->setVisible(browserTabVisible);
     ui->action_Delete->setShortcut(browserTabVisible ? QKeySequence::Delete : QKeySequence());
     actionFilterSpacer->setVisible(browserTabVisible);
