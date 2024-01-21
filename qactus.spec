@@ -22,7 +22,7 @@
 %global devname %{libprefix}-devel
 
 Name:           qactus
-Version:        2.1.0
+Version:        2.9.9
 Release:        0
 Summary:        A GUI client for OBS
 License:        Apache-2.0
