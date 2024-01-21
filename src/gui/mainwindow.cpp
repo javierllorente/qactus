@@ -26,9 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
     obs(new OBS()),
     trayIcon(new TrayIcon(this)),
     m_notify(false),
-    deleteProjectConnected(false),
-    deletePackageConnected(false),
-    deleteFileConnected(false),
     browserFilter(new BrowserFilter(this)),
     browser(new Browser(this, browserFilter, obs)),
     monitor(new Monitor(this, obs)),
@@ -251,18 +248,6 @@ void MainWindow::setupProjectShortcuts()
     actionDelete_package->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence());
     actionDelete_project->setShortcut(QKeySequence::Delete);
-
-    ui->action_Delete->setEnabled(browser->hasProjectSelection());
-    disconnect(ui->action_Delete, &QAction::triggered, browser, &Browser::deletePackage);
-    disconnect(ui->action_Delete, &QAction::triggered, browser, &Browser::deleteFile);
-
-    deletePackageConnected = false;
-    deleteFileConnected = false;
-    if (!deleteProjectConnected) {
-        connect(ui->action_Delete, &QAction::triggered, browser, &Browser::deleteProject);
-        deleteProjectConnected = true;
-    }
-
     actionNew_project->setShortcut(QKeySequence::New);
     actionNew_package->setShortcut(QKeySequence());
 }
@@ -273,18 +258,6 @@ void MainWindow::setupPackageShortcuts()
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence::Delete);
-
-    ui->action_Delete->setEnabled(true);
-    disconnect(ui->action_Delete, &QAction::triggered, browser, &Browser::deleteProject);
-    disconnect(ui->action_Delete, &QAction::triggered, browser, &Browser::deleteFile);
-
-    deleteProjectConnected = false;
-    deleteFileConnected = false;
-    if (!deletePackageConnected) {
-        connect(ui->action_Delete, &QAction::triggered, browser, &Browser::deletePackage);
-        deletePackageConnected = true;
-    }
-
     actionNew_project->setShortcut(QKeySequence());
     actionNew_package->setShortcut(QKeySequence::New);
 }
@@ -295,18 +268,6 @@ void MainWindow::setupFileShortcuts()
     actionDelete_project->setShortcut(QKeySequence());
     actionDelete_package->setShortcut(QKeySequence());
     actionDelete_file->setShortcut(QKeySequence::Delete);
-
-    ui->action_Delete->setEnabled(true);
-    disconnect(ui->action_Delete, &QAction::triggered, browser, &Browser::deleteProject);
-    disconnect(ui->action_Delete, &QAction::triggered, browser, &Browser::deletePackage);
-
-    deleteProjectConnected = false;
-    deletePackageConnected = false;
-    if (!deleteFileConnected) {
-        connect(ui->action_Delete, &QAction::triggered, browser, &Browser::deleteFile);
-        deleteFileConnected = true;
-    }
-
     actionNew_project->setShortcut(QKeySequence());
     actionNew_package->setShortcut(QKeySequence());
 }
@@ -458,7 +419,7 @@ void MainWindow::createActions()
         bookmarks->deleteBookmark(browser->getCurrentProject());
     });
 
-    actionBookmarks = ui->toolBar->insertWidget(ui->action_Delete, bookmarkButton);
+    actionBookmarks = ui->toolBar->insertWidget(actionFilter, bookmarkButton);
     separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
 
     // Project actions
@@ -468,7 +429,7 @@ void MainWindow::createActions()
     projectButton->setText(tr("&Project"));
     projectButton->setIcon(QIcon::fromTheme("folder-development"));
     projectMenu = new QMenu(projectButton);
-    ui->toolBar->addWidget(projectButton);
+    actionProject = ui->toolBar->addWidget(projectButton);
 
     // Reload actions
     action_ReloadProjects = new QAction(tr("&Reload project list"), this);
@@ -551,7 +512,7 @@ void MainWindow::createActions()
     filterSpacer->setVisible(true);
     actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
 
-    actionFilter = ui->toolBar->insertWidget(ui->action_Delete, browserFilter);
+    actionFilter = ui->toolBar->insertWidget(actionProject, browserFilter);
 
     // Tray icon actions
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
@@ -868,8 +829,6 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     action_UploadFile->setVisible(browserTabVisible);
     action_DownloadFile->setVisible(browserTabVisible);
 
-    ui->action_Delete->setVisible(browserTabVisible);
-    ui->action_Delete->setShortcut(browserTabVisible ? QKeySequence::Delete : QKeySequence());
     actionFilterSpacer->setVisible(browserTabVisible);
     actionFilter->setVisible(browserTabVisible);
 

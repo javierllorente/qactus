@@ -84,6 +84,7 @@ private:
 
     QToolButton *projectButton;
     QMenu *projectMenu;
+    QAction *actionProject;
 
     QAction *action_ReloadProjects;
     QAction *action_ReloadPackages;
@@ -99,9 +100,6 @@ private:
     QAction *actionDelete_project;
     QAction *actionDelete_package;
     QAction *actionDelete_file;
-    bool deleteProjectConnected;
-    bool deletePackageConnected;
-    bool deleteFileConnected;
 
     QAction *actionProperties_project;
     QAction *actionProperties_package;
