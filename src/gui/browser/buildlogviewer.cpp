@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@ BuildLogViewer::BuildLogViewer(QWidget *parent) :
     ui->setupUi(this);
     QAction *findAction = new QAction(this);
     findAction->setShortcut(QKeySequence("Ctrl+F"));
-    connect(findAction, SIGNAL(triggered()), this, SLOT(findText()));
+    connect(findAction, &QAction::triggered, this, &BuildLogViewer::findText);
     addAction(findAction);
 
     ui->plainTextEdit->ensureCursorVisible();
+    findText();
 }
 
 BuildLogViewer::~BuildLogViewer()
