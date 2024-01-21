@@ -396,6 +396,7 @@ void MainWindow::createActions()
 
     connect(ui->action_Branch_package, &QAction::triggered, browser, &Browser::branchSelectedPackage);
     connect(ui->action_Home, &QAction::triggered, browser, &Browser::goHome);
+    separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
 
     // WatchList actions
     bookmarkButton = new QToolButton(this);
@@ -418,9 +419,15 @@ void MainWindow::createActions()
     connect(bookmarks, &Bookmarks::deleteBookmarkClicked, bookmarks, [=](){
         bookmarks->deleteBookmark(browser->getCurrentProject());
     });
+    actionBookmarks = ui->toolBar->addWidget(bookmarkButton);
 
-    actionBookmarks = ui->toolBar->insertWidget(actionFilter, bookmarkButton);
-    separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
+    // Browser filter actions
+    actionFilter = ui->toolBar->addWidget(browserFilter);
+    QWidget *filterSpacer = new QWidget(this);
+    filterSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    filterSpacer->setFixedWidth(25);
+    filterSpacer->setVisible(true);
+    actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
 
     // Project actions
     projectButton = new QToolButton();
@@ -505,14 +512,6 @@ void MainWindow::createActions()
     actionProperties_package = new QAction(tr("&Properties"), this);
     actionProperties_package->setIcon(QIcon::fromTheme("document-properties"));
     connect(actionProperties_package, &QAction::triggered, browser, &Browser::editPackage);
-
-    // Browser filter actions
-    QWidget *filterSpacer = new QWidget(this);
-    filterSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    filterSpacer->setVisible(true);
-    actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
-
-    actionFilter = ui->toolBar->insertWidget(actionProject, browserFilter);
 
     // Tray icon actions
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
