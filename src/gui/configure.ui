@@ -40,9 +40,6 @@
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectItems</enum>
      </property>
-     <property name="flow">
-      <enum>QListView::TopToBottom</enum>
-     </property>
      <property name="viewMode">
       <enum>QListView::IconMode</enum>
      </property>
