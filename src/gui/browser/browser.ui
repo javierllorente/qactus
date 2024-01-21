@@ -244,6 +244,9 @@
               <property name="editTriggers">
                <set>QAbstractItemView::NoEditTriggers</set>
               </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
               <property name="sortingEnabled">
                <bool>true</bool>
               </property>
@@ -276,6 +279,9 @@
             <widget class="FileTreeWidget" name="treeFiles">
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
              </property>
              <property name="rootIsDecorated">
               <bool>false</bool>
