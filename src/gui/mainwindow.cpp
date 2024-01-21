@@ -819,12 +819,13 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     // Enable/disable the branch/delete button if there is a file/package/project selected
     setupActions();
 
-    bool browserTabVisible = (index==0);
+    bool browserTabVisible = (index == 0);
     actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
     separatorHome->setVisible(browserTabVisible);
     ui->action_Home->setVisible(browserTabVisible);
     actionBookmarks->setVisible(browserTabVisible);
+    actionProject->setVisible(browserTabVisible);
     action_UploadFile->setVisible(browserTabVisible);
     action_DownloadFile->setVisible(browserTabVisible);
 
