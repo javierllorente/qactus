@@ -555,7 +555,7 @@ void MainWindow::createActions()
     browser->createResultsContextMenu(treeResultsMenu);
 
     QAction *actionQuickSearch = new QAction(tr("Quick Project"), this);
-    actionQuickSearch->setShortcut(QKeySequence(Qt::ALT | Qt::Key_P));
+    actionQuickSearch->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
     connect(actionQuickSearch, &QAction::triggered, this, [&](){
         browserFilter->setFocus();
     });
