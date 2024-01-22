@@ -91,7 +91,6 @@ private:
     void getPackages(const QString &project);
 
 private slots:
-    void slotProjectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotContextMenuPackages(const QPoint &point);
     void slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotPkgMetaConfigFetched(OBSPkgMetaConfig *pkgMetaConfig);

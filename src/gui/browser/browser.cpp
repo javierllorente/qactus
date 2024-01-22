@@ -358,9 +358,15 @@ QString Browser::getCurrentProject() const
 
 void Browser::setCurrentProject(const QString &project)
 {
+    qDebug() << __PRETTY_FUNCTION__;
     clearOverview();
-    m_browserFilter->setText(project);
-    getPackages(project);
+    if (!project.isEmpty()) {
+        m_browserFilter->setText(project);
+        getPackages(project);
+        emit toggleBookmarkActions(project);
+    }
+
+    emit projectSelectionChanged();
 }
 
 void Browser::downloadFile()
@@ -518,30 +524,6 @@ void Browser::setupModels()
     ui->treePackages->createModel();
     packagesSelectionModel = ui->treePackages->selectionModel();
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
-}
-
-void Browser::slotProjectSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
-{
-    qDebug() << __PRETTY_FUNCTION__;
-    Q_UNUSED(deselected)
-
-    QString selectedProjectStr;
-
-    // Clean up packages, files and build results on project click
-    ui->treePackages->clearModel();
-    ui->treeFiles->clearModel();
-    ui->treeBuildResults->clearModel();
-
-    if (!selected.isEmpty()) {
-        QModelIndex selectedProject = selected.indexes().at(0);
-        selectedProjectStr = selectedProject.data().toString();
-        getPackages(selectedProject.data().toString());
-        ui->treePackages->filterPackages("");
-        emit projectSelectionChanged();
-        ui->treeFiles->setAcceptDrops(false);
-    }
-
-    emit toggleBookmarkActions(selectedProjectStr);
 }
 
 void Browser::slotContextMenuPackages(const QPoint &point)
