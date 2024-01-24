@@ -53,6 +53,7 @@ Browser::Browser(QWidget *parent, BrowserFilter *browserFilter, OBS *obs) :
 
     connect(m_obs, &OBS::finishedParsingProjectList, this, &Browser::addProjectList);
     connect(m_browserFilter, &BrowserFilter::setCurrentProject, this, &Browser::setCurrentProject);
+    connect(m_browserFilter, &BrowserFilter::returnPressed, this, &Browser::setCurrentProject);
 
     connect(m_obs, &OBS::finishedParsingFile, this, &Browser::addFile);
     connect(m_obs, &OBS::finishedParsingFileList, ui->treeFiles, &FileTreeWidget::filesAdded);
@@ -101,6 +102,7 @@ Browser::Browser(QWidget *parent, BrowserFilter *browserFilter, OBS *obs) :
     connect(ui->treeFiles, &FileTreeWidget::droppedFile, this, &Browser::uploadFile);
 
     connect(m_obs, &OBS::finishedParsingPackageList, ui->treePackages, &PackageTreeWidget::addPackageList);
+    connect(m_obs, &OBS::finishedParsingPackageList, this, &Browser::slotSelectPackage);
     connect(ui->treePackages, &PackageTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     connect(m_obs, &OBS::finishedParsingResult, this, &Browser::addResult);
@@ -356,14 +358,19 @@ QString Browser::getCurrentProject() const
     return currentProject;
 }
 
-void Browser::setCurrentProject(const QString &project)
+void Browser::setCurrentProject(const QString &location)
 {
     qDebug() << __PRETTY_FUNCTION__;
     clearOverview();
-    if (!project.isEmpty()) {
-        m_browserFilter->setText(project);
+    if (!location.isEmpty()) {
+
+        QString project = location.contains("/") ? location.split("/")[0] : location;
+        selectPackage = location.contains("/")
+                ? location.split("/")[1].replace("/", "") : "";
+
+        m_browserFilter->setText(location);
         getPackages(project);
-        emit toggleBookmarkActions(project);
+        emit toggleBookmarkActions(location);
     }
 
     emit projectSelectionChanged();
@@ -552,6 +559,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     if (!selected.isEmpty()) {
         QModelIndex selectedPackage = selected.indexes().at(0);
         currentPackage = ui->treePackages->getCurrentPackage();
+        m_browserFilter->setText(currentProject + "/" + currentPackage);
 
         m_obs->getPackageMetaConfig(currentProject, currentPackage);
         getPackageFiles(selectedPackage.data().toString());
@@ -565,6 +573,15 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 
         emit projectSelectionChanged();
         ui->treeFiles->setAcceptDrops(false);
+    }
+}
+
+
+void Browser::slotSelectPackage()
+{
+    if (!selectPackage.isEmpty()) {
+        ui->treePackages->setCurrentPackage(selectPackage);
+        selectPackage = "";
     }
 }
 

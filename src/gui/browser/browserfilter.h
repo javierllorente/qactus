@@ -53,6 +53,7 @@ private slots:
 
 signals:
     void setCurrentProject(const QString &project);
+    void returnPressed(const QString &location);
 };
 
 #endif // BROWSERFILTER_H

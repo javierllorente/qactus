@@ -35,10 +35,12 @@ BrowserFilter::BrowserFilter(QWidget *parent) :
     });
 
     m_projectCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-    ui->lineEditFilter->setCompleter(m_projectCompleter);
-
+    ui->lineEditFilter->setCompleter(m_projectCompleter);    
     connect(m_projectCompleter, QOverload<const QString &>::of(&QCompleter::activated),
             this, &BrowserFilter::autocompletedProject_clicked);
+    connect(ui->lineEditFilter, &QLineEdit::returnPressed, this, [=](){
+        emit returnPressed(ui->lineEditFilter->text());
+    });
 }
 
 BrowserFilter::~BrowserFilter()

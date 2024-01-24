@@ -62,7 +62,7 @@ public slots:
     void getProjects();
     void goHome();
     QString getCurrentProject() const;
-    void setCurrentProject(const QString &project);
+    void setCurrentProject(const QString &location);
     void downloadFile();
     void uploadSelectedFile();
     void createRequest();
@@ -80,6 +80,7 @@ private:
     QItemSelectionModel *filesSelectionModel;
     QString currentProject;
     QString currentPackage;
+    QString selectPackage;
     QMenu *m_packagesMenu;
     QMenu *m_filesMenu;
     QMenu *m_resultsMenu;
@@ -93,6 +94,7 @@ private:
 private slots:
     void slotContextMenuPackages(const QPoint &point);
     void slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void slotSelectPackage();
     void slotPkgMetaConfigFetched(OBSPkgMetaConfig *pkgMetaConfig);
     void getPackageFiles(const QString &package);
     void getBuildResults(const QString &project, const QString &package);
