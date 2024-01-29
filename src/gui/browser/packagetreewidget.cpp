@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,11 @@ bool PackageTreeWidget::setCurrentPackage(const QString &package)
         selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
         scrollTo(itemIndex, QAbstractItemView::PositionAtTop);
         return true;
+    } else {
+        qDebug() << __PRETTY_FUNCTION__ << "package" << package << "not found";
+        emit packageNotFound(package);
     }
+
     return false;
 }
 

@@ -70,6 +70,7 @@ Browser::Browser(QWidget *parent, BrowserFilter *browserFilter, OBS *obs) :
     connect(m_obs, &OBS::buildLogNotFound, this, &Browser::slotBuildLogNotFound);
     connect(m_obs, &OBS::projectNotFound, this, &Browser::slotProjectNotFound);
     connect(m_obs, &OBS::packageNotFound, this, &Browser::slotPackageNotFound);
+    connect(ui->treePackages, &PackageTreeWidget::packageNotFound, this, &Browser::slotSelectedPackageNotFound);
 
     connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, [=](OBSStatus *status) {
         if (status->getCode() == "ok") {
@@ -374,6 +375,14 @@ void Browser::setCurrentProject(const QString &location)
     }
 
     emit projectSelectionChanged();
+}
+
+void Browser::slotSelectedPackageNotFound(const QString &package)
+{
+    QString title = tr("Package not found");
+    QString text = QString("<b>%1</b> not found in %2").arg(package, currentProject);
+    QMessageBox::information(this, title, text);
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void Browser::downloadFile()

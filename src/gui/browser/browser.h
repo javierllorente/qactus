@@ -63,6 +63,7 @@ public slots:
     void goHome();
     QString getCurrentProject() const;
     void setCurrentProject(const QString &location);
+    void slotSelectedPackageNotFound(const QString &package);
     void downloadFile();
     void uploadSelectedFile();
     void createRequest();
