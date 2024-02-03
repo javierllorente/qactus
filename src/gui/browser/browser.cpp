@@ -22,10 +22,10 @@
 #include "packageactiondialog.h"
 #include "buildlogviewer.h"
 
-Browser::Browser(QWidget *parent, BrowserFilter *browserFilter, OBS *obs) :
+Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     QWidget(parent),
     ui(new Ui::Browser),
-    m_browserFilter(browserFilter),
+    m_locationBar(locationBar),
     m_obs(obs),
     m_packagesMenu(nullptr),
     m_filesMenu(nullptr),
@@ -52,8 +52,8 @@ Browser::Browser(QWidget *parent, BrowserFilter *browserFilter, OBS *obs) :
     ui->verticalLayout_2->addWidget(m_resultsToolbar);
 
     connect(m_obs, &OBS::finishedParsingProjectList, this, &Browser::addProjectList);
-    connect(m_browserFilter, &BrowserFilter::setCurrentProject, this, &Browser::setCurrentProject);
-    connect(m_browserFilter, &BrowserFilter::returnPressed, this, &Browser::setCurrentProject);
+    connect(m_locationBar, &LocationBar::setCurrentProject, this, &Browser::setCurrentProject);
+    connect(m_locationBar, &LocationBar::returnPressed, this, &Browser::setCurrentProject);
 
     connect(m_obs, &OBS::finishedParsingFile, this, &Browser::addFile);
     connect(m_obs, &OBS::finishedParsingFileList, ui->treeFiles, &FileTreeWidget::filesAdded);
@@ -74,7 +74,7 @@ Browser::Browser(QWidget *parent, BrowserFilter *browserFilter, OBS *obs) :
 
     connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, [=](OBSStatus *status) {
         if (status->getCode() == "ok") {
-            m_browserFilter->addProject(status->getProject());
+            m_locationBar->addProject(status->getProject());
             setCurrentProject(status->getProject());
             showTrayMessage(APP_NAME, tr("Project %1 has been created").arg(status->getProject()));
         }
@@ -148,7 +148,7 @@ void Browser::readSettings()
 void Browser::addProjectList(const QStringList &projectList)
 { 
     qDebug() << __PRETTY_FUNCTION__;
-    m_browserFilter->addProjectList(projectList);
+    m_locationBar->addProjectList(projectList);
 
     emit toggleBookmarkActions("");
     emit finishedLoadingProjects();
@@ -339,7 +339,7 @@ void Browser::getProjects()
     qDebug() << __PRETTY_FUNCTION__;
     setupModels();
     ui->treeFiles->setAcceptDrops(false);
-    m_browserFilter->clear();
+    m_locationBar->clear();
     clearOverview();
     currentProject = "";
     emit projectSelectionChanged();
@@ -369,7 +369,7 @@ void Browser::setCurrentProject(const QString &location)
         selectPackage = location.contains("/")
                 ? location.split("/")[1].replace("/", "") : "";
 
-        m_browserFilter->setText(location);
+        m_locationBar->setText(location);
         getPackages(project);
         emit toggleBookmarkActions(location);
     }
@@ -417,7 +417,7 @@ void Browser::createRequest()
     }
 
     CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, m_obs, this);
-    createRequestDialog->addProjectList(m_browserFilter->getProjectList());
+    createRequestDialog->addProjectList(m_locationBar->getProjectList());
     disconnect(m_obs, &OBS::finishedParsingPackageList,
                ui->treePackages, &PackageTreeWidget::addPackageList);
 
@@ -440,7 +440,7 @@ void Browser::linkPackage()
                                                                        currentProject,
                                                                        ui->treePackages->getCurrentPackage(),
                                                                        PackageAction::LinkPackage);
-    packageActionDialog->addProjectList(m_browserFilter->getProjectList());
+    packageActionDialog->addProjectList(m_locationBar->getProjectList());
     connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
     connect(packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
     packageActionDialog->exec();
@@ -454,7 +454,7 @@ void Browser::copyPackage()
                                                                        currentProject,
                                                                        ui->treePackages->getCurrentPackage(),
                                                                        PackageAction::CopyPackage);
-    packageActionDialog->addProjectList(m_browserFilter->getProjectList());
+    packageActionDialog->addProjectList(m_locationBar->getProjectList());
     connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
     connect(packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
     packageActionDialog->exec();
@@ -568,7 +568,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     if (!selected.isEmpty()) {
         QModelIndex selectedPackage = selected.indexes().at(0);
         currentPackage = ui->treePackages->getCurrentPackage();
-        m_browserFilter->setText(currentProject + "/" + currentPackage);
+        m_locationBar->setText(currentProject + "/" + currentPackage);
 
         m_obs->getPackageMetaConfig(currentProject, currentPackage);
         getPackageFiles(selectedPackage.data().toString());
@@ -741,7 +741,7 @@ void Browser::slotBranchPackage(OBSStatus *status)
 
     if (status->getCode()=="ok") {
         QString newBranch = status->getProject();
-        m_browserFilter->addProject(newBranch);
+        m_locationBar->addProject(newBranch);
         setCurrentProject(newBranch);
         showTrayMessage(APP_NAME, tr("The package %1 has been branched").arg(status->getPackage()));
     } else {
@@ -808,7 +808,7 @@ void Browser::slotDeleteProject(OBSStatus *status)
     qDebug() << __PRETTY_FUNCTION__;
 
     if (status->getCode()=="ok") {
-        m_browserFilter->removeProject(status->getProject());
+        m_locationBar->removeProject(status->getProject());
 
         showTrayMessage(APP_NAME, tr("The project %1 has been deleted").arg(status->getProject()));
     } else {

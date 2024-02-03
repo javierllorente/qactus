@@ -20,7 +20,7 @@
 #include <QItemSelectionModel>
 #include <QMenu>
 #include <QToolBar>
-#include "browserfilter.h"
+#include "locationbar.h"
 #include "obs.h"
 
 namespace Ui {
@@ -32,7 +32,7 @@ class Browser : public QWidget
     Q_OBJECT
 
 public:
-    explicit Browser(QWidget *parent = nullptr, BrowserFilter *browserFilter = nullptr, OBS *obs = nullptr);
+    explicit Browser(QWidget *parent = nullptr, LocationBar *locationBar = nullptr, OBS *obs = nullptr);
     ~Browser();
     void readSettings();
     void addProjectList(const QStringList &projectList);
@@ -75,7 +75,7 @@ public slots:
 
 private:
     Ui::Browser *ui;
-    BrowserFilter *m_browserFilter;
+    LocationBar *m_locationBar;
     OBS *m_obs;
     QItemSelectionModel *packagesSelectionModel;
     QItemSelectionModel *filesSelectionModel;

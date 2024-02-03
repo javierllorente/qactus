@@ -35,7 +35,7 @@
 #include "obsstatus.h"
 #include "utils.h"
 #include "credentials.h"
-#include "browserfilter.h"
+#include "locationbar.h"
 #include "buildlogviewer.h"
 #include "bookmarks.h"
 #include "browser.h"
@@ -104,7 +104,7 @@ private:
     QAction *actionProperties_project;
     QAction *actionProperties_package;
 
-    BrowserFilter *browserFilter;
+    LocationBar *locationBar;
     QAction *actionFilter;
     QAction *actionFilterSpacer;
     void createActions();

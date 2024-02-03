@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     obs(new OBS()),
     trayIcon(new TrayIcon(this)),
     m_notify(false),
-    browserFilter(new BrowserFilter(this)),
-    browser(new Browser(this, browserFilter, obs)),
+    locationBar(new LocationBar(this)),
+    browser(new Browser(this, locationBar, obs)),
     monitor(new Monitor(this, obs)),
     requestBox(new RequestBox(this, obs)),
     errorBox(nullptr),
@@ -422,7 +422,7 @@ void MainWindow::createActions()
     actionBookmarks = ui->toolBar->addWidget(bookmarkButton);
 
     // Browser filter actions
-    actionFilter = ui->toolBar->addWidget(browserFilter);
+    actionFilter = ui->toolBar->addWidget(locationBar);
     QWidget *filterSpacer = new QWidget(this);
     filterSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     filterSpacer->setFixedWidth(25);
@@ -557,7 +557,7 @@ void MainWindow::createActions()
     QAction *actionQuickSearch = new QAction(tr("Quick Project"), this);
     actionQuickSearch->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
     connect(actionQuickSearch, &QAction::triggered, this, [&](){
-        browserFilter->setFocus();
+        locationBar->setFocus();
     });
     addAction(actionQuickSearch);
 

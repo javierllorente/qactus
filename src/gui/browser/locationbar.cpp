@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "browserfilter.h"
-#include "ui_browserfilter.h"
+#include "locationbar.h"
+#include "ui_locationbar.h"
 #include <QDebug>
 #include <QTimer>
 #include <QIcon>
 
-BrowserFilter::BrowserFilter(QWidget *parent) :
+LocationBar::LocationBar(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::BrowserFilter),
+    ui(new Ui::LocationBar),
     m_projectModel(new QStringListModel(this)),
     m_projectCompleter(new QCompleter(m_projectModel, this))
 {
@@ -37,43 +37,43 @@ BrowserFilter::BrowserFilter(QWidget *parent) :
     m_projectCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     ui->lineEditFilter->setCompleter(m_projectCompleter);    
     connect(m_projectCompleter, QOverload<const QString &>::of(&QCompleter::activated),
-            this, &BrowserFilter::autocompletedProject_clicked);
+            this, &LocationBar::autocompletedProject_clicked);
     connect(ui->lineEditFilter, &QLineEdit::returnPressed, this, [=](){
         emit returnPressed(ui->lineEditFilter->text());
     });
 }
 
-BrowserFilter::~BrowserFilter()
+LocationBar::~LocationBar()
 {
     delete ui;
 }
 
-QString BrowserFilter::text() const
+QString LocationBar::text() const
 {
     return ui->lineEditFilter->text();
 }
 
-void BrowserFilter::setText(const QString &text)
+void LocationBar::setText(const QString &text)
 {
     ui->lineEditFilter->setText(text);
 }
 
-void BrowserFilter::clear()
+void LocationBar::clear()
 {
     ui->lineEditFilter->clear();
 }
 
-void BrowserFilter::setFocus()
+void LocationBar::setFocus()
 {
     ui->lineEditFilter->setFocus();
 }
 
-QStringList BrowserFilter::getProjectList() const
+QStringList LocationBar::getProjectList() const
 {
     return m_projectModel->stringList();
 }
 
-bool BrowserFilter::addProject(const QString &project)
+bool LocationBar::addProject(const QString &project)
 {
    if (m_projectModel->insertRow(m_projectModel->rowCount())) {
        QModelIndex index = m_projectModel->index(m_projectModel->rowCount() - 1, 0);
@@ -82,7 +82,7 @@ bool BrowserFilter::addProject(const QString &project)
    return false;
 }
 
-bool BrowserFilter::removeProject(const QString &project)
+bool LocationBar::removeProject(const QString &project)
 {
     int index = m_projectModel->stringList().indexOf(project);
     if (index == -1) {
@@ -92,14 +92,14 @@ bool BrowserFilter::removeProject(const QString &project)
     return true;
 }
 
-void BrowserFilter::addProjectList(const QStringList &projectList)
+void LocationBar::addProjectList(const QStringList &projectList)
 {
     qDebug() << __PRETTY_FUNCTION__;
     ui->lineEditFilter->clear();
     m_projectModel->setStringList(projectList);
 }
 
-void BrowserFilter::autocompletedProject_clicked(const QString &project)
+void LocationBar::autocompletedProject_clicked(const QString &project)
 {
     emit setCurrentProject(project);
 }
