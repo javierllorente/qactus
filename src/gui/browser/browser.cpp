@@ -125,6 +125,9 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
 
     connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->treePackages, &PackageTreeWidget::filterPackages);
 
+    connect(ui->tabWidgetPackages, &QTabWidget::currentChanged, this, &Browser::slotTabIndexChanged);
+
+
     readSettings();
 }
 
@@ -566,13 +569,21 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     Q_UNUSED(deselected)
 
     if (!selected.isEmpty()) {
-        QModelIndex selectedPackage = selected.indexes().at(0);
-        currentPackage = ui->treePackages->getCurrentPackage();
+        QModelIndex selectedIndex = selected.indexes().at(0);
+        currentPackage = selectedIndex.data().toString();
         m_locationBar->setText(currentProject + "/" + currentPackage);
 
-        m_obs->getPackageMetaConfig(currentProject, currentPackage);
-        getPackageFiles(selectedPackage.data().toString());
-        getBuildResults(currentProject, currentPackage);
+        switch (ui->tabWidgetPackages->currentIndex()) {
+            case 0:
+                m_obs->getPackageMetaConfig(currentProject, currentPackage);
+                getBuildResults(currentProject, currentPackage);
+                break;
+            case 1:
+                getPackageFiles(currentPackage);
+            default:
+                break;
+        }
+
         emit packageSelectionChanged();
         ui->treeFiles->setAcceptDrops(true);
     } else {
@@ -585,6 +596,26 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     }
 }
 
+void Browser::slotTabIndexChanged(int index)
+{
+    if (!currentProject.isEmpty() && !currentPackage.isEmpty()) {
+        switch (index) {
+            case 0:
+                if (currentPackage != overviewPackage) {
+                    m_obs->getPackageMetaConfig(currentProject, currentPackage);
+                    getBuildResults(currentProject, currentPackage);
+                }
+                break;
+            case 1:
+                if (currentPackage != ui->treeFiles->getPackage()) {
+                    getPackageFiles(currentPackage);
+                }
+                break;
+            default:
+                break;
+            }
+    }
+}
 
 void Browser::slotSelectPackage()
 {
@@ -611,6 +642,7 @@ void Browser::slotPkgMetaConfigFetched(OBSPkgMetaConfig *pkgMetaConfig)
         description = "No description set";
     }
     ui->description->setText(description);
+    overviewPackage = pkgMetaConfig->getName();
 }
 
 void Browser::getPackageFiles(const QString &package)

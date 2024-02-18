@@ -82,6 +82,7 @@ private:
     QString currentProject;
     QString currentPackage;
     QString selectPackage;
+    QString overviewPackage;
     QMenu *m_packagesMenu;
     QMenu *m_filesMenu;
     QMenu *m_resultsMenu;
@@ -95,6 +96,7 @@ private:
 private slots:
     void slotContextMenuPackages(const QPoint &point);
     void slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void slotTabIndexChanged(int index);
     void slotSelectPackage();
     void slotPkgMetaConfigFetched(OBSPkgMetaConfig *pkgMetaConfig);
     void getPackageFiles(const QString &package);
