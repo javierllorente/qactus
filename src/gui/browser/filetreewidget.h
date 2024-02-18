@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ public:
     QString getCurrentFile() const;
     bool removeFile(const QString &fileName);
     void clearModel();
+    QString getProject() const;
+    QString getPackage() const;
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
@@ -49,9 +51,11 @@ private:
     bool firstTimeFileListDisplayed;
     int m_logicalIndex;
     Qt::SortOrder m_order;
+    QString project;
+    QString package;
 
 public slots:
-    void filesAdded();
+    void filesAdded(const QString &project, const QString &package);
 
 signals:
     void droppedFile(QString);

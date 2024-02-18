@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ void FileTreeWidget::dropEvent(QDropEvent *event)
     }
 }
 
-void FileTreeWidget::filesAdded()
+void FileTreeWidget::filesAdded(const QString &project, const QString &package)
 {
     qDebug() << __PRETTY_FUNCTION__;
     if (firstTimeFileListDisplayed) {
@@ -88,6 +88,8 @@ void FileTreeWidget::filesAdded()
     m_order = header()->sortIndicatorOrder();
 
     selectionModel()->clear(); // Emits selectionChanged() and currentChanged()
+    this->project = project;
+    this->package = package;
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -167,4 +169,14 @@ bool FileTreeWidget::removeFile(const QString &fileName)
 void FileTreeWidget::clearModel()
 {
     model()->removeRows(0, model()->rowCount());
+}
+
+QString FileTreeWidget::getProject() const
+{
+    return project;
+}
+
+QString FileTreeWidget::getPackage() const
+{
+    return package;
 }
