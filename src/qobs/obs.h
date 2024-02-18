@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2015-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@ signals:
     void finishedParsingPackageList(QStringList);
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);
-    void finishedParsingFileList();
+    void finishedParsingFileList(const QString &project, const QString &package);
     void finishedParsingLink(OBSLink *obsLink);
     void finishedParsingRequestStatus(OBSStatus *status);
     void srDiffFetched(const QString &);

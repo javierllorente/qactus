@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2015-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,8 +99,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingFile(OBSFile*)),
             this, SIGNAL(finishedParsingFile(OBSFile*)));
-    connect(xmlReader, SIGNAL(finishedParsingFileList()),
-            this, SIGNAL(finishedParsingFileList()));
+    connect(xmlReader, &OBSXmlReader::finishedParsingFileList,
+            this, &OBS::finishedParsingFileList);
     connect(xmlReader, &OBSXmlReader::finishedParsingLink, this, &OBS::finishedParsingLink);
     connect(xmlReader, &OBSXmlReader::finishedParsingRequestStatus, this, &OBS::finishedParsingRequestStatus);
     connect(obsCore, SIGNAL(srDiffFetched(QString)),
