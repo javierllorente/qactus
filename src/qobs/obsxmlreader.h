@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,7 +119,7 @@ signals:
     void finishedParsingPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
     void finishedParsingPackageList(QStringList);
     void finishedParsingFile(OBSFile*);
-    void finishedParsingFileList();
+    void finishedParsingFileList(const QString &project, const QString &package);
     void finishedParsingLink(OBSLink *obsLink);
     void finishedParsingRequestStatus(OBSStatus *obsStatus);
     void finishedParsingAbout(OBSAbout *obsAbout);

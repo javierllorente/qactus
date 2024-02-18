@@ -1006,7 +1006,7 @@ void OBSXmlReader::parseFileList(const QString &project, const QString &package,
         } // end entry
 
     } // end while
-    emit finishedParsingFileList();
+    emit finishedParsingFileList(project, package);
 }
 
 void OBSXmlReader::parseLink(const QString &data)
