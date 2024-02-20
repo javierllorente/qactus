@@ -275,7 +275,10 @@ void Browser::reloadPackages()
     qDebug() << __PRETTY_FUNCTION__;
     getPackages(currentProject);
 
-    // Clean up package files and results
+    // Clear overview, files and revisions
+    ui->title->clear();
+    ui->link->clear();
+    ui->description->clear();
     ui->treeBuildResults->clearModel();
     ui->treeFiles->clearModel();
     ui->treeRevisions->clearModel();
