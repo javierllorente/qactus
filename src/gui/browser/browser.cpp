@@ -275,7 +275,9 @@ void Browser::reloadPackages()
     qDebug() << __PRETTY_FUNCTION__;
     getPackages(currentProject);
 
-    // Clear overview, files and revisions
+    // Clear location (package), current package, overview, files and revisions
+    m_locationBar->setText(currentProject);
+    currentPackage.clear();
     ui->title->clear();
     ui->link->clear();
     ui->description->clear();
