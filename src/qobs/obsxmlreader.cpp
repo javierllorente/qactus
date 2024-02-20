@@ -41,11 +41,6 @@ void OBSXmlReader::addData(const QString &data)
         if (xml.name().toString() == "resultlist" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: resultlist tag found";
             parseResultList(data);
-            break;
-
-        } else if (xml.name().toString() == "revisionlist" && xml.isStartElement()) {
-            qDebug() << "OBSXmlReader: revisionlist tag found";
-            parseRevisionList(data);
         } else if (xml.name().toString() == "status" && xml.isStartElement()) {
             qDebug() << "OBSXmlReader: status tag found";
             parseBuildStatus(data);
@@ -617,7 +612,7 @@ void OBSXmlReader::parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision
     }
 }
 
-void OBSXmlReader::parseRevisionList(const QString &data)
+void OBSXmlReader::parseRevisionList(const QString &project, const QString &package, const QString &data)
 {
     QXmlStreamReader xml(data);
     OBSRevision *obsRevision = nullptr;
@@ -625,13 +620,17 @@ void OBSXmlReader::parseRevisionList(const QString &data)
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
         if (xml.isStartElement()) {
-
             if (xml.name().toString() == "revisionlist") {
                 xml.readNextStartElement();
             }
 
-            obsRevision = new OBSRevision();
+            if (xml.name().toString() == "revision") {
+                obsRevision = new OBSRevision();
+                obsRevision->setProject(project);
+                obsRevision->setPackage(package);
+            }
             parseRevision(xml, obsRevision);
+
 
         }
 
@@ -640,6 +639,7 @@ void OBSXmlReader::parseRevisionList(const QString &data)
             delete obsRevision;
         }
     }
+    emit finishedParsingRevisionList(project, package);
 }
 
 void OBSXmlReader::parseCollection(QXmlStreamReader &xml)

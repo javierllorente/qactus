@@ -50,6 +50,7 @@ public:
     OBSStatus *parseNotFoundStatus(const QString &data);
     void parsePackageList(const QString &data);
     void parseFileList(const QString &project, const QString &package, const QString &data);
+    void parseRevisionList(const QString &project, const QString &package, const QString &data);
     void parseLink(const QString &data);
     void parseResultList(const QString &data);
     void parseIncomingRequests(const QString &data);
@@ -79,7 +80,6 @@ private:
     void parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus);
     int row;
     void parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision);
-    void parseRevisionList(const QString &data);
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
     void parseCollection(QXmlStreamReader &xml);
@@ -120,6 +120,7 @@ signals:
     void finishedParsingPackageList(QStringList);
     void finishedParsingFile(OBSFile*);
     void finishedParsingFileList(const QString &project, const QString &package);
+    void finishedParsingRevisionList(const QString &project, const QString &package);
     void finishedParsingLink(OBSLink *obsLink);
     void finishedParsingRequestStatus(OBSStatus *obsStatus);
     void finishedParsingAbout(OBSAbout *obsAbout);
