@@ -30,6 +30,7 @@ set(QACTUS_SRC
     browser/loghighlighter.cpp
     browser/packagelistmodel.cpp
     browser/packagetreewidget.cpp
+    browser/revisiontreewidget.cpp
     browser/searchwidget.cpp
     browser/locationbar.cpp
     browser/bookmarks.cpp
@@ -69,6 +70,7 @@ set(QACTUS_HDR
     browser/loghighlighter.h
     browser/packagelistmodel.h
     browser/packagetreewidget.h
+    browser/revisiontreewidget.h
     browser/searchwidget.h
     browser/locationbar.h
     browser/bookmarks.h
