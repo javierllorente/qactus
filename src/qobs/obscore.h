@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public:
     void getPackageMetaConfig(const QString &resource);
     void getPackages(const QString &resource);
     void getFiles(const QString &project, const QString &package);
+    void getRevisions(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
     void getAllBuildStatus(const QString &resource);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
@@ -130,6 +131,7 @@ private:
         PkgMetaConfig,
         PackageList,
         FileList,
+        RevisionList,
         Link,
         BuildStatus,
         BuildStatusList,

@@ -101,6 +101,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingFile(OBSFile*)));
     connect(xmlReader, &OBSXmlReader::finishedParsingFileList,
             this, &OBS::finishedParsingFileList);
+    connect(xmlReader, &OBSXmlReader::finishedParsingRevisionList,
+            this, &OBS::finishedParsingRevisionList);
     connect(xmlReader, &OBSXmlReader::finishedParsingLink, this, &OBS::finishedParsingLink);
     connect(xmlReader, &OBSXmlReader::finishedParsingRequestStatus, this, &OBS::finishedParsingRequestStatus);
     connect(obsCore, SIGNAL(srDiffFetched(QString)),
@@ -182,13 +184,6 @@ void OBS::getProjectResults(const QString &project)
     obsCore->getAllBuildStatus(resource);
 }
 
-void OBS::getRevisions(const QString &project, const QString &package)
-{
-    //    URL format: https://api.opensuse.org/source/<project>/<package>/_history
-    QString resource = QString("%1/%2/_history").arg(project, package);
-    obsCore->requestSource(resource);
-}
-
 void OBS::getIncomingRequests()
 {
     obsCore->getIncomingRequests();
@@ -265,6 +260,11 @@ void OBS::getPackageMetaConfig(const QString &project, const QString &package)
 void OBS::getFiles(const QString &project, const QString &package)
 {
     obsCore->getFiles(project, package);
+}
+
+void OBS::getRevisions(const QString &project, const QString &package)
+{
+    obsCore->getRevisions(project, package);
 }
 
 void OBS::getLink(const QString &project, const QString &package)

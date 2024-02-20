@@ -43,7 +43,6 @@ public:
     void login();
     void getBuildStatus(const QStringList &stringList, int row);
     void getProjectResults(const QString &project);
-    void getRevisions(const QString &project, const QString &package);
     void getIncomingRequests();
     void getOutgoingRequests();
     void getDeclinedRequests();
@@ -56,6 +55,7 @@ public:
     void getProjectMetaConfig(const QString &project);
     void getPackageMetaConfig(const QString &project, const QString &package);
     void getFiles(const QString &project, const QString &package);
+    void getRevisions(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     OBSXmlReader *getXmlReader();
@@ -126,6 +126,7 @@ signals:
     void finishedParsingList(QStringList);
     void finishedParsingFile(OBSFile*);
     void finishedParsingFileList(const QString &project, const QString &package);
+    void finishedParsingRevisionList(const QString &project, const QString &package);
     void finishedParsingLink(OBSLink *obsLink);
     void finishedParsingRequestStatus(OBSStatus *status);
     void srDiffFetched(const QString &);
