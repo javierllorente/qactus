@@ -293,6 +293,16 @@
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="tabRevisions">
+          <attribute name="title">
+           <string>Revisions</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="RevisionTreeWidget" name="treeRevisions"/>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>
@@ -316,6 +326,11 @@
    <class>BuildResultTreeWidget</class>
    <extends>QTreeView</extends>
    <header>buildresulttreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RevisionTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>revisiontreewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
