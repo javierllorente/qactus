@@ -79,6 +79,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, &OBSXmlReader::finishedParsingResultList, this, &OBS::finishedParsingResultList);
     connect(xmlReader, SIGNAL(finishedParsingRevision(OBSRevision*)),
             this, SIGNAL(finishedParsingRevision(OBSRevision*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingRevision,
+            this, &OBS::finishedParsingRevision);
 
     connect(xmlReader, &OBSXmlReader::finishedParsingIncomingRequest, this, &OBS::finishedParsingIncomingRequest);
     connect(xmlReader, &OBSXmlReader::finishedParsingIncomingRequestList, this, &OBS::finishedParsingIncomingRequestList);
@@ -182,6 +184,11 @@ void OBS::getProjectResults(const QString &project)
     //    URL format: https://api.opensuse.org/build/<project>/_result
     QString resource = QString("%1/%2").arg(project, "_result");
     obsCore->getAllBuildStatus(resource);
+}
+
+void OBS::getLatestRevision(const QString &project, const QString &package)
+{
+    obsCore->getLatestRevision(project, package);
 }
 
 void OBS::getIncomingRequests()

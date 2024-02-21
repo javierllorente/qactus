@@ -630,8 +630,6 @@ void OBSXmlReader::parseRevisionList(const QString &project, const QString &pack
                 obsRevision->setPackage(package);
             }
             parseRevision(xml, obsRevision);
-
-
         }
 
         if (xml.name().toString() == "revision" && xml.isEndElement()) {
@@ -640,6 +638,29 @@ void OBSXmlReader::parseRevisionList(const QString &project, const QString &pack
         }
     }
     emit finishedParsingRevisionList(project, package);
+}
+
+void OBSXmlReader::parseLatestRevision(const QString &project, const QString &package, const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSRevision *obsRevision = nullptr;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        if (xml.isStartElement()) {
+            if (xml.name().toString() == "revision") {
+                obsRevision = new OBSRevision();
+                obsRevision->setProject(project);
+                obsRevision->setPackage(package);
+            }
+            parseRevision(xml, obsRevision);
+        }
+
+        if (xml.name().toString() == "revision" && xml.isEndElement()) {
+            emit finishedParsingLatestRevision(obsRevision);
+            delete obsRevision;
+        }
+    }
 }
 
 void OBSXmlReader::parseCollection(QXmlStreamReader &xml)

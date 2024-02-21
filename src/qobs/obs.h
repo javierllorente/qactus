@@ -43,6 +43,7 @@ public:
     void login();
     void getBuildStatus(const QStringList &stringList, int row);
     void getProjectResults(const QString &project);
+    void getLatestRevision(const QString &project, const QString &package);
     void getIncomingRequests();
     void getOutgoingRequests();
     void getDeclinedRequests();
@@ -112,6 +113,7 @@ signals:
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList(QList<OBSResult *> resultList);
     void finishedParsingRevision(OBSRevision*);
+    void finishedParsingLatestRevision(OBSRevision *revision);
     void finishedParsingIncomingRequest(OBSRequest *request);
     void finishedParsingIncomingRequestList();
     void finishedParsingOutgoingRequest(OBSRequest *request);

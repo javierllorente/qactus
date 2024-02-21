@@ -240,6 +240,15 @@ void OBSCore::getRevisions(const QString &project, const QString &package)
     reply->setProperty("pkgrev", package);
 }
 
+void OBSCore::getLatestRevision(const QString &project, const QString &package)
+{
+    QString resource = QString("/%1/%2/_history?limit=1").arg(project, package);
+    QNetworkReply *reply = requestSource(resource);
+    reply->setProperty("reqtype", OBSCore::LatestRevision);
+    reply->setProperty("prjrev", project);
+    reply->setProperty("pkgrev", package);
+}
+
 void OBSCore::getLink(const QString &project, const QString &package)
 {
     QString resource = QString("/source/%1/%2/_link").arg(project, package);
@@ -416,6 +425,20 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                     package = reply->property("pkgrev").toString();
                 }
                 xmlReader->parseRevisionList(project, package, dataStr);
+                break;
+            }
+
+            case OBSCore::LatestRevision: { // <revision>
+                qDebug() << reqTypeStr << "LatestRevision";
+                QString project;
+                QString package;
+                if (reply->property("prjrev").isValid()) {
+                    project = reply->property("prjrev").toString();
+                }
+                if (reply->property("pkgrev").isValid()) {
+                    package = reply->property("pkgrev").toString();
+                }
+                xmlReader->parseLatestRevision(project, package, dataStr);
                 break;
             }
 
@@ -651,6 +674,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
 
             case OBSCore::FileList: // <status>
             case OBSCore::RevisionList: // <status>
+            case OBSCore::LatestRevision: // <status>
                 qDebug() << reqTypeStr << "FileList";
                 if (isAuthenticated()) {
                     QString dataStr = QString::fromUtf8(data);

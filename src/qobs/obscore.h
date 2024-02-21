@@ -57,6 +57,7 @@ public:
     void getPackages(const QString &resource);
     void getFiles(const QString &project, const QString &package);
     void getRevisions(const QString &project, const QString &package);
+    void getLatestRevision(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
     void getAllBuildStatus(const QString &resource);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
@@ -132,6 +133,7 @@ private:
         PackageList,
         FileList,
         RevisionList,
+        LatestRevision,
         Link,
         BuildStatus,
         BuildStatusList,
