@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ public:
     }
 
     void setId(const QString &);
+    void setCreator(const QString &);
     void setActionType(const QString &);
     void setSourceProject(const QString &);
     void setSourcePackage(const QString &);
@@ -44,6 +45,7 @@ public:
     void setDescription(const QString &);
 
     QString getId() const;
+    QString getCreator() const;
     QString getActionType() const;
     QString getSourceProject() const;
     QString getSourcePackage() const;
@@ -59,6 +61,7 @@ public:
 
 private:
     QString id;
+    QString creator;
     QString actionType;
     OBSObject *source;
     OBSObject *target;

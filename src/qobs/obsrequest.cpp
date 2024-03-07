@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ OBSRequest::~OBSRequest()
 OBSRequest &OBSRequest::operator=(const OBSRequest &other)
 {
     this->setId(other.getId());
+    this->setCreator(other.getCreator());
     this->setActionType(other.getActionType());
     this->setSourceProject(other.getSourceProject());
     this->setSourcePackage(other.getSourcePackage());
@@ -55,6 +56,16 @@ void OBSRequest::setId(const QString &id)
 QString OBSRequest::getId() const
 {
     return id;
+}
+
+void OBSRequest::setCreator(const QString &creator)
+{
+    this->creator = creator;
+}
+
+QString OBSRequest::getCreator() const
+{
+    return creator;
 }
 
 void OBSRequest::setActionType(const QString &actionType)
