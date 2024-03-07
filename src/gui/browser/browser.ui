@@ -303,6 +303,16 @@
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="tabRequests">
+          <attribute name="title">
+           <string>Requests</string>
+          </attribute>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="RequestsTreeWidget" name="treeRequests"/>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>
@@ -331,6 +341,11 @@
    <class>RevisionTreeWidget</class>
    <extends>QTreeView</extends>
    <header>revisiontreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RequestsTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>requeststreewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -93,6 +93,7 @@ private:
     void setupModels();
     void getPackages(const QString &project);
     void getRevisions(const QString &project, const QString &package);
+    void gePackagetRequests(const QString &project, const QString &package);
 
 private slots:
     void slotContextMenuPackages(const QPoint &point);
