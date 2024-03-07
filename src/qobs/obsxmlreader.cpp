@@ -339,6 +339,36 @@ void OBSXmlReader::parseRequestStatus(const QString &data)
     delete obsStatus;
 }
 
+
+void OBSXmlReader::parseRequests(const QString &project, const QString &package, const QString &data)
+{
+    QXmlStreamReader xml(data);
+    OBSRequest *obsRequest = nullptr;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+
+        parseCollection(xml);
+
+        if (xml.name().toString() == "request") {
+                obsRequest = parseRequest(xml);
+        }
+
+        if (xml.name().toString() == "request" && xml.isEndElement()) {
+            emit finishedParsingRequest(obsRequest);
+            delete obsRequest;
+        }
+    }
+
+    if (xml.hasError()) {
+        qDebug() << "Error parsing XML!" << xml.errorString();
+        delete obsRequest;
+        return;
+    }
+
+    emit finishedParsingRequestList(project, package);
+}
+
 void OBSXmlReader::parseBranchPackage(const QString &data)
 {
     qDebug() << "OBSXmlReader::parseBranchPackage()";
@@ -777,6 +807,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             obsRequest = new OBSRequest();
             QXmlStreamAttributes attrib = xml.attributes();
             obsRequest->setId(attrib.value("id").toString());
+            obsRequest->setCreator(attrib.value("creator").toString());
         }
     } // request
 
