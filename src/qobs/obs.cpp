@@ -82,6 +82,11 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, &OBSXmlReader::finishedParsingRevision,
             this, &OBS::finishedParsingRevision);
 
+    connect(xmlReader, &OBSXmlReader::finishedParsingRequest,
+            this, &OBS::finishedParsingRequest);
+    connect(xmlReader, &OBSXmlReader::finishedParsingRequestList,
+            this, &OBS::finishedParsingRequestList);
+
     connect(xmlReader, &OBSXmlReader::finishedParsingIncomingRequest, this, &OBS::finishedParsingIncomingRequest);
     connect(xmlReader, &OBSXmlReader::finishedParsingIncomingRequestList, this, &OBS::finishedParsingIncomingRequestList);
     connect(xmlReader, &OBSXmlReader::finishedParsingOutgoingRequest, this, &OBS::finishedParsingOutgoingRequest);
@@ -209,6 +214,11 @@ void OBS::getDeclinedRequests()
 int OBS::getRequestCount()
 {
     return xmlReader->getRequestNumber();
+}
+
+void OBS::getPackageRequests(const QString &project, const QString &package)
+{
+    obsCore->getPackageRequests(project, package);
 }
 
 void OBS::slotChangeSubmitRequest(const QString &id, const QString &comments, bool accepted)

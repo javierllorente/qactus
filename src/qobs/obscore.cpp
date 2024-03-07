@@ -137,6 +137,11 @@ QNetworkReply *OBSCore::requestSource(const QString &resource)
     return request("/source/" + resource);
 }
 
+QNetworkReply *OBSCore::requestRequest(const QString &resource)
+{
+    return request("/request/" + resource);
+}
+
 QString OBSCore::createReqResourceStr(const QString &states, const QString &roles) const
 {
     return  QString("/request/?view=collection&states=%1&roles=%2&user=%3")
@@ -184,6 +189,18 @@ void OBSCore::getOutgoingRequests()
 void OBSCore::getDeclinedRequests()
 {
     getRequests(OBSCore::DeclinedRequests);
+}
+
+void OBSCore::getPackageRequests(const QString &project, const QString &package)
+{
+    QString types = "submit,delete,add_role,change_devel,maintenance_incident,maintenance_release,release";
+    QString states = "new,review";
+    QString resource = QString("?view=collection&types=%1&states=%2&project=%3&package=%4")
+            .arg(types, states, project, package);
+    QNetworkReply *reply = requestRequest(resource);
+    reply->setProperty("reqtype", OBSCore::PackageRequests);
+    reply->setProperty("prjreq", project);
+    reply->setProperty("pkgreq", package);
 }
 
 bool OBSCore::isIncludeHomeProjects() const
@@ -472,6 +489,20 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 qDebug() << reqTypeStr << "Collection";
                 xmlReader->parseDeclinedRequests(dataStr);
                 break;
+
+            case OBSCore::PackageRequests: {
+                qDebug() << reqTypeStr << "Collection";
+                QString project;
+                QString package;
+                if (reply->property("prjreq").isValid()) {
+                    project = reply->property("prjreq").toString();
+                }
+                if (reply->property("pkgreq").isValid()) {
+                    package = reply->property("pkgreq").toString();
+                }
+                xmlReader->parseRequests(project, package, dataStr);
+                break;
+            }
 
             case OBSCore::ChangeRequestState:
                 qDebug() << reqTypeStr << "ChangeRequestState";
