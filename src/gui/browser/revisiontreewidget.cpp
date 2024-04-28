@@ -82,6 +82,7 @@ void RevisionTreeWidget::addRevision(OBSRevision *revision)
         QStandardItem *revItem = new QStandardItem();
         revItem->setData(revision->getRev(), Qt::UserRole);
         revItem->setData(revision->getRev(), Qt::DisplayRole);
+        revItem->setData(Qt::AlignTop, Qt::TextAlignmentRole);
 
         QStandardItem *dateItem = new QStandardItem();
         QString dateStr;
@@ -90,10 +91,12 @@ void RevisionTreeWidget::addRevision(OBSRevision *revision)
         dateStr = dateTime.toString("dd/MM/yyyy H:mm");
         dateItem->setData(unixTime, Qt::UserRole);
         dateItem->setData(dateStr, Qt::DisplayRole);
+        dateItem->setData(Qt::AlignTop, Qt::TextAlignmentRole);
 
         QStandardItem *userItem = new QStandardItem();
         userItem->setData(revision->getUser(), Qt::UserRole);
         userItem->setData(revision->getUser(), Qt::DisplayRole);
+        userItem->setData(Qt::AlignTop, Qt::TextAlignmentRole);
 
         QStandardItem *commentsItem = new QStandardItem();
         commentsItem->setData(revision->getComment(), Qt::UserRole);
