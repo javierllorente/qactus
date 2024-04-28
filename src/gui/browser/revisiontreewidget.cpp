@@ -101,6 +101,7 @@ void RevisionTreeWidget::addRevision(OBSRevision *revision)
         QStandardItem *commentsItem = new QStandardItem();
         commentsItem->setData(revision->getComment(), Qt::UserRole);
         commentsItem->setData(revision->getComment(), Qt::DisplayRole);
+        commentsItem->setData(Qt::AlignTop, Qt::TextAlignmentRole);
 
         QList<QStandardItem *> items;
         items << revItem << dateItem << userItem << commentsItem;
