@@ -29,7 +29,7 @@
    <item>
     <widget class="QSplitter" name="hSplitterBrowser">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0,0">
@@ -37,7 +37,7 @@
         <number>0</number>
        </property>
        <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
+        <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
        </property>
        <item>
         <widget class="QLineEdit" name="lineEditFilter">
@@ -58,7 +58,7 @@
           </sizepolicy>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
@@ -84,7 +84,7 @@
        <item>
         <widget class="QTabWidget" name="tabWidgetPackages">
          <property name="tabPosition">
-          <enum>QTabWidget::North</enum>
+          <enum>QTabWidget::TabPosition::North</enum>
          </property>
          <property name="currentIndex">
           <number>0</number>
@@ -118,7 +118,7 @@
               </sizepolicy>
              </property>
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <widget class="QWidget" name="verticalLayoutWidget_3">
               <layout class="QVBoxLayout" name="verticalLayout_labels" stretch="0,0,1">
@@ -126,7 +126,7 @@
                 <number>0</number>
                </property>
                <property name="sizeConstraint">
-                <enum>QLayout::SetDefaultConstraint</enum>
+                <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
                </property>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout">
@@ -153,7 +153,7 @@
                     <string/>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -200,7 +200,7 @@
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_3">
                  <property name="sizeConstraint">
-                  <enum>QLayout::SetDefaultConstraint</enum>
+                  <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
                  </property>
                  <item>
                   <widget class="QLabel" name="description">
@@ -214,7 +214,7 @@
                     <string/>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -242,7 +242,7 @@
                </sizepolicy>
               </property>
               <property name="editTriggers">
-               <set>QAbstractItemView::NoEditTriggers</set>
+               <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
               </property>
               <property name="alternatingRowColors">
                <bool>true</bool>
@@ -278,7 +278,7 @@
            <item>
             <widget class="FileTreeWidget" name="treeFiles">
              <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
+              <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
              </property>
              <property name="alternatingRowColors">
               <bool>true</bool>
@@ -299,7 +299,11 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="RevisionTreeWidget" name="treeRevisions"/>
+            <widget class="RevisionTreeWidget" name="treeRevisions">
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -309,7 +313,11 @@
           </attribute>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
-            <widget class="RequestsTreeWidget" name="treeRequests"/>
+            <widget class="RequestsTreeWidget" name="treeRequests">
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
