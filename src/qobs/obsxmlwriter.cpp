@@ -61,7 +61,7 @@ void OBSXmlWriter::createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepos
     xmlWriter.writeEmptyElement("path");
     xmlWriter.writeAttribute("project", repository->getProject());
     xmlWriter.writeAttribute("repository", repository->getRepository());
-    for (auto arch : repository->getArchs()) {
+    for (auto&& arch : repository->getArchs()) {
         xmlWriter.writeTextElement("arch", arch);
     }
     xmlWriter.writeEndElement();
@@ -71,7 +71,7 @@ void OBSXmlWriter::createWatchListElement(QXmlStreamWriter &xmlWriter, const QSt
 {
     xmlWriter.writeStartElement("watchlist");
 
-    for (const QString &item : qAsConst(watchList)) {
+    for (auto&& item : std::as_const(watchList)) {
         if (item.contains("/")) {
             QStringList location = item.split("/");
             xmlWriter.writeStartElement("package");
@@ -95,10 +95,10 @@ void OBSXmlWriter::createUserRoles(QXmlStreamWriter &xmlWriter, const QMultiHash
         QStringList users = userRoles.keys();
         QString userAdded;
 
-        for (auto user : users) {
+        for (auto&& user : std::as_const(users)) {
             QStringList roles = userRoles.values(user);
             if (user!=userAdded) {
-                for (auto role : roles) {
+                for (auto&& role : std::as_const(roles)) {
                     xmlWriter.writeEmptyElement(tag);
                     xmlWriter.writeAttribute(type, user);
                     xmlWriter.writeAttribute("role", role);
@@ -116,7 +116,7 @@ void OBSXmlWriter::createRepositoryFlags(QXmlStreamWriter &xmlWriter, const QHas
     if (!flag.isEmpty()) {
         xmlWriter.writeStartElement(type);
 
-        for (auto repository : repositories) {
+        for (auto&& repository : std::as_const(repositories)) {
             bool enabled = flag.value(repository);
             QString enabledStr = enabled ? "enable" : "disable";
 
@@ -150,7 +150,7 @@ QByteArray OBSXmlWriter::createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) cons
     createRepositoryFlags(xmlWriter, prjMetaConfig->getPublishFlag(), "publish");
     createRepositoryFlags(xmlWriter, prjMetaConfig->getUseForBuildFlag(), "useforbuild");
 
-    for (auto repository : prjMetaConfig->getRepositories()) {
+    for (auto&& repository : prjMetaConfig->getRepositories()) {
         createRepositoryElement(xmlWriter, repository);
     }
 
