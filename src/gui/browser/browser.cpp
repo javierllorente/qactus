@@ -110,6 +110,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingResultList, ui->treeBuildResults, &BuildResultTreeWidget::finishedAddingResults);
     connect(m_obs, &OBS::finishedParsingResultList, this, &Browser::finishedAddingResults);
 
+    connect(m_obs, &OBS::finishedParsingLatestRevision, this, &Browser::setLatestRevision);
+
     // Model selection's signals-slots
     packagesSelectionModel = ui->treePackages->selectionModel();
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
@@ -236,6 +238,7 @@ void Browser::clearPackageFilter()
 void Browser::clearOverview()
 {
     ui->title->clear();
+    ui->latestRevision->clear();
     ui->link->clear();
     ui->description->clear();
 }
@@ -608,6 +611,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         switch (ui->tabWidgetPackages->currentIndex()) {
             case 0:
                 m_obs->getPackageMetaConfig(currentProject, currentPackage);
+                m_obs->getLatestRevision(currentProject, currentPackage);
                 getBuildResults(currentProject, currentPackage);
                 break;
             case 1:
@@ -645,6 +649,7 @@ void Browser::slotTabIndexChanged(int index)
             case 0:
                 if (currentPackage != overviewPackage) {
                     m_obs->getPackageMetaConfig(currentProject, currentPackage);
+                    m_obs->getLatestRevision(currentProject, currentPackage);
                     getBuildResults(currentProject, currentPackage);
                 }
                 break;
@@ -695,6 +700,15 @@ void Browser::slotPkgMetaConfigFetched(OBSPkgMetaConfig *pkgMetaConfig)
     }
     ui->description->setText(description);
     overviewPackage = pkgMetaConfig->getName();
+}
+
+void Browser::setLatestRevision(OBSRevision *revision)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    uint unixTime = revision->getTime();
+    QDateTime dateTime = QDateTime::fromSecsSinceEpoch(qint64(unixTime), Qt::UTC);
+    QString dateStr = dateTime.toString("dd/MM/yyyy H:mm");
+    ui->latestRevision->setText(dateStr);
 }
 
 void Browser::getPackageFiles(const QString &package)

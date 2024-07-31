@@ -166,6 +166,25 @@
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QLabel" name="latestRevision">
+                   <property name="maximumSize">
+                    <size>
+                     <width>125</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                   <property name="indent">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </item>
                <item>
