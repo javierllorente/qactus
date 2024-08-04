@@ -112,7 +112,7 @@
            <item>
             <widget class="QSplitter" name="vSplitterBrowser">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -121,7 +121,7 @@
               <enum>Qt::Orientation::Vertical</enum>
              </property>
              <widget class="QWidget" name="verticalLayoutWidget_3">
-              <layout class="QVBoxLayout" name="verticalLayout_labels" stretch="0,0,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0">
                <property name="spacing">
                 <number>0</number>
                </property>
@@ -129,7 +129,10 @@
                 <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
                </property>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout">
+                <layout class="QVBoxLayout" name="verticalLayout">
+                 <property name="sizeConstraint">
+                  <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+                 </property>
                  <item>
                   <widget class="QLabel" name="title">
                    <property name="sizePolicy">
@@ -167,29 +170,6 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="latestRevision">
-                   <property name="maximumSize">
-                    <size>
-                     <width>125</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-                   </property>
-                   <property name="indent">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <item>
                   <widget class="QLabel" name="link">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -214,17 +194,10 @@
                    </property>
                   </widget>
                  </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
-                 <property name="sizeConstraint">
-                  <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-                 </property>
                  <item>
                   <widget class="QLabel" name="description">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+                    <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -248,6 +221,67 @@
                     <bool>false</bool>
                    </property>
                   </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_8">
+                 <property name="leftMargin">
+                  <number>4</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>12</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="latestRevision">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>125</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                   <property name="indent">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </item>
