@@ -118,7 +118,7 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
             }
 
             while (xml.readNextStartElement()) {
-                if (xml.name().toString() ==" arch" && xml.isStartElement()) {
+                if (xml.name().toString() == "arch" && xml.isStartElement()) {
                     repository->appendArch(xml.readElementText());
                 }
             }
