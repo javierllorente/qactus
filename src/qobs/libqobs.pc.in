@@ -4,6 +4,6 @@ includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
 Name: libqobs
 Description: Library for interfacing with Open Build Service instances
 Version: @PROJECT_VERSION@
-Requires: Qt5Core, Qt5Gui, Qt5Network
+Requires: Qt6Core, Qt6Gui, Qt6Network
 Libs: -L${libdir} -lqobs
 Cflags: -I${includedir}
