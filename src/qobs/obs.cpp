@@ -77,8 +77,6 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SIGNAL(finishedParsingResult(OBSResult*)));
     connect(xmlReader, &OBSXmlReader::finishedParsingResultList, this, &OBS::finishedParsingResultList);
-    connect(xmlReader, SIGNAL(finishedParsingRevision(OBSRevision*)),
-            this, SIGNAL(finishedParsingRevision(OBSRevision*)));
     connect(xmlReader, &OBSXmlReader::finishedParsingRevision,
             this, &OBS::finishedParsingRevision);
     connect(xmlReader, &OBSXmlReader::finishedParsingLatestRevision,
