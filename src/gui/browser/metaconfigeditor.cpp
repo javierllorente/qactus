@@ -205,7 +205,6 @@ void MetaConfigEditor::slotSetupRepositoryFlagsCompleter(OBSPrjMetaConfig *prjMe
             repositoryFlagsCompleter->appendRepository(repository->getName());
         }
     }
-    delete prjMetaConfig;
 }
 
 void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
