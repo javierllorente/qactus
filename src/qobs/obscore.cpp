@@ -159,7 +159,7 @@ void OBSCore::getRequests(OBSCore::RequestType type)
         reply = request(resource);
         break;
     case OBSCore::OutgoingRequests:
-        resource = createReqResourceStr("new", "creator");
+        resource = createReqResourceStr("new,review", "creator");
         reply = request(resource);
         break;
     case OBSCore::DeclinedRequests:
