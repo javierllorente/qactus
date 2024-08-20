@@ -52,8 +52,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->verticalLayout_2->addWidget(m_resultsToolbar);
 
     // Hide files and revisions tabs by default
-    ui->tabWidgetPackages->setTabVisible(1, false);
-    ui->tabWidgetPackages->setTabVisible(2, false);
+    ui->tabWidget->setTabVisible(1, false);
+    ui->tabWidget->setTabVisible(2, false);
 
     connect(m_obs, &OBS::finishedParsingProjectList, this, &Browser::addProjectList);
     connect(m_locationBar, &LocationBar::setCurrentProject, this, &Browser::setCurrentProject);
@@ -133,7 +133,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
 
     connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->treePackages, &PackageTreeWidget::filterPackages);
 
-    connect(ui->tabWidgetPackages, &QTabWidget::currentChanged, this, &Browser::slotTabIndexChanged);
+    connect(ui->tabWidget, &QTabWidget::currentChanged, this, &Browser::slotTabIndexChanged);
 
     connect(m_obs, &OBS::finishedParsingRevision, ui->treeRevisions, &RevisionTreeWidget::addRevision);
     connect(m_obs, &OBS::finishedParsingRevisionList, ui->treeRevisions, &RevisionTreeWidget::revisionsAdded);
@@ -608,8 +608,8 @@ void Browser::slotProjectSelectionChanged()
 {
     qDebug() << __PRETTY_FUNCTION__;
     if (!currentProject.isEmpty()) {
-        ui->tabWidgetPackages->setTabVisible(1, false);
-        ui->tabWidgetPackages->setTabVisible(2, false);
+        ui->tabWidget->setTabVisible(1, false);
+        ui->tabWidget->setTabVisible(2, false);
     }
 }
 
@@ -619,13 +619,13 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     Q_UNUSED(deselected)
 
     if (!selected.isEmpty()) {
-        ui->tabWidgetPackages->setTabVisible(1, true);
-        ui->tabWidgetPackages->setTabVisible(2, true);
+        ui->tabWidget->setTabVisible(1, true);
+        ui->tabWidget->setTabVisible(2, true);
         QModelIndex selectedIndex = selected.indexes().at(0);
         currentPackage = selectedIndex.data().toString();
         m_locationBar->setText(currentProject + "/" + currentPackage);
 
-        switch (ui->tabWidgetPackages->currentIndex()) {
+        switch (ui->tabWidget->currentIndex()) {
             case 0:
                 m_obs->getPackageMetaConfig(currentProject, currentPackage);
                 m_obs->getLatestRevision(currentProject, currentPackage);
