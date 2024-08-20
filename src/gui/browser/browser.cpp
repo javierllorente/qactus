@@ -76,7 +76,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
         if (status->getCode() == "ok") {
             m_locationBar->addProject(status->getProject());
             setCurrentProject(status->getProject());
-            showTrayMessage(APP_NAME, tr("Project %1 has been created").arg(status->getProject()));
+            emit showTrayMessage(APP_NAME, tr("Project %1 has been created").arg(status->getProject()));
         }
     });
 
@@ -84,7 +84,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
         if (status->getCode()=="ok") {
             ui->treePackages->addPackage(status->getPackage());
             ui->treePackages->setCurrentPackage(status->getPackage());
-            showTrayMessage(APP_NAME, tr("Package %1 has been created").arg(status->getPackage()));
+            emit showTrayMessage(APP_NAME, tr("Package %1 has been created").arg(status->getPackage()));
         }
     });
 
@@ -788,7 +788,7 @@ void Browser::slotUploadFile(OBSRevision *revision)
     if (currentProject == revision->getProject() && currentPackage == revision->getPackage()) {
         getPackageFiles(currentPackage);
     }
-    showTrayMessage(APP_NAME, tr("The file %1 has been uploaded").arg(revision->getFile()));
+    emit showTrayMessage(APP_NAME, tr("The file %1 has been uploaded").arg(revision->getFile()));
 
     emit updateStatusBar(tr("Done"), true);
 }
@@ -841,7 +841,7 @@ void Browser::slotBranchPackage(OBSStatus *status)
         QString newBranch = status->getProject();
         m_locationBar->addProject(newBranch);
         setCurrentProject(newBranch);
-        showTrayMessage(APP_NAME, tr("The package %1 has been branched").arg(status->getPackage()));
+        emit showTrayMessage(APP_NAME, tr("The package %1 has been branched").arg(status->getPackage()));
     } else {
         const QString title = tr("Warning");
         const QString text = status->getSummary() + "<br>" + status->getDetails();
@@ -861,7 +861,7 @@ void Browser::slotFileFetched(const QString &fileName, const QByteArray &data)
     file.close();
 
     if (bytesWritten!=-1) {
-        showTrayMessage(APP_NAME, tr("File %1 downloaded successfuly").arg(fileName));
+        emit showTrayMessage(APP_NAME, tr("File %1 downloaded successfuly").arg(fileName));
     }
 }
 
@@ -908,7 +908,7 @@ void Browser::slotDeleteProject(OBSStatus *status)
     if (status->getCode()=="ok") {
         m_locationBar->removeProject(status->getProject());
 
-        showTrayMessage(APP_NAME, tr("The project %1 has been deleted").arg(status->getProject()));
+        emit showTrayMessage(APP_NAME, tr("The project %1 has been deleted").arg(status->getProject()));
     } else {
         const QString title = tr("Warning");
         const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getDetails());
@@ -926,7 +926,7 @@ void Browser::slotDeletePackage(OBSStatus *status)
         if (status->getProject() == currentProject) {
             ui->treePackages->removePackage(status->getPackage());
         }
-        showTrayMessage(APP_NAME, tr("The package %1 has been deleted").arg(status->getPackage()));
+        emit showTrayMessage(APP_NAME, tr("The package %1 has been deleted").arg(status->getPackage()));
     } else {
         const QString title = tr("Warning");
         const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getDetails());
@@ -954,7 +954,7 @@ void Browser::slotDeleteFile(OBSStatus *status)
                 emit fileSelectionChanged();
             }
         }
-        showTrayMessage(APP_NAME, tr("The file %1 has been deleted").arg(status->getDetails()));
+        emit showTrayMessage(APP_NAME, tr("The file %1 has been deleted").arg(status->getDetails()));
     } else {
         const QString title = tr("Warning");
         const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getDetails());
