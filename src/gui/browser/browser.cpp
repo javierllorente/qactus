@@ -51,6 +51,10 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->verticalLayout_4->addWidget(m_filesToolbar);
     ui->verticalLayout_2->addWidget(m_resultsToolbar);
 
+    // Hide files and revisions tabs by default
+    ui->tabWidgetPackages->setTabVisible(1, false);
+    ui->tabWidgetPackages->setTabVisible(2, false);
+
     connect(m_obs, &OBS::finishedParsingProjectList, this, &Browser::addProjectList);
     connect(m_locationBar, &LocationBar::setCurrentProject, this, &Browser::setCurrentProject);
     connect(m_locationBar, &LocationBar::returnPressed, this, &Browser::setCurrentProject);
@@ -113,6 +117,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingLatestRevision, this, &Browser::setLatestRevision);
 
     // Model selection's signals-slots
+    connect(this, &Browser::projectSelectionChanged, this, &Browser::slotProjectSelectionChanged);
+
     packagesSelectionModel = ui->treePackages->selectionModel();
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::packageSelectionChanged);
@@ -598,12 +604,23 @@ void Browser::gePackagetRequests(const QString &project, const QString &package)
     m_obs->getPackageRequests(project, package);
 }
 
+void Browser::slotProjectSelectionChanged()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    if (!currentProject.isEmpty()) {
+        ui->tabWidgetPackages->setTabVisible(1, false);
+        ui->tabWidgetPackages->setTabVisible(2, false);
+    }
+}
+
 void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     qDebug() << __PRETTY_FUNCTION__;
     Q_UNUSED(deselected)
 
     if (!selected.isEmpty()) {
+        ui->tabWidgetPackages->setTabVisible(1, true);
+        ui->tabWidgetPackages->setTabVisible(2, true);
         QModelIndex selectedIndex = selected.indexes().at(0);
         currentPackage = selectedIndex.data().toString();
         m_locationBar->setText(currentProject + "/" + currentPackage);
