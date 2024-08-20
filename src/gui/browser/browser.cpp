@@ -654,7 +654,6 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         ui->treeRevisions->clearModel();
         ui->treeRequests->clearModel();
 
-        emit projectSelectionChanged();
         ui->treeFiles->setAcceptDrops(false);
     }
 }
