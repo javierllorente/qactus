@@ -101,7 +101,7 @@ private slots:
     void slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotTabIndexChanged(int index);
     void slotSelectPackage();
-    void slotPkgMetaConfigFetched(OBSPkgMetaConfig *pkgMetaConfig);
+    void slotMetaConfigFetched(OBSMetaConfig *metaConfig);
     void setLatestRevision(OBSRevision *revision);
     void getPackageFiles(const QString &package);
     void getBuildResults(const QString &project, const QString &package);

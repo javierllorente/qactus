@@ -123,8 +123,9 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::packageSelectionChanged);
 
-    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, this, &Browser::slotPkgMetaConfigFetched);
-
+    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &Browser::slotMetaConfigFetched);
+    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, this, &Browser::slotMetaConfigFetched);    
+    
     filesSelectionModel = ui->treeFiles->selectionModel();
     connect(filesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::fileSelectionChanged);
 
@@ -610,7 +611,9 @@ void Browser::slotProjectSelectionChanged()
     if (!currentProject.isEmpty()) {
         ui->tabWidget->setTabVisible(1, false);
         ui->tabWidget->setTabVisible(2, false);
+        m_obs->getProjectMetaConfig(currentProject);
     }
+    currentPackage = "";
 }
 
 void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
@@ -698,24 +701,28 @@ void Browser::slotSelectPackage()
     }
 }
 
-void Browser::slotPkgMetaConfigFetched(OBSPkgMetaConfig *pkgMetaConfig)
+void Browser::slotMetaConfigFetched(OBSMetaConfig *metaConfig)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    QString title = pkgMetaConfig->getTitle();
+    QString title = metaConfig->getTitle();
     if (title.isEmpty()) {
-        title = pkgMetaConfig->getName();
+        title = metaConfig->getName();
     }
     ui->title->setText(title);
 
-    QString url = pkgMetaConfig->getUrl().toString();
-    ui->link->setText(!url.isEmpty() ? "<a href=\"" + url + "\">" + url + "</a>" : "");
-    ui->link->setVisible(!url.isEmpty());
-    QString description = pkgMetaConfig->getDescription();
+    OBSPkgMetaConfig *pkgMetaConfig = dynamic_cast<OBSPkgMetaConfig *>(metaConfig);
+    if (pkgMetaConfig) {
+        QString url = pkgMetaConfig->getUrl().toString();
+        ui->link->setText(!url.isEmpty() ? "<a href=\"" + url + "\">" + url + "</a>" : "");
+        ui->link->setVisible(!url.isEmpty());
+    }
+    ui->link->setVisible(pkgMetaConfig);
+    QString description = metaConfig->getDescription();
     if (description.isEmpty()) {
         description = "No description set";
     }
     ui->description->setText(description);
-    overviewPackage = pkgMetaConfig->getName();
+    overviewPackage = metaConfig->getName();
 }
 
 void Browser::setLatestRevision(OBSRevision *revision)
