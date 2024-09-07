@@ -48,6 +48,7 @@ public:
     void getOutgoingRequests();
     void getDeclinedRequests();
     int getRequestCount();
+    void getProjectRequests(const QString &project);
     void getPackageRequests(const QString &project, const QString &package);
     void getRequestDiff(const QString &source);
     bool isIncludeHomeProjects() const;

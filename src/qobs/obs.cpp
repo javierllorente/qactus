@@ -216,6 +216,11 @@ int OBS::getRequestCount()
     return xmlReader->getRequestNumber();
 }
 
+void OBS::getProjectRequests(const QString &project)
+{
+    obsCore->getProjectRequests(project);
+}
+
 void OBS::getPackageRequests(const QString &project, const QString &package)
 {
     obsCore->getPackageRequests(project, package);

@@ -191,6 +191,17 @@ void OBSCore::getDeclinedRequests()
     getRequests(OBSCore::DeclinedRequests);
 }
 
+void OBSCore::getProjectRequests(const QString &project)
+{
+    QString types = "submit,delete,add_role,change_devel,maintenance_incident,maintenance_release,release";
+    QString states = "new,review";
+    QString resource = QString("?view=collection&types=%1&states=%2&project=%3")
+            .arg(types, states, project);
+    QNetworkReply *reply = requestRequest(resource);
+    reply->setProperty("reqtype", OBSCore::ProjectRequests);
+    reply->setProperty("prjreq", project);
+}
+
 void OBSCore::getPackageRequests(const QString &project, const QString &package)
 {
     QString types = "submit,delete,add_role,change_devel,maintenance_incident,maintenance_release,release";
@@ -489,6 +500,16 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 qDebug() << reqTypeStr << "Collection";
                 xmlReader->parseDeclinedRequests(dataStr);
                 break;
+
+            case OBSCore::ProjectRequests: {
+                qDebug() << reqTypeStr << "Collection";
+                QString project;
+                if (reply->property("prjreq").isValid()) {
+                    project = reply->property("prjreq").toString();
+                }
+                xmlReader->parseRequests(project, "", dataStr);
+                break;
+            }
 
             case OBSCore::PackageRequests: {
                 qDebug() << reqTypeStr << "Collection";

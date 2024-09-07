@@ -47,6 +47,7 @@ public:
     void getIncomingRequests();
     void getOutgoingRequests();
     void getDeclinedRequests();
+    void getProjectRequests(const QString &project);
     void getPackageRequests(const QString &project, const QString &package);
     QNetworkReply *postRequest(const QString &resource, const QByteArray &data, const QString &contentTypeHeader);
     QNetworkReply *putRequest(const QString &resource, const QByteArray &data);
@@ -142,6 +143,7 @@ private:
         IncomingRequests,
         OutgoingRequests,
         DeclinedRequests,
+        ProjectRequests,
         PackageRequests,
         ChangeRequestState,
         SRDiff,
