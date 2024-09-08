@@ -82,6 +82,7 @@ private:
     QString currentProject;
     QString currentPackage;
     QString selectPackage;
+    QString overviewProject;
     QString overviewPackage;
     QMenu *m_packagesMenu;
     QMenu *m_filesMenu;
@@ -93,6 +94,7 @@ private:
     void setupModels();
     void getPackages(const QString &project);
     void getRevisions(const QString &project, const QString &package);
+    void getProjectRequests(const QString &project);
     void gePackagetRequests(const QString &project, const QString &package);
 
 private slots:

@@ -388,18 +388,27 @@ QString Browser::getCurrentProject() const
 
 void Browser::setCurrentProject(const QString &location)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__ << "location =" << location;
     clearOverview();
+    currentProject = "";
+    currentPackage = "";
+    
     if (!location.isEmpty()) {
+        if (location.contains("/")) {
+            QStringList locationSplit = location.split("/");
+            currentProject = locationSplit[0];
+            currentPackage = locationSplit[1].replace("/", "");
+        } else {
+            currentProject = location;
+        }        
 
-        QString project = location.contains("/") ? location.split("/")[0] : location;
-        selectPackage = location.contains("/")
-                ? location.split("/")[1].replace("/", "") : "";
+        selectPackage = currentPackage;
 
         m_locationBar->setText(location);
-        getPackages(project);
+        getPackages(currentProject);
         emit toggleBookmarkActions(location);
     }
+    qDebug() << __PRETTY_FUNCTION__ << "currentProject =" << currentProject << "currentPackage =" << currentPackage;
 
     emit projectSelectionChanged();
 }
@@ -597,6 +606,14 @@ void Browser::getRevisions(const QString &project, const QString &package)
     m_obs->getRevisions(project, package);
 }
 
+void Browser::getProjectRequests(const QString &project)
+{
+    qDebug() << __PRETTY_FUNCTION__ << project;
+    emit updateStatusBar(tr("Getting project requests..."), false);
+    ui->treeRequests->clearModel();
+    m_obs->getProjectRequests(project);
+}
+
 void Browser::gePackagetRequests(const QString &project, const QString &package)
 {
     qDebug() << __PRETTY_FUNCTION__ << project << package;
@@ -607,11 +624,19 @@ void Browser::gePackagetRequests(const QString &project, const QString &package)
 
 void Browser::slotProjectSelectionChanged()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    if (!currentProject.isEmpty()) {
+    qDebug() << __PRETTY_FUNCTION__ << "currentProject =" << currentProject << "currentPackage =" << currentPackage;
+    if (!currentProject.isEmpty() && currentPackage.isEmpty()) {
         ui->tabWidget->setTabVisible(1, false);
         ui->tabWidget->setTabVisible(2, false);
-        m_obs->getProjectMetaConfig(currentProject);
+        
+         switch (ui->tabWidget->currentIndex()) {
+            case 0:
+                m_obs->getProjectMetaConfig(currentProject);
+                break;
+            case 3:
+                m_obs->getProjectRequests(currentProject);
+                break;
+         }
     }
     currentPackage = "";
 }
@@ -663,10 +688,13 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 
 void Browser::slotTabIndexChanged(int index)
 {
-    if (!currentProject.isEmpty() && !currentPackage.isEmpty()) {
+    qDebug() << __PRETTY_FUNCTION__ << "currentProject =" << currentProject;
+    if (!currentProject.isEmpty()) {
         switch (index) {
             case 0:
-                if (currentPackage != overviewPackage) {
+                if (currentPackage.isEmpty() && currentProject != overviewProject) {
+                    m_obs->getProjectMetaConfig(currentProject);
+                } else if (currentPackage != overviewPackage) {
                     m_obs->getPackageMetaConfig(currentProject, currentPackage);
                     m_obs->getLatestRevision(currentProject, currentPackage);
                     getBuildResults(currentProject, currentPackage);
@@ -683,7 +711,9 @@ void Browser::slotTabIndexChanged(int index)
                 }
                 break;
             case 3:
-                if (currentPackage != ui->treeRequests->getPackage()) {
+                if (currentProject != ui->treeRequests->getProject() && currentPackage.isEmpty()) {
+                    getProjectRequests(currentProject);
+                } else if (currentPackage != ui->treeRequests->getPackage()) {
                     gePackagetRequests(currentProject, currentPackage);
                 }
                 break;
@@ -715,6 +745,9 @@ void Browser::slotMetaConfigFetched(OBSMetaConfig *metaConfig)
         QString url = pkgMetaConfig->getUrl().toString();
         ui->link->setText(!url.isEmpty() ? "<a href=\"" + url + "\">" + url + "</a>" : "");
         ui->link->setVisible(!url.isEmpty());
+        overviewPackage = metaConfig->getName();
+    } else {
+        overviewProject = metaConfig->getName();
     }
     ui->link->setVisible(pkgMetaConfig);
     QString description = metaConfig->getDescription();
@@ -722,7 +755,6 @@ void Browser::slotMetaConfigFetched(OBSMetaConfig *metaConfig)
         description = "No description set";
     }
     ui->description->setText(description);
-    overviewPackage = metaConfig->getName();
 }
 
 void Browser::setLatestRevision(OBSRevision *revision)
