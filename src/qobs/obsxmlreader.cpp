@@ -818,7 +818,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest->setActionType(attrib.value("type").toString());
-                qDebug() << "Action type:" <<  obsRequest->getActionType();
+                // qDebug() << "Action type:" <<  obsRequest->getActionType();
             }
         } // action
 
@@ -827,7 +827,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest->setSourceProject(attrib.value("project").toString());
                 obsRequest->setSourcePackage(attrib.value("package").toString());
-                qDebug() << "Source: " <<  obsRequest->getSource();
+                // qDebug() << "Source: " <<  obsRequest->getSource();
             }
         } // source
 
@@ -836,7 +836,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest->setTargetProject(attrib.value("project").toString());
                 obsRequest->setTargetPackage(attrib.value("package").toString());
-                qDebug() << "Target: " <<  obsRequest->getTarget();
+                // qDebug() << "Target: " <<  obsRequest->getTarget();
             }
         } // target
 
@@ -844,14 +844,14 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
                 obsRequest->setState(attrib.value("name").toString());
-                qDebug() << "State: " <<  obsRequest->getState();
+                // qDebug() << "State: " <<  obsRequest->getState();
                 obsRequest->setRequester(attrib.value("who").toString());
-                qDebug() << "Requester: " <<  obsRequest->getRequester();
+                // qDebug() << "Requester: " <<  obsRequest->getRequester();
                 QString date = attrib.value("when").toString();
                 // Replace the "T" (as in 2015-03-13T20:01:33)
                 date.replace(10, 1, " ");
                 obsRequest->setDate(date);
-                qDebug() << "Date: " <<  obsRequest->getDate();
+                // qDebug() << "Date: " <<  obsRequest->getDate();
             }
         } // state
 
@@ -859,7 +859,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             if (xml.isStartElement()) {
                 xml.readNext();
                 obsRequest->setDescription(xml.text().toString());
-                qDebug() << "Description:\n" <<  obsRequest->getDescription();
+                // qDebug() << "Description:\n" <<  obsRequest->getDescription();
                 // if tag is not empty (ie: <description/>), read next start element
                 if (!xml.text().isEmpty()) {
                     xml.readNextStartElement();
