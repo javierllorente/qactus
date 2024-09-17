@@ -39,6 +39,8 @@ public:
     void createPackagesContextMenu(QMenu *packagesMenu);
     void createFilesContextMenu(QMenu *filesMenu);
     void createResultsContextMenu(QMenu *resultsMenu);
+    QString getLocationProject() const;
+    QString getLocationPackage() const;
     bool hasProjectSelection();
     bool hasPackageSelection();
     bool hasFileSelection();
@@ -62,7 +64,10 @@ public slots:
     void getProjects();
     void goHome();
     QString getCurrentProject() const;
-    void setCurrentProject(const QString &location);
+    void load(const QString &location);
+    void goTo(const QString &location);
+    void handleProjectTasks();
+    void handlePackageTasks();
     void slotSelectedPackageNotFound(const QString &package);
     void downloadFile();
     void uploadSelectedFile();
@@ -90,12 +95,13 @@ private:
     QToolBar *m_packagesToolbar;
     QToolBar *m_filesToolbar;
     QToolBar *m_resultsToolbar;
+    bool m_loaded;
     void writeSettings();
     void setupModels();
     void getPackages(const QString &project);
     void getRevisions(const QString &project, const QString &package);
     void getProjectRequests(const QString &project);
-    void gePackagetRequests(const QString &project, const QString &package);
+    void getPackageRequests(const QString &project, const QString &package);
 
 private slots:
     void slotContextMenuPackages(const QPoint &point);

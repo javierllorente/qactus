@@ -32,7 +32,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     m_resultsMenu(nullptr),
     m_packagesToolbar(new QToolBar(this)),
     m_filesToolbar(new QToolBar(this)),
-    m_resultsToolbar(new QToolBar(this))
+    m_resultsToolbar(new QToolBar(this)),
+    m_loaded(false)
 {
     ui->setupUi(this);
 
@@ -56,8 +57,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->tabWidget->setTabVisible(2, false);
 
     connect(m_obs, &OBS::finishedParsingProjectList, this, &Browser::addProjectList);
-    connect(m_locationBar, &LocationBar::setCurrentProject, this, &Browser::setCurrentProject);
-    connect(m_locationBar, &LocationBar::returnPressed, this, &Browser::setCurrentProject);
+    connect(m_locationBar, &LocationBar::setCurrentProject, this, &Browser::load);
+    connect(m_locationBar, &LocationBar::returnPressed, this, &Browser::load);
 
     connect(m_obs, &OBS::finishedParsingFile, this, &Browser::addFile);
     connect(m_obs, &OBS::finishedParsingFileList, ui->treeFiles, &FileTreeWidget::filesAdded);
@@ -79,7 +80,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, [=](OBSStatus *status) {
         if (status->getCode() == "ok") {
             m_locationBar->addProject(status->getProject());
-            setCurrentProject(status->getProject());
+            goTo(status->getProject());
             emit showTrayMessage(APP_NAME, tr("Project %1 has been created").arg(status->getProject()));
         }
     });
@@ -192,6 +193,25 @@ void Browser::createResultsContextMenu(QMenu *resultsMenu)
     m_resultsToolbar->addActions(m_resultsMenu->actions());
 }
 
+QString Browser::getLocationProject() const
+{
+    QString location = m_locationBar->text();
+    if (location.contains("/")) {
+        location = location.split("/")[0];
+    }
+    return location;
+}
+
+QString Browser::getLocationPackage() const
+{
+    QString location = m_locationBar->text();
+    QString package;
+    if (location.contains("/")) {
+        package = location.split("/")[1].replace("/", "");
+    }
+    return package;
+}
+
 bool Browser::hasProjectSelection()
 {
     return (!currentProject.isEmpty());
@@ -248,6 +268,8 @@ void Browser::clearOverview()
     ui->latestRevision->clear();
     ui->link->clear();
     ui->description->clear();
+    overviewProject.clear();
+    overviewPackage.clear();
 }
 
 void Browser::newProject()
@@ -378,7 +400,7 @@ void Browser::getProjects()
 void Browser::goHome()
 {
     QString userHomeProject = QString("home:%1").arg(m_obs->getUsername());
-    setCurrentProject(userHomeProject);
+    goTo(userHomeProject);
 }
 
 QString Browser::getCurrentProject() const
@@ -386,31 +408,71 @@ QString Browser::getCurrentProject() const
     return currentProject;
 }
 
-void Browser::setCurrentProject(const QString &location)
+void Browser::load(const QString &location)
 {
     qDebug() << __PRETTY_FUNCTION__ << "location =" << location;
-    clearOverview();
-    currentProject = "";
-    currentPackage = "";
+    currentProject = getLocationProject();
+    currentPackage = getLocationPackage();
+    getPackages(currentProject);
     
-    if (!location.isEmpty()) {
-        if (location.contains("/")) {
-            QStringList locationSplit = location.split("/");
-            currentProject = locationSplit[0];
-            currentPackage = locationSplit[1].replace("/", "");
-        } else {
-            currentProject = location;
-        }        
-
-        selectPackage = currentPackage;
-
-        m_locationBar->setText(location);
-        getPackages(currentProject);
-        emit toggleBookmarkActions(location);
+    if (currentPackage.isEmpty()) {
+        handleProjectTasks();
+    } else {
+        handlePackageTasks();
     }
-    qDebug() << __PRETTY_FUNCTION__ << "currentProject =" << currentProject << "currentPackage =" << currentPackage;
 
+    selectPackage = currentPackage;
+    m_locationBar->setText(location);
+    m_loaded = true;
+    emit toggleBookmarkActions(location);
     emit projectSelectionChanged();
+}
+
+void Browser::goTo(const QString &location)
+{
+    m_locationBar->setText(location);
+    load(location);
+}
+
+void Browser::handleProjectTasks()
+{
+    int tabIndex = ui->tabWidget->currentIndex();
+    qDebug() << __PRETTY_FUNCTION__ << "tabIndex =" << tabIndex;
+    switch (tabIndex) {
+        case 0:
+            clearOverview();
+            m_obs->getProjectMetaConfig(getLocationProject());
+        break;
+        case 3:
+            getProjectRequests(getLocationProject());
+        break;
+    }
+}
+
+void Browser::handlePackageTasks()
+{
+    int tabIndex = ui->tabWidget->currentIndex();
+    qDebug() << __PRETTY_FUNCTION__ << "tabIndex =" << tabIndex;
+    QString prj = getLocationProject();
+    QString pkg = getLocationPackage();
+
+    switch (tabIndex) {
+        case 0:
+            clearOverview();
+            m_obs->getPackageMetaConfig(prj, pkg);
+            m_obs->getLatestRevision(prj, pkg);
+            getBuildResults(prj, pkg);
+            break;
+        case 1:
+            getPackageFiles(pkg);
+            break;
+        case 2:
+            getRevisions(prj, pkg);
+            break;
+        case 3:
+            getPackageRequests(prj, pkg);
+            break;
+    }
 }
 
 void Browser::slotSelectedPackageNotFound(const QString &package)
@@ -614,7 +676,7 @@ void Browser::getProjectRequests(const QString &project)
     m_obs->getProjectRequests(project);
 }
 
-void Browser::gePackagetRequests(const QString &project, const QString &package)
+void Browser::getPackageRequests(const QString &project, const QString &package)
 {
     qDebug() << __PRETTY_FUNCTION__ << project << package;
     emit updateStatusBar(tr("Getting package requests..."), false);
@@ -653,6 +715,17 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         currentPackage = selectedIndex.data().toString();
         m_locationBar->setText(currentProject + "/" + currentPackage);
 
+        if (currentPackage.isEmpty() && getLocationPackage().isEmpty()) {
+
+            if (m_loaded) {
+                // Clear project, so that projectA/package to projectA
+                // then tab switch to requests, fetches them
+                clearOverview();
+                m_loaded = false;
+            }
+            return;
+        }
+
         switch (ui->tabWidget->currentIndex()) {
             case 0:
                 m_obs->getPackageMetaConfig(currentProject, currentPackage);
@@ -666,7 +739,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
                 getRevisions(currentProject, currentPackage);
                 break;
             case 3:
-                gePackagetRequests(currentProject, currentPackage);
+                getPackageRequests(currentProject, currentPackage);
                 break;
             default:
                 break;
@@ -688,13 +761,13 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 
 void Browser::slotTabIndexChanged(int index)
 {
-    qDebug() << __PRETTY_FUNCTION__ << "currentProject =" << currentProject;
+    qDebug() << __PRETTY_FUNCTION__ << "tabIndex =" <<  index;
     if (!currentProject.isEmpty()) {
         switch (index) {
             case 0:
                 if (currentPackage.isEmpty() && currentProject != overviewProject) {
                     m_obs->getProjectMetaConfig(currentProject);
-                } else if (currentPackage != overviewPackage) {
+                } else if (!currentPackage.isEmpty() && currentPackage != overviewPackage) {
                     m_obs->getPackageMetaConfig(currentProject, currentPackage);
                     m_obs->getLatestRevision(currentProject, currentPackage);
                     getBuildResults(currentProject, currentPackage);
@@ -714,10 +787,8 @@ void Browser::slotTabIndexChanged(int index)
                 if (currentProject != ui->treeRequests->getProject() && currentPackage.isEmpty()) {
                     getProjectRequests(currentProject);
                 } else if (currentPackage != ui->treeRequests->getPackage()) {
-                    gePackagetRequests(currentProject, currentPackage);
+                    getPackageRequests(currentProject, currentPackage);
                 }
-                break;
-            default:
                 break;
             }
     }
@@ -895,7 +966,7 @@ void Browser::slotBranchPackage(OBSStatus *status)
     if (status->getCode()=="ok") {
         QString newBranch = status->getProject();
         m_locationBar->addProject(newBranch);
-        setCurrentProject(newBranch);
+        goTo(newBranch);
         emit showTrayMessage(APP_NAME, tr("The package %1 has been branched").arg(status->getPackage()));
     } else {
         const QString title = tr("Warning");

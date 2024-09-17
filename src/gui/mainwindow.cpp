@@ -409,7 +409,7 @@ void MainWindow::createActions()
     bookmarkButton->setMenu(bookmarks);
     bookmarkButton->setEnabled(false);
     connect(obs, &OBS::finishedParsingPerson, bookmarks, &Bookmarks::slotLoadBookmarks);
-    connect(bookmarks, &Bookmarks::clicked, browser, &Browser::setCurrentProject);
+    connect(bookmarks, &Bookmarks::clicked, browser, &Browser::goTo);
     connect(browser, &Browser::toggleBookmarkActions, bookmarks, &Bookmarks::toggleActions);
     connect(bookmarks, &Bookmarks::bookmarkAdded, this, &MainWindow::slotUpdatePerson);
     connect(bookmarks, &Bookmarks::bookmarkDeleted, this, &MainWindow::slotUpdatePerson);
