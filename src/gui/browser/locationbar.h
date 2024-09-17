@@ -52,7 +52,7 @@ private slots:
     void autocompletedProject_clicked(const QString &project);
 
 signals:
-    void setCurrentProject(const QString &project);
+    void projectChanged(const QString &project);
     void returnPressed(const QString &location);
 };
 

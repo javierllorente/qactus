@@ -57,7 +57,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->tabWidget->setTabVisible(2, false);
 
     connect(m_obs, &OBS::finishedParsingProjectList, this, &Browser::addProjectList);
-    connect(m_locationBar, &LocationBar::setCurrentProject, this, &Browser::load);
+    connect(m_locationBar, &LocationBar::projectChanged, this, &Browser::load);
     connect(m_locationBar, &LocationBar::returnPressed, this, &Browser::load);
 
     connect(m_obs, &OBS::finishedParsingFile, this, &Browser::addFile);

@@ -101,5 +101,5 @@ void LocationBar::addProjectList(const QStringList &projectList)
 
 void LocationBar::autocompletedProject_clicked(const QString &project)
 {
-    emit setCurrentProject(project);
+    emit projectChanged(project);
 }
