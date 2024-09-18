@@ -711,20 +711,10 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     if (!selected.isEmpty()) {
         ui->tabWidget->setTabVisible(1, true);
         ui->tabWidget->setTabVisible(2, true);
+
         QModelIndex selectedIndex = selected.indexes().at(0);
         currentPackage = selectedIndex.data().toString();
         m_locationBar->setText(currentProject + "/" + currentPackage);
-
-        if (currentPackage.isEmpty() && getLocationPackage().isEmpty()) {
-
-            if (m_loaded) {
-                // Clear project, so that projectA/package to projectA
-                // then tab switch to requests, fetches them
-                clearOverview();
-                m_loaded = false;
-            }
-            return;
-        }
 
         switch (ui->tabWidget->currentIndex()) {
             case 0:
@@ -748,6 +738,17 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         emit packageSelectionChanged();
         ui->treeFiles->setAcceptDrops(true);
     } else {
+        qDebug() << __PRETTY_FUNCTION__ << "currentPackage =" << currentPackage << "locationPackage =" << getLocationPackage();
+        if (currentPackage.isEmpty() && getLocationPackage().isEmpty()) {
+            if (m_loaded) {
+                // Clear project, so that projectA/package to projectA
+                // then tab switch to requests, fetches them
+                clearOverview();
+                m_loaded = false;
+            }
+            return;
+        }
+
         // If there is no package selected, clear both the files, build results, revisions
         // and requests
         ui->treeBuildResults->clearModel();
