@@ -37,10 +37,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createActions();
     setupTreeMonitor();
+    connect(this, &MainWindow::updateStatusBar, this, &MainWindow::slotUpdateStatusBar);
     connect(browser, &Browser::showTrayMessage, trayIcon, [=](const QString &title, const QString &message){
         trayIcon->showMessage(title, message);
     });
-
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupProjectShortcuts);
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupActions);
