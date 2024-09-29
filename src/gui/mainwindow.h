@@ -134,7 +134,7 @@ private:
 
     void writeSettings();
     void readSettings();
-    void readMWSettings();
+    void readWindowSettings();
     void readAuthSettings();
 
     QMessageBox *errorBox;

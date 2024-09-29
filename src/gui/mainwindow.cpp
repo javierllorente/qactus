@@ -662,12 +662,12 @@ void MainWindow::writeSettings()
 void MainWindow::readSettings()
 {
     qDebug() << "MainWindow::readSettings()";
-    readMWSettings();
+    readWindowSettings();
     readProxySettings();
     readAuthSettings();
 }
 
-void MainWindow::readMWSettings()
+void MainWindow::readWindowSettings()
 {
     QSettings settings;
     settings.beginGroup("MainWindow");
