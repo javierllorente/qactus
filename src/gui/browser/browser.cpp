@@ -146,6 +146,13 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(ui->treeRequests, &RequestsTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     readSettings();
+
+    connect(this, &Browser::finishedLoadingProjects, [this] {
+        if  (m_homepage.isEmpty()) {
+            m_homepage = QString("home:%1").arg(m_obs->getUsername());
+        }
+        goTo(m_homepage);
+    });
 }
 
 Browser::~Browser()
@@ -158,6 +165,7 @@ void Browser::readSettings()
 {
     QSettings settings;
     settings.beginGroup("Browser");
+    m_homepage = settings.value("Homepage").toString();
     bool includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
     m_obs->setIncludeHomeProjects(includeHomeProjects);
     ui->hSplitterBrowser->restoreState(settings.value("horizontalSplitterSizes").toByteArray());

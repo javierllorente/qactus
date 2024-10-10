@@ -96,6 +96,7 @@ private:
     QToolBar *m_filesToolbar;
     QToolBar *m_resultsToolbar;
     bool m_loaded;
+    QString m_homepage;
     void writeSettings();
     void setupModels();
     void getPackages(const QString &project);

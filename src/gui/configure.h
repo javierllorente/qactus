@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ private:
     void readTimerSettings();
     void proxySettingsSetup();
     QNetworkProxy proxy;
+    QString homepage;
     bool includeHomeProjects;
     enum ProxyType { NoProxy, SystemProxy, ManualProxy };
     void writeSettings();

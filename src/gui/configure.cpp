@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,6 +96,7 @@ void Configure::writeSettings()
     settings.endGroup();
 
     settings.beginGroup("Browser");
+    settings.setValue("Homepage", ui->lineEditHomepage->text());
     settings.setValue("IncludeHomeProjects", ui->checkBoxHomeProjects->isChecked());
     settings.endGroup();
 }
@@ -153,6 +154,8 @@ void Configure::readSettings()
     QSettings settings;
 
     settings.beginGroup("Browser");
+    homepage = settings.value("Homepage").toString();
+    ui->lineEditHomepage->setText(homepage);
     includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
     ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
     settings.endGroup();
