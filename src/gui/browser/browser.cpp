@@ -419,6 +419,12 @@ QString Browser::getCurrentProject() const
 void Browser::load(const QString &location)
 {
     qDebug() << __PRETTY_FUNCTION__ << "location =" << location;
+
+    if (!m_obs->isAuthenticated()) {
+        showNotAuthenticatedMessage();
+        return;
+    }
+
     currentProject = getLocationProject();
     currentPackage = getLocationPackage();
     getPackages(currentProject);
@@ -656,6 +662,13 @@ void Browser::slotContextMenuPackages(const QPoint &point)
     if (index.isValid() && m_packagesMenu) {
         m_packagesMenu->exec(ui->treePackages->mapToGlobal(point));
     }
+}
+
+void Browser::showNotAuthenticatedMessage()
+{
+    QString title = tr("Error");
+    QString text = tr("Not authenticated<br>Please sign in");
+    QMessageBox::critical(this, title, text);
 }
 
 void Browser::getPackages(const QString &project)

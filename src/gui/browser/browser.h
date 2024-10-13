@@ -99,6 +99,7 @@ private:
     QString m_homepage;
     void writeSettings();
     void setupModels();
+    void showNotAuthenticatedMessage();
     void getPackages(const QString &project);
     void getRevisions(const QString &project, const QString &package);
     void getProjectRequests(const QString &project);
