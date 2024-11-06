@@ -40,6 +40,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->hSplitterBrowser->setSizes((QList<int>({160, 400})));
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 1);
+    ui->treeBuildResults->setVisible(false);
 
     QIcon filterIcon(QIcon::fromTheme("view-filter"));
     ui->lineEditFilter->addAction(filterIcon, QLineEdit::LeadingPosition);
@@ -728,6 +729,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 {
     qDebug() << __PRETTY_FUNCTION__;
     Q_UNUSED(deselected)
+    ui->treeBuildResults->setVisible(!selected.isEmpty());
 
     if (!selected.isEmpty()) {
         ui->tabWidget->setTabVisible(1, true);
