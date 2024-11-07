@@ -40,6 +40,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->hSplitterBrowser->setSizes((QList<int>({160, 400})));
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 1);
+    ui->packages->setVisible(false);
+    ui->packagesCount->setVisible(false);
     ui->treeBuildResults->setVisible(false);
 
     QIcon filterIcon(QIcon::fromTheme("view-filter"));
@@ -109,6 +111,9 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(ui->treeFiles, &FileTreeWidget::droppedFile, this, &Browser::uploadFile);
 
     connect(m_obs, &OBS::finishedParsingPackageList, ui->treePackages, &PackageTreeWidget::addPackageList);
+    connect(m_obs, &OBS::finishedParsingPackageList, this, [this] {
+        ui->packagesCount->setText(QString::number(ui->treePackages->getPackageList().size()));
+    });
     connect(m_obs, &OBS::finishedParsingPackageList, this, &Browser::slotSelectPackage);
     connect(ui->treePackages, &PackageTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
@@ -709,9 +714,12 @@ void Browser::getPackageRequests(const QString &project, const QString &package)
 void Browser::slotProjectSelectionChanged()
 {
     qDebug() << __PRETTY_FUNCTION__ << "currentProject =" << currentProject << "currentPackage =" << currentPackage;
+
     if (!currentProject.isEmpty() && currentPackage.isEmpty()) {
         ui->tabWidget->setTabVisible(1, false);
         ui->tabWidget->setTabVisible(2, false);
+        ui->packages->setVisible(true);
+        ui->packagesCount->setVisible(true);
         
          switch (ui->tabWidget->currentIndex()) {
             case 0:
@@ -734,6 +742,8 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     if (!selected.isEmpty()) {
         ui->tabWidget->setTabVisible(1, true);
         ui->tabWidget->setTabVisible(2, true);
+        ui->packages->setVisible(false);
+        ui->packagesCount->setVisible(false);
 
         QModelIndex selectedIndex = selected.indexes().at(0);
         currentPackage = selectedIndex.data().toString();
@@ -762,6 +772,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         ui->treeFiles->setAcceptDrops(true);
     } else {
         qDebug() << __PRETTY_FUNCTION__ << "currentPackage =" << currentPackage << "locationPackage =" << getLocationPackage();
+
         if (currentPackage.isEmpty() && getLocationPackage().isEmpty()) {
             if (m_loaded) {
                 // Clear project, so that projectA/package to projectA
