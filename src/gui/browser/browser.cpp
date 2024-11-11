@@ -17,6 +17,7 @@
 #include "ui_browser.h"
 #include <QFileDialog>
 #include <QSettings>
+#include <QTimeZone>
 #include "metaconfigeditor.h"
 #include "createrequestdialog.h"
 #include "packageactiondialog.h"
@@ -867,7 +868,7 @@ void Browser::setLatestRevision(OBSRevision *revision)
 {
     qDebug() << __PRETTY_FUNCTION__;
     uint unixTime = revision->getTime();
-    QDateTime dateTime = QDateTime::fromSecsSinceEpoch(qint64(unixTime), Qt::UTC);
+    QDateTime dateTime = QDateTime::fromSecsSinceEpoch(qint64(unixTime), QTimeZone::UTC);
     QString dateStr = dateTime.toString("dd/MM/yyyy H:mm");
     ui->latestRevision->setText(dateStr);
 }

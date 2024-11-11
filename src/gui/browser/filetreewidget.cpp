@@ -15,6 +15,7 @@
  */
 #include "filetreewidget.h"
 #include <QHeaderView>
+#include <QTimeZone>
 
 FileTreeWidget::FileTreeWidget(QWidget *parent) :
     QTreeView(parent),
@@ -121,7 +122,7 @@ void FileTreeWidget::addFile(OBSFile *obsFile)
         QString lastModifiedStr;
         QString lastModifiedUnixTimeStr = obsFile->getLastModified();
 #if QT_VERSION >= 0x050800
-        QDateTime lastModifiedDateTime = QDateTime::fromSecsSinceEpoch(qint64(lastModifiedUnixTimeStr.toInt()), Qt::UTC);
+        QDateTime lastModifiedDateTime = QDateTime::fromSecsSinceEpoch(qint64(lastModifiedUnixTimeStr.toInt()), QTimeZone::UTC);
         lastModifiedStr = lastModifiedDateTime.toString("dd/MM/yyyy H:mm");
 #else
         lastModifiedStr = Utils::unixTimeToDate(lastModifiedUnixTimeStr);

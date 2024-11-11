@@ -16,6 +16,7 @@
 #include "revisiontreewidget.h"
 #include <QDateTime>
 #include <QHeaderView>
+#include <QTimeZone>
 
 RevisionTreeWidget::RevisionTreeWidget(QWidget *parent) :
     QTreeView(parent),
@@ -87,7 +88,7 @@ void RevisionTreeWidget::addRevision(OBSRevision *revision)
         QStandardItem *dateItem = new QStandardItem();
         QString dateStr;
         uint unixTime = revision->getTime();
-        QDateTime dateTime = QDateTime::fromSecsSinceEpoch(qint64(unixTime), Qt::UTC);
+        QDateTime dateTime = QDateTime::fromSecsSinceEpoch(qint64(unixTime), QTimeZone::UTC);
         dateStr = dateTime.toString("dd/MM/yyyy H:mm");
         dateItem->setData(unixTime, Qt::UserRole);
         dateItem->setData(dateStr, Qt::DisplayRole);
