@@ -215,7 +215,6 @@ void MainWindow::setupActions()
     qDebug() << __PRETTY_FUNCTION__;
 
     bool projectSelected = browser->hasProjectSelection();
-    newButton->setEnabled(projectSelected);
     actionNew_project->setEnabled(projectSelected);
     actionDelete_project->setEnabled(projectSelected);
     actionProperties_project->setEnabled(projectSelected);
@@ -370,14 +369,7 @@ void MainWindow::createActions()
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    // New button actions
-    newButton = new QToolButton(this);
-    newButton->setPopupMode(QToolButton::MenuButtonPopup);
-    newButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    newButton->setText(tr("&New"));
-    newButton->setIcon(QIcon::fromTheme("document-new"));
-
-    newMenu = new QMenu(newButton);
+    // New actions
     actionNew_package = new QAction(tr("New p&ackage"), this);
     actionNew_package->setIcon(QIcon::fromTheme("package"));
     connect(actionNew_package, &QAction::triggered, browser, &Browser::newPackage);
@@ -385,14 +377,6 @@ void MainWindow::createActions()
     actionNew_project = new QAction(tr("New pr&oject"), this);
     actionNew_project->setIcon(QIcon::fromTheme("project-development"));
     connect(actionNew_project, &QAction::triggered, browser, &Browser::newProject);
-
-    newMenu->addAction(actionNew_package);
-    newMenu->addAction(actionNew_project);
-    newButton->setMenu(newMenu);
-    newButton->setEnabled(false);
-
-    actionNew = ui->toolBar->insertWidget(ui->action_Branch_package, newButton);
-    connect(newButton, &QToolButton::clicked, browser, &Browser::newPackage);
 
     connect(ui->action_Branch_package, &QAction::triggered, browser, &Browser::branchSelectedPackage);
     connect(ui->action_Home, &QAction::triggered, browser, &Browser::goHome);
@@ -820,7 +804,6 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     setupActions();
 
     bool browserTabVisible = (index == 0);
-    actionNew->setVisible(browserTabVisible);
     ui->action_Branch_package->setVisible(browserTabVisible);
     separatorHome->setVisible(browserTabVisible);
     ui->action_Home->setVisible(browserTabVisible);
