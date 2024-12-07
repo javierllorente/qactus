@@ -79,8 +79,6 @@ private:
     Bookmarks *bookmarks;
     QAction *actionBookmarks;
 
-    QAction *separatorHome;
-
     QToolButton *projectButton;
     QMenu *projectMenu;
     QAction *actionProject;

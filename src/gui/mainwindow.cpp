@@ -379,7 +379,6 @@ void MainWindow::createActions()
     connect(actionNew_project, &QAction::triggered, browser, &Browser::newProject);
 
     connect(ui->action_Home, &QAction::triggered, browser, &Browser::goHome);
-    separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
 
     // WatchList actions
     bookmarkButton = new QToolButton(this);
@@ -808,7 +807,6 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     setupActions();
 
     bool browserTabVisible = (index == 0);
-    separatorHome->setVisible(browserTabVisible);
     ui->action_Home->setVisible(browserTabVisible);
     actionBookmarks->setVisible(browserTabVisible);
     actionProject->setVisible(browserTabVisible);
