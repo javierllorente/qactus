@@ -223,8 +223,8 @@ void MainWindow::setupActions()
     action_MonitorProject->setEnabled(projectSelected);
 
     bool packageSelected = browser->hasPackageSelection();
-    ui->action_Branch_package->setEnabled(packageSelected);
     action_createRequest->setEnabled(packageSelected);
+    action_Branch_package->setEnabled(packageSelected);
     action_linkPackage->setEnabled(packageSelected);
     action_copyPackage->setEnabled(packageSelected);
     action_UploadFile->setEnabled(packageSelected);
@@ -378,7 +378,6 @@ void MainWindow::createActions()
     actionNew_project->setIcon(QIcon::fromTheme("project-development"));
     connect(actionNew_project, &QAction::triggered, browser, &Browser::newProject);
 
-    connect(ui->action_Branch_package, &QAction::triggered, browser, &Browser::branchSelectedPackage);
     connect(ui->action_Home, &QAction::triggered, browser, &Browser::goHome);
     separatorHome = ui->toolBar->insertSeparator(ui->action_Home);
 
@@ -465,6 +464,11 @@ void MainWindow::createActions()
     action_createRequest->setIcon(QIcon::fromTheme("cloud-upload"));
     connect(action_createRequest, &QAction::triggered, browser, &Browser::createRequest);
 
+    // Branch package action
+    action_Branch_package = new QAction(tr("&Branch package"), this);
+    action_Branch_package->setIcon(QIcon::fromTheme("branch"));
+    connect(action_Branch_package, &QAction::triggered, browser, &Browser::branchSelectedPackage);
+
     // Link package action
     action_linkPackage = new QAction(tr("&Link package"), this);
     action_linkPackage->setIcon(QIcon::fromTheme("edit-link"));
@@ -516,7 +520,7 @@ void MainWindow::createActions()
 
     QMenu *treePackagesMenu = new QMenu(this);
     treePackagesMenu->addAction(actionNew_package);
-    treePackagesMenu->addAction(ui->action_Branch_package);
+    treePackagesMenu->addAction(action_Branch_package);
     treePackagesMenu->addAction(action_createRequest);
     treePackagesMenu->addAction(action_linkPackage);
     treePackagesMenu->addAction(action_copyPackage);
@@ -804,7 +808,6 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     setupActions();
 
     bool browserTabVisible = (index == 0);
-    ui->action_Branch_package->setVisible(browserTabVisible);
     separatorHome->setVisible(browserTabVisible);
     ui->action_Home->setVisible(browserTabVisible);
     actionBookmarks->setVisible(browserTabVisible);

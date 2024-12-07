@@ -69,6 +69,7 @@ private:
 
 
     QAction *action_createRequest;
+    QAction *action_Branch_package;
     QAction *action_linkPackage;
     QAction *action_copyPackage;
     QAction *actionNew_package;
