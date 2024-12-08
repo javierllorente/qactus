@@ -44,6 +44,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->packages->setVisible(false);
     ui->packagesCount->setVisible(false);
     ui->treeBuildResults->setVisible(false);
+    m_resultsToolbar->setVisible(false);
 
     QIcon filterIcon(QIcon::fromTheme("view-filter"));
     ui->lineEditFilter->addAction(filterIcon, QLineEdit::LeadingPosition);
@@ -721,6 +722,7 @@ void Browser::slotProjectSelectionChanged()
         ui->tabWidget->setTabVisible(2, false);
         ui->packages->setVisible(true);
         ui->packagesCount->setVisible(true);
+        m_resultsToolbar->setVisible(false);
         
          switch (ui->tabWidget->currentIndex()) {
             case 0:
@@ -745,6 +747,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         ui->tabWidget->setTabVisible(2, true);
         ui->packages->setVisible(false);
         ui->packagesCount->setVisible(false);
+        m_resultsToolbar->setVisible(true);
 
         QModelIndex selectedIndex = selected.indexes().at(0);
         currentPackage = selectedIndex.data().toString();
