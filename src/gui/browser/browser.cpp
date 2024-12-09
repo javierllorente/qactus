@@ -731,6 +731,7 @@ void Browser::slotProjectSelectionChanged()
         ui->tabWidget->setTabVisible(2, false);
         ui->packages->setVisible(true);
         ui->packagesCount->setVisible(true);
+        m_projectsToolbar->setVisible(true);
         m_resultsToolbar->setVisible(false);
         
          switch (ui->tabWidget->currentIndex()) {
@@ -756,6 +757,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         ui->tabWidget->setTabVisible(2, true);
         ui->packages->setVisible(false);
         ui->packagesCount->setVisible(false);
+        m_projectsToolbar->setVisible(false);
         m_resultsToolbar->setVisible(true);
 
         QModelIndex selectedIndex = selected.indexes().at(0);
