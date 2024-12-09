@@ -412,13 +412,7 @@ void MainWindow::createActions()
     actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
 
     // Project actions
-    projectButton = new QToolButton();
-    projectButton->setPopupMode(QToolButton::MenuButtonPopup);
-    projectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    projectButton->setText(tr("&Project"));
-    projectButton->setIcon(QIcon::fromTheme("folder-development"));
-    projectMenu = new QMenu(projectButton);
-    actionProject = ui->toolBar->addWidget(projectButton);
+    QMenu *projectsMenu = new QMenu(this);
 
     // Reload actions
     action_ReloadProjects = new QAction(tr("&Reload project list"), this);
@@ -510,12 +504,11 @@ void MainWindow::createActions()
     connect(action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     trayIcon->trayIconMenu->addAction(action_Quit);
 
-    projectMenu->addAction(actionNew_project);
-    projectMenu->addAction(action_ReloadProjects);
-    projectMenu->addAction(action_MonitorProject);
-    projectMenu->addAction(actionDelete_project);
-    projectMenu->addAction(actionProperties_project);
-    projectButton->setMenu(projectMenu);
+    projectsMenu->addAction(actionNew_project);
+    projectsMenu->addAction(action_ReloadProjects);
+    projectsMenu->addAction(action_MonitorProject);
+    projectsMenu->addAction(actionDelete_project);
+    projectsMenu->addAction(actionProperties_project);
 
     QMenu *treePackagesMenu = new QMenu(this);
     treePackagesMenu->addAction(actionNew_package);
@@ -537,6 +530,7 @@ void MainWindow::createActions()
     treeResultsMenu->addAction(action_getBuildLog);
     treeResultsMenu->addAction(action_ReloadResults);
 
+    browser->setProjectsMenu(projectsMenu);
     browser->createPackagesContextMenu(treePackagesMenu);
     browser->createFilesContextMenu(treeFilesMenu);
     browser->createResultsContextMenu(treeResultsMenu);
@@ -809,7 +803,6 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     bool browserTabVisible = (index == 0);
     ui->action_Home->setVisible(browserTabVisible);
     actionBookmarks->setVisible(browserTabVisible);
-    actionProject->setVisible(browserTabVisible);
     action_UploadFile->setVisible(browserTabVisible);
     action_DownloadFile->setVisible(browserTabVisible);
 

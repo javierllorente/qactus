@@ -79,10 +79,6 @@ private:
     Bookmarks *bookmarks;
     QAction *actionBookmarks;
 
-    QToolButton *projectButton;
-    QMenu *projectMenu;
-    QAction *actionProject;
-
     QAction *action_ReloadProjects;
     QAction *action_ReloadPackages;
     QAction *action_ReloadFiles;

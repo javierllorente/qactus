@@ -31,6 +31,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     m_packagesMenu(nullptr),
     m_filesMenu(nullptr),
     m_resultsMenu(nullptr),
+    m_projectsToolbar(new QToolBar(this)),
     m_packagesToolbar(new QToolBar(this)),
     m_filesToolbar(new QToolBar(this)),
     m_resultsToolbar(new QToolBar(this)),
@@ -49,10 +50,12 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     QIcon filterIcon(QIcon::fromTheme("view-filter"));
     ui->lineEditFilter->addAction(filterIcon, QLineEdit::LeadingPosition);
 
+    m_projectsToolbar->setIconSize(QSize(15, 15));
     m_packagesToolbar->setIconSize(QSize(15, 15));
     m_filesToolbar->setIconSize(QSize(15, 15));
     m_resultsToolbar->setIconSize(QSize(15, 15));
 
+    ui->verticalLayout->addWidget(m_projectsToolbar);
     ui->verticalLayout_6->insertWidget(2, m_packagesToolbar);
     ui->verticalLayout_4->addWidget(m_filesToolbar);
     ui->verticalLayout_2->addWidget(m_resultsToolbar);
@@ -189,6 +192,12 @@ void Browser::addProjectList(const QStringList &projectList)
     emit toggleBookmarkActions("");
     emit finishedLoadingProjects();
     emit updateStatusBar(tr("Done"), true);
+}
+
+void Browser::setProjectsMenu(QMenu *projectsMenu)
+{
+    m_projectsMenu = projectsMenu;
+    m_projectsToolbar->addActions(m_projectsMenu->actions());
 }
 
 void Browser::createPackagesContextMenu(QMenu *packagesMenu)
