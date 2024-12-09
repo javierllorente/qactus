@@ -415,6 +415,8 @@ void Browser::getProjects()
     ui->treeFiles->setAcceptDrops(false);
     m_locationBar->clear();
     clearOverview();
+    ui->packages->setVisible(false);
+    ui->packagesCount->setVisible(false);
     currentProject = "";
     emit projectSelectionChanged();
 
