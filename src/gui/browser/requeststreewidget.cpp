@@ -64,6 +64,7 @@ void RequestsTreeWidget::deleteModel()
 void RequestsTreeWidget::clearModel()
 {
     model()->removeRows(0, model()->rowCount());
+    selectionModel()->clearSelection();
 }
 
 QString RequestsTreeWidget::getProject() const

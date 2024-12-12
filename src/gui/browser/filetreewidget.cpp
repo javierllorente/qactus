@@ -170,6 +170,7 @@ bool FileTreeWidget::removeFile(const QString &fileName)
 void FileTreeWidget::clearModel()
 {
     model()->removeRows(0, model()->rowCount());
+    selectionModel()->clearSelection();
 }
 
 QString FileTreeWidget::getProject() const

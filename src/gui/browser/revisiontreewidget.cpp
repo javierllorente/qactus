@@ -62,6 +62,7 @@ void RevisionTreeWidget::deleteModel()
 void RevisionTreeWidget::clearModel()
 {
     model()->removeRows(0, model()->rowCount());
+    selectionModel()->clearSelection();
 }
 
 QString RevisionTreeWidget::getProject() const
