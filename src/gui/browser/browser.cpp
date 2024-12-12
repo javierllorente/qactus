@@ -695,6 +695,7 @@ void Browser::getPackages(const QString &project)
     qDebug() << __PRETTY_FUNCTION__ << project;
     if (!project.isEmpty()) {
         emit updateStatusBar(tr("Getting packages..."), false);
+        ui->treePackages->clearModel();
         m_obs->getPackages(project);
         currentProject = project;
     }
