@@ -697,7 +697,6 @@ void Browser::getPackages(const QString &project)
     qDebug() << __PRETTY_FUNCTION__ << project;
     if (!project.isEmpty()) {
         emit updateStatusBar(tr("Getting packages..."), false);
-        ui->treePackages->clearModel();
         m_obs->getPackages(project);
         currentProject = project;
     }
@@ -1069,6 +1068,7 @@ void Browser::slotProjectNotFound(OBSStatus *status)
 {
     qDebug() << __PRETTY_FUNCTION__;
     clearOverview();
+    ui->treePackages->clearModel();
     const QString title = tr("Project not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
     QMessageBox::information(this, title, text);
