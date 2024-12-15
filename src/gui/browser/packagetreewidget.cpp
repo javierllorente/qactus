@@ -98,6 +98,5 @@ bool PackageTreeWidget::removePackage(const QString &package)
 
 void PackageTreeWidget::clearModel()
 {
-    model()->removeRows(0, model()->rowCount());
-    selectionModel()->clearSelection();
+    sourceModelPackages->clear();
 }
