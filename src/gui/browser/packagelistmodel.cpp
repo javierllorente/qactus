@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,13 @@ bool PackageListModel::removePackage(const QString &package)
     m_packages.removeAt(index);
     endRemoveRows();
     return true;
+}
+
+void PackageListModel::clear()
+{
+    beginResetModel();
+    m_packages.clear();
+    endResetModel();
 }
 
 QStringList PackageListModel::stringList() const
