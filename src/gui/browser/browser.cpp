@@ -295,6 +295,8 @@ void Browser::clearOverview()
     ui->description->clear();
     overviewProject.clear();
     overviewPackage.clear();
+    ui->packages->setVisible(false);
+    ui->packagesCount->setVisible(false);
 }
 
 void Browser::newProject()
@@ -1065,7 +1067,8 @@ void Browser::slotBuildLogNotFound()
 
 void Browser::slotProjectNotFound(OBSStatus *status)
 {
-    ui->treePackages->clearModel();
+    qDebug() << __PRETTY_FUNCTION__;
+    clearOverview();
     const QString title = tr("Project not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
     QMessageBox::information(this, title, text);
