@@ -266,12 +266,12 @@ void OBS::getProjects()
 
 void OBS::getPackages(const QString &project)
 {
-    obsCore->getPackages("/" + project);
+    obsCore->getPackages(project);
 }
 
 void OBS::getProjectMetaConfig(const QString &project)
 {
-    obsCore->getProjectMetaConfig("/" + project + "/_meta");
+    obsCore->getProjectMetaConfig(project + "/_meta");
 }
 
 void OBS::getPackageMetaConfig(const QString &project, const QString &package)
