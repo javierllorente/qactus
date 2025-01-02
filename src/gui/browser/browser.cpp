@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -737,6 +737,8 @@ void Browser::slotProjectSelectionChanged()
         ui->packagesCount->setVisible(true);
         m_projectsToolbar->setVisible(true);
         m_resultsToolbar->setVisible(false);
+        m_projectsToolbar->setDisabled(false);
+        m_resultsToolbar->setDisabled(false);
         
          switch (ui->tabWidget->currentIndex()) {
             case 0:
@@ -763,6 +765,8 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         ui->packagesCount->setVisible(false);
         m_projectsToolbar->setVisible(false);
         m_resultsToolbar->setVisible(true);
+        m_projectsToolbar->setDisabled(false);
+        m_resultsToolbar->setDisabled(false);
 
         QModelIndex selectedIndex = selected.indexes().at(0);
         currentPackage = selectedIndex.data().toString();
@@ -1068,6 +1072,8 @@ void Browser::slotProjectNotFound(OBSStatus *status)
 {
     qDebug() << __PRETTY_FUNCTION__;
     clearOverview();
+    m_projectsToolbar->setDisabled(true);
+    m_packagesToolbar->setDisabled(true);
     ui->treePackages->clearModel();
     const QString title = tr("Project not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
@@ -1077,6 +1083,8 @@ void Browser::slotProjectNotFound(OBSStatus *status)
 
 void Browser::slotPackageNotFound(OBSStatus *status)
 {
+    m_projectsToolbar->setDisabled(true);
+    m_resultsToolbar->setDisabled(true);
     const QString title = tr("Package not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
     QMessageBox::information(this, title, text);
