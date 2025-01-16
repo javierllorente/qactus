@@ -35,6 +35,8 @@ set(QACTUS_SRC
     browser/searchwidget.cpp
     browser/locationbar.cpp
     browser/bookmarks.cpp
+    browser/overviewwidget.cpp
+    browser/datacontroller.cpp
     monitor/monitor.cpp
     monitor/monitortab.cpp
     monitor/monitorpackagestab.cpp
@@ -76,6 +78,8 @@ set(QACTUS_HDR
     browser/searchwidget.h
     browser/locationbar.h
     browser/bookmarks.h
+    browser/overviewwidget.h
+    browser/datacontroller.h
     monitor/monitor.h
     monitor/monitortab.h
     monitor/monitorpackagestab.h
@@ -105,6 +109,7 @@ set(QACTUS_UI
     browser/createrequestdialog.ui
     browser/searchwidget.ui
     browser/locationbar.ui
+    browser/overviewwidget.ui
     monitor/monitor.ui
     monitor/monitortab.ui
     monitor/roweditor.ui

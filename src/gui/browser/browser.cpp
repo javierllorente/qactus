@@ -17,7 +17,6 @@
 #include "ui_browser.h"
 #include <QFileDialog>
 #include <QSettings>
-#include <QTimeZone>
 #include "metaconfigeditor.h"
 #include "createrequestdialog.h"
 #include "packageactiondialog.h"
@@ -42,9 +41,6 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->hSplitterBrowser->setSizes((QList<int>({160, 400})));
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 1);
-    ui->packages->setVisible(false);
-    ui->packagesCount->setVisible(false);
-    ui->treeBuildResults->setVisible(false);
     m_resultsToolbar->setVisible(false);
 
     QIcon filterIcon(QIcon::fromTheme("view-filter"));
@@ -55,7 +51,6 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     m_filesToolbar->setIconSize(QSize(15, 15));
     m_resultsToolbar->setIconSize(QSize(15, 15));
 
-    ui->verticalLayout->addWidget(m_projectsToolbar);
     ui->verticalLayout_6->insertWidget(2, m_packagesToolbar);
     ui->verticalLayout_4->addWidget(m_filesToolbar);
     ui->verticalLayout_2->addWidget(m_resultsToolbar);
@@ -111,22 +106,22 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
 
     connect(ui->treePackages, &PackageTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuPackages);
     connect(ui->treeFiles, &FileTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuFiles);
-    connect(ui->treeBuildResults, &BuildResultTreeWidget::customContextMenuRequested, this,&Browser::slotContextMenuResults);
+    connect(ui->overviewWidget, &OverviewWidget::buildResultSelectionChanged, this, &Browser::buildResultSelectionChanged);
 
     connect(ui->treeFiles, &FileTreeWidget::droppedFile, this, &Browser::uploadFile);
 
     connect(m_obs, &OBS::finishedParsingPackageList, ui->treePackages, &PackageTreeWidget::addPackageList);
     connect(m_obs, &OBS::finishedParsingPackageList, this, [this] {
-        ui->packagesCount->setText(QString::number(ui->treePackages->getPackageList().size()));
+        ui->overviewWidget->setPackageCount(QString::number(ui->treePackages->getPackageList().size()));
     });
     connect(m_obs, &OBS::finishedParsingPackageList, this, &Browser::slotSelectPackage);
     connect(ui->treePackages, &PackageTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     connect(m_obs, &OBS::finishedParsingResult, this, &Browser::addResult);
-    connect(m_obs, &OBS::finishedParsingResultList, ui->treeBuildResults, &BuildResultTreeWidget::finishedAddingResults);
+    connect(m_obs, &OBS::finishedParsingResultList, ui->overviewWidget, &OverviewWidget::finishedParsingResultList);
     connect(m_obs, &OBS::finishedParsingResultList, this, &Browser::finishedAddingResults);
 
-    connect(m_obs, &OBS::finishedParsingLatestRevision, this, &Browser::setLatestRevision);
+    connect(m_obs, &OBS::finishedParsingLatestRevision, ui->overviewWidget, &OverviewWidget::setLatestRevision);
 
     // Model selection's signals-slots
     connect(this, &Browser::projectSelectionChanged, this, &Browser::slotProjectSelectionChanged);
@@ -135,14 +130,11 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::packageSelectionChanged);
 
-    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, this, &Browser::slotMetaConfigFetched);
-    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, this, &Browser::slotMetaConfigFetched);    
+    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
+    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
     
     filesSelectionModel = ui->treeFiles->selectionModel();
     connect(filesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::fileSelectionChanged);
-
-    QItemSelectionModel *buildResultsSelectionModel = ui->treeBuildResults->selectionModel();
-    connect(buildResultsSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::buildResultSelectionChanged);
 
     connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->treePackages, &PackageTreeWidget::filterPackages);
 
@@ -180,7 +172,6 @@ void Browser::readSettings()
     bool includeHomeProjects = settings.value("IncludeHomeProjects").toBool();
     m_obs->setIncludeHomeProjects(includeHomeProjects);
     ui->hSplitterBrowser->restoreState(settings.value("horizontalSplitterSizes").toByteArray());
-    ui->vSplitterBrowser->restoreState(settings.value("verticalSplitterSizes").toByteArray());
     settings.endGroup();
 }
 
@@ -264,12 +255,7 @@ bool Browser::hasFileSelection()
 
 bool Browser::hasBuildResultSelection()
 {
-    QItemSelectionModel *treeBuildResultsSelectionModel = ui->treeBuildResults->selectionModel();
-    if (treeBuildResultsSelectionModel) {
-        return treeBuildResultsSelectionModel->hasSelection();
-    } else {
-        return false;
-    }
+    return ui->overviewWidget->hasResultSelection();
 }
 
 void Browser::setPackageFilterFocus()
@@ -285,18 +271,6 @@ QString Browser::packageFilterText() const
 void Browser::clearPackageFilter()
 {
     ui->lineEditFilter->clear();
-}
-
-void Browser::clearOverview()
-{
-    ui->title->clear();
-    ui->latestRevision->clear();
-    ui->link->clear();
-    ui->description->clear();
-    overviewProject.clear();
-    overviewPackage.clear();
-    ui->packages->setVisible(false);
-    ui->packagesCount->setVisible(false);
 }
 
 void Browser::newProject()
@@ -340,10 +314,8 @@ void Browser::reloadPackages()
     // Clear location (package), current package, overview, files and revisions
     m_locationBar->setText(currentProject);
     currentPackage.clear();
-    ui->title->clear();
-    ui->link->clear();
-    ui->description->clear();
-    ui->treeBuildResults->clearModel();
+    ui->overviewWidget->clear();
+    ui->overviewWidget->clearResultsModel();
     ui->treeFiles->clearModel();
     ui->treeRevisions->clearModel();
     ui->treeRequests->clearModel();
@@ -369,7 +341,7 @@ void Browser::addResult(OBSResult *result)
         QString resultPackage = result->getStatusList().first()->getPackage();
 
         if (currentProject == resultProject && currentPackage == resultPackage) {
-            ui->treeBuildResults->addResult(result);
+            ui->overviewWidget->addResult(result);
         }
     }
 }
@@ -384,8 +356,8 @@ void Browser::reloadResults()
 void Browser::getBuildLog()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    QString currentBuildRepository = ui->treeBuildResults->getCurrentRepository();
-    QString currentBuildArch = ui->treeBuildResults->getCurrentArch();
+    QString currentBuildRepository = ui->overviewWidget->getCurrentRepository();
+    QString currentBuildArch = ui->overviewWidget->getCurrentArch();
     QString currentPackage = ui->treePackages->getCurrentPackage();
 
     m_obs->getBuildLog(currentProject, currentBuildRepository, currentBuildArch, currentPackage);
@@ -416,9 +388,8 @@ void Browser::getProjects()
     setupModels();
     ui->treeFiles->setAcceptDrops(false);
     m_locationBar->clear();
-    clearOverview();
-    ui->packages->setVisible(false);
-    ui->packagesCount->setVisible(false);
+    ui->overviewWidget->clear();
+    ui->overviewWidget->setPackageCountVisible(false);
     currentProject = "";
     emit projectSelectionChanged();
 
@@ -449,6 +420,7 @@ void Browser::load(const QString &location)
     currentProject = getLocationProject();
     currentPackage = getLocationPackage();
     getPackages(currentProject);
+    ui->overviewWidget->setDataLoaded(false);
     
     if (currentPackage.isEmpty()) {
         handleProjectTasks();
@@ -475,7 +447,7 @@ void Browser::handleProjectTasks()
     qDebug() << __PRETTY_FUNCTION__ << "tabIndex =" << tabIndex;
     switch (tabIndex) {
         case 0:
-            clearOverview();
+            ui->overviewWidget->clear();
             m_obs->getProjectMetaConfig(getLocationProject());
         break;
         case 3:
@@ -493,7 +465,7 @@ void Browser::handlePackageTasks()
 
     switch (tabIndex) {
         case 0:
-            clearOverview();
+            ui->overviewWidget->clear();
             m_obs->getPackageMetaConfig(prj, pkg);
             m_obs->getLatestRevision(prj, pkg);
             getBuildResults(prj, pkg);
@@ -658,7 +630,6 @@ void Browser::writeSettings()
     QSettings settings;
     settings.beginGroup("Browser");
     settings.setValue("horizontalSplitterSizes", ui->hSplitterBrowser->saveState());
-    settings.setValue("verticalSplitterSizes", ui->vSplitterBrowser->saveState());
     settings.endGroup();
 }
 
@@ -667,7 +638,7 @@ void Browser::setupModels()
     qDebug() << __PRETTY_FUNCTION__;
     // Clean up package list, files and results
     ui->treePackages->deleteModel();
-    ui->treeBuildResults->clearModel();
+    ui->overviewWidget->clearResultsModel();
     ui->treeFiles->clearModel();
     ui->treeRevisions->clearModel();
     ui->treeRequests->clearModel();
@@ -733,8 +704,7 @@ void Browser::slotProjectSelectionChanged()
     if (!currentProject.isEmpty() && currentPackage.isEmpty()) {
         ui->tabWidget->setTabVisible(1, false);
         ui->tabWidget->setTabVisible(2, false);
-        ui->packages->setVisible(true);
-        ui->packagesCount->setVisible(true);
+        ui->overviewWidget->setPackageCountVisible(true);
         m_projectsToolbar->setVisible(true);
         m_resultsToolbar->setVisible(false);
         m_projectsToolbar->setDisabled(false);
@@ -742,10 +712,14 @@ void Browser::slotProjectSelectionChanged()
         
          switch (ui->tabWidget->currentIndex()) {
             case 0:
-                m_obs->getProjectMetaConfig(currentProject);
+                if (currentPackage.isEmpty() && !ui->overviewWidget->isDataLoaded()) {
+                    m_obs->getProjectMetaConfig(currentProject);
+                }
                 break;
             case 3:
-                m_obs->getProjectRequests(currentProject);
+                if (currentPackage.isEmpty() && getLocationPackage().isEmpty()) {
+                    m_obs->getProjectRequests(currentProject);
+                }
                 break;
          }
     }
@@ -756,13 +730,13 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 {
     qDebug() << __PRETTY_FUNCTION__;
     Q_UNUSED(deselected)
-    ui->treeBuildResults->setVisible(!selected.isEmpty());
+    ui->overviewWidget->setResultsVisible(!selected.isEmpty());
+    ui->overviewWidget->setDataLoaded(false);
 
     if (!selected.isEmpty()) {
         ui->tabWidget->setTabVisible(1, true);
         ui->tabWidget->setTabVisible(2, true);
-        ui->packages->setVisible(false);
-        ui->packagesCount->setVisible(false);
+        ui->overviewWidget->setPackageCountVisible(false);
         m_projectsToolbar->setVisible(false);
         m_resultsToolbar->setVisible(true);
         m_projectsToolbar->setDisabled(false);
@@ -798,9 +772,10 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 
         if (currentPackage.isEmpty() && getLocationPackage().isEmpty()) {
             if (m_loaded) {
+                // FIXME: clean this
                 // Clear project, so that projectA/package to projectA
                 // then tab switch to requests, fetches them
-                clearOverview();
+                // clearOverview();
                 m_loaded = false;
             }
             return;
@@ -808,7 +783,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 
         // If there is no package selected, clear both the files, build results, revisions
         // and requests
-        ui->treeBuildResults->clearModel();
+        ui->overviewWidget->clearResultsModel();
         ui->treeFiles->clearModel();
         ui->treeRevisions->clearModel();
         ui->treeRequests->clearModel();
@@ -860,41 +835,6 @@ void Browser::slotSelectPackage()
     }
 }
 
-void Browser::slotMetaConfigFetched(OBSMetaConfig *metaConfig)
-{
-    qDebug() << __PRETTY_FUNCTION__;
-    QString title = metaConfig->getTitle();
-    if (title.isEmpty()) {
-        title = metaConfig->getName();
-    }
-    ui->title->setText(title);
-
-    OBSPkgMetaConfig *pkgMetaConfig = dynamic_cast<OBSPkgMetaConfig *>(metaConfig);
-    if (pkgMetaConfig) {
-        QString url = pkgMetaConfig->getUrl().toString();
-        ui->link->setText(!url.isEmpty() ? "<a href=\"" + url + "\">" + url + "</a>" : "");
-        ui->link->setVisible(!url.isEmpty());
-        overviewPackage = metaConfig->getName();
-    } else {
-        overviewProject = metaConfig->getName();
-    }
-    ui->link->setVisible(pkgMetaConfig);
-    QString description = metaConfig->getDescription();
-    if (description.isEmpty()) {
-        description = "No description set";
-    }
-    ui->description->setText(description);
-}
-
-void Browser::setLatestRevision(OBSRevision *revision)
-{
-    qDebug() << __PRETTY_FUNCTION__;
-    uint unixTime = revision->getTime();
-    QDateTime dateTime = QDateTime::fromSecsSinceEpoch(qint64(unixTime), QTimeZone::UTC);
-    QString dateStr = dateTime.toString("dd/MM/yyyy H:mm");
-    ui->latestRevision->setText(dateStr);
-}
-
 void Browser::getPackageFiles(const QString &package)
 {
     qDebug() << __PRETTY_FUNCTION__;
@@ -911,7 +851,7 @@ void Browser::getBuildResults(const QString &project, const QString &package)
     qDebug() << __PRETTY_FUNCTION__;
     emit updateStatusBar(tr("Getting build results..."), false);
 
-    ui->treeBuildResults->clearModel();
+    ui->overviewWidget->clearResultsModel();
     m_obs->getAllBuildStatus(project, package);
 }
 
@@ -986,14 +926,6 @@ void Browser::slotUploadFileError(OBSStatus *status)
     QString statusText = tr("Error uploading to %1/%2").arg(status->getProject(), status->getPackage());
 
     emit updateStatusBar(statusText, true);
-}
-
-void Browser::slotContextMenuResults(const QPoint &point)
-{
-    QModelIndex index = ui->treeBuildResults->indexAt(point);
-    if (index.isValid() && m_resultsMenu) {
-        m_resultsMenu->exec(ui->treeBuildResults->mapToGlobal(point));
-    }
 }
 
 void Browser::slotCreateRequest(OBSRequest *obsRequest)
@@ -1071,7 +1003,7 @@ void Browser::slotBuildLogNotFound()
 void Browser::slotProjectNotFound(OBSStatus *status)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    clearOverview();
+    ui->overviewWidget->clear();
     m_projectsToolbar->setDisabled(true);
     m_packagesToolbar->setDisabled(true);
     ui->treePackages->clearModel();

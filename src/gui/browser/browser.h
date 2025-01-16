@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,6 @@ public:
     void setPackageFilterFocus();
     QString packageFilterText() const;
     void clearPackageFilter();
-    void clearOverview();
 
 public slots:
     void newProject();
@@ -114,8 +113,6 @@ private slots:
     void slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotTabIndexChanged(int index);
     void slotSelectPackage();
-    void slotMetaConfigFetched(OBSMetaConfig *metaConfig);
-    void setLatestRevision(OBSRevision *revision);
     void getPackageFiles(const QString &package);
     void getBuildResults(const QString &project, const QString &package);
     void slotContextMenuFiles(const QPoint &point);
@@ -124,7 +121,6 @@ private slots:
     void slotUploadFile(OBSRevision *revision);
     void slotUploadFileError(OBSStatus *status);
     void finishedAddingResults();
-    void slotContextMenuResults(const QPoint &point);
     void slotCreateRequest(OBSRequest *request);
     void slotCreateRequestStatus(OBSStatus *status);
     void slotBranchPackage(OBSStatus *status);
