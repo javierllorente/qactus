@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2010-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -530,7 +530,7 @@ void MainWindow::createActions()
     treeResultsMenu->addAction(action_getBuildLog);
     treeResultsMenu->addAction(action_ReloadResults);
 
-    browser->addProjectsActions(projectsMenu);
+    browser->addProjectActions(projectsMenu->actions());
     browser->createPackagesContextMenu(treePackagesMenu);
     browser->createFilesContextMenu(treeFilesMenu);
     browser->setResultsMenu(treeResultsMenu);

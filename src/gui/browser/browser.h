@@ -36,7 +36,7 @@ public:
     ~Browser();
     void readSettings();
     void addProjectList(const QStringList &projectList);
-    void addProjectsActions(QMenu *projectsMenu);
+    void addProjectActions(QList<QAction *> projectActions);
     void createPackagesContextMenu(QMenu *packagesMenu);
     void createFilesContextMenu(QMenu *filesMenu);
     void setResultsMenu(QMenu *resultsMenu);

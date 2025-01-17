@@ -176,9 +176,9 @@ void Browser::addProjectList(const QStringList &projectList)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::addProjectsActions(QMenu *projectsMenu)
+void Browser::addProjectActions(QList<QAction*> projectActions)
 {
-    ui->overviewWidget->addProjectActions(projectsMenu->actions());
+    ui->overviewWidget->addProjectActions(projectActions);
 }
 
 void Browser::createPackagesContextMenu(QMenu *packagesMenu)
