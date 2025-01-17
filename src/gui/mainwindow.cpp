@@ -530,10 +530,10 @@ void MainWindow::createActions()
     treeResultsMenu->addAction(action_getBuildLog);
     treeResultsMenu->addAction(action_ReloadResults);
 
-    browser->setProjectsMenu(projectsMenu);
+    browser->addProjectsActions(projectsMenu);
     browser->createPackagesContextMenu(treePackagesMenu);
     browser->createFilesContextMenu(treeFilesMenu);
-    browser->createResultsContextMenu(treeResultsMenu);
+    browser->setResultsMenu(treeResultsMenu);
 
     QAction *actionQuickSearch = new QAction(tr("Quick Project"), this);
     actionQuickSearch->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
