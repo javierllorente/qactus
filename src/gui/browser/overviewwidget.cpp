@@ -24,6 +24,7 @@ OverviewWidget::OverviewWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::OverviewWidget)
     , m_projectsToolbar(new QToolBar(this))
+    , m_resultsToolbar(new QToolBar(this))
     , m_resultsMenu(nullptr)
 {
     ui->setupUi(this);
@@ -31,7 +32,11 @@ OverviewWidget::OverviewWidget(QWidget *parent)
     ui->packages->setVisible(false);
     ui->packagesCount->setVisible(false);
     ui->treeBuildResults->setVisible(false);
+    m_projectsToolbar->setIconSize(QSize(15, 15));
+    m_resultsToolbar->setIconSize(QSize(15, 15));
+    m_resultsToolbar->setVisible(false);
     ui->verticalLayout->addWidget(m_projectsToolbar);
+    ui->verticalLayout_2->addWidget(m_resultsToolbar);
 
     connect(ui->treeBuildResults, &BuildResultTreeWidget::customContextMenuRequested, this, &OverviewWidget::slotContextMenuResults);
     connect(this, &OverviewWidget::finishedParsingResultList, ui->treeBuildResults, &BuildResultTreeWidget::finishedAddingResults);
@@ -46,6 +51,17 @@ OverviewWidget::~OverviewWidget()
 {
     writeSettings();
     delete ui;
+}
+
+void OverviewWidget::addProjectActions(QList<QAction *> actions)
+{
+    m_projectsToolbar->addActions(actions);
+}
+
+void OverviewWidget::setResultsMenu(QMenu *resultsMenu)
+{
+    m_resultsMenu = resultsMenu;
+    m_resultsToolbar->addActions(m_resultsMenu->actions());
 }
 
 void OverviewWidget::setLatestRevision(OBSRevision *revision)
@@ -65,17 +81,6 @@ void OverviewWidget::setPackageCount(const QString &packageCount)
 void OverviewWidget::addResult(OBSResult *result)
 {
     ui->treeBuildResults->addResult(result);
-}
-
-void OverviewWidget::setPackageCountVisible(bool visible)
-{
-    ui->packages->setVisible(visible);
-    ui->packagesCount->setVisible(visible);
-}
-
-void OverviewWidget::setResultsVisible(bool visible)
-{
-    ui->treeBuildResults->setVisible(visible);
 }
 
 QString OverviewWidget::getCurrentRepository() const
@@ -142,8 +147,22 @@ void OverviewWidget::setMetaConfig(OBSMetaConfig *metaConfig)
         ui->link->setText(!url.isEmpty() ? "<a href=\"" + url + "\">" + url + "</a>" : "");
         ui->link->setVisible(!url.isEmpty());
         // overviewPackage = metaConfig->getName();
+        ui->packages->setVisible(false);
+        ui->packagesCount->setVisible(false);
+
+        m_projectsToolbar->setVisible(false);
+        m_resultsToolbar->setVisible(true);
+        m_projectsToolbar->setDisabled(false);
+        m_resultsToolbar->setDisabled(false);
     } else {
         // overviewProject = metaConfig->getName();
+        ui->packages->setVisible(true);
+        ui->packagesCount->setVisible(true);
+
+        m_projectsToolbar->setVisible(true);
+        m_resultsToolbar->setVisible(false);
+        m_projectsToolbar->setDisabled(false);
+        m_resultsToolbar->setDisabled(false);
     }
     ui->link->setVisible(pkgMetaConfig);
     QString description = metaConfig->getDescription();
@@ -153,6 +172,36 @@ void OverviewWidget::setMetaConfig(OBSMetaConfig *metaConfig)
     ui->description->setText(description);
     m_dataLoaded = true;
 
+}
+
+void OverviewWidget::onPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    qDebug() << Q_FUNC_INFO;
+    Q_UNUSED(deselected)
+
+    ui->treeBuildResults->setVisible(!selected.isEmpty());
+    m_dataLoaded = false;
+
+    if (!selected.isEmpty()) {
+        m_projectsToolbar->setVisible(false);
+        m_resultsToolbar->setVisible(true);
+        m_projectsToolbar->setDisabled(false);
+        m_resultsToolbar->setDisabled(false);
+    }
+}
+
+void OverviewWidget::onProjectNotFound(OBSStatus *status)
+{
+    qDebug() << Q_FUNC_INFO;
+    clear();
+    m_projectsToolbar->setDisabled(true);
+}
+
+void OverviewWidget::onPackageNotFound(OBSStatus *status)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_projectsToolbar->setDisabled(true);
+    m_resultsToolbar->setDisabled(true);
 }
 
 void OverviewWidget::slotContextMenuResults(const QPoint &point)

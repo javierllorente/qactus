@@ -19,6 +19,7 @@
 #include <QWidget>
 #include <QToolBar>
 #include <QMenu>
+#include <QItemSelection>
 #include "datacontroller.h"
 #include "obsmetaconfig.h"
 #include "obsresult.h"
@@ -35,11 +36,11 @@ class OverviewWidget : public QWidget, public DataController
 public:
     explicit OverviewWidget(QWidget *parent = nullptr);
     ~OverviewWidget();
+    void addProjectActions(QList <QAction *> actions);
+    void setResultsMenu(QMenu *resultsMenu);
     void setLatestRevision(OBSRevision *revision);
     void setPackageCount(const QString &packageCount);
     void addResult(OBSResult *result);
-    void setPackageCountVisible(bool visible);
-    void setResultsVisible(bool visible);
     QString getCurrentRepository() const;
     QString getCurrentArch() const;
     bool hasResultSelection();
@@ -51,6 +52,7 @@ private:
     void writeSettings();
     Ui::OverviewWidget *ui;
     QToolBar *m_projectsToolbar;
+    QToolBar *m_resultsToolbar;
     QMenu *m_resultsMenu;
     bool m_dataLoaded;
 
@@ -60,6 +62,9 @@ signals:
 
 public slots:
     void setMetaConfig(OBSMetaConfig *metaConfig);
+    void onPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void onProjectNotFound(OBSStatus *status);
+    void onPackageNotFound(OBSStatus *status);
 
 private slots:
     void slotContextMenuResults(const QPoint &point);

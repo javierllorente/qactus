@@ -36,10 +36,10 @@ public:
     ~Browser();
     void readSettings();
     void addProjectList(const QStringList &projectList);
-    void setProjectsMenu(QMenu *projectsMenu);
+    void addProjectsActions(QMenu *projectsMenu);
     void createPackagesContextMenu(QMenu *packagesMenu);
     void createFilesContextMenu(QMenu *filesMenu);
-    void createResultsContextMenu(QMenu *resultsMenu);
+    void setResultsMenu(QMenu *resultsMenu);
     QString getLocationProject() const;
     QString getLocationPackage() const;
     bool hasProjectSelection();
@@ -89,14 +89,10 @@ private:
     QString selectPackage;
     QString overviewProject;
     QString overviewPackage;
-    QMenu *m_projectsMenu;
     QMenu *m_packagesMenu;
     QMenu *m_filesMenu;
-    QMenu *m_resultsMenu;
-    QToolBar *m_projectsToolbar;
     QToolBar *m_packagesToolbar;
     QToolBar *m_filesToolbar;
-    QToolBar *m_resultsToolbar;
     bool m_loaded;
     QString m_homepage;
     void writeSettings();

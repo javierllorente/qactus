@@ -29,11 +29,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     m_obs(obs),
     m_packagesMenu(nullptr),
     m_filesMenu(nullptr),
-    m_resultsMenu(nullptr),
-    m_projectsToolbar(new QToolBar(this)),
     m_packagesToolbar(new QToolBar(this)),
     m_filesToolbar(new QToolBar(this)),
-    m_resultsToolbar(new QToolBar(this)),
     m_loaded(false)
 {
     ui->setupUi(this);
@@ -41,19 +38,15 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     ui->hSplitterBrowser->setSizes((QList<int>({160, 400})));
     ui->hSplitterBrowser->setStretchFactor(1, 1);
     ui->hSplitterBrowser->setStretchFactor(0, 1);
-    m_resultsToolbar->setVisible(false);
 
     QIcon filterIcon(QIcon::fromTheme("view-filter"));
     ui->lineEditFilter->addAction(filterIcon, QLineEdit::LeadingPosition);
 
-    m_projectsToolbar->setIconSize(QSize(15, 15));
     m_packagesToolbar->setIconSize(QSize(15, 15));
     m_filesToolbar->setIconSize(QSize(15, 15));
-    m_resultsToolbar->setIconSize(QSize(15, 15));
 
     ui->verticalLayout_6->insertWidget(2, m_packagesToolbar);
     ui->verticalLayout_4->addWidget(m_filesToolbar);
-    ui->verticalLayout_2->addWidget(m_resultsToolbar);
 
     // Hide files and revisions tabs by default
     ui->tabWidget->setTabVisible(1, false);
@@ -77,7 +70,9 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::buildLogFetched, this, &Browser::slotBuildLogFetched);
     connect(m_obs, &OBS::buildLogNotFound, this, &Browser::slotBuildLogNotFound);
     connect(m_obs, &OBS::projectNotFound, this, &Browser::slotProjectNotFound);
+    connect(m_obs, &OBS::projectNotFound, ui->overviewWidget, &OverviewWidget::onProjectNotFound);
     connect(m_obs, &OBS::packageNotFound, this, &Browser::slotPackageNotFound);
+    connect(m_obs, &OBS::packageNotFound, ui->overviewWidget, &OverviewWidget::onPackageNotFound);
     connect(ui->treePackages, &PackageTreeWidget::packageNotFound, this, &Browser::slotSelectedPackageNotFound);
 
     connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, [=](OBSStatus *status) {
@@ -125,10 +120,6 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
 
     // Model selection's signals-slots
     connect(this, &Browser::projectSelectionChanged, this, &Browser::slotProjectSelectionChanged);
-
-    packagesSelectionModel = ui->treePackages->selectionModel();
-    connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
-    connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::packageSelectionChanged);
 
     connect(m_obs, &OBS::finishedParsingProjectMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
     connect(m_obs, &OBS::finishedParsingPackageMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
@@ -185,10 +176,9 @@ void Browser::addProjectList(const QStringList &projectList)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::setProjectsMenu(QMenu *projectsMenu)
+void Browser::addProjectsActions(QMenu *projectsMenu)
 {
-    m_projectsMenu = projectsMenu;
-    m_projectsToolbar->addActions(m_projectsMenu->actions());
+    ui->overviewWidget->addProjectActions(projectsMenu->actions());
 }
 
 void Browser::createPackagesContextMenu(QMenu *packagesMenu)
@@ -203,10 +193,9 @@ void Browser::createFilesContextMenu(QMenu *filesMenu)
     m_filesToolbar->addActions(m_filesMenu->actions());
 }
 
-void Browser::createResultsContextMenu(QMenu *resultsMenu)
+void Browser::setResultsMenu(QMenu *resultsMenu)
 {
-    m_resultsMenu = resultsMenu;
-    m_resultsToolbar->addActions(m_resultsMenu->actions());
+    ui->overviewWidget->setResultsMenu(resultsMenu);
 }
 
 QString Browser::getLocationProject() const
@@ -389,7 +378,6 @@ void Browser::getProjects()
     ui->treeFiles->setAcceptDrops(false);
     m_locationBar->clear();
     ui->overviewWidget->clear();
-    ui->overviewWidget->setPackageCountVisible(false);
     currentProject = "";
     emit projectSelectionChanged();
 
@@ -646,6 +634,8 @@ void Browser::setupModels()
     ui->treePackages->createModel();
     packagesSelectionModel = ui->treePackages->selectionModel();
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
+    connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, ui->overviewWidget, &OverviewWidget::onPackageSelectionChanged);
+    connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::packageSelectionChanged);
 }
 
 void Browser::slotContextMenuPackages(const QPoint &point)
@@ -704,11 +694,6 @@ void Browser::slotProjectSelectionChanged()
     if (!currentProject.isEmpty() && currentPackage.isEmpty()) {
         ui->tabWidget->setTabVisible(1, false);
         ui->tabWidget->setTabVisible(2, false);
-        ui->overviewWidget->setPackageCountVisible(true);
-        m_projectsToolbar->setVisible(true);
-        m_resultsToolbar->setVisible(false);
-        m_projectsToolbar->setDisabled(false);
-        m_resultsToolbar->setDisabled(false);
         
          switch (ui->tabWidget->currentIndex()) {
             case 0:
@@ -730,17 +715,10 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 {
     qDebug() << __PRETTY_FUNCTION__;
     Q_UNUSED(deselected)
-    ui->overviewWidget->setResultsVisible(!selected.isEmpty());
-    ui->overviewWidget->setDataLoaded(false);
 
     if (!selected.isEmpty()) {
         ui->tabWidget->setTabVisible(1, true);
         ui->tabWidget->setTabVisible(2, true);
-        ui->overviewWidget->setPackageCountVisible(false);
-        m_projectsToolbar->setVisible(false);
-        m_resultsToolbar->setVisible(true);
-        m_projectsToolbar->setDisabled(false);
-        m_resultsToolbar->setDisabled(false);
 
         QModelIndex selectedIndex = selected.indexes().at(0);
         currentPackage = selectedIndex.data().toString();
@@ -1002,9 +980,7 @@ void Browser::slotBuildLogNotFound()
 
 void Browser::slotProjectNotFound(OBSStatus *status)
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    ui->overviewWidget->clear();
-    m_projectsToolbar->setDisabled(true);
+    qDebug() << Q_FUNC_INFO;
     m_packagesToolbar->setDisabled(true);
     ui->treePackages->clearModel();
     const QString title = tr("Project not found");
@@ -1015,8 +991,7 @@ void Browser::slotProjectNotFound(OBSStatus *status)
 
 void Browser::slotPackageNotFound(OBSStatus *status)
 {
-    m_projectsToolbar->setDisabled(true);
-    m_resultsToolbar->setDisabled(true);
+    qDebug() << Q_FUNC_INFO;
     const QString title = tr("Package not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
     QMessageBox::information(this, title, text);
