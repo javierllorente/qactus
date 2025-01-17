@@ -821,13 +821,6 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     ui->action_Refresh->setVisible(monitorTabVisible || requestsTabVisible);
 }
 
-void MainWindow::on_tabWidgetPackages_currentChanged(int index)
-{
-    if (index==0 && browser->hasFileSelection()) {
-        setupFileShortcuts();
-    }
-}
-
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     event->ignore();

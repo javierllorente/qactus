@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2010-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,7 +174,6 @@ private slots:
     void slotAbout(OBSAbout *obsAbout);
     void slotUpdatePerson(OBSPerson *obsPerson);
     void on_iconBar_currentRowChanged(int index);
-    void on_tabWidgetPackages_currentChanged(int index);
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
 };
 
