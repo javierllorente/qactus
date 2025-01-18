@@ -17,7 +17,6 @@
 #include "ui_browser.h"
 #include <QFileDialog>
 #include <QSettings>
-#include "metaconfigeditor.h"
 #include "createrequestdialog.h"
 #include "packageactiondialog.h"
 #include "buildlogviewer.h"
@@ -264,35 +263,35 @@ void Browser::clearPackageFilter()
 
 void Browser::newProject()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, currentProject, "", MCEMode::CreateProject);
-    metaConfigEditor->exec();
-    delete metaConfigEditor;
+    launchMetaConfigEditor(currentProject, "", MCEMode::CreateProject);
 }
 
 void Browser::newPackage()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, currentProject, "", MCEMode::CreatePackage);
-    metaConfigEditor->exec();
-    delete metaConfigEditor;
+    launchMetaConfigEditor(currentProject, "", MCEMode::CreatePackage);
 }
 
 void Browser::editProject()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, currentProject, "", MCEMode::EditProject);
-    metaConfigEditor->exec();
-    delete metaConfigEditor;
+    launchMetaConfigEditor(currentProject, "", MCEMode::EditProject);
 }
 
 void Browser::editPackage()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    QString package = ui->treePackages->getCurrentPackage();
-    MetaConfigEditor *metaConfigEditor = new MetaConfigEditor(this, m_obs, currentProject, package, MCEMode::EditPackage);
+    launchMetaConfigEditor(currentProject, ui->treePackages->getCurrentPackage(), MCEMode::EditPackage);
+}
+
+void Browser::launchMetaConfigEditor(const QString &project, const QString &package, MCEMode mode)
+{
+    qDebug() << Q_FUNC_INFO << project << package;
+    disconnect(m_obs, &OBS::finishedParsingProjectMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
+    disconnect(m_obs, &OBS::finishedParsingPackageMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
+
+    QScopedPointer<MetaConfigEditor> metaConfigEditor(new MetaConfigEditor(this, m_obs, project, package, mode));
     metaConfigEditor->exec();
-    delete metaConfigEditor;
+
+    connect(m_obs, &OBS::finishedParsingProjectMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
+    connect(m_obs, &OBS::finishedParsingPackageMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
 }
 
 void Browser::reloadPackages()

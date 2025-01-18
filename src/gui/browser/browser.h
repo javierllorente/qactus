@@ -21,6 +21,7 @@
 #include <QMenu>
 #include <QToolBar>
 #include "locationbar.h"
+#include "metaconfigeditor.h"
 #include "obs.h"
 
 namespace Ui {
@@ -102,6 +103,7 @@ private:
     void getRevisions(const QString &project, const QString &package);
     void getProjectRequests(const QString &project);
     void getPackageRequests(const QString &project, const QString &package);
+    void launchMetaConfigEditor(const QString &project, const QString &package, MCEMode mode);
 
 private slots:
     void slotContextMenuPackages(const QPoint &point);
