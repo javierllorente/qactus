@@ -56,11 +56,11 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_locationBar, &LocationBar::returnPressed, this, &Browser::load);
 
     connect(m_obs, &OBS::finishedParsingFile, this, &Browser::addFile);
-    connect(m_obs, &OBS::finishedParsingFileList, ui->treeFiles, &FileTreeWidget::filesAdded);
+    connect(m_obs, &OBS::finishedParsingFileList, ui->filesWidget, &FileTreeWidget::filesAdded);
     connect(m_obs, &OBS::finishedParsingUploadFileRevision, this, &Browser::slotUploadFile);
     connect(m_obs, &OBS::cannotUploadFile, this, &Browser::slotUploadFileError);
     connect(m_obs, &OBS::fileFetched, this, &Browser::slotFileFetched);
-    connect(ui->treeFiles, &FileTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
+    connect(ui->filesWidget, &FileTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     connect(m_obs, &OBS::finishedParsingCreateRequest, this, &Browser::slotCreateRequest);
     connect(m_obs, &OBS::finishedParsingCreateRequestStatus, this, &Browser::slotCreateRequestStatus);
@@ -99,10 +99,10 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::cannotDeleteFile, this, &Browser::slotDeleteFile);
 
     connect(ui->treePackages, &PackageTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuPackages);
-    connect(ui->treeFiles, &FileTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuFiles);
+    connect(ui->filesWidget, &FileTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuFiles);
     connect(ui->overviewWidget, &OverviewWidget::buildResultSelectionChanged, this, &Browser::buildResultSelectionChanged);
 
-    connect(ui->treeFiles, &FileTreeWidget::droppedFile, this, &Browser::uploadFile);
+    connect(ui->filesWidget, &FileTreeWidget::droppedFile, this, &Browser::uploadFile);
 
     connect(m_obs, &OBS::finishedParsingPackageList, ui->treePackages, &PackageTreeWidget::addPackageList);
     connect(m_obs, &OBS::finishedParsingPackageList, this, [this] {
@@ -123,7 +123,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingProjectMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
     connect(m_obs, &OBS::finishedParsingPackageMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
     
-    filesSelectionModel = ui->treeFiles->selectionModel();
+    filesSelectionModel = ui->filesWidget->selectionModel();
     connect(filesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::fileSelectionChanged);
 
     connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->treePackages, &PackageTreeWidget::filterPackages);
@@ -233,7 +233,7 @@ bool Browser::hasPackageSelection()
 
 bool Browser::hasFileSelection()
 {
-    QItemSelectionModel *treeFilesSelectionModel = ui->treeFiles->selectionModel();
+    QItemSelectionModel *treeFilesSelectionModel = ui->filesWidget->selectionModel();
     if (treeFilesSelectionModel) {
         return treeFilesSelectionModel->hasSelection();
     } else {
@@ -304,12 +304,12 @@ void Browser::reloadPackages()
     currentPackage.clear();
     ui->overviewWidget->clear();
     ui->overviewWidget->clearResultsModel();
-    ui->treeFiles->clearModel();
+    ui->filesWidget->clearModel();
     ui->treeRevisions->clearModel();
     ui->treeRequests->clearModel();
 
     emit packageSelectionChanged();
-    ui->treeFiles->setAcceptDrops(false);
+    ui->filesWidget->setAcceptDrops(false);
 }
 
 void Browser::reloadFiles()
@@ -374,7 +374,7 @@ void Browser::getProjects()
 {
     qDebug() << __PRETTY_FUNCTION__;
     setupModels();
-    ui->treeFiles->setAcceptDrops(false);
+    ui->filesWidget->setAcceptDrops(false);
     m_locationBar->clear();
     ui->overviewWidget->clear();
     currentProject = "";
@@ -481,7 +481,7 @@ void Browser::slotSelectedPackageNotFound(const QString &package)
 void Browser::downloadFile()
 {
     QString currentPackage = ui->treePackages->getCurrentPackage();
-    QString currentFile = ui->treeFiles->getCurrentFile();
+    QString currentFile = ui->filesWidget->getCurrentFile();
     m_obs->downloadFile(currentProject, currentPackage, currentFile);
 }
 
@@ -505,7 +505,7 @@ void Browser::createRequest()
     request->setSourceProject(currentProject);
     request->setSourcePackage(currentPackage);
 
-    if (ui->treeFiles->hasLink()) {
+    if (ui->filesWidget->hasLink()) {
         m_obs->getLink(currentProject, currentPackage);
     }
 
@@ -597,7 +597,7 @@ void Browser::deleteFile()
     qDebug() << __PRETTY_FUNCTION__;
 
     QString package = ui->treePackages->getCurrentPackage();
-    QString fileName = ui->treeFiles->getCurrentFile();
+    QString fileName = ui->filesWidget->getCurrentFile();
 
     const QString title = tr("Delete confirmation");
     const QString text = tr("Do you really want to delete file<br> %1/%2/%3?")
@@ -627,7 +627,7 @@ void Browser::setupModels()
     // Clean up package list, files and results
     ui->treePackages->deleteModel();
     ui->overviewWidget->clearResultsModel();
-    ui->treeFiles->clearModel();
+    ui->filesWidget->clearModel();
     ui->treeRevisions->clearModel();
     ui->treeRequests->clearModel();
 
@@ -703,7 +703,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     Q_UNUSED(deselected)
 
     ui->overviewWidget->setDataLoaded(false);
-    ui->treeFiles->clearModel();
+    ui->filesWidget->clearModel();
     ui->treeRevisions->clearModel();
     ui->treeRequests->setDataLoaded(false);
 
@@ -735,7 +735,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         }
 
         emit packageSelectionChanged();
-        ui->treeFiles->setAcceptDrops(true);
+        ui->filesWidget->setAcceptDrops(true);
     } else {
         qDebug() << __PRETTY_FUNCTION__ << "currentPackage =" << currentPackage << "locationPackage =" << getLocationPackage();
 
@@ -753,11 +753,11 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         // If there is no package selected, clear both the files, build results, revisions
         // and requests
         ui->overviewWidget->clearResultsModel();
-        ui->treeFiles->clearModel();
+        ui->filesWidget->clearModel();
         ui->treeRevisions->clearModel();
         ui->treeRequests->clearModel();
 
-        ui->treeFiles->setAcceptDrops(false);
+        ui->filesWidget->setAcceptDrops(false);
     }
 }
 
@@ -776,7 +776,7 @@ void Browser::slotTabIndexChanged(int index)
                 }
                 break;
             case 1:
-                if (!currentPackage.isEmpty() && !ui->treeFiles->isDataLoaded()) {
+                if (!currentPackage.isEmpty() && !ui->filesWidget->isDataLoaded()) {
                     getPackageFiles(currentPackage);
                 }
                 break;
@@ -809,7 +809,7 @@ void Browser::getPackageFiles(const QString &package)
     qDebug() << __PRETTY_FUNCTION__;
     emit updateStatusBar(tr("Getting package files.."), false);
 
-    ui->treeFiles->clearModel();
+    ui->filesWidget->clearModel();
 
     m_obs->getFiles(currentProject, package);
     emit updateStatusBar(tr("Getting package data..."), false);
@@ -826,9 +826,9 @@ void Browser::getBuildResults(const QString &project, const QString &package)
 
 void Browser::slotContextMenuFiles(const QPoint &point)
 {
-    QModelIndex index = ui->treeFiles->indexAt(point);
+    QModelIndex index = ui->filesWidget->indexAt(point);
     if (index.isValid() && m_filesMenu) {
-        m_filesMenu->exec(ui->treeFiles->mapToGlobal(point));
+        m_filesMenu->exec(ui->filesWidget->mapToGlobal(point));
     }
 }
 
@@ -841,7 +841,7 @@ void Browser::addFile(OBSFile *file)
     QString filePackage = file->getPackage();
 
     if (currentProject == fileProject && currentPackage == filePackage) {
-        ui->treeFiles->addFile(file);
+        ui->filesWidget->addFile(file);
     }
 }
 
@@ -1033,11 +1033,11 @@ void Browser::slotDeleteFile(OBSStatus *status)
         QString fileName = status->getDetails();
 
         if (status->getProject() == currentProject && status->getPackage() == currentPackage) {
-            bool fileRemoved = ui->treeFiles->removeFile(fileName);
+            bool fileRemoved = ui->filesWidget->removeFile(fileName);
 
             if (fileRemoved) {
                 // Disable the delete file action if there are no files after a deletion
-                QItemSelectionModel *treeFilesSelectionModel = ui->treeFiles->selectionModel();
+                QItemSelectionModel *treeFilesSelectionModel = ui->filesWidget->selectionModel();
                 QList<QModelIndex> selectedFiles = treeFilesSelectionModel->selectedIndexes();
                 emit fileSelectionChanged();
             }

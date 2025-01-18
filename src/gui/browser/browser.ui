@@ -135,7 +135,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="FileTreeWidget" name="treeFiles">
+            <widget class="FileTreeWidget" name="filesWidget">
              <property name="editTriggers">
               <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
              </property>
