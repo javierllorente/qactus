@@ -689,26 +689,12 @@ void Browser::getPackageRequests(const QString &project, const QString &package)
 
 void Browser::slotProjectSelectionChanged()
 {
-    qDebug() << __PRETTY_FUNCTION__ << "currentProject =" << currentProject << "currentPackage =" << currentPackage;
+    qDebug() << Q_FUNC_INFO << "currentProject =" << currentProject << "currentPackage =" << currentPackage;
 
     if (!currentProject.isEmpty() && currentPackage.isEmpty()) {
         ui->tabWidget->setTabVisible(1, false);
         ui->tabWidget->setTabVisible(2, false);
-        
-         switch (ui->tabWidget->currentIndex()) {
-            case 0:
-                if (currentPackage.isEmpty() && !ui->overviewWidget->isDataLoaded()) {
-                    m_obs->getProjectMetaConfig(currentProject);
-                }
-                break;
-            case 3:
-                if (currentPackage.isEmpty() && getLocationPackage().isEmpty()) {
-                    m_obs->getProjectRequests(currentProject);
-                }
-                break;
-         }
     }
-    currentPackage = "";
 }
 
 void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
