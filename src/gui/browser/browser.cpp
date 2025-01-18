@@ -72,7 +72,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::projectNotFound, ui->overviewWidget, &OverviewWidget::onProjectNotFound);
     connect(m_obs, &OBS::packageNotFound, this, &Browser::slotPackageNotFound);
     connect(m_obs, &OBS::packageNotFound, ui->overviewWidget, &OverviewWidget::onPackageNotFound);
-    connect(ui->treePackages, &PackageTreeWidget::packageNotFound, this, &Browser::slotSelectedPackageNotFound);
+    connect(ui->packagesWidget, &PackageTreeWidget::packageNotFound, this, &Browser::slotSelectedPackageNotFound);
 
     connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, [=](OBSStatus *status) {
         if (status->getCode() == "ok") {
@@ -84,8 +84,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
 
     connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, [=](OBSStatus *status) {
         if (status->getCode()=="ok") {
-            ui->treePackages->addPackage(status->getPackage());
-            ui->treePackages->setCurrentPackage(status->getPackage());
+            ui->packagesWidget->addPackage(status->getPackage());
+            ui->packagesWidget->setCurrentPackage(status->getPackage());
             emit showTrayMessage(APP_NAME, tr("Package %1 has been created").arg(status->getPackage()));
         }
     });
@@ -98,18 +98,18 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::cannotDeletePackage, this, &Browser::slotDeletePackage);
     connect(m_obs, &OBS::cannotDeleteFile, this, &Browser::slotDeleteFile);
 
-    connect(ui->treePackages, &PackageTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuPackages);
+    connect(ui->packagesWidget, &PackageTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuPackages);
     connect(ui->filesWidget, &FileTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuFiles);
     connect(ui->overviewWidget, &OverviewWidget::buildResultSelectionChanged, this, &Browser::buildResultSelectionChanged);
 
     connect(ui->filesWidget, &FileTreeWidget::droppedFile, this, &Browser::uploadFile);
 
-    connect(m_obs, &OBS::finishedParsingPackageList, ui->treePackages, &PackageTreeWidget::addPackageList);
+    connect(m_obs, &OBS::finishedParsingPackageList, ui->packagesWidget, &PackageTreeWidget::addPackageList);
     connect(m_obs, &OBS::finishedParsingPackageList, this, [this] {
-        ui->overviewWidget->setPackageCount(QString::number(ui->treePackages->getPackageList().size()));
+        ui->overviewWidget->setPackageCount(QString::number(ui->packagesWidget->getPackageList().size()));
     });
     connect(m_obs, &OBS::finishedParsingPackageList, this, &Browser::slotSelectPackage);
-    connect(ui->treePackages, &PackageTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
+    connect(ui->packagesWidget, &PackageTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     connect(m_obs, &OBS::finishedParsingResult, this, &Browser::addResult);
     connect(m_obs, &OBS::finishedParsingResultList, ui->overviewWidget, &OverviewWidget::finishedParsingResultList);
@@ -126,7 +126,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     filesSelectionModel = ui->filesWidget->selectionModel();
     connect(filesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::fileSelectionChanged);
 
-    connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->treePackages, &PackageTreeWidget::filterPackages);
+    connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->packagesWidget, &PackageTreeWidget::filterPackages);
 
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &Browser::slotTabIndexChanged);
 
@@ -223,7 +223,7 @@ bool Browser::hasProjectSelection()
 
 bool Browser::hasPackageSelection()
 {
-    QItemSelectionModel *treePackagesSelectionModel = ui->treePackages->selectionModel();
+    QItemSelectionModel *treePackagesSelectionModel = ui->packagesWidget->selectionModel();
     if (treePackagesSelectionModel) {
         return treePackagesSelectionModel->hasSelection();
     } else {
@@ -278,7 +278,7 @@ void Browser::editProject()
 
 void Browser::editPackage()
 {
-    launchMetaConfigEditor(currentProject, ui->treePackages->getCurrentPackage(), MCEMode::EditPackage);
+    launchMetaConfigEditor(currentProject, ui->packagesWidget->getCurrentPackage(), MCEMode::EditPackage);
 }
 
 void Browser::launchMetaConfigEditor(const QString &project, const QString &package, MCEMode mode)
@@ -315,7 +315,7 @@ void Browser::reloadPackages()
 void Browser::reloadFiles()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    getPackageFiles(ui->treePackages->getCurrentPackage());
+    getPackageFiles(ui->packagesWidget->getCurrentPackage());
     emit packageSelectionChanged();
 }
 
@@ -324,7 +324,7 @@ void Browser::addResult(OBSResult *result)
     qDebug() << __PRETTY_FUNCTION__;
 
     if (!result->getStatusList().isEmpty()) {
-        currentPackage = ui->treePackages->getCurrentPackage();
+        currentPackage = ui->packagesWidget->getCurrentPackage();
         QString resultProject = result->getProject();
         QString resultPackage = result->getStatusList().first()->getPackage();
 
@@ -337,7 +337,7 @@ void Browser::addResult(OBSResult *result)
 void Browser::reloadResults()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    getBuildResults(currentProject, ui->treePackages->getCurrentPackage());
+    getBuildResults(currentProject, ui->packagesWidget->getCurrentPackage());
     emit packageSelectionChanged();
 }
 
@@ -346,7 +346,7 @@ void Browser::getBuildLog()
     qDebug() << __PRETTY_FUNCTION__;
     QString currentBuildRepository = ui->overviewWidget->getCurrentRepository();
     QString currentBuildArch = ui->overviewWidget->getCurrentArch();
-    QString currentPackage = ui->treePackages->getCurrentPackage();
+    QString currentPackage = ui->packagesWidget->getCurrentPackage();
 
     m_obs->getBuildLog(currentProject, currentBuildRepository, currentBuildArch, currentPackage);
     emit updateStatusBar(tr("Getting build log..."), false);
@@ -354,7 +354,7 @@ void Browser::getBuildLog()
 
 void Browser::branchSelectedPackage()
 {
-    QString package = ui->treePackages->getCurrentPackage();
+    QString package = ui->packagesWidget->getCurrentPackage();
 
     const QString title = tr("Branch confirmation");
     const QString text = tr("<b>Source</b><br> %1/%2<br><b>Destination</b><br> home:%3:branches")
@@ -480,7 +480,7 @@ void Browser::slotSelectedPackageNotFound(const QString &package)
 
 void Browser::downloadFile()
 {
-    QString currentPackage = ui->treePackages->getCurrentPackage();
+    QString currentPackage = ui->packagesWidget->getCurrentPackage();
     QString currentFile = ui->filesWidget->getCurrentFile();
     m_obs->downloadFile(currentProject, currentPackage, currentFile);
 }
@@ -498,7 +498,7 @@ void Browser::uploadSelectedFile()
 void Browser::createRequest()
 {
 //    FIXME: If there is a _link, set target to project/package from _link
-    QString currentPackage = ui->treePackages->getCurrentPackage();
+    QString currentPackage = ui->packagesWidget->getCurrentPackage();
 
     OBSRequest *request = new OBSRequest();
     request->setActionType("submit");
@@ -512,7 +512,7 @@ void Browser::createRequest()
     CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, m_obs, this);
     createRequestDialog->addProjectList(m_locationBar->getProjectList());
     disconnect(m_obs, &OBS::finishedParsingPackageList,
-               ui->treePackages, &PackageTreeWidget::addPackageList);
+               ui->packagesWidget, &PackageTreeWidget::addPackageList);
 
     int result = createRequestDialog->exec();
     if (result) {
@@ -523,7 +523,7 @@ void Browser::createRequest()
     delete request;
 
     connect(m_obs, &OBS::finishedParsingPackageList,
-            ui->treePackages, &PackageTreeWidget::addPackageList);
+            ui->packagesWidget, &PackageTreeWidget::addPackageList);
 }
 
 void Browser::linkPackage()
@@ -531,7 +531,7 @@ void Browser::linkPackage()
     qDebug() << __PRETTY_FUNCTION__;
     PackageActionDialog *packageActionDialog = new PackageActionDialog(this, m_obs,
                                                                        currentProject,
-                                                                       ui->treePackages->getCurrentPackage(),
+                                                                       ui->packagesWidget->getCurrentPackage(),
                                                                        PackageAction::LinkPackage);
     packageActionDialog->addProjectList(m_locationBar->getProjectList());
     connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
@@ -545,7 +545,7 @@ void Browser::copyPackage()
     qDebug() << __PRETTY_FUNCTION__;
     PackageActionDialog *packageActionDialog = new PackageActionDialog(this, m_obs,
                                                                        currentProject,
-                                                                       ui->treePackages->getCurrentPackage(),
+                                                                       ui->packagesWidget->getCurrentPackage(),
                                                                        PackageAction::CopyPackage);
     packageActionDialog->addProjectList(m_locationBar->getProjectList());
     connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
@@ -576,7 +576,7 @@ void Browser::deletePackage()
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    QString package = ui->treePackages->getCurrentPackage();
+    QString package = ui->packagesWidget->getCurrentPackage();
 
     const QString title = tr("Delete confirmation");
     const QString text = tr("Do you really want to delete package<br> %1/%2?")
@@ -596,7 +596,7 @@ void Browser::deleteFile()
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    QString package = ui->treePackages->getCurrentPackage();
+    QString package = ui->packagesWidget->getCurrentPackage();
     QString fileName = ui->filesWidget->getCurrentFile();
 
     const QString title = tr("Delete confirmation");
@@ -625,14 +625,14 @@ void Browser::setupModels()
 {
     qDebug() << __PRETTY_FUNCTION__;
     // Clean up package list, files and results
-    ui->treePackages->deleteModel();
+    ui->packagesWidget->deleteModel();
     ui->overviewWidget->clearResultsModel();
     ui->filesWidget->clearModel();
     ui->treeRevisions->clearModel();
     ui->treeRequests->clearModel();
 
-    ui->treePackages->createModel();
-    packagesSelectionModel = ui->treePackages->selectionModel();
+    ui->packagesWidget->createModel();
+    packagesSelectionModel = ui->packagesWidget->selectionModel();
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, ui->overviewWidget, &OverviewWidget::onPackageSelectionChanged);
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::packageSelectionChanged);
@@ -640,9 +640,9 @@ void Browser::setupModels()
 
 void Browser::slotContextMenuPackages(const QPoint &point)
 {
-    QModelIndex index = ui->treePackages->indexAt(point);
+    QModelIndex index = ui->packagesWidget->indexAt(point);
     if (index.isValid() && m_packagesMenu) {
-        m_packagesMenu->exec(ui->treePackages->mapToGlobal(point));
+        m_packagesMenu->exec(ui->packagesWidget->mapToGlobal(point));
     }
 }
 
@@ -799,7 +799,7 @@ void Browser::slotTabIndexChanged(int index)
 void Browser::slotSelectPackage()
 {
     if (!selectPackage.isEmpty()) {
-        ui->treePackages->setCurrentPackage(selectPackage);
+        ui->packagesWidget->setCurrentPackage(selectPackage);
         selectPackage = "";
     }
 }
@@ -836,7 +836,7 @@ void Browser::addFile(OBSFile *file)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    currentPackage = ui->treePackages->getCurrentPackage();
+    currentPackage = ui->packagesWidget->getCurrentPackage();
     QString fileProject = file->getProject();
     QString filePackage = file->getPackage();
 
@@ -849,7 +849,7 @@ void Browser::uploadFile(const QString &path)
 {
     qDebug() <<  __PRETTY_FUNCTION__ << "path:" << path;
 
-    QString package = ui->treePackages->getCurrentPackage();
+    QString package = ui->packagesWidget->getCurrentPackage();
 
     if (!currentProject.isEmpty() && !package.isEmpty()) {
         QFile file(path);
@@ -875,7 +875,7 @@ void Browser::uploadFile(const QString &path)
 void Browser::slotUploadFile(OBSRevision *revision)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    QString currentPackage = ui->treePackages->getCurrentPackage();
+    QString currentPackage = ui->packagesWidget->getCurrentPackage();
 
     // Refresh file list
     if (currentProject == revision->getProject() && currentPackage == revision->getPackage()) {
@@ -973,7 +973,7 @@ void Browser::slotProjectNotFound(OBSStatus *status)
 {
     qDebug() << Q_FUNC_INFO;
     m_packagesToolbar->setDisabled(true);
-    ui->treePackages->clearModel();
+    ui->packagesWidget->clearModel();
     const QString title = tr("Project not found");
     const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getCode());
     QMessageBox::information(this, title, text);
@@ -1012,7 +1012,7 @@ void Browser::slotDeletePackage(OBSStatus *status)
 
     if (status->getCode() == "ok") {
         if (status->getProject() == currentProject) {
-            ui->treePackages->removePackage(status->getPackage());
+            ui->packagesWidget->removePackage(status->getPackage());
         }
         emit showTrayMessage(APP_NAME, tr("The package %1 has been deleted").arg(status->getPackage()));
     } else {
@@ -1029,7 +1029,7 @@ void Browser::slotDeleteFile(OBSStatus *status)
     qDebug() << __PRETTY_FUNCTION__;
 
     if (status->getCode() == "ok") {
-        QString currentPackage = ui->treePackages->getCurrentPackage();
+        QString currentPackage = ui->packagesWidget->getCurrentPackage();
         QString fileName = status->getDetails();
 
         if (status->getProject() == currentProject && status->getPackage() == currentPackage) {
