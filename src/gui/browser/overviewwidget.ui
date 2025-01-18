@@ -256,7 +256,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="BuildResultTreeWidget" name="treeBuildResults">
+     <widget class="BuildResultTreeWidget" name="resultsWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>

@@ -31,17 +31,17 @@ OverviewWidget::OverviewWidget(QWidget *parent)
 
     ui->packages->setVisible(false);
     ui->packagesCount->setVisible(false);
-    ui->treeBuildResults->setVisible(false);
+    ui->resultsWidget->setVisible(false);
     m_projectsToolbar->setIconSize(QSize(15, 15));
     m_resultsToolbar->setIconSize(QSize(15, 15));
     m_resultsToolbar->setVisible(false);
     ui->verticalLayout->addWidget(m_projectsToolbar);
     ui->verticalLayout_2->addWidget(m_resultsToolbar);
 
-    connect(ui->treeBuildResults, &BuildResultTreeWidget::customContextMenuRequested, this, &OverviewWidget::slotContextMenuResults);
-    connect(this, &OverviewWidget::finishedParsingResultList, ui->treeBuildResults, &BuildResultTreeWidget::finishedAddingResults);
+    connect(ui->resultsWidget, &BuildResultTreeWidget::customContextMenuRequested, this, &OverviewWidget::slotContextMenuResults);
+    connect(this, &OverviewWidget::finishedParsingResultList, ui->resultsWidget, &BuildResultTreeWidget::finishedAddingResults);
 
-    QItemSelectionModel *buildResultsSelectionModel = ui->treeBuildResults->selectionModel();
+    QItemSelectionModel *buildResultsSelectionModel = ui->resultsWidget->selectionModel();
     connect(buildResultsSelectionModel, &QItemSelectionModel::selectionChanged, this, &OverviewWidget::buildResultSelectionChanged);
 
     readSettings();
@@ -80,22 +80,22 @@ void OverviewWidget::setPackageCount(const QString &packageCount)
 
 void OverviewWidget::addResult(OBSResult *result)
 {
-    ui->treeBuildResults->addResult(result);
+    ui->resultsWidget->addResult(result);
 }
 
 QString OverviewWidget::getCurrentRepository() const
 {
-    return ui->treeBuildResults->getCurrentRepository();
+    return ui->resultsWidget->getCurrentRepository();
 }
 
 QString OverviewWidget::getCurrentArch() const
 {
-    return ui->treeBuildResults->getCurrentArch();
+    return ui->resultsWidget->getCurrentArch();
 }
 
 bool OverviewWidget::hasResultSelection()
 {
-    return ui->treeBuildResults->hasSelection();
+    return ui->resultsWidget->hasSelection();
 }
 
 void OverviewWidget::clear()
@@ -113,7 +113,7 @@ void OverviewWidget::clear()
 
 void OverviewWidget::clearResultsModel()
 {
-    ui->treeBuildResults->clearModel();
+    ui->resultsWidget->clearModel();
 }
 
 void OverviewWidget::readSettings()
@@ -179,7 +179,7 @@ void OverviewWidget::onPackageSelectionChanged(const QItemSelection &selected, c
     qDebug() << Q_FUNC_INFO;
     Q_UNUSED(deselected)
 
-    ui->treeBuildResults->setVisible(!selected.isEmpty());
+    ui->resultsWidget->setVisible(!selected.isEmpty());
     m_dataLoaded = false;
 
     if (!selected.isEmpty()) {
@@ -206,8 +206,8 @@ void OverviewWidget::onPackageNotFound(OBSStatus *status)
 
 void OverviewWidget::slotContextMenuResults(const QPoint &point)
 {
-    QModelIndex index = ui->treeBuildResults->indexAt(point);
+    QModelIndex index = ui->resultsWidget->indexAt(point);
     if (index.isValid() && m_resultsMenu) {
-        m_resultsMenu->exec(ui->treeBuildResults->mapToGlobal(point));
+        m_resultsMenu->exec(ui->resultsWidget->mapToGlobal(point));
     }
 }
