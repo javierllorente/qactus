@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2024-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@
 #include <QTreeView>
 #include <QObject>
 #include <QStandardItemModel>
+#include "datacontroller.h"
 #include "obsrevision.h"
 
-class RevisionTreeWidget : public QTreeView
+class RevisionTreeWidget : public QTreeView, public DataController
 {
     Q_OBJECT
 public:

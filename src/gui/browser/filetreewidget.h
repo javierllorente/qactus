@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,11 @@
 #include <QMimeData>
 #include <QDebug>
 #include <QStandardItemModel>
+#include "datacontroller.h"
 #include "obsfile.h"
 #include "utils.h"
 
-class FileTreeWidget : public QTreeView
+class FileTreeWidget : public QTreeView, public DataController
 {
         Q_OBJECT
 

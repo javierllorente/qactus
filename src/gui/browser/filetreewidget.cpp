@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 
 FileTreeWidget::FileTreeWidget(QWidget *parent) :
     QTreeView(parent),
+    sourceModelFiles(nullptr),
     firstTimeFileListDisplayed(true)
 {
     createModel();
@@ -43,10 +44,9 @@ void FileTreeWidget::createModel()
 
 void FileTreeWidget::deleteModel()
 {
-    if (sourceModelFiles) {
-        delete sourceModelFiles;
-        sourceModelFiles = nullptr;
-    }
+    delete sourceModelFiles;
+    sourceModelFiles = nullptr;
+    m_dataLoaded = false;
 }
 
 void FileTreeWidget::dragEnterEvent(QDragEnterEvent *event)
@@ -91,6 +91,7 @@ void FileTreeWidget::filesAdded(const QString &project, const QString &package)
     selectionModel()->clear(); // Emits selectionChanged() and currentChanged()
     this->project = project;
     this->package = package;
+    m_dataLoaded = true;
     emit updateStatusBar(tr("Done"), true);
 }
 
@@ -171,6 +172,7 @@ void FileTreeWidget::clearModel()
 {
     model()->removeRows(0, model()->rowCount());
     selectionModel()->clearSelection();
+    m_dataLoaded = false;
 }
 
 QString FileTreeWidget::getProject() const

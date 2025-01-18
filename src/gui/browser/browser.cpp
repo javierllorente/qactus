@@ -408,6 +408,7 @@ void Browser::load(const QString &location)
     currentPackage = getLocationPackage();
     getPackages(currentProject);
     ui->overviewWidget->setDataLoaded(false);
+    ui->treeRequests->clearModel();
     
     if (currentPackage.isEmpty()) {
         handleProjectTasks();
@@ -712,8 +713,13 @@ void Browser::slotProjectSelectionChanged()
 
 void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     Q_UNUSED(deselected)
+
+    ui->overviewWidget->setDataLoaded(false);
+    ui->treeFiles->clearModel();
+    ui->treeRevisions->clearModel();
+    ui->treeRequests->setDataLoaded(false);
 
     if (!selected.isEmpty()) {
         ui->tabWidget->setTabVisible(1, true);
@@ -748,12 +754,12 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         qDebug() << __PRETTY_FUNCTION__ << "currentPackage =" << currentPackage << "locationPackage =" << getLocationPackage();
 
         if (currentPackage.isEmpty() && getLocationPackage().isEmpty()) {
+            // Clear project, so that projectA/package to projectA
+            // then tab switch to requests, fetches them
             if (m_loaded) {
-                // FIXME: clean this
-                // Clear project, so that projectA/package to projectA
-                // then tab switch to requests, fetches them
-                // clearOverview();
                 m_loaded = false;
+            } else {
+                ui->treeRequests->clearModel();
             }
             return;
         }
@@ -775,28 +781,28 @@ void Browser::slotTabIndexChanged(int index)
     if (!currentProject.isEmpty()) {
         switch (index) {
             case 0:
-                if (currentPackage.isEmpty() && currentProject != overviewProject) {
+                if (currentPackage.isEmpty() && !ui->overviewWidget->isDataLoaded()) {
                     m_obs->getProjectMetaConfig(currentProject);
-                } else if (!currentPackage.isEmpty() && currentPackage != overviewPackage) {
+                } else if (!currentPackage.isEmpty() &&  !ui->overviewWidget->isDataLoaded()) {
                     m_obs->getPackageMetaConfig(currentProject, currentPackage);
                     m_obs->getLatestRevision(currentProject, currentPackage);
                     getBuildResults(currentProject, currentPackage);
                 }
                 break;
             case 1:
-                if (currentPackage != ui->treeFiles->getPackage()) {
+                if (!currentPackage.isEmpty() && !ui->treeFiles->isDataLoaded()) {
                     getPackageFiles(currentPackage);
                 }
                 break;
             case 2:
-                if (currentPackage != ui->treeRevisions->getPackage()) {
+                if (!currentPackage.isEmpty() && !ui->treeRevisions->isDataLoaded()) {
                     getRevisions(currentProject, currentPackage);
                 }
                 break;
             case 3:
-                if (currentProject != ui->treeRequests->getProject() && currentPackage.isEmpty()) {
+                if (currentPackage.isEmpty() && !ui->treeRequests->isDataLoaded()) {
                     getProjectRequests(currentProject);
-                } else if (currentPackage != ui->treeRequests->getPackage()) {
+                } else if (!currentPackage.isEmpty() && !ui->treeRequests->isDataLoaded()) {
                     getPackageRequests(currentProject, currentPackage);
                 }
                 break;

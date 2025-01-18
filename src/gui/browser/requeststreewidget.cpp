@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2024-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,12 +59,14 @@ void RequestsTreeWidget::deleteModel()
 {
     delete itemModel;
     itemModel = nullptr;
+    m_dataLoaded = false;
 }
 
 void RequestsTreeWidget::clearModel()
 {
     model()->removeRows(0, model()->rowCount());
     selectionModel()->clearSelection();
+    m_dataLoaded = false;
 }
 
 QString RequestsTreeWidget::getProject() const
@@ -131,5 +133,6 @@ void RequestsTreeWidget::requestsAdded(const QString &project, const QString &pa
     selectionModel()->clear(); // Emits selectionChanged() and currentChanged()
     this->project = project;
     this->package = package;
+    m_dataLoaded = true;
     emit updateStatusBar(tr("Done"), true);
 }
