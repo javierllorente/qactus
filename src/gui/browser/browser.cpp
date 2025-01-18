@@ -134,9 +134,9 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingRevisionList, ui->revisionsWidget, &RevisionTreeWidget::revisionsAdded);
     connect(ui->revisionsWidget, &RevisionTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
-    connect(m_obs, &OBS::finishedParsingRequest, ui->treeRequests, &RequestsTreeWidget::addRequest);
-    connect(m_obs, &OBS::finishedParsingRequestList, ui->treeRequests, &RequestsTreeWidget::requestsAdded);
-    connect(ui->treeRequests, &RequestsTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
+    connect(m_obs, &OBS::finishedParsingRequest, ui->requestsWidget, &RequestsTreeWidget::addRequest);
+    connect(m_obs, &OBS::finishedParsingRequestList, ui->requestsWidget, &RequestsTreeWidget::requestsAdded);
+    connect(ui->requestsWidget, &RequestsTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     readSettings();
 
@@ -306,7 +306,7 @@ void Browser::reloadPackages()
     ui->overviewWidget->clearResultsModel();
     ui->filesWidget->clearModel();
     ui->revisionsWidget->clearModel();
-    ui->treeRequests->clearModel();
+    ui->requestsWidget->clearModel();
 
     emit packageSelectionChanged();
     ui->filesWidget->setAcceptDrops(false);
@@ -408,7 +408,7 @@ void Browser::load(const QString &location)
     currentPackage = getLocationPackage();
     getPackages(currentProject);
     ui->overviewWidget->setDataLoaded(false);
-    ui->treeRequests->clearModel();
+    ui->requestsWidget->clearModel();
     
     if (currentPackage.isEmpty()) {
         handleProjectTasks();
@@ -629,7 +629,7 @@ void Browser::setupModels()
     ui->overviewWidget->clearResultsModel();
     ui->filesWidget->clearModel();
     ui->revisionsWidget->clearModel();
-    ui->treeRequests->clearModel();
+    ui->requestsWidget->clearModel();
 
     ui->packagesWidget->createModel();
     packagesSelectionModel = ui->packagesWidget->selectionModel();
@@ -675,7 +675,7 @@ void Browser::getProjectRequests(const QString &project)
 {
     qDebug() << __PRETTY_FUNCTION__ << project;
     emit updateStatusBar(tr("Getting project requests..."), false);
-    ui->treeRequests->clearModel();
+    ui->requestsWidget->clearModel();
     m_obs->getProjectRequests(project);
 }
 
@@ -683,7 +683,7 @@ void Browser::getPackageRequests(const QString &project, const QString &package)
 {
     qDebug() << __PRETTY_FUNCTION__ << project << package;
     emit updateStatusBar(tr("Getting package requests..."), false);
-    ui->treeRequests->clearModel();
+    ui->requestsWidget->clearModel();
     m_obs->getPackageRequests(project, package);
 }
 
@@ -705,7 +705,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
     ui->overviewWidget->setDataLoaded(false);
     ui->filesWidget->clearModel();
     ui->revisionsWidget->clearModel();
-    ui->treeRequests->setDataLoaded(false);
+    ui->requestsWidget->setDataLoaded(false);
 
     if (!selected.isEmpty()) {
         ui->tabWidget->setTabVisible(1, true);
@@ -745,7 +745,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
             if (m_loaded) {
                 m_loaded = false;
             } else {
-                ui->treeRequests->clearModel();
+                ui->requestsWidget->clearModel();
             }
             return;
         }
@@ -755,7 +755,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         ui->overviewWidget->clearResultsModel();
         ui->filesWidget->clearModel();
         ui->revisionsWidget->clearModel();
-        ui->treeRequests->clearModel();
+        ui->requestsWidget->clearModel();
 
         ui->filesWidget->setAcceptDrops(false);
     }
@@ -786,9 +786,9 @@ void Browser::slotTabIndexChanged(int index)
                 }
                 break;
             case 3:
-                if (currentPackage.isEmpty() && !ui->treeRequests->isDataLoaded()) {
+                if (currentPackage.isEmpty() && !ui->requestsWidget->isDataLoaded()) {
                     getProjectRequests(currentProject);
-                } else if (!currentPackage.isEmpty() && !ui->treeRequests->isDataLoaded()) {
+                } else if (!currentPackage.isEmpty() && !ui->requestsWidget->isDataLoaded()) {
                     getPackageRequests(currentProject, currentPackage);
                 }
                 break;

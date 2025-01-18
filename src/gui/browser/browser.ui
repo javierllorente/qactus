@@ -172,7 +172,7 @@
           </attribute>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
-            <widget class="RequestsTreeWidget" name="treeRequests">
+            <widget class="RequestsTreeWidget" name="requestsWidget">
              <property name="rootIsDecorated">
               <bool>false</bool>
              </property>
