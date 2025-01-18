@@ -130,9 +130,9 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
 
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &Browser::slotTabIndexChanged);
 
-    connect(m_obs, &OBS::finishedParsingRevision, ui->treeRevisions, &RevisionTreeWidget::addRevision);
-    connect(m_obs, &OBS::finishedParsingRevisionList, ui->treeRevisions, &RevisionTreeWidget::revisionsAdded);
-    connect(ui->treeRevisions, &RevisionTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
+    connect(m_obs, &OBS::finishedParsingRevision, ui->revisionsWidget, &RevisionTreeWidget::addRevision);
+    connect(m_obs, &OBS::finishedParsingRevisionList, ui->revisionsWidget, &RevisionTreeWidget::revisionsAdded);
+    connect(ui->revisionsWidget, &RevisionTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     connect(m_obs, &OBS::finishedParsingRequest, ui->treeRequests, &RequestsTreeWidget::addRequest);
     connect(m_obs, &OBS::finishedParsingRequestList, ui->treeRequests, &RequestsTreeWidget::requestsAdded);
@@ -305,7 +305,7 @@ void Browser::reloadPackages()
     ui->overviewWidget->clear();
     ui->overviewWidget->clearResultsModel();
     ui->filesWidget->clearModel();
-    ui->treeRevisions->clearModel();
+    ui->revisionsWidget->clearModel();
     ui->treeRequests->clearModel();
 
     emit packageSelectionChanged();
@@ -628,7 +628,7 @@ void Browser::setupModels()
     ui->packagesWidget->deleteModel();
     ui->overviewWidget->clearResultsModel();
     ui->filesWidget->clearModel();
-    ui->treeRevisions->clearModel();
+    ui->revisionsWidget->clearModel();
     ui->treeRequests->clearModel();
 
     ui->packagesWidget->createModel();
@@ -667,7 +667,7 @@ void Browser::getRevisions(const QString &project, const QString &package)
 {
     qDebug() << __PRETTY_FUNCTION__ << project << package;
     emit updateStatusBar(tr("Getting revisions.."), false);
-    ui->treeRevisions->clearModel();
+    ui->revisionsWidget->clearModel();
     m_obs->getRevisions(project, package);
 }
 
@@ -704,7 +704,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
 
     ui->overviewWidget->setDataLoaded(false);
     ui->filesWidget->clearModel();
-    ui->treeRevisions->clearModel();
+    ui->revisionsWidget->clearModel();
     ui->treeRequests->setDataLoaded(false);
 
     if (!selected.isEmpty()) {
@@ -754,7 +754,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         // and requests
         ui->overviewWidget->clearResultsModel();
         ui->filesWidget->clearModel();
-        ui->treeRevisions->clearModel();
+        ui->revisionsWidget->clearModel();
         ui->treeRequests->clearModel();
 
         ui->filesWidget->setAcceptDrops(false);
@@ -781,7 +781,7 @@ void Browser::slotTabIndexChanged(int index)
                 }
                 break;
             case 2:
-                if (!currentPackage.isEmpty() && !ui->treeRevisions->isDataLoaded()) {
+                if (!currentPackage.isEmpty() && !ui->revisionsWidget->isDataLoaded()) {
                     getRevisions(currentProject, currentPackage);
                 }
                 break;

@@ -158,7 +158,7 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="RevisionTreeWidget" name="treeRevisions">
+            <widget class="RevisionTreeWidget" name="revisionsWidget">
              <property name="rootIsDecorated">
               <bool>false</bool>
              </property>
