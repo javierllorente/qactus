@@ -137,6 +137,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingRequest, ui->requestsWidget, &RequestsTreeWidget::addRequest);
     connect(m_obs, &OBS::finishedParsingRequestList, ui->requestsWidget, &RequestsTreeWidget::requestsAdded);
     connect(ui->requestsWidget, &RequestsTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
+    connect(ui->requestsWidget, &RequestsTreeWidget::descriptionFetched, ui->requestDescription, &QTextBrowser::setText);
 
     readSettings();
 
@@ -307,6 +308,7 @@ void Browser::reloadPackages()
     ui->filesWidget->clearModel();
     ui->revisionsWidget->clearModel();
     ui->requestsWidget->clearModel();
+    ui->requestDescription->clear();
 
     emit packageSelectionChanged();
     ui->filesWidget->setAcceptDrops(false);
@@ -409,6 +411,7 @@ void Browser::load(const QString &location)
     getPackages(currentProject);
     ui->overviewWidget->setDataLoaded(false);
     ui->requestsWidget->clearModel();
+    ui->requestDescription->clear();
     
     if (currentPackage.isEmpty()) {
         handleProjectTasks();
@@ -630,6 +633,7 @@ void Browser::setupModels()
     ui->filesWidget->clearModel();
     ui->revisionsWidget->clearModel();
     ui->requestsWidget->clearModel();
+    ui->requestDescription->clear();
 
     ui->packagesWidget->createModel();
     packagesSelectionModel = ui->packagesWidget->selectionModel();
@@ -676,6 +680,7 @@ void Browser::getProjectRequests(const QString &project)
     qDebug() << __PRETTY_FUNCTION__ << project;
     emit updateStatusBar(tr("Getting project requests..."), false);
     ui->requestsWidget->clearModel();
+    ui->requestDescription->clear();
     m_obs->getProjectRequests(project);
 }
 
@@ -746,6 +751,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
                 m_loaded = false;
             } else {
                 ui->requestsWidget->clearModel();
+                ui->requestDescription->clear();
             }
             return;
         }
@@ -756,6 +762,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         ui->filesWidget->clearModel();
         ui->revisionsWidget->clearModel();
         ui->requestsWidget->clearModel();
+        ui->requestDescription->clear();
 
         ui->filesWidget->setAcceptDrops(false);
     }

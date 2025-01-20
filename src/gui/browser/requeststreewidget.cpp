@@ -28,22 +28,20 @@ RequestsTreeWidget::RequestsTreeWidget(QWidget *parent) :
 
 void RequestsTreeWidget::createModel()
 {
-    QStringList headerLabels;
-    headerLabels << tr("Created") << tr("Source") << tr("Target")
-                 << tr("Requester") << tr("Action") << tr("ID");
-    itemModel = new QStandardItemModel(this);
-    itemModel->setHorizontalHeaderLabels(headerLabels);
+    itemModel = new RequestItemModel(this);
     setModel(itemModel);
 }
 
 void RequestsTreeWidget::initTable()
 {
-    setColumnWidth(0, 145);
-    setColumnWidth(1, 150);
-    setColumnWidth(2, 150);
-    setColumnWidth(3, 100);
-    setColumnWidth(4, 75);
-    setColumnWidth(5, 75);
+    setColumnWidth(0, 145); // Date
+    setColumnWidth(1, 60); // SR ID
+    setColumnWidth(2, 210); // Source project
+    setColumnWidth(3, 210); // Target project
+    setColumnWidth(4, 100); // Requester
+    setColumnWidth(5, 60); // Type
+    setColumnWidth(6, 60); // State
+    setColumnHidden(7, true); // Description
     setSortingEnabled(true);
     setAlternatingRowColors(true);
     setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -52,6 +50,12 @@ void RequestsTreeWidget::initTable()
             [&](int logicalIndex, Qt::SortOrder order) {
         this->logicalIndex = logicalIndex;
         this->order = order;
+    });
+
+    connect(this, &RequestsTreeWidget::clicked, this, [=](const QModelIndex &index){
+        RequestItemModel *currentModel = static_cast<RequestItemModel *>(model());
+        QString description = currentModel->getDescription(index);
+        emit descriptionFetched(description);
     });
 }
 
@@ -81,40 +85,7 @@ QString RequestsTreeWidget::getPackage() const
 
 void RequestsTreeWidget::addRequest(OBSRequest *request)
 {
-    QStandardItemModel *itemModel = static_cast<QStandardItemModel *>(model());
-    if (itemModel) {
-        itemModel->setSortRole(Qt::UserRole);
-
-        QStandardItem *createdItem = new QStandardItem();
-        QDate date = QDate::fromString(request->getDate());
-        createdItem->setData(date, Qt::UserRole);
-        createdItem->setData(request->getDate(), Qt::DisplayRole);
-
-        QStandardItem *sourceItem = new QStandardItem();
-        sourceItem->setData(request->getSource(), Qt::UserRole);
-        sourceItem->setData(request->getSource(), Qt::DisplayRole);
-
-        QStandardItem *targetItem = new QStandardItem();
-        targetItem->setData(request->getTarget(), Qt::UserRole);
-        targetItem->setData(request->getTarget(), Qt::DisplayRole);
-
-        QStandardItem *creatorItem = new QStandardItem();
-        creatorItem->setData(request->getCreator(), Qt::UserRole);
-        creatorItem->setData(request->getCreator(), Qt::DisplayRole);
-
-        QStandardItem *actionItem = new QStandardItem();
-        actionItem->setData(request->getActionType(), Qt::UserRole);
-        actionItem->setData(request->getActionType(), Qt::DisplayRole);
-
-        QStandardItem *idItem = new QStandardItem();
-        idItem->setData(request->getId(), Qt::UserRole);
-        idItem->setData(request->getId(), Qt::DisplayRole);
-
-        QList<QStandardItem *> items;
-        items << createdItem << sourceItem << targetItem << creatorItem
-              << actionItem << idItem;
-        itemModel->appendRow(items);
-    }
+    itemModel->appendRequest(request);
 }
 
 void RequestsTreeWidget::requestsAdded(const QString &project, const QString &package)

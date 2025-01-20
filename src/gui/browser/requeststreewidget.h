@@ -18,9 +18,9 @@
 
 #include <QTreeView>
 #include <QObject>
-#include <QStandardItemModel>
 #include "datacontroller.h"
 #include "obsrequest.h"
+#include "requestitemmodel.h"
 
 class RequestsTreeWidget : public QTreeView, public DataController
 {
@@ -35,7 +35,7 @@ public:
     QString getPackage() const;
 
 private:
-    QStandardItemModel *itemModel;
+    RequestItemModel *itemModel;
     bool firstTimeRevisionListDisplayed;
     int logicalIndex;
     Qt::SortOrder order;
@@ -48,6 +48,7 @@ public slots:
 
 signals:
     void updateStatusBar(QString message, bool progressBarHidden);
+    void descriptionFetched(const QString &description);
 };
 
 #endif // REQUESTSTREEWIDGET_H

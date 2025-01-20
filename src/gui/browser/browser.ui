@@ -29,7 +29,7 @@
    <item>
     <widget class="QSplitter" name="hSplitterBrowser">
      <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0,0">
@@ -37,7 +37,7 @@
         <number>0</number>
        </property>
        <property name="sizeConstraint">
-        <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+        <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <item>
         <widget class="QLineEdit" name="lineEditFilter">
@@ -58,7 +58,7 @@
           </sizepolicy>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+          <set>QAbstractItemView::NoEditTriggers</set>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
@@ -84,7 +84,7 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="tabPosition">
-          <enum>QTabWidget::TabPosition::North</enum>
+          <enum>QTabWidget::North</enum>
          </property>
          <property name="currentIndex">
           <number>0</number>
@@ -137,7 +137,7 @@
            <item>
             <widget class="FileTreeWidget" name="filesWidget">
              <property name="editTriggers">
-              <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+              <set>QAbstractItemView::NoEditTriggers</set>
              </property>
              <property name="alternatingRowColors">
               <bool>true</bool>
@@ -166,16 +166,22 @@
            </item>
           </layout>
          </widget>
-	 <widget class="QWidget" name="requestsTab">
+         <widget class="QWidget" name="requestsTab">
           <attribute name="title">
            <string>Requests</string>
           </attribute>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="RequestsTreeWidget" name="requestsWidget">
-             <property name="rootIsDecorated">
-              <bool>false</bool>
+            <widget class="QSplitter" name="requestsSplitter">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
              </property>
+             <widget class="RequestsTreeWidget" name="requestsWidget">
+              <property name="rootIsDecorated">
+               <bool>false</bool>
+              </property>
+             </widget>
+             <widget class="QTextBrowser" name="requestDescription"/>
             </widget>
            </item>
           </layout>
