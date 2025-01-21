@@ -689,6 +689,7 @@ void Browser::getPackageRequests(const QString &project, const QString &package)
     qDebug() << __PRETTY_FUNCTION__ << project << package;
     emit updateStatusBar(tr("Getting package requests..."), false);
     ui->requestsWidget->clearModel();
+    ui->requestDescription->clear();
     m_obs->getPackageRequests(project, package);
 }
 
