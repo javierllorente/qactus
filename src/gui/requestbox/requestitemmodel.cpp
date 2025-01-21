@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,12 @@ bool RequestItemModel::removeRequest(const QString &id)
         return true;
     }
     return false;
+}
+
+void RequestItemModel::clear()
+{
+    removeRows(0, rowCount());
+    idList.clear();
 }
 
 void RequestItemModel::syncRequests()

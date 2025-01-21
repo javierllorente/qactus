@@ -68,7 +68,7 @@ void RequestsTreeWidget::deleteModel()
 
 void RequestsTreeWidget::clearModel()
 {
-    model()->removeRows(0, model()->rowCount());
+    itemModel->clear();
     selectionModel()->clearSelection();
     m_dataLoaded = false;
 }
