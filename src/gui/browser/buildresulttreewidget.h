@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QTreeView>
 #include <QStandardItemModel>
+#include <QSharedPointer>
 #include "obsresult.h"
 #include "utils.h"
 
@@ -30,7 +31,7 @@ public:
     BuildResultTreeWidget(QWidget *parent = 0);
     void createModel();
     void deleteModel();
-    void addResult(OBSResult *obsResult);
+    void addResult(QSharedPointer<OBSResult> result);
     bool hasSelection();
     void clearModel();
     QString getCurrentRepository() const;

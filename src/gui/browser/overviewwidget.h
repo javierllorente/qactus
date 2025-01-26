@@ -41,7 +41,7 @@ public:
     void setResultsMenu(QMenu *resultsMenu);
     void setLatestRevision(QSharedPointer<OBSRevision> revision);
     void setPackageCount(const QString &packageCount);
-    void addResult(OBSResult *result);
+    void addResult(QSharedPointer<OBSResult> result);
     QString getCurrentRepository() const;
     QString getCurrentArch() const;
     bool hasResultSelection();
@@ -59,7 +59,7 @@ private:
 
 signals:
     void buildResultSelectionChanged();
-    void finishedParsingResultList(QList<OBSResult *> resultList);
+    void finishedParsingResultList(QList<QSharedPointer<OBSResult>> resultList);
 
 public slots:
     void setMetaConfig(OBSMetaConfig *metaConfig);

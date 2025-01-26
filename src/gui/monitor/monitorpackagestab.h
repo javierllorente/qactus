@@ -42,7 +42,7 @@ signals:
     void itemSelectionChanged();
 
 public slots:
-    void addDroppedPackage(OBSResult *result);
+    void addDroppedPackage(QSharedPointer<OBSResult> result);
     void finishedAddingPackages();
     void slotInsertStatus(QSharedPointer<OBSStatus> status, int row);
     void slotAddRow();

@@ -321,7 +321,7 @@ void Browser::reloadFiles()
     emit packageSelectionChanged();
 }
 
-void Browser::addResult(OBSResult *result)
+void Browser::addResult(QSharedPointer<OBSResult> result)
 {
     qDebug() << __PRETTY_FUNCTION__;
 

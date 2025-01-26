@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2021-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QSharedPointer>
 #include "obs.h"
 #include "obsresult.h"
 #include <QDebug>
@@ -39,11 +40,11 @@ signals:
     void notifyChanged(bool change);
 
 public slots:
-    void slotAddResultList(const QList<OBSResult *> &resultList);
+    void slotAddResultList(QList<QSharedPointer<OBSResult>> resultList);
 
 private:
-    void checkForResultListChanges(const QList<OBSResult *> &resultList);
-    QList<OBSResult *> m_resultList;
+    void checkForResultListChanges(QList<QSharedPointer<OBSResult>> resultList);
+    QList<QSharedPointer<OBSResult>> m_resultList;
 
 };
 

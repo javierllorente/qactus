@@ -260,8 +260,8 @@ void OBSXmlReader::parseResultList(const QString &data)
     qDebug() << Q_FUNC_INFO;
 
     QXmlStreamReader xml(data);
-    QList<OBSResult *> resultList;
-    OBSResult *obsResult = nullptr;
+    QList<QSharedPointer<OBSResult>> resultList;
+    QSharedPointer<OBSResult> result = QSharedPointer<OBSResult>();
     QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>();
 
     while (!xml.atEnd() && !xml.hasError()) {
@@ -273,32 +273,30 @@ void OBSXmlReader::parseResultList(const QString &data)
             }
 
             if (xml.name().toString() == "result") {
-                obsResult = new OBSResult();
+                result = QSharedPointer<OBSResult>(new OBSResult());
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsResult->setProject(attrib.value("project").toString());
-                obsResult->setRepository(attrib.value("repository").toString());
-                obsResult->setArch(attrib.value("arch").toString());
-                obsResult->setCode(attrib.value("code").toString());
-                obsResult->setState(attrib.value("state").toString());
-                resultList.append(obsResult);
+                result->setProject(attrib.value("project").toString());
+                result->setRepository(attrib.value("repository").toString());
+                result->setArch(attrib.value("arch").toString());
+                result->setCode(attrib.value("code").toString());
+                result->setState(attrib.value("state").toString());
+                resultList.append(result);
             }
 
             if (xml.name().toString() == "status") {
                 status = QSharedPointer<OBSStatus>(new OBSStatus());
-                obsResult->appendStatus(status);
+                result->appendStatus(status);
             }
 
             parseStatus(xml, status);
         }
 
         if (xml.name().toString() == "result" && xml.isEndElement()) {
-            emit finishedParsingResult(obsResult);
+            emit finishedParsingResult(result);
         }
 
         if (xml.name().toString() == "resultlist" && xml.isEndElement()) {
             emit finishedParsingResultList(resultList);
-            qDeleteAll(resultList);
-            resultList.clear();
         }
     }
 }

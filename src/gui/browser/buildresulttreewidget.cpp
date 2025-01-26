@@ -49,20 +49,20 @@ void BuildResultTreeWidget::deleteModel()
     }
 }
 
-void BuildResultTreeWidget::addResult(OBSResult *obsResult)
+void BuildResultTreeWidget::addResult(QSharedPointer<OBSResult> result)
 {
     QStandardItemModel *resultModel = static_cast<QStandardItemModel*>(model());
 
     if (resultModel) {
-        QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
-        QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
+        QStandardItem *itemRepository = new QStandardItem(result->getRepository());
+        QStandardItem *itemArch = new QStandardItem(result->getArch());
 
-        if (!obsResult->getStatusList().isEmpty()) {
-            QStandardItem *itemBuildResult = new QStandardItem(obsResult->getStatusList().first()->getCode());
+        if (!result->getStatusList().isEmpty()) {
+            QStandardItem *itemBuildResult = new QStandardItem(result->getStatusList().first()->getCode());
             itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
 
-            if (!obsResult->getStatusList().first()->getDetails().isEmpty()) {
-                QString details = obsResult->getStatusList().first()->getDetails();
+            if (!result->getStatusList().first()->getDetails().isEmpty()) {
+                QString details = result->getStatusList().first()->getDetails();
                 details = Utils::breakLine(details, 250);
                 itemBuildResult->setToolTip(details);
             }

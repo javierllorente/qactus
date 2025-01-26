@@ -138,7 +138,7 @@ void MonitorPackagesTab::dropEvent(QDropEvent *event)
     }
 }
 
-void MonitorPackagesTab::addDroppedPackage(OBSResult *result)
+void MonitorPackagesTab::addDroppedPackage(QSharedPointer<OBSResult> result)
 {
     qDebug() << __PRETTY_FUNCTION__;
 

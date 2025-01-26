@@ -106,8 +106,8 @@ signals:
     void finishedParsingDeletePrjStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingDeletePkgStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingDeleteFileStatus(QSharedPointer<OBSStatus> status);
-    void finishedParsingResult(OBSResult*);
-    void finishedParsingResultList(const QList<OBSResult *> &resultList);
+    void finishedParsingResult(QSharedPointer<OBSResult> result);
+    void finishedParsingResultList(QList<QSharedPointer<OBSResult>> resultList);
     void finishedParsingRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingLatestRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingIncomingRequest(QSharedPointer<OBSRequest> request);

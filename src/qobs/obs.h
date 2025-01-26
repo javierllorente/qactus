@@ -112,8 +112,8 @@ signals:
     void cannotDeleteProject(QSharedPointer<OBSStatus> status);
     void cannotDeletePackage(QSharedPointer<OBSStatus> status);
     void cannotDeleteFile(QSharedPointer<OBSStatus> status);
-    void finishedParsingResult(OBSResult*);
-    void finishedParsingResultList(QList<OBSResult *> resultList);
+    void finishedParsingResult(QSharedPointer<OBSResult> result);
+    void finishedParsingResultList(QList<QSharedPointer<OBSResult>> resultList);
     void finishedParsingRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingRequestList(const QString &project, const QString &package);

@@ -44,7 +44,7 @@ bool MonitorRepositoryTab::hasSelection()
     }
 }
 
-void MonitorRepositoryTab::slotAddResultList(const QList<OBSResult *> &resultList)
+void MonitorRepositoryTab::slotAddResultList(QList<QSharedPointer<OBSResult>> resultList)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
@@ -58,7 +58,7 @@ void MonitorRepositoryTab::slotAddResultList(const QList<OBSResult *> &resultLis
         m_resultList = resultList;
         QTreeWidgetItem *item = nullptr;
 
-        for (OBSResult *result : resultList) {
+        for (QSharedPointer<OBSResult> result : resultList) {
             for (QSharedPointer<OBSStatus> status : result->getStatusList()) {
 
                 item = new QTreeWidgetItem(ui->treeWidget);
@@ -81,21 +81,21 @@ void MonitorRepositoryTab::slotAddResultList(const QList<OBSResult *> &resultLis
     }
 }
 
-void MonitorRepositoryTab::checkForResultListChanges(const QList<OBSResult *> &resultList)
+void MonitorRepositoryTab::checkForResultListChanges(QList<QSharedPointer<OBSResult>> resultList)
 {
     // FIXME: intersect always returns 0
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-    QSet<OBSResult *> old_resultSet(m_resultList.begin(), m_resultList.end());
-    QSet<OBSResult *> new_resultSet(resultList.begin(), resultList.end());
+    QSet<QSharedPointer<OBSResult>> old_resultSet(m_resultList.begin(), m_resultList.end());
+    QSet<QSharedPointer<OBSResult>> new_resultSet(resultList.begin(), resultList.end());
 #else
-    QSet<OBSResult *> old_resultSet = m_resultList.toSet();
-    QSet<OBSResult *> new_resultSet= resultList.toSet();
+    QSet<QSharedPointer<OBSResult>> old_resultSet = m_resultList.toSet();
+    QSet<QSharedPointer<OBSResult>> new_resultSet= resultList.toSet();
 #endif
 
-    QList<OBSResult *> commonResults = old_resultSet.intersect(new_resultSet).values();
+    QList<QSharedPointer<OBSResult>> commonResults = old_resultSet.intersect(new_resultSet).values();
 
-    for (OBSResult *oldResult : commonResults) {
-        for (OBSResult *newResult : resultList) {
+    for (QSharedPointer<OBSResult> oldResult : commonResults) {
+        for (QSharedPointer<OBSResult> newResult : resultList) {
 
             if (oldResult == newResult) {
 

@@ -59,7 +59,7 @@ public slots:
     void editPackage();
     void reloadPackages();
     void reloadFiles();
-    void addResult(OBSResult *result);
+    void addResult(QSharedPointer<OBSResult> result);
     void reloadResults();
     void getBuildLog();
     void branchSelectedPackage();

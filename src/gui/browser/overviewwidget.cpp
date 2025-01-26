@@ -78,7 +78,7 @@ void OverviewWidget::setPackageCount(const QString &packageCount)
     ui->packagesCount->setText(packageCount);
 }
 
-void OverviewWidget::addResult(OBSResult *result)
+void OverviewWidget::addResult(QSharedPointer<OBSResult> result)
 {
     ui->resultsWidget->addResult(result);
 }
