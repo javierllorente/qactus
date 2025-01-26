@@ -71,8 +71,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(obsCore, &OBSCore::cannotDeletePackage, this, &OBS::cannotDeletePackage);
     connect(obsCore, &OBSCore::cannotDeleteFile, this, &OBS::cannotDeleteFile);
 
-    connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
-            this, SIGNAL(finishedParsingResult(OBSResult*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingResult, this, &OBS::finishedParsingResult);
     connect(xmlReader, &OBSXmlReader::finishedParsingResultList, this, &OBS::finishedParsingResultList);
     connect(xmlReader, &OBSXmlReader::finishedParsingRevision,
             this, &OBS::finishedParsingRevision);
