@@ -216,7 +216,7 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, QSharedPointer<OBSStatus> 
 void OBSXmlReader::parseBuildStatus(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -233,7 +233,7 @@ void OBSXmlReader::parseBuildStatus(const QString &data)
 QSharedPointer<OBSStatus> OBSXmlReader::parseNotFoundStatus(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -300,7 +300,7 @@ void OBSXmlReader::parseResultList(const QString &data)
 void OBSXmlReader::parseRequestStatus(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -348,7 +348,7 @@ void OBSXmlReader::parseBranchPackage(const QString &data)
     qDebug() << Q_FUNC_INFO;
     qDebug() << data;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -367,7 +367,7 @@ void OBSXmlReader::parseLinkPackage(const QString &project, const QString &packa
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>(new OBSRevision());
+    QSharedPointer<OBSRevision> revision(new OBSRevision());
     revision->setProject(project);
     revision->setPackage(package);
 
@@ -388,7 +388,7 @@ void OBSXmlReader::parseCopyPackage(const QString &project, const QString &packa
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>(new OBSRevision());
+    QSharedPointer<OBSRevision> revision(new OBSRevision());
     revision->setProject(project);
     revision->setPackage(package);
 
@@ -430,7 +430,7 @@ void OBSXmlReader::parseCreateRequestStatus(const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -449,7 +449,7 @@ void OBSXmlReader::parseCreateProject(const QString &project, const QString &dat
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
     status->setProject(project);
 
     while (!xml.atEnd() && !xml.hasError()) {
@@ -469,7 +469,7 @@ void OBSXmlReader::parseCreatePackage(const QString &project, const QString &pac
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
     status->setProject(project);
     status->setPackage(package);
 
@@ -490,7 +490,7 @@ void OBSXmlReader::parseUploadFile(const QString &project, const QString &packag
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>(new OBSRevision());
+    QSharedPointer<OBSRevision> revision(new OBSRevision());
     revision->setProject(project);
     revision->setPackage(package);
     revision->setFile(file);
@@ -512,7 +512,7 @@ void OBSXmlReader::parseDeleteProject(const QString &project, const QString &dat
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
     status->setProject(project);
 
     while (!xml.atEnd() && !xml.hasError()) {
@@ -532,7 +532,7 @@ void OBSXmlReader::parseDeletePackage(const QString &project, const QString &pac
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
     status->setProject(project);
     status->setPackage(package);
 
@@ -553,7 +553,7 @@ void OBSXmlReader::parseDeleteFile(const QString &project, const QString &packag
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
     status->setProject(project);
     status->setPackage(package);
     status->setDetails(fileName);
@@ -998,7 +998,7 @@ void OBSXmlReader::parseLink(const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSLink> link = QSharedPointer<OBSLink>(new OBSLink());
+    QSharedPointer<OBSLink> link(new OBSLink());
 
     while (!xml.atEnd() && !xml.hasError()) {
 
@@ -1025,7 +1025,7 @@ void OBSXmlReader::parseLink(const QString &data)
 void OBSXmlReader::parseAbout(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSAbout> about = QSharedPointer<OBSAbout>(new OBSAbout());
+    QSharedPointer<OBSAbout> about(new OBSAbout());
 
     while (!xml.atEnd() && !xml.hasError()) {
 
@@ -1064,7 +1064,7 @@ void OBSXmlReader::parseAbout(const QString &data)
 void OBSXmlReader::parsePerson(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSPerson> person = QSharedPointer<OBSPerson>(new OBSPerson());
+    QSharedPointer<OBSPerson> person(new OBSPerson());
 
     while (!xml.atEnd() && !xml.hasError()) {
 
@@ -1120,7 +1120,7 @@ void OBSXmlReader::parseUpdatePerson(const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    QSharedPointer<OBSStatus> status(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
