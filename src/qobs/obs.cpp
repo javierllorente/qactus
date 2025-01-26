@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2015-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -228,7 +228,7 @@ void OBS::getPackageRequests(const QString &project, const QString &package)
 
 void OBS::slotChangeSubmitRequest(const QString &id, const QString &comments, bool accepted)
 {
-    qDebug() << "OBS::changeSubmitRequest() id:" << id << " comments:" << comments << " accept:" << accepted;
+    qDebug() << Q_FUNC_INFO << "id:" << id << " comments:" << comments << " accept:" << accepted;
     QString newState = accepted ? "accepted" : "declined";
     QString resource = QString("/request/%1?cmd=changestate&newstate=%2").arg(id, newState);
     QByteArray data;
@@ -243,7 +243,7 @@ void OBS::createRequest(const QByteArray &data)
 
 void OBS::getRequestDiff(const QString &source)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     QString resource = QString("/request/%1?cmd=diff").arg(source);
     obsCore->getSRDiff(resource);
 }
