@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2015-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ private:
     QStringList packageList;
     QStringListModel *packageModel;
     QCompleter *packageCompleter;
-    QList<OBSRepository *> repositories;
+    QList<QSharedPointer<OBSRepository>> repositories;
     QStringList repositoryList;
     QStringListModel *repositoryModel;
     QCompleter *repositoryCompleter;
@@ -72,7 +72,7 @@ private slots:
     void insertPackageList(const QStringList &list);
     void refreshPackageAutocompleter(const QString&);
     void autocompletedPackageName_clicked(const QString&);
-    void insertProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
+    void insertProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
     void refreshRepositoryAutocompleter(const QString&);
     void autocompletedRepositoryName_clicked(const QString&repository);
     void refreshArchAutocompleter(const QString&);

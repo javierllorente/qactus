@@ -62,7 +62,7 @@ signals:
     void finishedParsingResultList(QList<QSharedPointer<OBSResult>> resultList);
 
 public slots:
-    void setMetaConfig(OBSMetaConfig *metaConfig);
+    void setMetaConfig(QSharedPointer<OBSMetaConfig> metaConfig);
     void onPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void onProjectNotFound(QSharedPointer<OBSStatus>);
     void onPackageNotFound(QSharedPointer<OBSStatus> status);

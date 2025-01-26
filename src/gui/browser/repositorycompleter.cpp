@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ void RepositoryCompleter::slotCurrentChanged(const QModelIndex &current, const Q
     }
 }
 
-void RepositoryCompleter::slotFetchedDistribution(OBSDistribution *distribution)
+void RepositoryCompleter::slotFetchedDistribution(QSharedPointer<OBSDistribution> distribution)
 {
     m_distributions.append(distribution);
     m_repoNames.append(distribution->getRepoName());

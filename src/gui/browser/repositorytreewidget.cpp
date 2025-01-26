@@ -34,7 +34,7 @@ RepositoryTreeWidget::RepositoryTreeWidget(QWidget *parent) :
     connect(model, &QStandardItemModel::itemChanged, this, &RepositoryTreeWidget::itemChanged);
 }
 
-void RepositoryTreeWidget::addRepository(OBSRepository *repository)
+void RepositoryTreeWidget::addRepository(QSharedPointer<OBSRepository> repository)
 {
     for (auto arch : repository->getArchs()) {
         QStandardItem *itemName = new QStandardItem();
@@ -100,7 +100,7 @@ QWidget *RepositoryTreeWidget::createButtonBar()
         buttonAdd->setIcon(QIcon::fromTheme("list-add"));
         buttonAdd->setMaximumSize(25, 25);
         connect(buttonAdd, &QPushButton::clicked, this, [&]() {
-            addRepository(new OBSRepository);
+            addRepository(QSharedPointer<OBSRepository>(new OBSRepository()));
             scrollToBottom();
             QModelIndex itemIndex = model->index(rowCount()-1, 0);
             setCurrentIndex(itemIndex);
@@ -132,13 +132,13 @@ QWidget *RepositoryTreeWidget::createButtonBar()
         return mainWidget;
 }
 
-QList<OBSRepository *> RepositoryTreeWidget::getRepositories() const
+QList<QSharedPointer<OBSRepository>> RepositoryTreeWidget::getRepositories() const
 {
-    QList<OBSRepository *> repositoryList;
+    QList<QSharedPointer<OBSRepository>> repositoryList;
 
     int rows = rowCount();
     for (int i=0; i<rows; i++) {
-        OBSRepository *repository = new OBSRepository();
+        QSharedPointer<OBSRepository> repository(new OBSRepository());
         for (int j=0; j<3; j++) {
             QModelIndex index = model->index(i, j);
             switch (j) {

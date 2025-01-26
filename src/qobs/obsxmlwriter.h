@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 #include <QObject>
 #include <QXmlStreamWriter>
+#include <QSharedPointer>
 #include "obsrequest.h"
 #include "obsrepository.h"
 #include "obsperson.h"
@@ -30,13 +31,13 @@ class OBSXmlWriter : public QObject
 public:
     explicit OBSXmlWriter(QObject *parent = nullptr);
     QByteArray createRequest(OBSRequest *obsRequest);
-    QByteArray createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) const;
-    QByteArray createPackageMeta(OBSPkgMetaConfig *pkgMetaConfig) const;
+    QByteArray createProjectMeta(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig) const;
+    QByteArray createPackageMeta(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig) const;
     QByteArray createLink(const QString &project, const QString &package) const;
-    QByteArray createPerson(OBSPerson *obsPerson);
+    QByteArray createPerson(QSharedPointer<OBSPerson> obsPerson);
 
 private:
-    void createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepository *repository) const;
+    void createRepositoryElement(QXmlStreamWriter &xmlWriter, QSharedPointer<OBSRepository> repository) const;
     void createWatchListElement(QXmlStreamWriter &xmlWriter, const QStringList &watchList);
     void createUserRoles(QXmlStreamWriter &xmlWriter, const QMultiHash<QString, QString> &userRoles, const QString &type) const;
     void createRepositoryFlags(QXmlStreamWriter &xmlWriter, const QHash<QString, bool> &flag, const QString &type) const;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public:
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
 
 private:
-    QList<OBSDistribution *> m_distributions;
+    QList<QSharedPointer<OBSDistribution>> m_distributions;
     QStringList m_repoNames;
     QStringList m_archs;
     QStringList m_path;
@@ -42,7 +42,7 @@ private:
 public slots:
     void slotItemChanged(QStandardItem *item);
     void slotCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
-    void slotFetchedDistribution(OBSDistribution *distribution);
+    void slotFetchedDistribution(QSharedPointer<OBSDistribution> distribution);
 };
 
 #endif // REPOSITORYCOMPLETER_H

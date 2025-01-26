@@ -33,10 +33,10 @@ void OBSLinkHelper::linkPackage(const QString &srcProject, const QString &srcPac
     emit getPackageMetaConfig(resource);
 }
 
-void OBSLinkHelper::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
+void OBSLinkHelper::slotFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    OBSPkgMetaConfig *newPkgMetaConfig = new OBSPkgMetaConfig();
+    QSharedPointer<OBSPkgMetaConfig> newPkgMetaConfig(new OBSPkgMetaConfig());
     newPkgMetaConfig->setName(pkgMetaConfig->getName());
     newPkgMetaConfig->setProject(m_dstProject);
     newPkgMetaConfig->setTitle(pkgMetaConfig->getTitle());
@@ -44,10 +44,8 @@ void OBSLinkHelper::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig
     newPkgMetaConfig->setDescription(pkgMetaConfig->getDescription());
     newPkgMetaConfig->setBuildFlag(pkgMetaConfig->getBuildFlag());
 
-    OBSXmlWriter *xmlWriter = new OBSXmlWriter();
+    QScopedPointer<OBSXmlWriter> xmlWriter(new OBSXmlWriter());
     QByteArray metaConfigData = xmlWriter->createPackageMeta(newPkgMetaConfig);
-    delete xmlWriter;
-    delete newPkgMetaConfig;
 
     emit createPackage(m_dstProject, m_dstPackage, metaConfigData);
 }

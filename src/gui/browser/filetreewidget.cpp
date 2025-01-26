@@ -95,7 +95,7 @@ void FileTreeWidget::filesAdded(const QString &project, const QString &package)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void FileTreeWidget::addFile(OBSFile *obsFile)
+void FileTreeWidget::addFile(QSharedPointer<OBSFile> file)
 {
     QStandardItemModel *fileModel = static_cast<QStandardItemModel*>(model());
     if (fileModel) {
@@ -103,25 +103,25 @@ void FileTreeWidget::addFile(OBSFile *obsFile)
 
         // Name
         QStandardItem *itemName = new QStandardItem();
-        itemName->setData(obsFile->getName(), Qt::UserRole);
-        itemName->setData(obsFile->getName(), Qt::DisplayRole);
+        itemName->setData(file->getName(), Qt::UserRole);
+        itemName->setData(file->getName(), Qt::DisplayRole);
 
         // Size
         QStandardItem *itemSize = new QStandardItem();
         QString fileSizeHuman;
 #if QT_VERSION >= 0x051000
         QLocale locale = this->locale();
-        fileSizeHuman = locale.formattedDataSize(obsFile->getSize().toInt());
+        fileSizeHuman = locale.formattedDataSize(file->getSize().toInt());
 #else
-        fileSizeHuman = Utils::fileSizeHuman(obsFile->getSize().toInt());
+        fileSizeHuman = Utils::fileSizeHuman(file->getSize().toInt());
 #endif
         itemSize->setData(QVariant(fileSizeHuman), Qt::DisplayRole);
-        itemSize->setData(obsFile->getSize().toInt(), Qt::UserRole);
+        itemSize->setData(file->getSize().toInt(), Qt::UserRole);
 
         // Modified time
         QStandardItem *itemLastModified = new QStandardItem();
         QString lastModifiedStr;
-        QString lastModifiedUnixTimeStr = obsFile->getLastModified();
+        QString lastModifiedUnixTimeStr = file->getLastModified();
 #if QT_VERSION >= 0x050800
         QDateTime lastModifiedDateTime = QDateTime::fromSecsSinceEpoch(qint64(lastModifiedUnixTimeStr.toInt()), QTimeZone::UTC);
         lastModifiedStr = lastModifiedDateTime.toString("dd/MM/yyyy H:mm");

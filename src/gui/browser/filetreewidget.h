@@ -22,6 +22,7 @@
 #include <QMimeData>
 #include <QDebug>
 #include <QStandardItemModel>
+#include <QSharedPointer>
 #include "datacontroller.h"
 #include "obsfile.h"
 #include "utils.h"
@@ -34,7 +35,7 @@ public:
     FileTreeWidget(QWidget *parent = nullptr);
     void createModel();
     void deleteModel();
-    void addFile(OBSFile *obsFile);
+    void addFile(QSharedPointer<OBSFile> file);
     bool hasLink() const;
     QString getCurrentFile() const;
     bool removeFile(const QString &fileName);

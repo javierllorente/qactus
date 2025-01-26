@@ -132,7 +132,7 @@ void OverviewWidget::writeSettings()
     settings.endGroup();
 }
 
-void OverviewWidget::setMetaConfig(OBSMetaConfig *metaConfig)
+void OverviewWidget::setMetaConfig(QSharedPointer<OBSMetaConfig> metaConfig)
 {
     qDebug() << Q_FUNC_INFO;
     QString title = metaConfig->getTitle();
@@ -141,7 +141,7 @@ void OverviewWidget::setMetaConfig(OBSMetaConfig *metaConfig)
     }
     ui->title->setText(title);
 
-    OBSPkgMetaConfig *pkgMetaConfig = dynamic_cast<OBSPkgMetaConfig *>(metaConfig);
+    OBSPkgMetaConfig *pkgMetaConfig = dynamic_cast<OBSPkgMetaConfig *>(metaConfig.data());
     if (pkgMetaConfig) {
         QString url = pkgMetaConfig->getUrl().toString();
         ui->link->setText(!url.isEmpty() ? "<a href=\"" + url + "\">" + url + "</a>" : "");

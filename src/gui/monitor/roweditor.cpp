@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2015-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,11 +168,10 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
     m_obs->getProjectMetaConfig(project);
 }
 
-void RowEditor::insertProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
+void RowEditor::insertProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig)
 {
     qDebug() << __PRETTY_FUNCTION__;
     repositories = prjMetaConfig->getRepositories();
-    delete prjMetaConfig;
 
     for (auto repository : repositories) {
         repositoryList.append(repository->getName());

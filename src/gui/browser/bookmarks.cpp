@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ Bookmarks::Bookmarks(QWidget *parent)
 
 Bookmarks::~Bookmarks()
 {
-    delete m_person;
+
 }
 
 void Bookmarks::addMenuActions()
@@ -46,7 +46,7 @@ void Bookmarks::addMenuActions()
 }
 
 
-void Bookmarks::slotLoadBookmarks(OBSPerson *person)
+void Bookmarks::slotLoadBookmarks(QSharedPointer<OBSPerson> person)
 {
     m_person = person;
     clear();

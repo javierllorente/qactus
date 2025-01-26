@@ -88,9 +88,9 @@ private:
     void parseCollection(QXmlStreamReader &xml);
     QSharedPointer<OBSRequest> parseRequest(QXmlStreamReader &xml);
     QStringList parseList(QXmlStreamReader &xml);
-    void parseMetaConfig(QXmlStreamReader &xml, OBSMetaConfig *metaConfig);
+    void parseMetaConfig(QXmlStreamReader &xml, QSharedPointer<OBSMetaConfig> metaConfig);
     QHash<QString, bool> parseRepositoryFlags(QXmlStreamReader &xml);
-    OBSDistribution *parseDistribution(QXmlStreamReader &xml);
+    QSharedPointer<OBSDistribution> parseDistribution(QXmlStreamReader &xml);
     QString requestNumber;
 
 signals:
@@ -119,20 +119,20 @@ signals:
     void finishedParsingList(QStringList);
     void finishedParsingProjectList(QStringList);
     void projectFetched(const QString &project);
-    void finishedParsingProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
-    void finishedParsingPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
+    void finishedParsingProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
+    void finishedParsingPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig);
     void finishedParsingPackageList(QStringList);
-    void finishedParsingFile(OBSFile*);
+    void finishedParsingFile(QSharedPointer<OBSFile> file);
     void finishedParsingFileList(const QString &project, const QString &package);
     void finishedParsingRevisionList(const QString &project, const QString &package);
-    void finishedParsingLink(OBSLink *obsLink);
+    void finishedParsingLink(QSharedPointer<OBSLink> link);
     void finishedParsingRequestStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingRequest( QSharedPointer<OBSRequest> request);
     void finishedParsingRequestList(const QString &project, const QString &package);
-    void finishedParsingAbout(OBSAbout *obsAbout);
-    void finishedParsingPerson(OBSPerson *obsPerson);
+    void finishedParsingAbout(QSharedPointer<OBSAbout> about);
+    void finishedParsingPerson(QSharedPointer<OBSPerson> person);
     void finishedParsingUpdatePerson(QSharedPointer<OBSStatus> status);
-    void finishedParsingDistribution(OBSDistribution *distribution);
+    void finishedParsingDistribution(QSharedPointer<OBSDistribution> distribution);
 };
 
 #endif // OBSXMLREADER_H

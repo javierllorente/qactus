@@ -19,6 +19,7 @@
 #include <QHeaderView>
 #include <QTimer>
 #include <QStandardItemModel>
+#include <QScopedPointer>
 #include "focusfilter.h"
 
 MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, MCEMode mode) :
@@ -52,7 +53,7 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
             ui->projectLineEdit->deselect();
         });
 
-        OBSPrjMetaConfig *prjMetaConfig = new OBSPrjMetaConfig();
+        QSharedPointer<OBSPrjMetaConfig> prjMetaConfig;
         addDefaultMaintainer(prjMetaConfig);
         addDefaultRepositories(prjMetaConfig);
         slotFetchedProjectMetaConfig(prjMetaConfig);
@@ -78,7 +79,7 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         ui->projectLineEdit->setDisabled(true);
         createUrlField();
 
-        OBSPkgMetaConfig *pkgMetaConfig = new OBSPkgMetaConfig();
+        QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig;
         addDefaultMaintainer(pkgMetaConfig);
         slotFetchedPackageMetaConfig(pkgMetaConfig);
 
@@ -121,13 +122,13 @@ void MetaConfigEditor::on_buttonBox_accepted()
     QProgressDialog progress(tr("Creating..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    OBSXmlWriter *xmlWriter = new OBSXmlWriter(this);
+    QScopedPointer<OBSXmlWriter> xmlWriter(new OBSXmlWriter());
     QByteArray data;
 
     switch (m_mode) {
     case MCEMode::CreateProject:
     case MCEMode::EditProject: {
-        OBSPrjMetaConfig *prjMetaConfig = new OBSPrjMetaConfig();
+        QSharedPointer<OBSPrjMetaConfig> prjMetaConfig(new OBSPrjMetaConfig());
         prjMetaConfig->setName(ui->projectLineEdit->text());
         prjMetaConfig->setTitle(ui->titleLineEdit->text());
         prjMetaConfig->setDescription(ui->descriptionTextEdit->toPlainText());
@@ -143,13 +144,12 @@ void MetaConfigEditor::on_buttonBox_accepted()
         fillMetaConfigRepositories(tableRepositories, prjMetaConfig);
 
         data = xmlWriter->createProjectMeta(prjMetaConfig);
-        delete prjMetaConfig;
         emit createProject(ui->projectLineEdit->text(), data);
         break;
     }
     case MCEMode::CreatePackage:
     case MCEMode::EditPackage: {
-        OBSPkgMetaConfig *pkgMetaConfig = new OBSPkgMetaConfig();
+        QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig(new OBSPkgMetaConfig());
         pkgMetaConfig->setName(packageLineEdit->text());
         pkgMetaConfig->setProject(ui->projectLineEdit->text());
         pkgMetaConfig->setTitle(ui->titleLineEdit->text());
@@ -165,13 +165,10 @@ void MetaConfigEditor::on_buttonBox_accepted()
         fillMetaConfigRepositoryFlags(useForFlagTree, pkgMetaConfig, RepositoryFlag::UseForBuild);
 
         data = xmlWriter->createPackageMeta(pkgMetaConfig);
-        delete pkgMetaConfig;
         emit createPackage(ui->projectLineEdit->text(), packageLineEdit->text(), data);
         break;
     }
     }
-
-    delete xmlWriter;
 }
 
 void MetaConfigEditor::on_buttonBox_rejected()
@@ -192,13 +189,13 @@ void MetaConfigEditor::slotCreateResult(QSharedPointer<OBSStatus> status)
    }
 }
 
-void MetaConfigEditor::slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig)
+void MetaConfigEditor::slotFetchedProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig)
 {
     fillRepositoryTab(prjMetaConfig);
     fillTabs(prjMetaConfig);
 }
 
-void MetaConfigEditor::slotSetupRepositoryFlagsCompleter(OBSPrjMetaConfig *prjMetaConfig)
+void MetaConfigEditor::slotSetupRepositoryFlagsCompleter(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig)
 {
     for (auto repository : prjMetaConfig->getRepositories()) {
         for (auto arch : repository->getArchs()) {
@@ -207,7 +204,7 @@ void MetaConfigEditor::slotSetupRepositoryFlagsCompleter(OBSPrjMetaConfig *prjMe
     }
 }
 
-void MetaConfigEditor::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig)
+void MetaConfigEditor::slotFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig)
 {
     packageLineEdit->setText(pkgMetaConfig->getName());
     urlLineEdit->setText(pkgMetaConfig->getUrl().toString());
@@ -239,7 +236,7 @@ void MetaConfigEditor::packageTextChanged(const QString &package)
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
 }
 
-void MetaConfigEditor::fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig)
+void MetaConfigEditor::fillRepositoryTab(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig)
 {
     tableRepositories = createRepositoryTable();
 
@@ -261,7 +258,7 @@ void MetaConfigEditor::fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig)
     }
 }
 
-void MetaConfigEditor::fillTabs(OBSMetaConfig *metaConfig)
+void MetaConfigEditor::fillTabs(QSharedPointer<OBSMetaConfig> metaConfig)
 {
     ui->titleLineEdit->setText(metaConfig->getTitle());
     ui->descriptionTextEdit->setText(metaConfig->getDescription());
@@ -471,21 +468,21 @@ void MetaConfigEditor::createUrlField()
     ui->layoutGeneral->insertRow(5, urlLabel, urlLineEdit);
 }
 
-void MetaConfigEditor::addDefaultMaintainer(OBSMetaConfig *metaConfig)
+void MetaConfigEditor::addDefaultMaintainer(QSharedPointer<OBSMetaConfig> metaConfig)
 {
     metaConfig->insertPerson(m_obs->getUsername(), "maintainer");
 }
 
-void MetaConfigEditor::addDefaultRepositories(OBSPrjMetaConfig *prjMetaConfig)
+void MetaConfigEditor::addDefaultRepositories(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig)
 {
-    OBSRepository *tumbleweed = new OBSRepository("openSUSE_Tumbleweed", "openSUSE:Factory", "snapshot", "x86_64");
+    QSharedPointer<OBSRepository> tumbleweed(new OBSRepository("openSUSE_Tumbleweed", "openSUSE:Factory", "snapshot", "x86_64"));
     prjMetaConfig->appendRepository(tumbleweed);
 
-    OBSRepository *leap = new OBSRepository("openSUSE_Current", "openSUSE:Current", "standard", "x86_64");
+    QSharedPointer<OBSRepository> leap(new OBSRepository("openSUSE_Current", "openSUSE:Current", "standard", "x86_64"));
     prjMetaConfig->appendRepository(leap);
 }
 
-void MetaConfigEditor::fillMetaConfigRoles(QTreeWidget *tree, OBSMetaConfig *metaConfig, const QString &type)
+void MetaConfigEditor::fillMetaConfigRoles(QTreeWidget *tree, QSharedPointer<OBSMetaConfig> metaConfig, const QString &type)
 {
     int rows = tree->topLevelItemCount();
     for (int i=0; i<rows; i++) {
@@ -497,7 +494,7 @@ void MetaConfigEditor::fillMetaConfigRoles(QTreeWidget *tree, OBSMetaConfig *met
     }
 }
 
-void MetaConfigEditor::fillMetaConfigRepositoryFlags(QTreeWidget *tree, OBSMetaConfig *metaConfig, RepositoryFlag flag)
+void MetaConfigEditor::fillMetaConfigRepositoryFlags(QTreeWidget *tree, QSharedPointer<OBSMetaConfig> metaConfig, RepositoryFlag flag)
 {
     int rows = tree->topLevelItemCount();
     for (int i=0; i<rows; i++) {
@@ -519,7 +516,7 @@ void MetaConfigEditor::fillMetaConfigRepositoryFlags(QTreeWidget *tree, OBSMetaC
     }
 }
 
-void MetaConfigEditor::fillMetaConfigRepositories(RepositoryTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig)
+void MetaConfigEditor::fillMetaConfigRepositories(RepositoryTreeWidget *tree, QSharedPointer<OBSPrjMetaConfig> prjMetaConfig)
 {
     for (auto repository : tree->getRepositories()) {
         prjMetaConfig->appendRepository(repository);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2020-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QTreeView>
 #include <QStandardItemModel>
+#include <QSharedPointer>
 #include "obsrepository.h"
 
 class RepositoryTreeWidget : public QTreeView
@@ -27,11 +28,11 @@ class RepositoryTreeWidget : public QTreeView
 
 public:
     RepositoryTreeWidget(QWidget *parent = nullptr);
-    void addRepository(OBSRepository *repository);
+    void addRepository(QSharedPointer<OBSRepository> repository);
     bool removeRepository(const QString &repository);
     bool removeRow(const QModelIndex &index);
     int rowCount() const;
-    QList<OBSRepository *> getRepositories() const;
+    QList<QSharedPointer<OBSRepository>> getRepositories() const;
     QWidget *createButtonBar();
 
 private:

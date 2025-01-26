@@ -57,9 +57,9 @@ private slots:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
     void slotCreateResult(QSharedPointer<OBSStatus> status);
-    void slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
-    void slotSetupRepositoryFlagsCompleter(OBSPrjMetaConfig *prjMetaConfig);
-    void slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
+    void slotFetchedProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
+    void slotSetupRepositoryFlagsCompleter(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
+    void slotFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig);
     void on_projectLineEdit_textChanged(const QString &project);
     void packageTextChanged(const QString &package);
 
@@ -81,8 +81,8 @@ private:
     QTreeWidget *usersTree;
     QTreeWidget *groupsTree;
     enum class RepositoryFlag { Build, DebugInfo, Publish, UseForBuild };
-    void fillRepositoryTab(OBSPrjMetaConfig *prjMetaConfig);
-    void fillTabs(OBSMetaConfig *metaConfig);
+    void fillRepositoryTab(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
+    void fillTabs(QSharedPointer<OBSMetaConfig> metaConfig);
     QWidget *createButtonBar(QTreeWidget *treeWidget);
     QWidget *createSideBar(QTreeWidget *treeWidget);
     RepositoryTreeWidget *createRepositoryTable();
@@ -90,11 +90,11 @@ private:
     QTreeWidget *createRoleTable(const QString &header, const QMultiHash<QString, QString> &userRoles);
     void createPackageField();
     void createUrlField();
-    void addDefaultMaintainer(OBSMetaConfig *metaConfig);
-    void addDefaultRepositories(OBSPrjMetaConfig *prjMetaConfig);
-    void fillMetaConfigRoles(QTreeWidget *tree, OBSMetaConfig *metaConfig, const QString &type);
-    void fillMetaConfigRepositoryFlags(QTreeWidget *tree, OBSMetaConfig *metaConfig, RepositoryFlag flag);
-    void fillMetaConfigRepositories(RepositoryTreeWidget *tree, OBSPrjMetaConfig *prjMetaConfig);
+    void addDefaultMaintainer(QSharedPointer<OBSMetaConfig> metaConfig);
+    void addDefaultRepositories(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
+    void fillMetaConfigRoles(QTreeWidget *tree, QSharedPointer<OBSMetaConfig> metaConfig, const QString &type);
+    void fillMetaConfigRepositoryFlags(QTreeWidget *tree, QSharedPointer<OBSMetaConfig> metaConfig, RepositoryFlag flag);
+    void fillMetaConfigRepositories(RepositoryTreeWidget *tree, QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
 
 };
 

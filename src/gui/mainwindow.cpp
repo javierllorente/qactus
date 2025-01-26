@@ -787,7 +787,7 @@ void MainWindow::slotAbout(OBSAbout *obsAbout)
     obsAbout = nullptr;
 }
 
-void MainWindow::slotUpdatePerson(OBSPerson *obsPerson)
+void MainWindow::slotUpdatePerson(QSharedPointer<OBSPerson> obsPerson)
 {
     OBSXmlWriter *xmlWriter = new OBSXmlWriter(this);
     QByteArray data = xmlWriter->createPerson(obsPerson);

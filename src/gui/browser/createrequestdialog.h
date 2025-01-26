@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ private:
     QCompleter *m_packageCompleter;
 
 private slots:
-    void linkFetched(OBSLink *link);
+    void linkFetched(QSharedPointer<OBSLink> link);
     void autocompletedProject_activated(const QString &project);
     void autocompletedPackage_activated(const QString &package);
     void toggleOkButton();

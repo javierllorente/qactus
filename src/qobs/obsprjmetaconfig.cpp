@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,17 +25,17 @@ OBSPrjMetaConfig::~OBSPrjMetaConfig()
 
 }
 
-void OBSPrjMetaConfig::appendRepository(OBSRepository *repository)
+void OBSPrjMetaConfig::appendRepository(QSharedPointer<OBSRepository> repository)
 {
     repositories.append(repository);
 }
 
-QList<OBSRepository *> OBSPrjMetaConfig::getRepositories() const
+QList<QSharedPointer<OBSRepository>> OBSPrjMetaConfig::getRepositories() const
 {
     return repositories;
 }
 
-void OBSPrjMetaConfig::setRepositories(const QList<OBSRepository *> &value)
+void OBSPrjMetaConfig::setRepositories(QList<QSharedPointer<OBSRepository>> value)
 {
     repositories = value;
 }

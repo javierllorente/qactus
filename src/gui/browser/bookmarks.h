@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public:
     ~Bookmarks();
 
 public slots:
-    void slotLoadBookmarks(OBSPerson *person);
+    void slotLoadBookmarks(QSharedPointer<OBSPerson> person);
     void addBookmark(const QString &project);
     void deleteBookmark(const QString &project);
     void toggleActions(const QString &project);
@@ -37,14 +37,14 @@ signals:
     void addBookmarkClicked();
     void deleteBookmarkClicked();
     void clicked(const QString &bookmark);
-    void bookmarkAdded(OBSPerson *person);
-    void bookmarkDeleted(OBSPerson *person);
+    void bookmarkAdded(QSharedPointer<OBSPerson> person);
+    void bookmarkDeleted(QSharedPointer<OBSPerson> person);
 
 private:
     QAction *m_actionAddBookmark;
     QAction *m_actionDeleteBookmark;
     int m_initialCount;
-    OBSPerson *m_person;
+    QSharedPointer<OBSPerson> m_person;
     void addMenuActions();
     void addItem(const QString &entry);
 

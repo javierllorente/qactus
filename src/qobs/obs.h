@@ -126,20 +126,20 @@ signals:
     void finishedParsingDeclinedRequestList();
     void finishedParsingProjectList(QStringList);
     void projectFetched(const QString &project);
-    void finishedParsingProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
-    void finishedParsingPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
+    void finishedParsingProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
+    void finishedParsingPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig);
     void finishedParsingPackageList(QStringList);
     void finishedParsingList(QStringList);
-    void finishedParsingFile(OBSFile*);
+    void finishedParsingFile(QSharedPointer<OBSFile> file);
     void finishedParsingFileList(const QString &project, const QString &package);
     void finishedParsingRevisionList(const QString &project, const QString &package);
-    void finishedParsingLink(OBSLink *obsLink);
+    void finishedParsingLink(QSharedPointer<OBSLink> link);
     void finishedParsingRequestStatus(QSharedPointer<OBSStatus> status);
     void srDiffFetched(const QString &);
-    void finishedParsingAbout(OBSAbout *obsAbout);
-    void finishedParsingPerson(OBSPerson *obsPerson);
+    void finishedParsingAbout(QSharedPointer<OBSAbout> about);
+    void finishedParsingPerson(QSharedPointer<OBSPerson> person);
     void finishedParsingUpdatePerson(QSharedPointer<OBSStatus> status);
-    void finishedParsingDistribution(OBSDistribution *distribution);
+    void finishedParsingDistribution(QSharedPointer<OBSDistribution> distribution);
 
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);

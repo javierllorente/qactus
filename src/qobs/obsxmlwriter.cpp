@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ QByteArray OBSXmlWriter::createRequest(OBSRequest *obsRequest)
     return data;
 }
 
-void OBSXmlWriter::createRepositoryElement(QXmlStreamWriter &xmlWriter, OBSRepository *repository) const
+void OBSXmlWriter::createRepositoryElement(QXmlStreamWriter &xmlWriter, QSharedPointer<OBSRepository> repository) const
 {
     xmlWriter.writeStartElement("repository");
     xmlWriter.writeAttribute("name", repository->getName());
@@ -130,7 +130,7 @@ void OBSXmlWriter::createRepositoryFlags(QXmlStreamWriter &xmlWriter, const QHas
     }
 }
 
-QByteArray OBSXmlWriter::createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) const
+QByteArray OBSXmlWriter::createProjectMeta(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig) const
 {
     QByteArray data;
     QXmlStreamWriter xmlWriter(&data);
@@ -159,7 +159,7 @@ QByteArray OBSXmlWriter::createProjectMeta(OBSPrjMetaConfig *prjMetaConfig) cons
     return data;
 }
 
-QByteArray OBSXmlWriter::createPackageMeta(OBSPkgMetaConfig *pkgMetaConfig) const
+QByteArray OBSXmlWriter::createPackageMeta(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig) const
 {
     QByteArray data;
     QXmlStreamWriter xmlWriter(&data);
@@ -210,7 +210,7 @@ QByteArray OBSXmlWriter::createLink(const QString &project, const QString &packa
     return data;
 }
 
-QByteArray OBSXmlWriter::createPerson(OBSPerson *obsPerson)
+QByteArray OBSXmlWriter::createPerson(QSharedPointer<OBSPerson> obsPerson)
 {
     QByteArray data;
     QXmlStreamWriter xmlWriter(&data);

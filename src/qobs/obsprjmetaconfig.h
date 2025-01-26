@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 #include <QString>
 #include <QMultiHash>
+#include <QSharedPointer>
 #include "obsmetaconfig.h"
 #include "obsrepository.h"
 
@@ -28,12 +29,12 @@ public:
     OBSPrjMetaConfig();
     ~OBSPrjMetaConfig();
 
-    void appendRepository(OBSRepository *repository);
-    QList<OBSRepository *> getRepositories() const;
-    void setRepositories(const QList<OBSRepository *> &value);
+    void appendRepository(QSharedPointer<OBSRepository> repository);
+    QList<QSharedPointer<OBSRepository>> getRepositories() const;
+    void setRepositories(QList<QSharedPointer<OBSRepository>> value);
 
 private:
-    QList<OBSRepository *> repositories;
+    QList<QSharedPointer<OBSRepository>> repositories;
 };
 
 #endif // OBSPRJMETACONFIG_H

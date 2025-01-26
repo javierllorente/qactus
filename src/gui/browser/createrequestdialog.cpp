@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ void CreateRequestDialog::addPackageList(const QStringList &packageList)
 #endif
 }
 
-void CreateRequestDialog::linkFetched(OBSLink *link)
+void CreateRequestDialog::linkFetched(QSharedPointer<OBSLink> link)
 {
     QString project = link->getProject().isEmpty() ? m_request->getSourceProject() : link->getProject();
     ui->targetProjectLineEdit->setText(project);
@@ -91,7 +91,6 @@ void CreateRequestDialog::linkFetched(OBSLink *link)
     ui->targetPackageLineEdit->setText(package);
 
     ui->descriptionPlainTextEdit->setFocus();
-    delete link;
 }
 
 void CreateRequestDialog::autocompletedPackage_activated(const QString &package)

@@ -101,8 +101,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(finishedParsingPackageList(QStringList)));
     connect(xmlReader, SIGNAL(finishedParsingList(QStringList)),
             this, SIGNAL(finishedParsingList(QStringList)));
-    connect(xmlReader, SIGNAL(finishedParsingFile(OBSFile*)),
-            this, SIGNAL(finishedParsingFile(OBSFile*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingFile, this, &OBS::finishedParsingFile);
     connect(xmlReader, &OBSXmlReader::finishedParsingFileList,
             this, &OBS::finishedParsingFileList);
     connect(xmlReader, &OBSXmlReader::finishedParsingRevisionList,
@@ -111,8 +110,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, &OBSXmlReader::finishedParsingRequestStatus, this, &OBS::finishedParsingRequestStatus);
     connect(obsCore, SIGNAL(srDiffFetched(QString)),
             this, SIGNAL(srDiffFetched(QString)));
-    connect(xmlReader, SIGNAL(finishedParsingAbout(OBSAbout*)),
-            SIGNAL(finishedParsingAbout(OBSAbout*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingAbout, this, &OBS::finishedParsingAbout);
     connect(xmlReader, &OBSXmlReader::finishedParsingPerson, this, &OBS::finishedParsingPerson);
     connect(xmlReader, &OBSXmlReader::finishedParsingUpdatePerson, this, &OBS::finishedParsingUpdatePerson);
     connect(xmlReader, &OBSXmlReader::finishedParsingDistribution, this, &OBS::finishedParsingDistribution);

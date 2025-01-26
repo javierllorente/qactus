@@ -840,7 +840,7 @@ void Browser::slotContextMenuFiles(const QPoint &point)
     }
 }
 
-void Browser::addFile(OBSFile *file)
+void Browser::addFile(QSharedPointer<OBSFile> file)
 {
     qDebug() << __PRETTY_FUNCTION__;
 

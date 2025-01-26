@@ -87,14 +87,14 @@ void OBSXmlReader::parseProjectList(const QString &userHome, const QString &data
 void OBSXmlReader::parsePrjMetaConfig(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSPrjMetaConfig *prjMetaConfig = nullptr;
-    OBSRepository *repository = nullptr;
+    QSharedPointer<OBSPrjMetaConfig> prjMetaConfig;
+    QSharedPointer<OBSRepository> repository;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
 
         if (xml.name().toString() == "project" && xml.isStartElement()) {
-            prjMetaConfig = new OBSPrjMetaConfig();
+            prjMetaConfig = QSharedPointer<OBSPrjMetaConfig>(new OBSPrjMetaConfig());
             QXmlStreamAttributes attrib = xml.attributes();
             prjMetaConfig->setName(attrib.value("name").toString());
         }
@@ -102,7 +102,7 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
         parseMetaConfig(xml, prjMetaConfig);
 
         if (xml.name().toString() == "repository" && xml.isStartElement()) {
-            repository = new OBSRepository();
+            repository = QSharedPointer<OBSRepository>(new OBSRepository());
             QXmlStreamAttributes attrib = xml.attributes();
             repository->setName(attrib.value("name").toString());
 
@@ -128,24 +128,22 @@ void OBSXmlReader::parsePrjMetaConfig(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete prjMetaConfig;
         return;
     }
 
     emit finishedParsingProjectMetaConfig(prjMetaConfig);
-    delete prjMetaConfig;
 }
 
 void OBSXmlReader::parsePkgMetaConfig(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSPkgMetaConfig *pkgMetaConfig = nullptr;
+    QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
 
         if (xml.name().toString() == "package" && xml.isStartElement()) {
-            pkgMetaConfig = new OBSPkgMetaConfig();
+            pkgMetaConfig = QSharedPointer<OBSPkgMetaConfig>(new OBSPkgMetaConfig());
             QXmlStreamAttributes attrib = xml.attributes();
             pkgMetaConfig->setName(attrib.value("name").toString());
             pkgMetaConfig->setProject(attrib.value("project").toString());
@@ -161,12 +159,10 @@ void OBSXmlReader::parsePkgMetaConfig(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete pkgMetaConfig;
         return;
     }
 
     emit finishedParsingPackageMetaConfig(pkgMetaConfig);
-    delete pkgMetaConfig;
 }
 
 void OBSXmlReader::parsePackageList(const QString &data)
@@ -854,7 +850,7 @@ QStringList OBSXmlReader::parseList(QXmlStreamReader &xml)
     return list;
 }
 
-void OBSXmlReader::parseMetaConfig(QXmlStreamReader &xml, OBSMetaConfig *metaConfig)
+void OBSXmlReader::parseMetaConfig(QXmlStreamReader &xml, QSharedPointer<OBSMetaConfig> metaConfig)
 {
     if (xml.name().toString() == "title" && xml.isStartElement()) {
         metaConfig->setTitle(xml.readElementText());
@@ -923,12 +919,12 @@ QHash<QString, bool> OBSXmlReader::parseRepositoryFlags(QXmlStreamReader &xml)
     return flagHash;
 }
 
-OBSDistribution *OBSXmlReader::parseDistribution(QXmlStreamReader &xml)
+QSharedPointer<OBSDistribution> OBSXmlReader::parseDistribution(QXmlStreamReader &xml)
 {
-    OBSDistribution *distribution = nullptr;
+    QSharedPointer<OBSDistribution> distribution;
 
     if (xml.name().toString() == "distribution" && xml.isStartElement()) {
-        distribution = new OBSDistribution();
+        distribution = QSharedPointer<OBSDistribution>(new OBSDistribution());
         QXmlStreamAttributes attrib = xml.attributes();
         distribution->setVendor(attrib.value("vendor").toString());
         distribution->setVersion(attrib.value("version").toString());
@@ -981,17 +977,16 @@ void OBSXmlReader::parseFileList(const QString &project, const QString &package,
         xml.readNext();
 
         if (xml.name().toString() == "entry") {
-            OBSFile *obsFile = nullptr;
+            QSharedPointer<OBSFile> file;
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsFile = new OBSFile();
-                obsFile->setProject(project);
-                obsFile->setPackage(package);
-                obsFile->setName(attrib.value("name").toString());
-                obsFile->setSize(attrib.value("size").toString());
-                obsFile->setLastModified(attrib.value("mtime").toString());
-                emit finishedParsingFile(obsFile);
-                delete obsFile;
+                file = QSharedPointer<OBSFile>(new OBSFile());
+                file->setProject(project);
+                file->setPackage(package);
+                file->setName(attrib.value("name").toString());
+                file->setSize(attrib.value("size").toString());
+                file->setLastModified(attrib.value("mtime").toString());
+                emit finishedParsingFile(file);
             }
         } // end entry
 
@@ -1003,7 +998,7 @@ void OBSXmlReader::parseLink(const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSLink *obsLink = new OBSLink();
+    QSharedPointer<OBSLink> link = QSharedPointer<OBSLink>(new OBSLink());
 
     while (!xml.atEnd() && !xml.hasError()) {
 
@@ -1012,8 +1007,8 @@ void OBSXmlReader::parseLink(const QString &data)
         if (xml.name().toString() == "link") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsLink->setProject(attrib.value("project").toString());
-                obsLink->setPackage(attrib.value("package").toString());
+                link->setProject(attrib.value("project").toString());
+                link->setPackage(attrib.value("package").toString());
             }
         } // end link
 
@@ -1021,17 +1016,16 @@ void OBSXmlReader::parseLink(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsLink;
         return;
     }
 
-    emit finishedParsingLink(obsLink);
+    emit finishedParsingLink(link);
 }
 
 void OBSXmlReader::parseAbout(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSAbout *obsAbout = new OBSAbout();
+    QSharedPointer<OBSAbout> about = QSharedPointer<OBSAbout>(new OBSAbout());
 
     while (!xml.atEnd() && !xml.hasError()) {
 
@@ -1039,22 +1033,22 @@ void OBSXmlReader::parseAbout(const QString &data)
 
         if (xml.name().toString() == "title" && xml.isStartElement()) {
             xml.readNext();
-            obsAbout->setTitle(xml.text().toString());
+            about->setTitle(xml.text().toString());
         }
 
         if (xml.name().toString() == "description" && xml.isStartElement()) {
             xml.readNext();
-            obsAbout->setDescription(xml.text().toString());
+            about->setDescription(xml.text().toString());
         }
 
         if (xml.name().toString() == "revision" && xml.isStartElement()) {
             xml.readNext();
-            obsAbout->setRevision(xml.text().toString());
+            about->setRevision(xml.text().toString());
         }
 
         if (xml.name().toString() == "last_deployment" && xml.isStartElement()) {
             xml.readNext();
-            obsAbout->setLastDeployment(xml.text().toString());
+            about->setLastDeployment(xml.text().toString());
         }
 
     } // end while
@@ -1064,13 +1058,13 @@ void OBSXmlReader::parseAbout(const QString &data)
         return;
     }
 
-    emit finishedParsingAbout(obsAbout);
+    emit finishedParsingAbout(about);
 }
 
 void OBSXmlReader::parsePerson(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSPerson *obsPerson = new OBSPerson();
+    QSharedPointer<OBSPerson> person = QSharedPointer<OBSPerson>(new OBSPerson());
 
     while (!xml.atEnd() && !xml.hasError()) {
 
@@ -1078,28 +1072,28 @@ void OBSXmlReader::parsePerson(const QString &data)
 
         if (xml.name().toString() == "login" && xml.isStartElement()) {
             xml.readNext();
-            obsPerson->setLogin(xml.text().toString());
+            person->setLogin(xml.text().toString());
         }
 
         if (xml.name().toString() == "email" && xml.isStartElement()) {
             xml.readNext();
-            obsPerson->setEmail(xml.text().toString());
+            person->setEmail(xml.text().toString());
         }
 
         if (xml.name().toString() == "realname" && xml.isStartElement()) {
             xml.readNext();
-            obsPerson->setRealName(xml.text().toString());
+            person->setRealName(xml.text().toString());
         }
 
         if (xml.name().toString() == "state" && xml.isStartElement()) {
             xml.readNext();
-            obsPerson->setState(xml.text().toString());
+            person->setState(xml.text().toString());
         }
 
         if (xml.name().toString() == "project") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsPerson->appendWatchItem(attrib.value("name").toString());
+                person->appendWatchItem(attrib.value("name").toString());
             }
         }
 
@@ -1108,7 +1102,7 @@ void OBSXmlReader::parsePerson(const QString &data)
                 QXmlStreamAttributes attrib = xml.attributes();
                 QString location = attrib.value("project").toString()
                         + "/" + attrib.value("name").toString();
-                obsPerson->appendWatchItem(location);
+                person->appendWatchItem(location);
             }
         }
 
@@ -1119,7 +1113,7 @@ void OBSXmlReader::parsePerson(const QString &data)
         return;
     }
 
-    emit finishedParsingPerson(obsPerson);
+    emit finishedParsingPerson(person);
 }
 
 void OBSXmlReader::parseUpdatePerson(const QString &data)
@@ -1151,7 +1145,7 @@ void OBSXmlReader::parseDistributions(const QString &data)
             xml.readNextStartElement();
         }
         if (xml.name().toString() == "distribution" && xml.isStartElement()) {
-            OBSDistribution *distribution = parseDistribution(xml);
+            QSharedPointer<OBSDistribution> distribution = parseDistribution(xml);
             emit finishedParsingDistribution(distribution);
         }
 

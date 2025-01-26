@@ -172,7 +172,7 @@ private slots:
     void on_action_Login_triggered();
     void on_actionAPI_information_triggered();
     void slotAbout(OBSAbout *obsAbout);
-    void slotUpdatePerson(OBSPerson *obsPerson);
+    void slotUpdatePerson(QSharedPointer<OBSPerson> obsPerson);
     void on_iconBar_currentRowChanged(int index);
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
 };
