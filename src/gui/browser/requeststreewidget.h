@@ -43,7 +43,7 @@ private:
     QString package;
 
 public slots:
-    void addRequest(OBSRequest *request);
+    void addRequest(QSharedPointer<OBSRequest> request);
     void requestsAdded(const QString &project, const QString &package);
 
 signals:

@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QStandardItemModel>
 #include <QSet>
+#include <QSharedPointer>
 #include "obsrequest.h"
 
 class RequestItemModel : public QStandardItemModel
@@ -28,7 +29,7 @@ class RequestItemModel : public QStandardItemModel
 public:
     RequestItemModel(QObject *parent = nullptr);
 
-    void appendRequest(OBSRequest *request);
+    void appendRequest(QSharedPointer<OBSRequest> request);
     QString getDescription(const QModelIndex &index) const;
     OBSRequest *getRequest(const QModelIndex &index);
     bool removeRequest(const QString &id);
@@ -38,7 +39,7 @@ public:
 private:
     QStringList idList;
     QStringList oldIdList;
-    QList<QStandardItem *> requestToItems(OBSRequest *request);
+    QList<QStandardItem *> requestToItems(QSharedPointer<OBSRequest> request);
     QString itemToString(int row, int column, int role) const;
 };
 

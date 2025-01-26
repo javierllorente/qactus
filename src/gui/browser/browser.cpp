@@ -905,11 +905,11 @@ void Browser::slotUploadFileError(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(statusText, true);
 }
 
-void Browser::slotCreateRequest(OBSRequest *obsRequest)
+void Browser::slotCreateRequest(QSharedPointer<OBSRequest> request)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    QString message = tr("Request created successfully. %1").arg(obsRequest->getId());
+    QString message = tr("Request created successfully. %1").arg(request->getId());
     emit showTrayMessage(APP_NAME, message);
     emit updateStatusBar(tr("Done"), true);
 }

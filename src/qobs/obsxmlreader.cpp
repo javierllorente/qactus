@@ -325,7 +325,7 @@ void OBSXmlReader::parseRequestStatus(const QString &data)
 void OBSXmlReader::parseRequests(const QString &project, const QString &package, const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSRequest *obsRequest = nullptr;
+    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -333,18 +333,16 @@ void OBSXmlReader::parseRequests(const QString &project, const QString &package,
         parseCollection(xml);
 
         if (xml.name().toString() == "request") {
-                obsRequest = parseRequest(xml);
+                request = parseRequest(xml);
         }
 
         if (xml.name().toString() == "request" && xml.isEndElement()) {
-            emit finishedParsingRequest(obsRequest);
-            delete obsRequest;
+            emit finishedParsingRequest(request);
         }
     }
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsRequest;
         return;
     }
 
@@ -417,23 +415,21 @@ void OBSXmlReader::parseCreateRequest(const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSRequest *obsRequest = nullptr;
+    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
         if (xml.name().toString() == "request") {
-            obsRequest = parseRequest(xml);
+            request = parseRequest(xml);
         }
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsRequest;
         return;
     }
 
-    emit finishedParsingCreateRequest(obsRequest);
-    delete obsRequest;
+    emit finishedParsingCreateRequest(request);
 }
 
 void OBSXmlReader::parseCreateRequestStatus(const QString &data)
@@ -671,7 +667,7 @@ void OBSXmlReader::parseCollection(QXmlStreamReader &xml)
 void OBSXmlReader::parseIncomingRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSRequest *obsRequest = nullptr;
+    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -679,10 +675,9 @@ void OBSXmlReader::parseIncomingRequests(const QString &data)
         parseCollection(xml);
 
         if (xml.name().toString() == "request" && xml.isStartElement()) {
-            obsRequest = parseRequest(xml);
+            request = parseRequest(xml);
             if (xml.name().toString() == "request" && xml.isEndElement()) {
-                emit finishedParsingIncomingRequest(obsRequest);
-                delete obsRequest;
+                emit finishedParsingIncomingRequest(request);
             }
         } // request
 
@@ -700,7 +695,7 @@ void OBSXmlReader::parseIncomingRequests(const QString &data)
 void OBSXmlReader::parseOutgoingRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSRequest *obsRequest = nullptr;
+    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -708,10 +703,9 @@ void OBSXmlReader::parseOutgoingRequests(const QString &data)
         parseCollection(xml);
 
         if (xml.name().toString() == "request" && xml.isStartElement()) {
-            obsRequest = parseRequest(xml);
+            request = parseRequest(xml);
             if (xml.name().toString() == "request" && xml.isEndElement()) {
-                emit finishedParsingOutgoingRequest(obsRequest);
-                delete obsRequest;
+                emit finishedParsingOutgoingRequest(request);
             }
         } // request
 
@@ -723,7 +717,6 @@ void OBSXmlReader::parseOutgoingRequests(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsRequest;
         return;
     }
 }
@@ -731,7 +724,7 @@ void OBSXmlReader::parseOutgoingRequests(const QString &data)
 void OBSXmlReader::parseDeclinedRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSRequest *obsRequest = nullptr;
+    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -739,10 +732,9 @@ void OBSXmlReader::parseDeclinedRequests(const QString &data)
         parseCollection(xml);
 
         if (xml.name().toString() == "request" && xml.isStartElement()) {
-            obsRequest = parseRequest(xml);
+            request = parseRequest(xml);
             if (xml.name().toString() == "request" && xml.isEndElement()) {
-                emit finishedParsingDeclinedRequest(obsRequest);
-                delete obsRequest;
+                emit finishedParsingDeclinedRequest(request);
             }
         } // request
 
@@ -754,21 +746,20 @@ void OBSXmlReader::parseDeclinedRequests(const QString &data)
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsRequest;
         return;
     }
 }
 
-OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
+QSharedPointer<OBSRequest> OBSXmlReader::parseRequest(QXmlStreamReader &xml)
 {
-    OBSRequest *obsRequest = nullptr;
+    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
 
     if (xml.name().toString() == "request") {
         if (xml.isStartElement()) {
-            obsRequest = new OBSRequest();
+            request = QSharedPointer<OBSRequest>(new OBSRequest());
             QXmlStreamAttributes attrib = xml.attributes();
-            obsRequest->setId(attrib.value("id").toString());
-            obsRequest->setCreator(attrib.value("creator").toString());
+            request->setId(attrib.value("id").toString());
+            request->setCreator(attrib.value("creator").toString());
         }
     } // request
 
@@ -778,42 +769,42 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
         if (xml.name().toString() == "action")  {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest->setActionType(attrib.value("type").toString());
+                request->setActionType(attrib.value("type").toString());
             }
         } // action
 
         if (xml.name().toString() == "source") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest->setSourceProject(attrib.value("project").toString());
-                obsRequest->setSourcePackage(attrib.value("package").toString());
+                request->setSourceProject(attrib.value("project").toString());
+                request->setSourcePackage(attrib.value("package").toString());
             }
         } // source
 
         if (xml.name().toString() == "target") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest->setTargetProject(attrib.value("project").toString());
-                obsRequest->setTargetPackage(attrib.value("package").toString());
+                request->setTargetProject(attrib.value("project").toString());
+                request->setTargetPackage(attrib.value("package").toString());
             }
         } // target
 
         if (xml.name().toString() == "state") {
             if (xml.isStartElement()) {
                 QXmlStreamAttributes attrib = xml.attributes();
-                obsRequest->setState(attrib.value("name").toString());
-                obsRequest->setRequester(attrib.value("who").toString());
+                request->setState(attrib.value("name").toString());
+                request->setRequester(attrib.value("who").toString());
                 QString date = attrib.value("when").toString();
                 // Replace the "T" (as in 2015-03-13T20:01:33)
                 date.replace(10, 1, " ");
-                obsRequest->setDate(date);
+                request->setDate(date);
             }
         } // state
 
         if (xml.name().toString() == "description") {
             if (xml.isStartElement()) {
                 xml.readNext();
-                obsRequest->setDescription(xml.text().toString());
+                request->setDescription(xml.text().toString());
                 // if tag is not empty (ie: <description/>), read next start element
                 if (!xml.text().isEmpty()) {
                     xml.readNextStartElement();
@@ -821,7 +812,7 @@ OBSRequest *OBSXmlReader::parseRequest(QXmlStreamReader &xml)
             }
         } // description
     }
-    return obsRequest;
+    return request;
 }
 
 QStringList OBSXmlReader::parseList(QXmlStreamReader &xml)

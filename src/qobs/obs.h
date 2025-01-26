@@ -91,7 +91,7 @@ signals:
     void finishedParsingBranchPackage(QSharedPointer<OBSStatus> status);
     void finishedParsingLinkPkgRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingCopyPkgRevision(QSharedPointer<OBSRevision> revision);
-    void finishedParsingCreateRequest(OBSRequest*);
+    void finishedParsingCreateRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingCreateRequestStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingCreatePrjStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingCreatePkgStatus(QSharedPointer<OBSStatus> status);
@@ -115,14 +115,14 @@ signals:
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList(QList<OBSResult *> resultList);
     void finishedParsingRevision(QSharedPointer<OBSRevision> revision);
-    void finishedParsingRequest(OBSRequest *request);
+    void finishedParsingRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingRequestList(const QString &project, const QString &package);
     void finishedParsingLatestRevision(QSharedPointer<OBSRevision> revision);
-    void finishedParsingIncomingRequest(OBSRequest *request);
+    void finishedParsingIncomingRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingIncomingRequestList();
-    void finishedParsingOutgoingRequest(OBSRequest *request);
+    void finishedParsingOutgoingRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingOutgoingRequestList();
-    void finishedParsingDeclinedRequest(OBSRequest *request);
+    void finishedParsingDeclinedRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingDeclinedRequestList();
     void finishedParsingProjectList(QStringList);
     void projectFetched(const QString &project);

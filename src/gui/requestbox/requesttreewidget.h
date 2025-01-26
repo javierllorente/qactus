@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QMenu>
 #include <QAction>
+#include <QSharedPointer>
 #include "obsrequest.h"
 #include "requestitemmodel.h"
 #include "requeststateeditor.h"
@@ -41,11 +42,11 @@ signals:
     void changeRequestState();
 
 public slots:
-    void addIncomingRequest(OBSRequest *request);
+    void addIncomingRequest(QSharedPointer<OBSRequest> request);
     void irListFetched();
-    void addOutgoingRequest(OBSRequest *request);
+    void addOutgoingRequest(QSharedPointer<OBSRequest> request);
     void orListFetched();
-    void addDeclinedRequest(OBSRequest *request);
+    void addDeclinedRequest(QSharedPointer<OBSRequest> request);
     void drListFetched();
     bool removeIncomingRequest(const QString &id);
     bool removeOutgoingRequest(const QString &id);

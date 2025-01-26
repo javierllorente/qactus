@@ -120,7 +120,7 @@ private slots:
     void slotUploadFile(QSharedPointer<OBSRevision> revision);
     void slotUploadFileError(QSharedPointer<OBSStatus> status);
     void finishedAddingResults();
-    void slotCreateRequest(OBSRequest *request);
+    void slotCreateRequest(QSharedPointer<OBSRequest> request);
     void slotCreateRequestStatus(QSharedPointer<OBSStatus> status);
     void slotBranchPackage(QSharedPointer<OBSStatus> status);
     void slotFileFetched(const QString &fileName, const QByteArray &data);

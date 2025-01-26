@@ -23,7 +23,7 @@ RequestItemModel::RequestItemModel(QObject *parent) :
     setHorizontalHeaderLabels(headerLabels);
 }
 
-void RequestItemModel::appendRequest(OBSRequest *request)
+void RequestItemModel::appendRequest(QSharedPointer<OBSRequest> request)
 {
     QString id = request->getId();
 
@@ -116,7 +116,7 @@ void RequestItemModel::syncRequests()
     oldIdList = idList;
 }
 
-QList<QStandardItem *> RequestItemModel::requestToItems(OBSRequest *request)
+QList<QStandardItem *> RequestItemModel::requestToItems(QSharedPointer<OBSRequest> request)
 {
     QStandardItem *dateItem = new QStandardItem();
     dateItem->setData(request->getDate(), Qt::DisplayRole);

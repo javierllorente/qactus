@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ int RequestTreeWidget::getRequestType() const
     return m_requestType;
 }
 
-void RequestTreeWidget::addIncomingRequest(OBSRequest *request)
+void RequestTreeWidget::addIncomingRequest(QSharedPointer<OBSRequest> request)
 {
     qDebug() << "RequestTreeWidget::addIncomingRequest()";
     irModel->appendRequest(request);
@@ -77,7 +77,7 @@ void RequestTreeWidget::irListFetched()
     emit updateStatusBar(tr("Done"), true);
 }
 
-void RequestTreeWidget::addOutgoingRequest(OBSRequest *request)
+void RequestTreeWidget::addOutgoingRequest(QSharedPointer<OBSRequest> request)
 {
     qDebug() << "RequestTreeWidget::addOutgoingRequest()";
     orModel->appendRequest(request);
@@ -89,7 +89,7 @@ void RequestTreeWidget::orListFetched()
     emit updateStatusBar(tr("Done"), true);
 }
 
-void RequestTreeWidget::addDeclinedRequest(OBSRequest *request)
+void RequestTreeWidget::addDeclinedRequest(QSharedPointer<OBSRequest> request)
 {
     qDebug() << "RequestTreeWidget::addDeclinedRequest()";
     drModel->appendRequest(request);

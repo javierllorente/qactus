@@ -83,7 +83,7 @@ QString RequestsTreeWidget::getPackage() const
     return package;
 }
 
-void RequestsTreeWidget::addRequest(OBSRequest *request)
+void RequestsTreeWidget::addRequest(QSharedPointer<OBSRequest> request)
 {
     itemModel->appendRequest(request);
 }

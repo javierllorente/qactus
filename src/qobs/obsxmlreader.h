@@ -86,7 +86,7 @@ private:
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
     void parseCollection(QXmlStreamReader &xml);
-    OBSRequest *parseRequest(QXmlStreamReader &xml);
+    QSharedPointer<OBSRequest> parseRequest(QXmlStreamReader &xml);
     QStringList parseList(QXmlStreamReader &xml);
     void parseMetaConfig(QXmlStreamReader &xml, OBSMetaConfig *metaConfig);
     QHash<QString, bool> parseRepositoryFlags(QXmlStreamReader &xml);
@@ -98,7 +98,7 @@ signals:
     void finishedParsingBranchPackage(QSharedPointer<OBSStatus> status);
     void finishedParsingLinkPkgRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingCopyPkgRevision(QSharedPointer<OBSRevision> revision);
-    void finishedParsingCreateRequest(OBSRequest*);
+    void finishedParsingCreateRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingCreateRequestStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingCreatePrjStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingCreatePkgStatus(QSharedPointer<OBSStatus> status);
@@ -110,11 +110,11 @@ signals:
     void finishedParsingResultList(const QList<OBSResult *> &resultList);
     void finishedParsingRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingLatestRevision(QSharedPointer<OBSRevision> revision);
-    void finishedParsingIncomingRequest(OBSRequest *request);
+    void finishedParsingIncomingRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingIncomingRequestList();
-    void finishedParsingOutgoingRequest(OBSRequest *request);
+    void finishedParsingOutgoingRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingOutgoingRequestList();
-    void finishedParsingDeclinedRequest(OBSRequest *request);
+    void finishedParsingDeclinedRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingDeclinedRequestList();
     void finishedParsingList(QStringList);
     void finishedParsingProjectList(QStringList);
@@ -127,7 +127,7 @@ signals:
     void finishedParsingRevisionList(const QString &project, const QString &package);
     void finishedParsingLink(OBSLink *obsLink);
     void finishedParsingRequestStatus(QSharedPointer<OBSStatus> status);
-    void finishedParsingRequest(OBSRequest *obsRequest);
+    void finishedParsingRequest( QSharedPointer<OBSRequest> request);
     void finishedParsingRequestList(const QString &project, const QString &package);
     void finishedParsingAbout(OBSAbout *obsAbout);
     void finishedParsingPerson(OBSPerson *obsPerson);
