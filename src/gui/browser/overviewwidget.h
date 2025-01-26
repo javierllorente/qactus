@@ -20,6 +20,7 @@
 #include <QToolBar>
 #include <QMenu>
 #include <QItemSelection>
+#include <QSharedPointer>
 #include "datacontroller.h"
 #include "obsmetaconfig.h"
 #include "obsresult.h"
@@ -38,7 +39,7 @@ public:
     ~OverviewWidget();
     void addProjectActions(QList <QAction *> actions);
     void setResultsMenu(QMenu *resultsMenu);
-    void setLatestRevision(OBSRevision *revision);
+    void setLatestRevision(QSharedPointer<OBSRevision> revision);
     void setPackageCount(const QString &packageCount);
     void addResult(OBSResult *result);
     QString getCurrentRepository() const;

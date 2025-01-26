@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2015-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,8 +89,8 @@ signals:
     void networkError(const QString&);
     void finishedParsingPackage(QSharedPointer<OBSStatus> status, int row);
     void finishedParsingBranchPackage(QSharedPointer<OBSStatus> status);
-    void finishedParsingLinkPkgRevision(OBSRevision *revision);
-    void finishedParsingCopyPkgRevision(OBSRevision *revision);
+    void finishedParsingLinkPkgRevision(QSharedPointer<OBSRevision> revision);
+    void finishedParsingCopyPkgRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingCreateRequest(OBSRequest*);
     void finishedParsingCreateRequestStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingCreatePrjStatus(QSharedPointer<OBSStatus> status);
@@ -99,7 +99,7 @@ signals:
     void cannotCopyPackage(QSharedPointer<OBSStatus> status);
     void cannotCreateProject(QSharedPointer<OBSStatus> status);
     void cannotCreatePackage(QSharedPointer<OBSStatus> status);
-    void finishedParsingUploadFileRevision(OBSRevision*);
+    void finishedParsingUploadFileRevision(QSharedPointer<OBSRevision> revision);
     void cannotUploadFile(QSharedPointer<OBSStatus> status);
     void fileFetched(const QString &fileName, const QByteArray &data);
     void buildLogFetched(const QString &buildLog);
@@ -114,10 +114,10 @@ signals:
     void cannotDeleteFile(QSharedPointer<OBSStatus> status);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList(QList<OBSResult *> resultList);
-    void finishedParsingRevision(OBSRevision*);
+    void finishedParsingRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingRequest(OBSRequest *request);
     void finishedParsingRequestList(const QString &project, const QString &package);
-    void finishedParsingLatestRevision(OBSRevision *revision);
+    void finishedParsingLatestRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingIncomingRequest(OBSRequest *request);
     void finishedParsingIncomingRequestList();
     void finishedParsingOutgoingRequest(OBSRequest *request);

@@ -880,7 +880,7 @@ void Browser::uploadFile(const QString &path)
     }
 }
 
-void Browser::slotUploadFile(OBSRevision *revision)
+void Browser::slotUploadFile(QSharedPointer<OBSRevision> revision)
 {
     qDebug() << __PRETTY_FUNCTION__;
     QString currentPackage = ui->packagesWidget->getCurrentPackage();

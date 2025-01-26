@@ -77,7 +77,7 @@ QString RevisionTreeWidget::getPackage() const
     return package;
 }
 
-void RevisionTreeWidget::addRevision(OBSRevision *revision)
+void RevisionTreeWidget::addRevision(QSharedPointer<OBSRevision> revision)
 {
     QStandardItemModel *itemModel = static_cast<QStandardItemModel *>(model());
     if (itemModel) {

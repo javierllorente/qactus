@@ -64,7 +64,7 @@ void OverviewWidget::setResultsMenu(QMenu *resultsMenu)
     m_resultsToolbar->addActions(m_resultsMenu->actions());
 }
 
-void OverviewWidget::setLatestRevision(OBSRevision *revision)
+void OverviewWidget::setLatestRevision(QSharedPointer<OBSRevision> revision)
 {
     qDebug() << __PRETTY_FUNCTION__;
     uint unixTime = revision->getTime();

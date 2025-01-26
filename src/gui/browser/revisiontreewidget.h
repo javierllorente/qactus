@@ -19,6 +19,7 @@
 #include <QTreeView>
 #include <QObject>
 #include <QStandardItemModel>
+#include <QSharedPointer>
 #include "datacontroller.h"
 #include "obsrevision.h"
 
@@ -43,7 +44,7 @@ private:
     QString package;
 
 public slots:
-    void addRevision(OBSRevision *revision);
+    void addRevision(QSharedPointer<OBSRevision> revision);
     void revisionsAdded(const QString &project, const QString &package);
 
 signals:

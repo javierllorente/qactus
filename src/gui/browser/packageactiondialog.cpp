@@ -104,7 +104,7 @@ void PackageActionDialog::on_buttonBox_accepted()
     emit updateStatusBar(message, false);
 }
 
-void PackageActionDialog::revisionFetched(OBSRevision *revision)
+void PackageActionDialog::revisionFetched(QSharedPointer<OBSRevision> revision)
 {
     QString message;
 

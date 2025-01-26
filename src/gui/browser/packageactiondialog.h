@@ -52,7 +52,7 @@ private:
 private slots:
     void toggleOkButton();
     void on_buttonBox_accepted();
-    void revisionFetched(OBSRevision *revision);
+    void revisionFetched(QSharedPointer<OBSRevision> revision);
     void slotCannot(QSharedPointer<OBSStatus> status);
 
 signals:

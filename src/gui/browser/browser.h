@@ -117,7 +117,7 @@ private slots:
     void slotContextMenuFiles(const QPoint &point);
     void addFile(OBSFile *file);
     void uploadFile(const QString &path);
-    void slotUploadFile(OBSRevision *revision);
+    void slotUploadFile(QSharedPointer<OBSRevision> revision);
     void slotUploadFileError(QSharedPointer<OBSStatus> status);
     void finishedAddingResults();
     void slotCreateRequest(OBSRequest *request);

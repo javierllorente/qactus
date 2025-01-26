@@ -375,46 +375,42 @@ void OBSXmlReader::parseLinkPackage(const QString &project, const QString &packa
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSRevision *obsRevision = new OBSRevision();
-    obsRevision->setProject(project);
-    obsRevision->setPackage(package);
+    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>(new OBSRevision());
+    revision->setProject(project);
+    revision->setPackage(package);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseRevision(xml, obsRevision);
+        parseRevision(xml, revision);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsRevision;
         return;
     }
 
-    emit finishedParsingLinkPkgRevision(obsRevision);
-    delete obsRevision;
+    emit finishedParsingLinkPkgRevision(revision);
 }
 
 void OBSXmlReader::parseCopyPackage(const QString &project, const QString &package, const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSRevision *obsRevision = new OBSRevision();
-    obsRevision->setProject(project);
-    obsRevision->setPackage(package);
+    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>(new OBSRevision());
+    revision->setProject(project);
+    revision->setPackage(package);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseRevision(xml, obsRevision);
+        parseRevision(xml, revision);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsRevision;
         return;
     }
 
-    emit finishedParsingCopyPkgRevision(obsRevision);
-    delete obsRevision;
+    emit finishedParsingCopyPkgRevision(revision);
 }
 
 void OBSXmlReader::parseCreateRequest(const QString &data)
@@ -504,24 +500,22 @@ void OBSXmlReader::parseUploadFile(const QString &project, const QString &packag
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSRevision *obsRevision = new OBSRevision();
-    obsRevision->setProject(project);
-    obsRevision->setPackage(package);
-    obsRevision->setFile(file);
+    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>(new OBSRevision());
+    revision->setProject(project);
+    revision->setPackage(package);
+    revision->setFile(file);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseRevision(xml, obsRevision);
+        parseRevision(xml, revision);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsRevision;
         return;
     }
 
-    emit finishedParsingUploadFileRevision(obsRevision);
-    delete obsRevision;
+    emit finishedParsingUploadFileRevision(revision);
 }
 
 void OBSXmlReader::parseDeleteProject(const QString &project, const QString &data)
@@ -587,34 +581,34 @@ void OBSXmlReader::parseDeleteFile(const QString &project, const QString &packag
     emit finishedParsingDeleteFileStatus(status);
 }
 
-void OBSXmlReader::parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision)
+void OBSXmlReader::parseRevision(QXmlStreamReader &xml, QSharedPointer<OBSRevision> revision)
 {
     if (xml.name().toString() == "revision") {
         QXmlStreamAttributes attrib = xml.attributes();
-        obsRevision->setRev(attrib.value("rev").toUInt());
+        revision->setRev(attrib.value("rev").toUInt());
     }
     if (xml.name().toString() == "version") {
         xml.readNext();
-        obsRevision->setVersion(xml.text().toString());
+        revision->setVersion(xml.text().toString());
     }
     if (xml.name().toString() == "time") {
         xml.readNext();
-        obsRevision->setTime(xml.text().toUInt());
+        revision->setTime(xml.text().toUInt());
     }
     if (xml.name().toString() == "user") {
         xml.readNext();
-        obsRevision->setUser(xml.text().toString());
+        revision->setUser(xml.text().toString());
     }
     if (xml.name().toString() == "comment") {
         xml.readNext();
-        obsRevision->setComment(xml.text().toString());
+        revision->setComment(xml.text().toString());
     }
 }
 
 void OBSXmlReader::parseRevisionList(const QString &project, const QString &package, const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSRevision *obsRevision = nullptr;
+    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -624,16 +618,15 @@ void OBSXmlReader::parseRevisionList(const QString &project, const QString &pack
             }
 
             if (xml.name().toString() == "revision") {
-                obsRevision = new OBSRevision();
-                obsRevision->setProject(project);
-                obsRevision->setPackage(package);
+                revision = QSharedPointer<OBSRevision>(new OBSRevision());
+                revision->setProject(project);
+                revision->setPackage(package);
             }
-            parseRevision(xml, obsRevision);
+            parseRevision(xml, revision);
         }
 
         if (xml.name().toString() == "revision" && xml.isEndElement()) {
-            emit finishedParsingRevision(obsRevision);
-            delete obsRevision;
+            emit finishedParsingRevision(revision);
         }
     }
     emit finishedParsingRevisionList(project, package);
@@ -642,22 +635,21 @@ void OBSXmlReader::parseRevisionList(const QString &project, const QString &pack
 void OBSXmlReader::parseLatestRevision(const QString &project, const QString &package, const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSRevision *obsRevision = nullptr;
+    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
         if (xml.isStartElement()) {
             if (xml.name().toString() == "revision") {
-                obsRevision = new OBSRevision();
-                obsRevision->setProject(project);
-                obsRevision->setPackage(package);
+                revision = QSharedPointer<OBSRevision>(new OBSRevision());
+                revision->setProject(project);
+                revision->setPackage(package);
             }
-            parseRevision(xml, obsRevision);
+            parseRevision(xml, revision);
         }
 
         if (xml.name().toString() == "revision" && xml.isEndElement()) {
-            emit finishedParsingLatestRevision(obsRevision);
-            delete obsRevision;
+            emit finishedParsingLatestRevision(revision);
         }
     }
 }

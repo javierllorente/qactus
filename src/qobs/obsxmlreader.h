@@ -82,7 +82,7 @@ private:
     OBSXmlReader();
     void parseStatus(QXmlStreamReader &xml, QSharedPointer<OBSStatus> status);
     int row;
-    void parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision);
+    void parseRevision(QXmlStreamReader &xml, QSharedPointer<OBSRevision> revision);
     QList<QString> requestIdList;
     QList<QString> oldRequestIdList;
     void parseCollection(QXmlStreamReader &xml);
@@ -96,20 +96,20 @@ private:
 signals:
     void finishedParsingPackage(QSharedPointer<OBSStatus> status, int row);
     void finishedParsingBranchPackage(QSharedPointer<OBSStatus> status);
-    void finishedParsingLinkPkgRevision(OBSRevision *revision);
-    void finishedParsingCopyPkgRevision(OBSRevision *revision);
+    void finishedParsingLinkPkgRevision(QSharedPointer<OBSRevision> revision);
+    void finishedParsingCopyPkgRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingCreateRequest(OBSRequest*);
     void finishedParsingCreateRequestStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingCreatePrjStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingCreatePkgStatus(QSharedPointer<OBSStatus> status);
-    void finishedParsingUploadFileRevision(OBSRevision*);
+    void finishedParsingUploadFileRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingDeletePrjStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingDeletePkgStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingDeleteFileStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList(const QList<OBSResult *> &resultList);
-    void finishedParsingRevision(OBSRevision*);
-    void finishedParsingLatestRevision(OBSRevision *revision);
+    void finishedParsingRevision(QSharedPointer<OBSRevision> revision);
+    void finishedParsingLatestRevision(QSharedPointer<OBSRevision> revision);
     void finishedParsingIncomingRequest(OBSRequest *request);
     void finishedParsingIncomingRequestList();
     void finishedParsingOutgoingRequest(OBSRequest *request);
