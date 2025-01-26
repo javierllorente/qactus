@@ -28,6 +28,7 @@
 #include <QTimer>
 #include <QToolButton>
 #include <QFileDialog>
+#include <QSharedPointer>
 #include "obs.h"
 #include "trayicon.h"
 #include "configure.h"
@@ -171,7 +172,7 @@ private slots:
     void on_action_Configure_Qactus_triggered();
     void on_action_Login_triggered();
     void on_actionAPI_information_triggered();
-    void slotAbout(OBSAbout *obsAbout);
+    void slotAbout(QSharedPointer<OBSAbout> about);
     void slotUpdatePerson(QSharedPointer<OBSPerson> obsPerson);
     void on_iconBar_currentRowChanged(int index);
     void slotUpdateStatusBar(const QString &message, bool progressBarHidden);

@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
             this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
     connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
-    connect(obs, SIGNAL(finishedParsingAbout(OBSAbout*)), this, SLOT(slotAbout(OBSAbout*)));
+    connect(obs, &OBS::finishedParsingAbout, this, &MainWindow::slotAbout);
 
     ui->stackedWidget->addWidget(browser);
     ui->stackedWidget->addWidget(monitor);
@@ -776,15 +776,12 @@ void MainWindow::on_actionAPI_information_triggered()
     obs->about();
 }
 
-void MainWindow::slotAbout(OBSAbout *obsAbout)
+void MainWindow::slotAbout(QSharedPointer<OBSAbout> about)
 {
-    const QString title = obsAbout->getTitle();
-    const QString text = QString("%1<br>Revision: %2<br>Last deployment: %3").arg(obsAbout->getDescription(),
-                                         obsAbout->getRevision(), obsAbout->getLastDeployment());
+    const QString title = about->getTitle();
+    const QString text = QString("%1<br>Revision: %2<br>Last deployment: %3").arg(about->getDescription(),
+                                                                                  about->getRevision(), about->getLastDeployment());
     QMessageBox::information(this, title, text);
-
-    delete obsAbout;
-    obsAbout = nullptr;
 }
 
 void MainWindow::slotUpdatePerson(QSharedPointer<OBSPerson> obsPerson)
