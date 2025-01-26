@@ -257,8 +257,8 @@ void OBSXmlReader::parseResultList(const QString &data)
 
     QXmlStreamReader xml(data);
     QList<QSharedPointer<OBSResult>> resultList;
-    QSharedPointer<OBSResult> result = QSharedPointer<OBSResult>();
-    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>();
+    QSharedPointer<OBSResult> result;
+    QSharedPointer<OBSStatus> status;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -319,7 +319,7 @@ void OBSXmlReader::parseRequestStatus(const QString &data)
 void OBSXmlReader::parseRequests(const QString &project, const QString &package, const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
+    QSharedPointer<OBSRequest> request;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -409,7 +409,7 @@ void OBSXmlReader::parseCreateRequest(const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
+    QSharedPointer<OBSRequest> request;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -598,7 +598,7 @@ void OBSXmlReader::parseRevision(QXmlStreamReader &xml, QSharedPointer<OBSRevisi
 void OBSXmlReader::parseRevisionList(const QString &project, const QString &package, const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>();
+    QSharedPointer<OBSRevision> revision;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -625,7 +625,7 @@ void OBSXmlReader::parseRevisionList(const QString &project, const QString &pack
 void OBSXmlReader::parseLatestRevision(const QString &project, const QString &package, const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>();
+    QSharedPointer<OBSRevision> revision;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -661,7 +661,7 @@ void OBSXmlReader::parseCollection(QXmlStreamReader &xml)
 void OBSXmlReader::parseIncomingRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
+    QSharedPointer<OBSRequest> request;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -689,7 +689,7 @@ void OBSXmlReader::parseIncomingRequests(const QString &data)
 void OBSXmlReader::parseOutgoingRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
+    QSharedPointer<OBSRequest> request;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -718,7 +718,7 @@ void OBSXmlReader::parseOutgoingRequests(const QString &data)
 void OBSXmlReader::parseDeclinedRequests(const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
+    QSharedPointer<OBSRequest> request;
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -746,7 +746,7 @@ void OBSXmlReader::parseDeclinedRequests(const QString &data)
 
 QSharedPointer<OBSRequest> OBSXmlReader::parseRequest(QXmlStreamReader &xml)
 {
-    QSharedPointer<OBSRequest> request = QSharedPointer<OBSRequest>();
+    QSharedPointer<OBSRequest> request;
 
     if (xml.name().toString() == "request") {
         if (xml.isStartElement()) {
