@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2015-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ signals:
 private slots:
     void on_acceptPushButton_clicked();
     void on_declinePushButton_clicked();
-    void slotRequestStatusFetched(OBSStatus *status);
+    void slotRequestStatusFetched(QSharedPointer<OBSStatus> status);
     void slotSrDiffFetched(const QString &diff);
     void slotAddBuildResults(OBSResult *obsResult);
 

@@ -63,8 +63,8 @@ signals:
 public slots:
     void setMetaConfig(OBSMetaConfig *metaConfig);
     void onPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void onProjectNotFound(OBSStatus *status);
-    void onPackageNotFound(OBSStatus *status);
+    void onProjectNotFound(QSharedPointer<OBSStatus>);
+    void onPackageNotFound(QSharedPointer<OBSStatus> status);
 
 private slots:
     void slotContextMenuResults(const QPoint &point);

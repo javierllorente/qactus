@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 #define REQUESTBOX_H
 
 #include <QWidget>
+#include <QSharedPointer>
 #include "obs.h"
 #include "obsrequest.h"
 
@@ -49,7 +50,7 @@ private slots:
     void getIncomingRequests();
     void getOutgoingRequests();
     void getDeclinedRequests();
-    void slotRequestStatusFetched(OBSStatus *status);
+    void slotRequestStatusFetched(QSharedPointer<OBSStatus> status);
 
 };
 

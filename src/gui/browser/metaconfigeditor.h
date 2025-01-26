@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QTreeWidget>
+#include <QSharedPointer>
 #include "obs.h"
 #include "obsxmlwriter.h"
 #include "obsprjmetaconfig.h"
@@ -55,7 +56,7 @@ signals:
 private slots:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
-    void slotCreateResult(OBSStatus *obsStatus);
+    void slotCreateResult(QSharedPointer<OBSStatus> status);
     void slotFetchedProjectMetaConfig(OBSPrjMetaConfig *prjMetaConfig);
     void slotSetupRepositoryFlagsCompleter(OBSPrjMetaConfig *prjMetaConfig);
     void slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);

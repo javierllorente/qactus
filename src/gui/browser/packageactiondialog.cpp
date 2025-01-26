@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ void PackageActionDialog::revisionFetched(OBSRevision *revision)
     close();
 }
 
-void PackageActionDialog::slotCannot(OBSStatus *status)
+void PackageActionDialog::slotCannot(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__ << status->getCode();
 

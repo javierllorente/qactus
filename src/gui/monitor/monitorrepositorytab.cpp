@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2021-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ void MonitorRepositoryTab::slotAddResultList(const QList<OBSResult *> &resultLis
         QTreeWidgetItem *item = nullptr;
 
         for (OBSResult *result : resultList) {
-            for (OBSStatus *status : result->getStatusList()) {
+            for (QSharedPointer<OBSStatus> status : result->getStatusList()) {
 
                 item = new QTreeWidgetItem(ui->treeWidget);
                 item->setText(0, result->getProject());
@@ -99,8 +99,8 @@ void MonitorRepositoryTab::checkForResultListChanges(const QList<OBSResult *> &r
 
             if (oldResult == newResult) {
 
-                for (OBSStatus *oldStatus : oldResult->getStatusList()) {
-                    for (OBSStatus *newStatus : newResult->getStatusList()) {
+                for (QSharedPointer<OBSStatus> oldStatus : oldResult->getStatusList()) {
+                    for (QSharedPointer<OBSStatus> newStatus : newResult->getStatusList()) {
 
                         if (oldStatus == newStatus
                                 && hasStatusChanged(oldStatus->getCode(), newStatus->getCode())) {

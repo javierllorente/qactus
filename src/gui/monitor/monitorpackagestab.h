@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2021-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QDebug>
+#include <QSharedPointer>
 #include "obs.h"
 #include "obsresult.h"
 #include "monitortab.h"
@@ -43,7 +44,7 @@ signals:
 public slots:
     void addDroppedPackage(OBSResult *result);
     void finishedAddingPackages();
-    void slotInsertStatus(OBSStatus *obsStatus, int row);
+    void slotInsertStatus(QSharedPointer<OBSStatus> status, int row);
     void slotAddRow();
     void slotRemoveRow();
 

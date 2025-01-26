@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2016-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@ OBSResult::OBSResult()
 
 OBSResult::~OBSResult()
 {
-    qDeleteAll(statusList);
-    statusList.clear();
+
 }
 
 QString OBSResult::getProject() const
@@ -76,17 +75,17 @@ void OBSResult::setState(const QString &value)
     state = value;
 }
 
-OBSStatus *OBSResult::getStatus() const
+QSharedPointer<OBSStatus> OBSResult::getStatus()
 {
     return statusList.first();
 }
 
-void OBSResult::appendStatus(OBSStatus *status)
+void OBSResult::appendStatus(QSharedPointer<OBSStatus> status)
 {
     statusList.append(status);
 }
 
-QList<OBSStatus *> OBSResult::getStatusList() const
+QList<QSharedPointer<OBSStatus>> OBSResult::getStatusList() const
 {
     return statusList;
 }

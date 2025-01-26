@@ -176,21 +176,21 @@ void OBSXmlReader::parsePackageList(const QString &data)
     emit finishedParsingPackageList(list);
 }
 
-void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
+void OBSXmlReader::parseStatus(QXmlStreamReader &xml, QSharedPointer<OBSStatus> status)
 {
     if (xml.name().toString() == "status") {
         if (xml.isStartElement()) {
             QXmlStreamAttributes attrib = xml.attributes();
             if (attrib.hasAttribute("package")) {
-                obsStatus->setPackage(attrib.value("package").toString());
+                status->setPackage(attrib.value("package").toString());
             }
-            obsStatus->setCode(attrib.value("code").toString());
+            status->setCode(attrib.value("code").toString());
         }
     } // end status
 
     if (xml.name().toString() == "summary" && xml.isStartElement()) {
         xml.readNext();
-        obsStatus->setSummary(xml.text().toString());
+        status->setSummary(xml.text().toString());
         // If user doesn't exist, return
         if (xml.text().toString().startsWith("Couldn't find User with login")) {
             return;
@@ -199,7 +199,7 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
 
     if (xml.name().toString() == "details" && xml.isStartElement()) {
         xml.readNext();
-        obsStatus->setDetails(xml.text().toString());
+        status->setDetails(xml.text().toString());
     } // end details
 
     if (xml.name().toString() == "data" && xml.isStartElement()) {
@@ -208,9 +208,9 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
             if (attrib.hasAttribute("name")) {
                 xml.readNext();
                 if (attrib.value("name").toString() == "targetproject") {
-                    obsStatus->setProject(xml.text().toString());
+                    status->setProject(xml.text().toString());
                 } else if (attrib.value("name").toString() == "targetpackage") {
-                    obsStatus->setPackage(xml.text().toString());
+                    status->setPackage(xml.text().toString());
                 }
             }
         }
@@ -220,36 +220,34 @@ void OBSXmlReader::parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus)
 void OBSXmlReader::parseBuildStatus(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsStatus;
         return;
     }
-    emit finishedParsingPackage(obsStatus, row);
-    delete obsStatus;
+    emit finishedParsingPackage(status, row);
 }
 
-OBSStatus *OBSXmlReader::parseNotFoundStatus(const QString &data)
+QSharedPointer<OBSStatus> OBSXmlReader::parseNotFoundStatus(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
     }
-    return obsStatus;
+    return status;
 }
 
 void OBSXmlReader::setPackageRow(int row)
@@ -264,7 +262,7 @@ void OBSXmlReader::parseResultList(const QString &data)
     QXmlStreamReader xml(data);
     QList<OBSResult *> resultList;
     OBSResult *obsResult = nullptr;
-    OBSStatus *obsStatus = nullptr;
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>();
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
@@ -286,11 +284,11 @@ void OBSXmlReader::parseResultList(const QString &data)
             }
 
             if (xml.name().toString() == "status") {
-                obsStatus = new OBSStatus();
-                obsResult->appendStatus(obsStatus);
+                status = QSharedPointer<OBSStatus>(new OBSStatus());
+                obsResult->appendStatus(status);
             }
 
-            parseStatus(xml, obsStatus);
+            parseStatus(xml, status);
         }
 
         if (xml.name().toString() == "result" && xml.isEndElement()) {
@@ -308,21 +306,19 @@ void OBSXmlReader::parseResultList(const QString &data)
 void OBSXmlReader::parseRequestStatus(const QString &data)
 {
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus );
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsStatus;
         return;
     }
 
-    emit finishedParsingRequestStatus(obsStatus);
-    delete obsStatus;
+    emit finishedParsingRequestStatus(status);
 }
 
 
@@ -360,21 +356,19 @@ void OBSXmlReader::parseBranchPackage(const QString &data)
     qDebug() << Q_FUNC_INFO;
     qDebug() << data;
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsStatus;
         return;
     }
 
-    emit finishedParsingBranchPackage(obsStatus);
-    delete obsStatus;
+    emit finishedParsingBranchPackage(status);
 }
 
 void OBSXmlReader::parseLinkPackage(const QString &project, const QString &package, const QString &data)
@@ -450,11 +444,11 @@ void OBSXmlReader::parseCreateRequestStatus(const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
@@ -462,53 +456,48 @@ void OBSXmlReader::parseCreateRequestStatus(const QString &data)
         return;
     }
 
-    emit finishedParsingCreateRequestStatus(obsStatus);
-    delete obsStatus;
+    emit finishedParsingCreateRequestStatus(status);
 }
 
 void OBSXmlReader::parseCreateProject(const QString &project, const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
-    obsStatus->setProject(project);
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    status->setProject(project);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsStatus;
         return;
     }
 
-    emit finishedParsingCreatePrjStatus(obsStatus);
-    delete obsStatus;
+    emit finishedParsingCreatePrjStatus(status);
 }
 
 void OBSXmlReader::parseCreatePackage(const QString &project, const QString &package,const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
-    obsStatus->setProject(project);
-    obsStatus->setPackage(package);
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    status->setProject(project);
+    status->setPackage(package);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsStatus;
         return;
     }
 
-    emit finishedParsingCreatePkgStatus(obsStatus);
-    delete obsStatus;
+    emit finishedParsingCreatePkgStatus(status);
 }
 
 void OBSXmlReader::parseUploadFile(const QString &project, const QString &package, const QString &file, const QString &data)
@@ -539,69 +528,63 @@ void OBSXmlReader::parseDeleteProject(const QString &project, const QString &dat
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
-    obsStatus->setProject(project);
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    status->setProject(project);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsStatus;
         return;
     }
 
-    emit finishedParsingDeletePrjStatus(obsStatus);
-    delete obsStatus;
+    emit finishedParsingDeletePrjStatus(status);
 }
 
 void OBSXmlReader::parseDeletePackage(const QString &project, const QString &package, const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
-    obsStatus->setProject(project);
-    obsStatus->setPackage(package);
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    status->setProject(project);
+    status->setPackage(package);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsStatus;
         return;
     }
 
-    emit finishedParsingDeletePkgStatus(obsStatus);
-    delete obsStatus;
+    emit finishedParsingDeletePkgStatus(status);
 }
 
 void OBSXmlReader::parseDeleteFile(const QString &project, const QString &package, const QString &fileName, const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
-    obsStatus->setProject(project);
-    obsStatus->setPackage(package);
-    obsStatus->setDetails(fileName);
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
+    status->setProject(project);
+    status->setPackage(package);
+    status->setDetails(fileName);
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
         qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
-        delete obsStatus;
         return;
     }
 
-    emit finishedParsingDeleteFileStatus(obsStatus);
-    delete obsStatus;
+    emit finishedParsingDeleteFileStatus(status);
 }
 
 void OBSXmlReader::parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision)
@@ -1162,11 +1145,11 @@ void OBSXmlReader::parseUpdatePerson(const QString &data)
 {
     qDebug() << Q_FUNC_INFO;
     QXmlStreamReader xml(data);
-    OBSStatus *obsStatus = new OBSStatus();
+    QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
-        parseStatus(xml, obsStatus);
+        parseStatus(xml, status);
     } // end while
 
     if (xml.hasError()) {
@@ -1174,7 +1157,7 @@ void OBSXmlReader::parseUpdatePerson(const QString &data)
         return;
     }
 
-    emit finishedParsingUpdatePerson(obsStatus);
+    emit finishedParsingUpdatePerson(status);
 }
 
 void OBSXmlReader::parseDistributions(const QString &data)

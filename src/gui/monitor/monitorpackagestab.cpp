@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2021-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,11 +174,11 @@ void MonitorPackagesTab::finishedAddingPackages()
     }
 }
 
-void MonitorPackagesTab::slotInsertStatus(OBSStatus *obsStatus, int row)
+void MonitorPackagesTab::slotInsertStatus(QSharedPointer<OBSStatus> status, int row)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    QString details = obsStatus->getDetails();
-    QString status = obsStatus->getCode();
+    QString details = status->getDetails();
+    QString code = status->getCode();
 
 //    If the line is too long (>250), break it
     details = Utils::breakLine(details, 250);
@@ -188,19 +188,19 @@ void MonitorPackagesTab::slotInsertStatus(OBSStatus *obsStatus, int row)
 
     QTreeWidgetItem *item = ui->treeWidget->topLevelItem(row);
     if (item) {
-        QString oldStatus = item->text(4);
-        item->setText(4, status);
+        QString oldCode = item->text(4);
+        item->setText(4, code);
         if (!details.isEmpty()) {
             item->setToolTip(4, details);
         }
-        item->setForeground(4, Utils::getColorForStatus(status));
+        item->setForeground(4, Utils::getColorForStatus(code));
 
-        qDebug() << "Build status" << status << "inserted in" << row
+        qDebug() << "Build status" << code << "inserted in" << row
                  << "(Total rows:" << ui->treeWidget->topLevelItemCount() << ")";
 
         //    If the old status is not empty and it is different from latest one,
         //    change the tray icon and enable the "Mark all as read" button
-        if (hasStatusChanged(oldStatus, status)) {
+        if (hasStatusChanged(oldCode, code)) {
             Utils::setItemBoldFont(item, true);
         }
 

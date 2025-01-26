@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,16 +93,16 @@ signals:
     void fileFetched(const QString &fileName, const QByteArray &data);
     void buildLogFetched(const QString &buildLog);
     void buildLogNotFound();
-    void projectNotFound(OBSStatus *status);
-    void packageNotFound(OBSStatus *status);
-    void cannotLinkPackage(OBSStatus *obsStatus);
-    void cannotCopyPackage(OBSStatus *obsStatus);
-    void cannotCreateProject(OBSStatus *obsStatus);
-    void cannotCreatePackage(OBSStatus *obsStatus);
-    void cannotUploadFile(OBSStatus *obsStatus);
-    void cannotDeleteProject(OBSStatus *obsStatus);
-    void cannotDeletePackage(OBSStatus *obsStatus);
-    void cannotDeleteFile(OBSStatus *obsStatus);
+    void projectNotFound(QSharedPointer<OBSStatus> status);
+    void packageNotFound(QSharedPointer<OBSStatus> status);
+    void cannotLinkPackage(QSharedPointer<OBSStatus> status);
+    void cannotCopyPackage(QSharedPointer<OBSStatus> status);
+    void cannotCreateProject(QSharedPointer<OBSStatus> status);
+    void cannotCreatePackage(QSharedPointer<OBSStatus> status);
+    void cannotUploadFile(QSharedPointer<OBSStatus> status);
+    void cannotDeleteProject(QSharedPointer<OBSStatus> status);
+    void cannotDeletePackage(QSharedPointer<OBSStatus> status);
+    void cannotDeleteFile(QSharedPointer<OBSStatus> status);
 
 public slots:
     void setCredentials(const QString&, const QString&);

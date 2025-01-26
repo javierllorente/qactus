@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ void OBSLinkHelper::slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig
     emit createPackage(m_dstProject, m_dstPackage, metaConfigData);
 }
 
-void OBSLinkHelper::slotFetchedCreatePkgStatus(OBSStatus *status)
+void OBSLinkHelper::slotFetchedCreatePkgStatus(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__ << status->getCode();
     if (status->getCode() == "ok") {

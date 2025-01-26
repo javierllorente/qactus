@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -179,13 +179,13 @@ void MetaConfigEditor::on_buttonBox_rejected()
     close();
 }
 
-void MetaConfigEditor::slotCreateResult(OBSStatus *obsStatus)
+void MetaConfigEditor::slotCreateResult(QSharedPointer<OBSStatus> status)
 {
-   qDebug() << __PRETTY_FUNCTION__ << obsStatus->getCode();
+    qDebug() << __PRETTY_FUNCTION__ << status->getCode();
    const QString title = tr("Warning");
-   const QString text = QString("<b>%1</b><br>%2").arg(obsStatus->getSummary(), obsStatus->getDetails());
+    const QString text = QString("<b>%1</b><br>%2").arg(status->getSummary(), status->getDetails());
 
-   if (obsStatus->getCode() == "ok") {
+   if (status->getCode() == "ok") {
        close();
    } else {
        QMessageBox::warning(this, title, text);

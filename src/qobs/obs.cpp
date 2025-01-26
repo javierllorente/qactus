@@ -29,50 +29,47 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, SIGNAL(selfSignedCertificate(QNetworkReply*)));
     connect(obsCore, SIGNAL(networkError(QString)),
             this, SIGNAL(networkError(QString)));
-    connect(xmlReader, SIGNAL(finishedParsingPackage(OBSStatus*,int)),
-            this, SIGNAL(finishedParsingPackage(OBSStatus*,int)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingPackage,
+            this, &OBS::finishedParsingPackage);
 
-    connect(xmlReader, SIGNAL(finishedParsingBranchPackage(OBSStatus*)),
-            this, SIGNAL(finishedParsingBranchPackage(OBSStatus*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingBranchPackage,
+            this, &OBS::finishedParsingBranchPackage);
     connect(xmlReader, &OBSXmlReader::finishedParsingLinkPkgRevision,
             this, &OBS::finishedParsingLinkPkgRevision);
     connect(xmlReader, &OBSXmlReader::finishedParsingCopyPkgRevision,
             this, &OBS::finishedParsingCopyPkgRevision);
-    connect(xmlReader, SIGNAL(finishedParsingCreateRequest(OBSRequest*)),
-            this, SIGNAL(finishedParsingCreateRequest(OBSRequest*)));
-    connect(xmlReader, SIGNAL(finishedParsingCreateRequestStatus(OBSStatus*)),
-            this, SIGNAL(finishedParsingCreateRequestStatus(OBSStatus*)));
-    connect(xmlReader, SIGNAL(finishedParsingCreatePrjStatus(OBSStatus*)),
-            this, SIGNAL(finishedParsingCreatePrjStatus(OBSStatus*)));
-    connect(xmlReader, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)),
-            this, SIGNAL(finishedParsingCreatePkgStatus(OBSStatus*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingCreateRequest,
+            this, &OBS::finishedParsingCreateRequest);
+    connect(xmlReader, &OBSXmlReader::finishedParsingCreateRequestStatus,
+            this, &OBS::finishedParsingCreateRequestStatus);
+    connect(xmlReader, &OBSXmlReader::finishedParsingCreatePrjStatus,
+            this, &OBS::finishedParsingCreatePrjStatus);
+    connect(xmlReader, &OBSXmlReader::finishedParsingCreatePkgStatus,
+            this, &OBS::finishedParsingCreatePkgStatus);
     connect(obsCore, &OBSCore::cannotLinkPackage, this, &OBS::cannotLinkPackage);
     connect(obsCore, &OBSCore::cannotCopyPackage, this, &OBS::cannotCopyPackage);
-    connect(obsCore, SIGNAL(cannotCreateProject(OBSStatus*)),
-            this, SIGNAL(cannotCreateProject(OBSStatus*)));
-    connect(obsCore, SIGNAL(cannotCreatePackage(OBSStatus*)),
-            this, SIGNAL(cannotCreatePackage(OBSStatus*)));
-    connect(xmlReader, SIGNAL(finishedParsingUploadFileRevision(OBSRevision*)),
-            this, SIGNAL(finishedParsingUploadFileRevision(OBSRevision*)));
-    connect(obsCore, SIGNAL(cannotUploadFile(OBSStatus*)),
-            this, SIGNAL(cannotUploadFile(OBSStatus*)));
+    connect(obsCore, &OBSCore::cannotCreateProject,
+            this, &OBS::cannotCreateProject);
+    connect(obsCore, &OBSCore::cannotCreatePackage,
+            this, &OBS::cannotCreatePackage);
+    connect(xmlReader, &OBSXmlReader::finishedParsingUploadFileRevision,
+            this, &OBS::finishedParsingUploadFileRevision);
+    connect(obsCore, &OBSCore::cannotUploadFile,
+            this, &OBS::cannotUploadFile);
     connect(obsCore, SIGNAL(fileFetched(QString,QByteArray)), this, SIGNAL(fileFetched(QString,QByteArray)));
     connect(obsCore, SIGNAL(buildLogFetched(QString)), this, SIGNAL(buildLogFetched(QString)));
     connect(obsCore, SIGNAL(buildLogNotFound()), this, SIGNAL(buildLogNotFound()));
     connect(obsCore, &OBSCore::projectNotFound, this, &OBS::projectNotFound);
     connect(obsCore, &OBSCore::packageNotFound, this, &OBS::packageNotFound);
-    connect(xmlReader, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)),
-            this, SIGNAL(finishedParsingDeletePrjStatus(OBSStatus*)));
-    connect(xmlReader, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)),
-            this, SIGNAL(finishedParsingDeletePkgStatus(OBSStatus*)));
-    connect(xmlReader, SIGNAL(finishedParsingDeleteFileStatus(OBSStatus*)),
-            this, SIGNAL(finishedParsingDeleteFileStatus(OBSStatus*)));
-    connect(obsCore, SIGNAL(cannotDeleteProject(OBSStatus*)),
-            this, SIGNAL(cannotDeleteProject(OBSStatus*)));
-    connect(obsCore, SIGNAL(cannotDeletePackage(OBSStatus*)),
-            this, SIGNAL(cannotDeletePackage(OBSStatus*)));
-    connect(obsCore, SIGNAL(cannotDeleteFile(OBSStatus*)),
-            this, SIGNAL(cannotDeleteFile(OBSStatus*)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingDeletePrjStatus,
+            this, &OBS::finishedParsingDeletePrjStatus);
+    connect(xmlReader, &OBSXmlReader::finishedParsingDeletePkgStatus,
+            this, &OBS::finishedParsingDeletePkgStatus);
+    connect(xmlReader, &OBSXmlReader::finishedParsingDeleteFileStatus,
+            this, &OBS::finishedParsingDeleteFileStatus);
+    connect(obsCore, &OBSCore::cannotDeleteProject, this, &OBS::cannotDeleteProject);
+    connect(obsCore, &OBSCore::cannotDeletePackage, this, &OBS::cannotDeletePackage);
+    connect(obsCore, &OBSCore::cannotDeleteFile, this, &OBS::cannotDeleteFile);
 
     connect(xmlReader, SIGNAL(finishedParsingResult(OBSResult*)),
             this, SIGNAL(finishedParsingResult(OBSResult*)));

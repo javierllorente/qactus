@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2016-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 #include <QString>
 #include <QList>
+#include <QSharedPointer>
 #include "obsstatus.h"
 
 class OBSResult
@@ -48,9 +49,9 @@ public:
     QString getState() const;
     void setState(const QString &value);
 
-    OBSStatus *getStatus() const;
-    void appendStatus(OBSStatus *status);
-    QList<OBSStatus *> getStatusList() const;
+    QSharedPointer<OBSStatus> getStatus();
+    void appendStatus(QSharedPointer<OBSStatus> status);
+    QList<QSharedPointer<OBSStatus>> getStatusList() const;
 
 private:
     QString project;
@@ -58,7 +59,7 @@ private:
     QString arch;
     QString code;
     QString state;
-    QList<OBSStatus *> statusList;
+    QList<QSharedPointer<OBSStatus>> statusList;
 };
 
 #endif // OBSRESULT_H

@@ -678,10 +678,9 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             case OBSCore::PackageList: // <status>
                 if (isAuthenticated()) {
                     QString dataStr = QString::fromUtf8(data);
-                    OBSStatus *status = xmlReader->parseNotFoundStatus(dataStr);
+                    QSharedPointer<OBSStatus> status = xmlReader->parseNotFoundStatus(dataStr);
                     qDebug() << Q_FUNC_INFO << "Project not found!" << status->getSummary() << status->getCode();
                     emit projectNotFound(status);
-                    delete status;
                 }
                 break;
 
@@ -690,10 +689,9 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             case OBSCore::LatestRevision: // <status>
                 if (isAuthenticated()) {
                     QString dataStr = QString::fromUtf8(data);
-                    OBSStatus *status = xmlReader->parseNotFoundStatus(dataStr);
+                    QSharedPointer<OBSStatus> status = xmlReader->parseNotFoundStatus(dataStr);
                     qDebug() << Q_FUNC_INFO << "Package not found!" << status->getSummary() << status->getCode();
                     emit packageNotFound(status);
-                    delete status;
                 }
                 break;
 
@@ -717,7 +715,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("destpkg").isValid()) {
                     package = reply->property("destpkg").toString();
                 }
-                OBSStatus *status = new OBSStatus();
+                QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>(new OBSStatus());
                 QString details = QString("The package %2 in project %1 does NOT exist.").arg(project, package);
                 status->setDetails(details);
                 status->setSummary("Cannot link");
@@ -726,7 +724,6 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 status->setPackage(package);
 
                 emit cannotLinkPackage(status);
-                delete status;
                 break;
             }
 
@@ -765,11 +762,11 @@ void OBSCore::replyFinished(QNetworkReply *reply)
     case QNetworkReply::ContentAccessDenied: // 401
         qDebug() << Q_FUNC_INFO << "Access denied!";
         if (reply->property("reqtype").isValid()) {
-            OBSStatus *obsStatus = nullptr;
+            QSharedPointer<OBSStatus> status = QSharedPointer<OBSStatus>();
             switch(reply->property("reqtype").toInt()) {
 
             case OBSCore::CopyPackage: {
-                obsStatus = new OBSStatus();
+                status = QSharedPointer<OBSStatus>(new OBSStatus());
                 QString project;
                 QString package;
                 if (reply->property("destprj").isValid()) {
@@ -778,34 +775,32 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("destpkg").isValid()) {
                     package = reply->property("destpkg").toString();
                 }
-                obsStatus->setProject(project);
-                obsStatus->setPackage(package);
-                obsStatus->setCode("error");
-                obsStatus->setSummary("Cannot copy");
-                obsStatus->setDetails(tr("You don't have the appropriate permissions to<br>copy %1 to %2<br>")
-                                      .arg(obsStatus->getPackage(), obsStatus->getProject()));
-                emit cannotCopyPackage(obsStatus);
-                delete obsStatus;
+                status->setProject(project);
+                status->setPackage(package);
+                status->setCode("error");
+                status->setSummary("Cannot copy");
+                status->setDetails(tr("You don't have the appropriate permissions to<br>copy %1 to %2<br>")
+                                      .arg(status->getPackage(), status->getProject()));
+                emit cannotCopyPackage(status);
                 break;
             }
             case OBSCore::CreateProject: {
-                obsStatus = new OBSStatus();
+                status = QSharedPointer<OBSStatus>(new OBSStatus());
                 QString project;
                 if (reply->property("createprj").isValid()) {
                     project = reply->property("createprj").toString();
                 }
-                obsStatus->setProject(project);
-                obsStatus->setCode("error");
-                obsStatus->setSummary("Cannot create");
-                obsStatus->setDetails(tr("You don't have the appropriate permissions to create<br>%1")
-                                      .arg(obsStatus->getProject()));
-                emit cannotCreateProject(obsStatus);
-                delete obsStatus;
+                status->setProject(project);
+                status->setCode("error");
+                status->setSummary("Cannot create");
+                status->setDetails(tr("You don't have the appropriate permissions to create<br>%1")
+                                      .arg(status->getProject()));
+                emit cannotCreateProject(status);
                 break;
             }
 
             case OBSCore::CreatePackage: {
-                obsStatus = new OBSStatus();
+                status = QSharedPointer<OBSStatus>(new OBSStatus());
                 QString project;
                 QString package;
                 if (reply->property("createprj").isValid()) {
@@ -814,19 +809,18 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("createpkg").isValid()) {
                     package = reply->property("createpkg").toString();
                 }
-                obsStatus->setProject(project);
-                obsStatus->setPackage(package);
-                obsStatus->setCode("error");
-                obsStatus->setSummary("Cannot create");
-                obsStatus->setDetails(tr("You don't have the appropriate permissions to create<br>%1/%2")
-                                      .arg(obsStatus->getProject(), obsStatus->getPackage()));
-                emit cannotCreatePackage(obsStatus);
-                delete obsStatus;
+                status->setProject(project);
+                status->setPackage(package);
+                status->setCode("error");
+                status->setSummary("Cannot create");
+                status->setDetails(tr("You don't have the appropriate permissions to create<br>%1/%2")
+                                      .arg(status->getProject(), status->getPackage()));
+                emit cannotCreatePackage(status);
                 break;
             }
 
             case OBSCore::UploadFile: {
-                obsStatus = new OBSStatus();
+                status = QSharedPointer<OBSStatus>(new OBSStatus());
                 QString project;
                 QString package;
                 if (reply->property("uploadprj").isValid()) {
@@ -835,35 +829,33 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("uploadpkg").isValid()) {
                     package = reply->property("uploadpkg").toString();
                 }
-                obsStatus->setProject(project);
-                obsStatus->setPackage(package);
-                obsStatus->setCode("error");
-                obsStatus->setSummary("Cannot upload file");
-                obsStatus->setDetails(tr("You don't have the appropriate permissions to upload to <br>%1/%2")
-                                      .arg(obsStatus->getProject(), obsStatus->getPackage()));
-                emit cannotUploadFile(obsStatus);
-                delete obsStatus;
+                status->setProject(project);
+                status->setPackage(package);
+                status->setCode("error");
+                status->setSummary("Cannot upload file");
+                status->setDetails(tr("You don't have the appropriate permissions to upload to <br>%1/%2")
+                                      .arg(status->getProject(), status->getPackage()));
+                emit cannotUploadFile(status);
                 break;
             }
 
             case OBSCore::DeleteProject: {
-                obsStatus = new OBSStatus();
+                status = QSharedPointer<OBSStatus>(new OBSStatus());
                 QString project;
                 if (reply->property("deleteprj").isValid()) {
                     project = reply->property("deleteprj").toString();
                 }
-                obsStatus->setProject(project);
-                obsStatus->setCode("error");
-                obsStatus->setSummary("Cannot delete");
-                obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1")
-                                      .arg(obsStatus->getProject()));
-                emit cannotDeleteProject(obsStatus);
-                delete obsStatus;
+                status->setProject(project);
+                status->setCode("error");
+                status->setSummary("Cannot delete");
+                status->setDetails(tr("You don't have the appropriate permissions to delete<br>%1")
+                                      .arg(status->getProject()));
+                emit cannotDeleteProject(status);
                 break;
             }
 
             case OBSCore::DeletePackage: {
-                obsStatus = new OBSStatus();
+                status = QSharedPointer<OBSStatus>(new OBSStatus());
                 QString project;
                 QString package;
                 if (reply->property("deleteprj").isValid()) {
@@ -872,19 +864,18 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("deletepkg").isValid()) {
                     package = reply->property("deletepkg").toString();
                 }
-                obsStatus->setProject(project);
-                obsStatus->setPackage(package);
-                obsStatus->setCode("error");
-                obsStatus->setSummary("Cannot delete");
-                obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1/%2")
-                                      .arg(obsStatus->getProject(), obsStatus->getPackage()));
-                emit cannotDeletePackage(obsStatus);
-                delete obsStatus;
+                status->setProject(project);
+                status->setPackage(package);
+                status->setCode("error");
+                status->setSummary("Cannot delete");
+                status->setDetails(tr("You don't have the appropriate permissions to delete<br>%1/%2")
+                                      .arg(status->getProject(), status->getPackage()));
+                emit cannotDeletePackage(status);
                 break;
             }
 
             case OBSCore::DeleteFile: {
-                obsStatus = new OBSStatus();
+                status = QSharedPointer<OBSStatus>(new OBSStatus());
                 QString project;
                 QString package;
                 QString fileName;
@@ -897,14 +888,13 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 if (reply->property("deletefile").isValid()) {
                     fileName = reply->property("deletefile").toString();
                 }
-                obsStatus->setProject(project);
-                obsStatus->setPackage(package);
-                obsStatus->setCode("error");
-                obsStatus->setSummary("Cannot delete");
-                obsStatus->setDetails(tr("You don't have the appropriate permissions to delete<br>%1/%2/%3")
-                                      .arg(obsStatus->getProject(), obsStatus->getPackage(), fileName));
-                emit cannotDeleteFile(obsStatus);
-                delete obsStatus;
+                status->setProject(project);
+                status->setPackage(package);
+                status->setCode("error");
+                status->setSummary("Cannot delete");
+                status->setDetails(tr("You don't have the appropriate permissions to delete<br>%1/%2/%3")
+                                      .arg(status->getProject(), status->getPackage(), fileName));
+                emit cannotDeleteFile(status);
                 break;
             }
 
@@ -956,7 +946,7 @@ void OBSCore::linkPackage(const QString &srcProject, const QString &srcPackage, 
         createPackage(dstProject, dstPackage, data);
     });
     connect(linkHelper, &OBSLinkHelper::readyToLinkPackage, this, &OBSCore::slotLinkPackage);
-    connect(this, &OBSCore::cannotCreatePackage, linkHelper, [&](OBSStatus *status) {
+    connect(this, &OBSCore::cannotCreatePackage, linkHelper, [&](QSharedPointer<OBSStatus> status) {
         QString details = QString("You don't have the appropriate permissions to create a link in %1/%2")
                 .arg(dstProject, srcPackage);
         status->setDetails(details);

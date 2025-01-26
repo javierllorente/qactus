@@ -74,7 +74,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::packageNotFound, ui->overviewWidget, &OverviewWidget::onPackageNotFound);
     connect(ui->packagesWidget, &PackageTreeWidget::packageNotFound, this, &Browser::slotSelectedPackageNotFound);
 
-    connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, [=](OBSStatus *status) {
+    connect(m_obs, &OBS::finishedParsingCreatePrjStatus, this, [=](QSharedPointer<OBSStatus> status) {
         if (status->getCode() == "ok") {
             m_locationBar->addProject(status->getProject());
             goTo(status->getProject());
@@ -82,7 +82,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
         }
     });
 
-    connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, [=](OBSStatus *status) {
+    connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, [=](QSharedPointer<OBSStatus> status) {
         if (status->getCode()=="ok") {
             ui->packagesWidget->addPackage(status->getPackage());
             ui->packagesWidget->setCurrentPackage(status->getPackage());
@@ -894,7 +894,7 @@ void Browser::slotUploadFile(OBSRevision *revision)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotUploadFileError(OBSStatus *status)
+void Browser::slotUploadFileError(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__ << status->getCode();
     QString title = tr("Warning");
@@ -914,7 +914,7 @@ void Browser::slotCreateRequest(OBSRequest *obsRequest)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotCreateRequestStatus(OBSStatus *status)
+void Browser::slotCreateRequestStatus(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
@@ -926,7 +926,7 @@ void Browser::slotCreateRequestStatus(OBSStatus *status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotBranchPackage(OBSStatus *status)
+void Browser::slotBranchPackage(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
@@ -977,7 +977,7 @@ void Browser::slotBuildLogNotFound()
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotProjectNotFound(OBSStatus *status)
+void Browser::slotProjectNotFound(QSharedPointer<OBSStatus> status)
 {
     qDebug() << Q_FUNC_INFO;
     m_packagesToolbar->setDisabled(true);
@@ -988,7 +988,7 @@ void Browser::slotProjectNotFound(OBSStatus *status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotPackageNotFound(OBSStatus *status)
+void Browser::slotPackageNotFound(QSharedPointer<OBSStatus> status)
 {
     qDebug() << Q_FUNC_INFO;
     const QString title = tr("Package not found");
@@ -997,7 +997,7 @@ void Browser::slotPackageNotFound(OBSStatus *status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotDeleteProject(OBSStatus *status)
+void Browser::slotDeleteProject(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
@@ -1014,7 +1014,7 @@ void Browser::slotDeleteProject(OBSStatus *status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotDeletePackage(OBSStatus *status)
+void Browser::slotDeletePackage(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
@@ -1032,7 +1032,7 @@ void Browser::slotDeletePackage(OBSStatus *status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotDeleteFile(OBSStatus *status)
+void Browser::slotDeleteFile(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2015-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ void RequestStateEditor::on_declinePushButton_clicked()
     emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), false);
 }
 
-void RequestStateEditor::slotRequestStatusFetched(OBSStatus *status)
+void RequestStateEditor::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
 {
    qDebug() << __PRETTY_FUNCTION__ << status->getCode();
    QString errorStr = tr("Error changing SR!");

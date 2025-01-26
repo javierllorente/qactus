@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QDesktopServices>
 #include <QCoreApplication>
+#include <QSharedPointer>
 #include "obsrequest.h"
 #include "obsfile.h"
 #include "obslink.h"
@@ -47,7 +48,7 @@ public:
     void parsePrjMetaConfig(const QString &data);
     void parsePkgMetaConfig(const QString &data);
     void parseBuildStatus(const QString &data);
-    OBSStatus *parseNotFoundStatus(const QString &data);
+    QSharedPointer<OBSStatus> parseNotFoundStatus(const QString &data);
     void parsePackageList(const QString &data);
     void parseFileList(const QString &project, const QString &package, const QString &data);
     void parseRevisionList(const QString &project, const QString &package, const QString &data);
@@ -79,7 +80,7 @@ public:
 private:
     static OBSXmlReader *instance;
     OBSXmlReader();
-    void parseStatus(QXmlStreamReader &xml, OBSStatus *obsStatus);
+    void parseStatus(QXmlStreamReader &xml, QSharedPointer<OBSStatus> status);
     int row;
     void parseRevision(QXmlStreamReader &xml, OBSRevision *obsRevision);
     QList<QString> requestIdList;
@@ -93,18 +94,18 @@ private:
     QString requestNumber;
 
 signals:
-    void finishedParsingPackage(OBSStatus*, int);
-    void finishedParsingBranchPackage(OBSStatus*);
+    void finishedParsingPackage(QSharedPointer<OBSStatus> status, int row);
+    void finishedParsingBranchPackage(QSharedPointer<OBSStatus> status);
     void finishedParsingLinkPkgRevision(OBSRevision *revision);
     void finishedParsingCopyPkgRevision(OBSRevision *revision);
     void finishedParsingCreateRequest(OBSRequest*);
-    void finishedParsingCreateRequestStatus(OBSStatus*);
-    void finishedParsingCreatePrjStatus(OBSStatus*);
-    void finishedParsingCreatePkgStatus(OBSStatus*);
+    void finishedParsingCreateRequestStatus(QSharedPointer<OBSStatus> status);
+    void finishedParsingCreatePrjStatus(QSharedPointer<OBSStatus> status);
+    void finishedParsingCreatePkgStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingUploadFileRevision(OBSRevision*);
-    void finishedParsingDeletePrjStatus(OBSStatus*);
-    void finishedParsingDeletePkgStatus(OBSStatus*);
-    void finishedParsingDeleteFileStatus(OBSStatus*);
+    void finishedParsingDeletePrjStatus(QSharedPointer<OBSStatus> status);
+    void finishedParsingDeletePkgStatus(QSharedPointer<OBSStatus> status);
+    void finishedParsingDeleteFileStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingResult(OBSResult*);
     void finishedParsingResultList(const QList<OBSResult *> &resultList);
     void finishedParsingRevision(OBSRevision*);
@@ -125,12 +126,12 @@ signals:
     void finishedParsingFileList(const QString &project, const QString &package);
     void finishedParsingRevisionList(const QString &project, const QString &package);
     void finishedParsingLink(OBSLink *obsLink);
-    void finishedParsingRequestStatus(OBSStatus *obsStatus);
+    void finishedParsingRequestStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingRequest(OBSRequest *obsRequest);
     void finishedParsingRequestList(const QString &project, const QString &package);
     void finishedParsingAbout(OBSAbout *obsAbout);
     void finishedParsingPerson(OBSPerson *obsPerson);
-    void finishedParsingUpdatePerson(OBSStatus *obsStatus);
+    void finishedParsingUpdatePerson(QSharedPointer<OBSStatus> status);
     void finishedParsingDistribution(OBSDistribution *distribution);
 };
 

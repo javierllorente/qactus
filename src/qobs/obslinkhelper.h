@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 #define OBSLINKHELPER_H
 
 #include <QObject>
+#include <QSharedPointer>
 #include "obspkgmetaconfig.h"
 #include "obsstatus.h"
 
@@ -41,7 +42,7 @@ signals:
 
 public slots:
     void slotFetchedPackageMetaConfig(OBSPkgMetaConfig *pkgMetaConfig);
-    void slotFetchedCreatePkgStatus(OBSStatus *status);
+    void slotFetchedCreatePkgStatus(QSharedPointer<OBSStatus> status);
 
 private slots:
 };

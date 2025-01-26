@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2019-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 #define PACKAGEACTIONDIALOG_H
 
 #include <QDialog>
+#include <QSharedPointer>
 #include "obs.h"
 
 namespace Ui {
@@ -52,7 +53,7 @@ private slots:
     void toggleOkButton();
     void on_buttonBox_accepted();
     void revisionFetched(OBSRevision *revision);
-    void slotCannot(OBSStatus *status);
+    void slotCannot(QSharedPointer<OBSStatus> status);
 
 signals:
     void updateStatusBar(QString message, bool progressBarHidden);

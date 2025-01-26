@@ -190,14 +190,14 @@ void OverviewWidget::onPackageSelectionChanged(const QItemSelection &selected, c
     }
 }
 
-void OverviewWidget::onProjectNotFound(OBSStatus *status)
+void OverviewWidget::onProjectNotFound(QSharedPointer<OBSStatus> status)
 {
     qDebug() << Q_FUNC_INFO;
     clear();
     m_projectsToolbar->setDisabled(true);
 }
 
-void OverviewWidget::onPackageNotFound(OBSStatus *status)
+void OverviewWidget::onPackageNotFound(QSharedPointer<OBSStatus> status)
 {
     qDebug() << Q_FUNC_INFO;
     m_projectsToolbar->setDisabled(true);

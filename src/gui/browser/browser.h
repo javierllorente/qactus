@@ -20,6 +20,7 @@
 #include <QItemSelectionModel>
 #include <QMenu>
 #include <QToolBar>
+#include <QSharedPointer>
 #include "locationbar.h"
 #include "metaconfigeditor.h"
 #include "obs.h"
@@ -117,19 +118,19 @@ private slots:
     void addFile(OBSFile *file);
     void uploadFile(const QString &path);
     void slotUploadFile(OBSRevision *revision);
-    void slotUploadFileError(OBSStatus *status);
+    void slotUploadFileError(QSharedPointer<OBSStatus> status);
     void finishedAddingResults();
     void slotCreateRequest(OBSRequest *request);
-    void slotCreateRequestStatus(OBSStatus *status);
-    void slotBranchPackage(OBSStatus *status);
+    void slotCreateRequestStatus(QSharedPointer<OBSStatus> status);
+    void slotBranchPackage(QSharedPointer<OBSStatus> status);
     void slotFileFetched(const QString &fileName, const QByteArray &data);
     void slotBuildLogFetched(const QString &buildLog);
     void slotBuildLogNotFound();
-    void slotProjectNotFound(OBSStatus *status);
-    void slotPackageNotFound(OBSStatus *status);
-    void slotDeleteProject(OBSStatus *status);
-    void slotDeletePackage(OBSStatus *status);
-    void slotDeleteFile(OBSStatus *status);
+    void slotProjectNotFound(QSharedPointer<OBSStatus> status);
+    void slotPackageNotFound(QSharedPointer<OBSStatus> status);
+    void slotDeleteProject(QSharedPointer<OBSStatus> status);
+    void slotDeletePackage(QSharedPointer<OBSStatus> status);
+    void slotDeleteFile(QSharedPointer<OBSStatus> status);
 
 signals:
     void projectSelectionChanged();
