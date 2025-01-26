@@ -170,7 +170,7 @@
           <attribute name="title">
            <string>Requests</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
             <widget class="QSplitter" name="requestsSplitter">
              <property name="orientation">
