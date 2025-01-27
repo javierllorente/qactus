@@ -54,7 +54,7 @@ RequestTreeWidget::RequestTreeWidget(QWidget *parent) :
     setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
-OBSRequest *RequestTreeWidget::currentRequest()
+QSharedPointer<OBSRequest> RequestTreeWidget::currentRequest()
 {
     RequestItemModel *currentModel = static_cast<RequestItemModel *>(model());
     return currentModel->getRequest(currentIndex());

@@ -31,7 +31,7 @@ public:
 
     void appendRequest(QSharedPointer<OBSRequest> request);
     QString getDescription(const QModelIndex &index) const;
-    OBSRequest *getRequest(const QModelIndex &index);
+    QSharedPointer<OBSRequest> getRequest(const QModelIndex &index);
     bool removeRequest(const QString &id);
     void clear();
     void syncRequests();

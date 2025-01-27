@@ -16,7 +16,7 @@
 #include "requeststateeditor.h"
 #include "ui_requeststateeditor.h"
 
-RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, OBSRequest *request) :
+RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, QSharedPointer<OBSRequest> request) :
     QDialog(parent),
     ui(new Ui::RequestStateEditor),
     m_obs(obs),

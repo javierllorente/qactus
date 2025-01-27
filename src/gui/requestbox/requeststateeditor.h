@@ -21,6 +21,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QStandardItemModel>
+#include <QSharedPointer>
 #include "obs.h"
 #include "syntaxhighlighter.h"
 #include "utils.h"
@@ -34,7 +35,8 @@ class RequestStateEditor : public QDialog
     Q_OBJECT
 
 public:
-    explicit RequestStateEditor(QWidget *parent = nullptr, OBS *obs = nullptr, OBSRequest *request = nullptr);
+    explicit RequestStateEditor(QWidget *parent = nullptr, OBS *obs = nullptr,
+                                QSharedPointer<OBSRequest> request = nullptr);
     ~RequestStateEditor();
 
     void setDiff(const QString &diff);
@@ -53,7 +55,7 @@ private slots:
 private:
     Ui::RequestStateEditor *ui;
     OBS *m_obs;
-    OBSRequest *m_request;
+    QSharedPointer<OBSRequest> m_request;
     QTextDocument *m_document;
     SyntaxHighlighter *m_syntaxHighlighter;
 };

@@ -76,13 +76,9 @@ void RequestBox::writeSettings()
 void RequestBox::changeRequestState()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    OBSRequest *request = ui->treeRequests->currentRequest();
-    RequestStateEditor *reqStateEditor = new RequestStateEditor(this, m_obs, request);
-
-    reqStateEditor->exec();
-
-    delete reqStateEditor;
-    delete request;
+    QSharedPointer<OBSRequest> request = ui->treeRequests->currentRequest();
+    QScopedPointer<RequestStateEditor> requestStateEditor(new RequestStateEditor(this, m_obs, request));
+    requestStateEditor->exec();
 }
 
 void RequestBox::getIncomingRequests()
@@ -110,9 +106,8 @@ void RequestBox::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
     if (status->getCode()=="ok") {
-        OBSRequest *request = ui->treeRequests->currentRequest();
+        QSharedPointer<OBSRequest> request = ui->treeRequests->currentRequest();
         ui->treeRequests->removeIncomingRequest(request->getId());
         ui->textBrowser->clear();
-        delete request;
     }
 }

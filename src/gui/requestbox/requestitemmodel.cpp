@@ -45,9 +45,9 @@ QString RequestItemModel::itemToString(int row, int column, int role) const
     return standardItem->data(role).toString();
 }
 
-OBSRequest *RequestItemModel::getRequest(const QModelIndex &index)
+QSharedPointer<OBSRequest> RequestItemModel::getRequest(const QModelIndex &index)
 {
-    OBSRequest *request = new OBSRequest();
+    QSharedPointer<OBSRequest> request(new OBSRequest());
     request->setDate(itemToString(index.row(), 0, Qt::DisplayRole));
     request->setId(itemToString(index.row(), 1, Qt::DisplayRole));
 

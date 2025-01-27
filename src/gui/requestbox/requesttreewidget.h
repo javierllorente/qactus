@@ -33,7 +33,7 @@ class RequestTreeWidget : public QTreeView
 
 public:
     explicit RequestTreeWidget(QWidget *parent = nullptr);
-    OBSRequest *currentRequest();
+    QSharedPointer<OBSRequest> currentRequest();
     int getRequestType() const;
 
 signals:
