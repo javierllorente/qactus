@@ -39,7 +39,7 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, QSharedPointer
     connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), m_obs, SLOT(slotChangeSubmitRequest(QString,QString,bool)));
     connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestStateEditor::slotRequestStatusFetched);
     connect(m_obs, SIGNAL(srDiffFetched(QString)), this, SLOT(slotSrDiffFetched(QString)));
-    connect(m_obs, SIGNAL(finishedParsingResult(OBSResult*)), this, SLOT(slotAddBuildResults(OBSResult*)));
+    connect(m_obs, &OBS::finishedParsingResult, this, &RequestStateEditor::slotAddBuildResults);
 
     if (m_request->getActionType()=="submit") {
         // Get SR diff
@@ -122,17 +122,17 @@ void RequestStateEditor::slotSrDiffFetched(const QString &diff)
     setDiff(diff);
 }
 
-void RequestStateEditor::slotAddBuildResults(OBSResult *obsResult)
+void RequestStateEditor::slotAddBuildResults(QSharedPointer<OBSResult> result)
 {
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
     if (model) {
-        QStandardItem *itemRepository = new QStandardItem(obsResult->getRepository());
-        QStandardItem *itemArch = new QStandardItem(obsResult->getArch());
-        QStandardItem *itemBuildResult = new QStandardItem(obsResult->getStatus()->getCode());
+        QStandardItem *itemRepository = new QStandardItem(result->getRepository());
+        QStandardItem *itemArch = new QStandardItem(result->getArch());
+        QStandardItem *itemBuildResult = new QStandardItem(result->getStatus()->getCode());
         itemBuildResult->setForeground(Utils::getColorForStatus(itemBuildResult->text()));
 
-        if (!obsResult->getStatus()->getDetails().isEmpty()) {
-            QString details = obsResult->getStatus()->getDetails();
+        if (!result->getStatus()->getDetails().isEmpty()) {
+            QString details = result->getStatus()->getDetails();
             details = Utils::breakLine(details, 250);
             itemBuildResult->setToolTip(details);
         }

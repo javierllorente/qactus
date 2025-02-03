@@ -50,7 +50,7 @@ private slots:
     void on_declinePushButton_clicked();
     void slotRequestStatusFetched(QSharedPointer<OBSStatus> status);
     void slotSrDiffFetched(const QString &diff);
-    void slotAddBuildResults(OBSResult *obsResult);
+    void slotAddBuildResults(QSharedPointer<OBSResult> result);
 
 private:
     Ui::RequestStateEditor *ui;
