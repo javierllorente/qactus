@@ -41,7 +41,7 @@ private:
     QMenu *m_menu;
 
 private slots:
-    void slotContextMenuRequests(const QPoint &point);
+    void onContextMenuRequested(const QPoint &point);
 
 };
 

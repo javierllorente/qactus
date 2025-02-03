@@ -44,7 +44,7 @@ RequestTreeWidget::RequestTreeWidget(QWidget *parent) :
         emit descriptionFetched(description);
     });
 
-    connect(this, &RequestTreeWidget::customContextMenuRequested, this, &RequestTreeWidget::slotContextMenuRequests);
+    connect(this, &RequestTreeWidget::customContextMenuRequested, this, &RequestTreeWidget::onContextMenuRequested);
 
     setItemDelegate(new AutoToolTipDelegate(this));
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -56,7 +56,7 @@ QSharedPointer<OBSRequest> RequestTreeWidget::currentRequest()
     return currentModel->getRequest(currentIndex());
 }
 
-void RequestTreeWidget::slotContextMenuRequests(const QPoint &point)
+void RequestTreeWidget::onContextMenuRequested(const QPoint &point)
 {
     QModelIndex index = indexAt(point);
     if (index.isValid()) {
