@@ -20,6 +20,7 @@
 #include <QSharedPointer>
 #include "obs.h"
 #include "obsrequest.h"
+#include "requestitemmodel.h"
 
 namespace Ui {
 class RequestBox;
@@ -33,17 +34,33 @@ public:
     explicit RequestBox(QWidget *parent = nullptr, OBS *obs = nullptr);
     ~RequestBox();
 
+    int getRequestType() const;
+
 private:
-    Ui::RequestBox *ui;
-    OBS *m_obs;
     void readSettings();
     void writeSettings();
+    Ui::RequestBox *ui;
+    OBS *m_obs;
+    RequestItemModel *irModel;
+    RequestItemModel *orModel;
+    RequestItemModel *drModel;
+    int m_requestType;
 
 signals:
     void updateStatusBar(const QString &message, bool progressBarHidden);
     void descriptionFetched(const QString &description);
 
 public slots:
+    void addIncomingRequest(QSharedPointer<OBSRequest> request);
+    void irListFetched();
+    void addOutgoingRequest(QSharedPointer<OBSRequest> request);
+    void orListFetched();
+    void addDeclinedRequest(QSharedPointer<OBSRequest> request);
+    void drListFetched();
+    bool removeIncomingRequest(const QString &id);
+    bool removeOutgoingRequest(const QString &id);
+    bool removeDeclinedRequest(const QString &id);
+    void requestTypeChanged(int index);
     void changeRequestState();
 
 private slots:

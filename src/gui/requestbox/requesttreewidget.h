@@ -23,9 +23,6 @@
 #include <QAction>
 #include <QSharedPointer>
 #include "obsrequest.h"
-#include "requestitemmodel.h"
-#include "requeststateeditor.h"
-#include "autotooltipdelegate.h"
 
 class RequestTreeWidget : public QTreeView
 {
@@ -34,31 +31,14 @@ class RequestTreeWidget : public QTreeView
 public:
     explicit RequestTreeWidget(QWidget *parent = nullptr);
     QSharedPointer<OBSRequest> currentRequest();
-    int getRequestType() const;
 
 signals:
     void updateStatusBar(const QString &message, bool progressBarHidden);
     void descriptionFetched(const QString &description);
     void changeRequestState();
 
-public slots:
-    void addIncomingRequest(QSharedPointer<OBSRequest> request);
-    void irListFetched();
-    void addOutgoingRequest(QSharedPointer<OBSRequest> request);
-    void orListFetched();
-    void addDeclinedRequest(QSharedPointer<OBSRequest> request);
-    void drListFetched();
-    bool removeIncomingRequest(const QString &id);
-    bool removeOutgoingRequest(const QString &id);
-    bool removeDeclinedRequest(const QString &id);
-    void requestTypeChanged(int index);
-
 private:
-     RequestItemModel *irModel;
-     RequestItemModel *orModel;
-     RequestItemModel *drModel;
-     QMenu *m_menu;
-     int m_requestType;
+    QMenu *m_menu;
 
 private slots:
     void slotContextMenuRequests(const QPoint &point);

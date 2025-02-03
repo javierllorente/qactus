@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 #include "requesttreewidget.h"
+#include "requestitemmodel.h"
+#include "autotooltipdelegate.h"
 
 RequestTreeWidget::RequestTreeWidget(QWidget *parent) :
     QTreeView(parent),
-    irModel(new RequestItemModel(this)),
-    orModel(new RequestItemModel(this)),
-    drModel(new RequestItemModel(this)),
-    m_menu(new QMenu(this)),
-    m_requestType(0)
+    m_menu(new QMenu(this))
 {
-    setModel(irModel);
-
     setColumnWidth(0, 145); // Date
     setColumnWidth(1, 60); // SR ID
     setColumnWidth(2, 210); // Source project
@@ -60,82 +56,8 @@ QSharedPointer<OBSRequest> RequestTreeWidget::currentRequest()
     return currentModel->getRequest(currentIndex());
 }
 
-int RequestTreeWidget::getRequestType() const
-{
-    return m_requestType;
-}
-
-void RequestTreeWidget::addIncomingRequest(QSharedPointer<OBSRequest> request)
-{
-    qDebug() << "RequestTreeWidget::addIncomingRequest()";
-    irModel->appendRequest(request);
-}
-
-void RequestTreeWidget::irListFetched()
-{
-    irModel->syncRequests();
-    emit updateStatusBar(tr("Done"), true);
-}
-
-void RequestTreeWidget::addOutgoingRequest(QSharedPointer<OBSRequest> request)
-{
-    qDebug() << "RequestTreeWidget::addOutgoingRequest()";
-    orModel->appendRequest(request);
-}
-
-void RequestTreeWidget::orListFetched()
-{
-    orModel->syncRequests();
-    emit updateStatusBar(tr("Done"), true);
-}
-
-void RequestTreeWidget::addDeclinedRequest(QSharedPointer<OBSRequest> request)
-{
-    qDebug() << "RequestTreeWidget::addDeclinedRequest()";
-    drModel->appendRequest(request);
-}
-
-void RequestTreeWidget::drListFetched()
-{
-    drModel->syncRequests();
-    emit updateStatusBar(tr("Done"), true);
-}
-
-bool RequestTreeWidget::removeIncomingRequest(const QString &id)
-{
-    return irModel->removeRequest(id);
-}
-
-bool RequestTreeWidget::removeOutgoingRequest(const QString &id)
-{
-    return orModel->removeRequest(id);
-}
-
-bool RequestTreeWidget::removeDeclinedRequest(const QString &id)
-{
-    return drModel->removeRequest(id);
-}
-
-void RequestTreeWidget::requestTypeChanged(int index)
-{
-    qDebug() << "RequestTreeWidget::requestTypeChanged()" << index;
-    m_requestType = index;
-    switch (index) {
-    case 0:
-        setModel(irModel);
-        break;
-    case 1:
-        setModel(orModel);
-        break;
-    case 2:
-        setModel(drModel);
-        break;
-    }
-}
-
 void RequestTreeWidget::slotContextMenuRequests(const QPoint &point)
 {
-    qDebug() << "RequestTreeWidget::slotContextMenuRequests()";
     QModelIndex index = indexAt(point);
     if (index.isValid()) {
         m_menu->exec(mapToGlobal(point));
