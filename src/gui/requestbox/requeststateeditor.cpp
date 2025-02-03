@@ -36,9 +36,9 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, QSharedPointer
     ui->targetLabelText->setText(m_request->getTarget());
     ui->dateLabelText->setText(m_request->getDate());
 
-    connect(this, SIGNAL(changeSubmitRequest(QString,QString,bool)), m_obs, SLOT(slotChangeSubmitRequest(QString,QString,bool)));
+    connect(this, &RequestStateEditor::changeSubmitRequest, m_obs, &OBS::slotChangeSubmitRequest);
     connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestStateEditor::slotRequestStatusFetched);
-    connect(m_obs, SIGNAL(srDiffFetched(QString)), this, SLOT(slotSrDiffFetched(QString)));
+    connect(m_obs, &OBS::srDiffFetched, this, &RequestStateEditor::slotSrDiffFetched);
     connect(m_obs, &OBS::finishedParsingResult, this, &RequestStateEditor::slotAddBuildResults);
 
     if (m_request->getActionType()=="submit") {
