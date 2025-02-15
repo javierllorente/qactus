@@ -88,7 +88,7 @@ void RequestViewer::showTabBuildResults(bool show)
 
 void RequestViewer::on_acceptPushButton_clicked()
 {
-    qDebug() << "Accepting request" << m_request->getId();
+    qDebug() << Q_FUNC_INFO << "Accepting request" << m_request->getId();
     QProgressDialog progress(tr("Accepting request..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
@@ -98,7 +98,7 @@ void RequestViewer::on_acceptPushButton_clicked()
 
 void RequestViewer::on_declinePushButton_clicked()
 {
-    qDebug() << "Declining request..." << m_request->getId();
+    qDebug() << Q_FUNC_INFO << "Declining request..." << m_request->getId();
     QProgressDialog progress(tr("Declining request..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
@@ -108,7 +108,7 @@ void RequestViewer::on_declinePushButton_clicked()
 
 void RequestViewer::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
 {
-   qDebug() << __PRETTY_FUNCTION__ << status->getCode();
+   qDebug() << Q_FUNC_INFO << status->getCode();
    QString errorStr = tr("Error changing SR!");
    if (status->getCode() == "ok") {
        close();
