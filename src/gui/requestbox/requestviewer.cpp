@@ -119,7 +119,7 @@ void RequestViewer::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
 
 void RequestViewer::slotSrDiffFetched(const QString &diff)
 {
-    qDebug() << "RequestStateEditor::slotSrDiffFetched()\n" << diff;
+    qDebug() << Q_FUNC_INFO;
     setDiff(diff);
 }
 
