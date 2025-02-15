@@ -26,6 +26,7 @@ RequestViewer::RequestViewer(QWidget *parent, OBS *obs, QSharedPointer<OBSReques
 {
     ui->setupUi(this);
 
+    setWindowTitle("Request " + m_request->getId());
     ui->commentsTextBrowser->setFocus();
     showTabBuildResults(false);
 

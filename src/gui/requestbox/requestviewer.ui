@@ -10,9 +10,6 @@
     <height>800</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Request State Change</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
@@ -23,7 +20,6 @@
       <widget class="QLabel" name="requestIdLabel">
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -38,7 +34,6 @@
         <widget class="QLabel" name="requestIdLabelText">
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -246,8 +241,7 @@
         <string>&amp;Accept</string>
        </property>
        <property name="icon">
-        <iconset theme="dialog-ok-apply">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset theme="dialog-ok-apply"/>
        </property>
       </widget>
      </item>
@@ -263,8 +257,7 @@
         <string>&amp;Decline</string>
        </property>
        <property name="icon">
-        <iconset theme="dialog-cancel">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset theme="dialog-cancel"/>
        </property>
       </widget>
      </item>
@@ -274,8 +267,7 @@
         <string>&amp;Close</string>
        </property>
        <property name="icon">
-        <iconset theme="application-exit">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset theme="application-exit"/>
        </property>
       </widget>
      </item>
