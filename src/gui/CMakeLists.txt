@@ -44,7 +44,7 @@ set(QACTUS_SRC
     requestbox/requestbox.cpp
     requestbox/requestboxtreewidget.cpp
     requestbox/requestitemmodel.cpp
-    requestbox/requeststateeditor.cpp
+    requestbox/requestviewer.cpp
     requestbox/requesttreewidget.cpp
     requestbox/requestswidget.cpp
     requestbox/syntaxhighlighter.cpp
@@ -87,7 +87,7 @@ set(QACTUS_HDR
     requestbox/requestbox.h
     requestbox/requestboxtreewidget.h
     requestbox/requestitemmodel.h
-    requestbox/requeststateeditor.h
+    requestbox/requestviewer.h
     requestbox/requesttreewidget.h
     requestbox/requestswidget.h
     requestbox/syntaxhighlighter.h
@@ -114,7 +114,7 @@ set(QACTUS_UI
     monitor/monitortab.ui
     monitor/roweditor.ui
     requestbox/requestbox.ui
-    requestbox/requeststateeditor.ui
+    requestbox/requestviewer.ui
     requestbox/requestswidget.ui
     mainwindow.ui
     configure.ui

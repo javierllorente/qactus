@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef REQUESTSTATEEDITOR_H
-#define REQUESTSTATEEDITOR_H
+#ifndef REQUESTVIEWER_H
+#define REQUESTVIEWER_H
 
 #include <QDialog>
 #include <QDebug>
@@ -27,17 +27,17 @@
 #include "utils.h"
 
 namespace Ui {
-class RequestStateEditor;
+class RequestViewer;
 }
 
-class RequestStateEditor : public QDialog
+class RequestViewer : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit RequestStateEditor(QWidget *parent = nullptr, OBS *obs = nullptr,
+    explicit RequestViewer(QWidget *parent = nullptr, OBS *obs = nullptr,
                                 QSharedPointer<OBSRequest> request = nullptr);
-    ~RequestStateEditor();
+    ~RequestViewer();
 
     void setDiff(const QString &diff);
     void showTabBuildResults(bool show);
@@ -53,11 +53,11 @@ private slots:
     void slotAddBuildResults(QSharedPointer<OBSResult> result);
 
 private:
-    Ui::RequestStateEditor *ui;
+    Ui::RequestViewer *ui;
     OBS *m_obs;
     QSharedPointer<OBSRequest> m_request;
     QTextDocument *m_document;
     SyntaxHighlighter *m_syntaxHighlighter;
 };
 
-#endif // REQUESTSTATEEDITOR_H
+#endif // REQUESTVIEWER_H

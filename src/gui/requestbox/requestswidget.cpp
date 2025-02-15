@@ -15,7 +15,7 @@
  */
 #include "requestswidget.h"
 #include "ui_requestswidget.h"
-#include "requeststateeditor.h"
+#include "requestviewer.h"
 #include <QSettings>
 
 RequestsWidget::RequestsWidget(QWidget *parent) :
@@ -116,6 +116,6 @@ void RequestsWidget::changeRequestState()
 {
     qDebug() << Q_FUNC_INFO;
     QSharedPointer<OBSRequest> request = ui->requestTreeWidget->getCurrentRequest();
-    QScopedPointer<RequestStateEditor> requestStateEditor(new RequestStateEditor(this, obs, request));
-    requestStateEditor->exec();
+    QScopedPointer<RequestViewer> requestViewer(new RequestViewer(this, obs, request));
+    requestViewer->exec();
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RequestStateEditor</class>
- <widget class="QDialog" name="RequestStateEditor">
+ <class>RequestViewer</class>
+ <widget class="QDialog" name="RequestViewer">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -288,7 +288,7 @@
   <connection>
    <sender>closePushButton</sender>
    <signal>clicked()</signal>
-   <receiver>RequestStateEditor</receiver>
+   <receiver>RequestViewer</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

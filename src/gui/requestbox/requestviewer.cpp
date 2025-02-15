@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "requeststateeditor.h"
-#include "ui_requeststateeditor.h"
+#include "requestviewer.h"
+#include "ui_requestviewer.h"
 
-RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, QSharedPointer<OBSRequest> request) :
+RequestViewer::RequestViewer(QWidget *parent, OBS *obs, QSharedPointer<OBSRequest> request) :
     QDialog(parent),
-    ui(new Ui::RequestStateEditor),
+    ui(new Ui::RequestViewer),
     m_obs(obs),
     m_request(request),
     m_document(new QTextDocument(this)),
@@ -36,10 +36,10 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, QSharedPointer
     ui->targetLabelText->setText(m_request->getTarget());
     ui->dateLabelText->setText(m_request->getDate());
 
-    connect(this, &RequestStateEditor::changeSubmitRequest, m_obs, &OBS::slotChangeSubmitRequest);
-    connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestStateEditor::slotRequestStatusFetched);
-    connect(m_obs, &OBS::srDiffFetched, this, &RequestStateEditor::slotSrDiffFetched);
-    connect(m_obs, &OBS::finishedParsingResult, this, &RequestStateEditor::slotAddBuildResults);
+    connect(this, &RequestViewer::changeSubmitRequest, m_obs, &OBS::slotChangeSubmitRequest);
+    connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestViewer::slotRequestStatusFetched);
+    connect(m_obs, &OBS::srDiffFetched, this, &RequestViewer::slotSrDiffFetched);
+    connect(m_obs, &OBS::finishedParsingResult, this, &RequestViewer::slotAddBuildResults);
 
     if (m_request->getActionType()=="submit") {
         // Get SR diff
@@ -65,18 +65,18 @@ RequestStateEditor::RequestStateEditor(QWidget *parent, OBS *obs, QSharedPointer
     ui->commentsTextBrowser->setEnabled(writeMode);
 }
 
-RequestStateEditor::~RequestStateEditor()
+RequestViewer::~RequestViewer()
 {
     delete ui;
 }
 
-void RequestStateEditor::setDiff(const QString &diff)
+void RequestViewer::setDiff(const QString &diff)
 {
     m_document->setPlainText(diff);
     ui->diffTextBrowser->setDocument(m_document);
 }
 
-void RequestStateEditor::showTabBuildResults(bool show)
+void RequestViewer::showTabBuildResults(bool show)
 {
     if (show) {
         ui->tabWidget->addTab(ui->tabBuildResults, tr("Build results"));
@@ -85,7 +85,7 @@ void RequestStateEditor::showTabBuildResults(bool show)
     }
 }
 
-void RequestStateEditor::on_acceptPushButton_clicked()
+void RequestViewer::on_acceptPushButton_clicked()
 {
     qDebug() << "Accepting request" << m_request->getId();
     QProgressDialog progress(tr("Accepting request..."), nullptr, 0, 0, this);
@@ -95,7 +95,7 @@ void RequestStateEditor::on_acceptPushButton_clicked()
     emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), true);
 }
 
-void RequestStateEditor::on_declinePushButton_clicked()
+void RequestViewer::on_declinePushButton_clicked()
 {
     qDebug() << "Declining request..." << m_request->getId();
     QProgressDialog progress(tr("Declining request..."), nullptr, 0, 0, this);
@@ -105,7 +105,7 @@ void RequestStateEditor::on_declinePushButton_clicked()
     emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), false);
 }
 
-void RequestStateEditor::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
+void RequestViewer::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
 {
    qDebug() << __PRETTY_FUNCTION__ << status->getCode();
    QString errorStr = tr("Error changing SR!");
@@ -116,13 +116,13 @@ void RequestStateEditor::slotRequestStatusFetched(QSharedPointer<OBSStatus> stat
    }
 }
 
-void RequestStateEditor::slotSrDiffFetched(const QString &diff)
+void RequestViewer::slotSrDiffFetched(const QString &diff)
 {
     qDebug() << "RequestStateEditor::slotSrDiffFetched()\n" << diff;
     setDiff(diff);
 }
 
-void RequestStateEditor::slotAddBuildResults(QSharedPointer<OBSResult> result)
+void RequestViewer::slotAddBuildResults(QSharedPointer<OBSResult> result)
 {
     QStandardItemModel *model = static_cast<QStandardItemModel*>(ui->treeBuildResults->model());
     if (model) {

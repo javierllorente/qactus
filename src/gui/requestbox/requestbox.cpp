@@ -15,7 +15,7 @@
  */
 #include "requestbox.h"
 #include "ui_requestbox.h"
-#include "requeststateeditor.h"
+#include "requestviewer.h"
 #include <QSettings>
 
 RequestBox::RequestBox(QWidget *parent, OBS *obs) :
