@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,42 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef REQUESTSTREEWIDGET_H
-#define REQUESTSTREEWIDGET_H
+#ifndef REQUESTSWIDGET_H
+#define REQUESTSWIDGET_H
 
-#include <QTreeView>
-#include <QObject>
+#include <QWidget>
+#include <QSharedPointer>
 #include "datacontroller.h"
-#include "obsrequest.h"
 #include "requestitemmodel.h"
+#include "obsrequest.h"
+#include "obs.h"
 
-class RequestsTreeWidget : public QTreeView, public DataController
+namespace Ui {
+class RequestsWidget;
+}
+
+class RequestsWidget : public QWidget, public DataController
 {
     Q_OBJECT
+
 public:
-    RequestsTreeWidget(QWidget *parent = nullptr);
-    void createModel();
-    void initTable();
-    void deleteModel();
+    explicit RequestsWidget(QWidget *parent = nullptr);
+    ~RequestsWidget();
+    void setModel(QAbstractItemModel *model);
+    void setOBS(OBS *obs);
+    QSharedPointer<OBSRequest> getCurrentRequest();
     void clearModel();
-    QString getProject() const;
-    QString getPackage() const;
+    void clearDescription();
+
 
 private:
+    void readSettings();
+    void writeSettings();
+    Ui::RequestsWidget *ui;
     RequestItemModel *itemModel;
+    OBS *obs;
     bool firstTimeRevisionListDisplayed;
     int logicalIndex;
     Qt::SortOrder order;
     QString project;
     QString package;
 
+signals:
+    void updateStatusBar(const QString &message, bool progressBarHidden);
+    void descriptionFetched(const QString &description);
+
 public slots:
     void addRequest(QSharedPointer<OBSRequest> request);
     void requestsAdded(const QString &project, const QString &package);
 
-signals:
-    void updateStatusBar(QString message, bool progressBarHidden);
-    void descriptionFetched(const QString &description);
+private slots:
+    void changeRequestState();
+
 };
 
-#endif // REQUESTSTREEWIDGET_H
+#endif // REQUESTSWIDGET_H

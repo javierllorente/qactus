@@ -22,21 +22,19 @@ RequestBox::RequestBox(QWidget *parent, OBS *obs) :
     QWidget(parent),
     ui(new Ui::RequestBox),
     m_obs(obs),
-    irModel(new RequestItemModel(this)),
-    orModel(new RequestItemModel(this)),
-    drModel(new RequestItemModel(this)),
+    incomingRequestsModel(new RequestItemModel(this)),
+    outgoingRequestsModel(new RequestItemModel(this)),
+    declinedRequestsModel(new RequestItemModel(this)),
     m_requestType(0)
 {
     ui->setupUi(this);
 
     ui->horizontalSplitter->setSizes((QList<int>({100, 500})));
-    ui->verticalSplitter->setSizes((QList<int>({240, 400})));
 
-    ui->treeRequests->setModel(irModel);
-    connect(ui->treeRequests, &RequestTreeWidget::descriptionFetched, this, &RequestBox::descriptionFetched);
-    connect(ui->treeRequests, &RequestTreeWidget::changeRequestState, this, &RequestBox::changeRequestState);
-    connect(ui->treeRequests, &RequestTreeWidget::descriptionFetched, ui->textBrowser, &QTextBrowser::setText);
-    connect(ui->treeRequests, &RequestTreeWidget::updateStatusBar, this, &RequestBox::updateStatusBar);
+    ui->requestsWidget->setModel(incomingRequestsModel);
+    ui->requestsWidget->setOBS(m_obs);
+    connect(ui->requestsWidget, &RequestsWidget::descriptionFetched, this, &RequestBox::descriptionFetched);
+    connect(ui->requestsWidget, &RequestsWidget::updateStatusBar, this, &RequestBox::updateStatusBar);
 
     connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::requestTypeChanged, this, &RequestBox::requestTypeChanged);
     connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getIncomingRequests, this, &RequestBox::getIncomingRequests);
@@ -44,12 +42,12 @@ RequestBox::RequestBox(QWidget *parent, OBS *obs) :
     connect(ui->treeRequestBoxes, &RequestBoxTreeWidget::getDeclinedRequests, this, &RequestBox::getDeclinedRequests);
 
     connect(m_obs, &OBS::finishedParsingIncomingRequest, this, &RequestBox::addIncomingRequest);
-    connect(m_obs, &OBS::finishedParsingIncomingRequestList, this, &RequestBox::irListFetched);
+    connect(m_obs, &OBS::finishedParsingIncomingRequestList, this, &RequestBox::incomingRequestsFetched);
     connect(m_obs, &OBS::finishedParsingOutgoingRequest, this, &RequestBox::addOutgoingRequest);
     connect(m_obs, &OBS::finishedParsingOutgoingRequestList, this, &RequestBox::orListFetched);
     connect(m_obs, &OBS::finishedParsingDeclinedRequest, this, &RequestBox::addDeclinedRequest);
     connect(m_obs, &OBS::finishedParsingDeclinedRequestList, this, &RequestBox::orListFetched);
-    connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestBox::slotRequestStatusFetched);
+    connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestBox::onStatusFetched);
 
     readSettings();
 }
@@ -70,7 +68,6 @@ void RequestBox::readSettings()
     QSettings settings;
     settings.beginGroup("RequestBox");
     ui->horizontalSplitter->restoreState(settings.value("horizontalSplitterSizes").toByteArray());
-    ui->verticalSplitter->restoreState(settings.value("verticalSplitterSizes").toByteArray());
     settings.endGroup();
 }
 
@@ -79,59 +76,58 @@ void RequestBox::writeSettings()
     QSettings settings;
     settings.beginGroup("RequestBox");
     settings.setValue("horizontalSplitterSizes", ui->horizontalSplitter->saveState());
-    settings.setValue("verticalSplitterSizes", ui->verticalSplitter->saveState());
     settings.endGroup();
 }
 
 void RequestBox::addIncomingRequest(QSharedPointer<OBSRequest> request)
 {
     qDebug() << Q_FUNC_INFO;
-    irModel->appendRequest(request);
+    incomingRequestsModel->appendRequest(request);
 }
 
-void RequestBox::irListFetched()
+void RequestBox::incomingRequestsFetched()
 {
-    irModel->syncRequests();
+    incomingRequestsModel->syncRequests();
     emit updateStatusBar(tr("Done"), true);
 }
 
 void RequestBox::addOutgoingRequest(QSharedPointer<OBSRequest> request)
 {
     qDebug() << Q_FUNC_INFO;
-    orModel->appendRequest(request);
+    outgoingRequestsModel->appendRequest(request);
 }
 
 void RequestBox::orListFetched()
 {
-    orModel->syncRequests();
+    outgoingRequestsModel->syncRequests();
     emit updateStatusBar(tr("Done"), true);
 }
 
 void RequestBox::addDeclinedRequest(QSharedPointer<OBSRequest> request)
 {
     qDebug() << Q_FUNC_INFO;
-    drModel->appendRequest(request);
+    declinedRequestsModel->appendRequest(request);
 }
 
-void RequestBox::drListFetched()
+void RequestBox::declinedRequestsFetched()
 {
-    drModel->syncRequests();
+    declinedRequestsModel->syncRequests();
     emit updateStatusBar(tr("Done"), true);
 }
 
 bool RequestBox::removeIncomingRequest(const QString &id)
 {
-    return irModel->removeRequest(id);
+    return incomingRequestsModel->removeRequest(id);
 }
 
 bool RequestBox::removeOutgoingRequest(const QString &id)
 {
-    return orModel->removeRequest(id);
+    return outgoingRequestsModel->removeRequest(id);
 }
 
 bool RequestBox::removeDeclinedRequest(const QString &id)
 {
-    return drModel->removeRequest(id);
+    return declinedRequestsModel->removeRequest(id);
 }
 
 void RequestBox::requestTypeChanged(int index)
@@ -141,53 +137,45 @@ void RequestBox::requestTypeChanged(int index)
     RequestItemModel *model = nullptr;
     switch (index) {
     case 0:
-        model = irModel;
+        model = incomingRequestsModel;
         break;
     case 1:
-        model = orModel;
+        model = outgoingRequestsModel;
         break;
     case 2:
-        model = drModel;
+        model = declinedRequestsModel;
         break;
     }
-    ui->treeRequests->setModel(model);
-}
-
-void RequestBox::changeRequestState()
-{
-    qDebug() << __PRETTY_FUNCTION__;
-    QSharedPointer<OBSRequest> request = ui->treeRequests->currentRequest();
-    QScopedPointer<RequestStateEditor> requestStateEditor(new RequestStateEditor(this, m_obs, request));
-    requestStateEditor->exec();
+    ui->requestsWidget->setModel(model);
 }
 
 void RequestBox::getIncomingRequests()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    ui->textBrowser->clear();
+    ui->requestsWidget->clearDescription();
     m_obs->getIncomingRequests();
 }
 
 void RequestBox::getOutgoingRequests()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    ui->textBrowser->clear();
+    ui->requestsWidget->clearDescription();
     m_obs->getOutgoingRequests();
 }
 
 void RequestBox::getDeclinedRequests()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    ui->textBrowser->clear();
+    ui->requestsWidget->clearDescription();
     m_obs->getDeclinedRequests();
 }
 
-void RequestBox::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
+void RequestBox::onStatusFetched(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
     if (status->getCode()=="ok") {
-        QSharedPointer<OBSRequest> request = ui->treeRequests->currentRequest();
+        QSharedPointer<OBSRequest> request = ui->requestsWidget->getCurrentRequest();
         removeIncomingRequest(request->getId());
-        ui->textBrowser->clear();
+        ui->requestsWidget->clearDescription();
     }
 }

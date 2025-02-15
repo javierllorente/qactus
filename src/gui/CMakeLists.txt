@@ -30,7 +30,6 @@ set(QACTUS_SRC
     browser/loghighlighter.cpp
     browser/packagelistmodel.cpp
     browser/packagetreewidget.cpp
-    browser/requeststreewidget.cpp
     browser/revisiontreewidget.cpp
     browser/searchwidget.cpp
     browser/locationbar.cpp
@@ -47,6 +46,7 @@ set(QACTUS_SRC
     requestbox/requestitemmodel.cpp
     requestbox/requeststateeditor.cpp
     requestbox/requesttreewidget.cpp
+    requestbox/requestswidget.cpp
     requestbox/syntaxhighlighter.cpp
     utils/utils.cpp
     utils/autotooltipdelegate.cpp
@@ -73,7 +73,6 @@ set(QACTUS_HDR
     browser/loghighlighter.h
     browser/packagelistmodel.h
     browser/packagetreewidget.h
-    browser/requeststreewidget.h
     browser/revisiontreewidget.h
     browser/searchwidget.h
     browser/locationbar.h
@@ -90,6 +89,7 @@ set(QACTUS_HDR
     requestbox/requestitemmodel.h
     requestbox/requeststateeditor.h
     requestbox/requesttreewidget.h
+    requestbox/requestswidget.h
     requestbox/syntaxhighlighter.h
     utils/utils.h
     utils/autotooltipdelegate.h
@@ -115,6 +115,7 @@ set(QACTUS_UI
     monitor/roweditor.ui
     requestbox/requestbox.ui
     requestbox/requeststateeditor.ui
+    requestbox/requestswidget.ui
     mainwindow.ui
     configure.ui
     login.ui)

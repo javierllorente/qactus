@@ -172,17 +172,7 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
-            <widget class="QSplitter" name="requestsSplitter">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <widget class="RequestsTreeWidget" name="requestsWidget">
-              <property name="rootIsDecorated">
-               <bool>false</bool>
-              </property>
-             </widget>
-             <widget class="QTextBrowser" name="requestDescription"/>
-            </widget>
+            <widget class="RequestsWidget" name="requestsWidget" native="true"/>
            </item>
           </layout>
          </widget>
@@ -195,6 +185,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>RequestsWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">requestswidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>FileTreeWidget</class>
    <extends>QTreeView</extends>
@@ -209,11 +205,6 @@
    <class>RevisionTreeWidget</class>
    <extends>QTreeView</extends>
    <header>revisiontreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RequestsTreeWidget</class>
-   <extends>QTreeView</extends>
-   <header>requeststreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>OverviewWidget</class>

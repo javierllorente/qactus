@@ -41,9 +41,9 @@ private:
     void writeSettings();
     Ui::RequestBox *ui;
     OBS *m_obs;
-    RequestItemModel *irModel;
-    RequestItemModel *orModel;
-    RequestItemModel *drModel;
+    RequestItemModel *incomingRequestsModel;
+    RequestItemModel *outgoingRequestsModel;
+    RequestItemModel *declinedRequestsModel;
     int m_requestType;
 
 signals:
@@ -52,22 +52,21 @@ signals:
 
 public slots:
     void addIncomingRequest(QSharedPointer<OBSRequest> request);
-    void irListFetched();
+    void incomingRequestsFetched();
     void addOutgoingRequest(QSharedPointer<OBSRequest> request);
     void orListFetched();
     void addDeclinedRequest(QSharedPointer<OBSRequest> request);
-    void drListFetched();
+    void declinedRequestsFetched();
     bool removeIncomingRequest(const QString &id);
     bool removeOutgoingRequest(const QString &id);
     bool removeDeclinedRequest(const QString &id);
     void requestTypeChanged(int index);
-    void changeRequestState();
 
 private slots:
     void getIncomingRequests();
     void getOutgoingRequests();
     void getDeclinedRequests();
-    void slotRequestStatusFetched(QSharedPointer<OBSStatus> status);
+    void onStatusFetched(QSharedPointer<OBSStatus> status);
 
 };
 

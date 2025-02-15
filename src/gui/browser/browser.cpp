@@ -41,6 +41,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     QIcon filterIcon(QIcon::fromTheme("view-filter"));
     ui->lineEditFilter->addAction(filterIcon, QLineEdit::LeadingPosition);
 
+    ui->requestsWidget->setOBS(m_obs);
     m_packagesToolbar->setIconSize(QSize(15, 15));
     m_filesToolbar->setIconSize(QSize(15, 15));
 
@@ -134,10 +135,8 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingRevisionList, ui->revisionsWidget, &RevisionTreeWidget::revisionsAdded);
     connect(ui->revisionsWidget, &RevisionTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
-    connect(m_obs, &OBS::finishedParsingRequest, ui->requestsWidget, &RequestsTreeWidget::addRequest);
-    connect(m_obs, &OBS::finishedParsingRequestList, ui->requestsWidget, &RequestsTreeWidget::requestsAdded);
-    connect(ui->requestsWidget, &RequestsTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
-    connect(ui->requestsWidget, &RequestsTreeWidget::descriptionFetched, ui->requestDescription, &QTextBrowser::setText);
+    connect(m_obs, &OBS::finishedParsingRequest, ui->requestsWidget, &RequestsWidget::addRequest);
+    connect(m_obs, &OBS::finishedParsingRequestList, ui->requestsWidget, &RequestsWidget::requestsAdded);
 
     readSettings();
 
@@ -308,7 +307,7 @@ void Browser::reloadPackages()
     ui->filesWidget->clearModel();
     ui->revisionsWidget->clearModel();
     ui->requestsWidget->clearModel();
-    ui->requestDescription->clear();
+    ui->requestsWidget->clearDescription();
 
     emit packageSelectionChanged();
     ui->filesWidget->setAcceptDrops(false);
@@ -411,7 +410,7 @@ void Browser::load(const QString &location)
     getPackages(currentProject);
     ui->overviewWidget->setDataLoaded(false);
     ui->requestsWidget->clearModel();
-    ui->requestDescription->clear();
+    ui->requestsWidget->clearDescription();
     
     if (currentPackage.isEmpty()) {
         handleProjectTasks();
@@ -633,7 +632,7 @@ void Browser::setupModels()
     ui->filesWidget->clearModel();
     ui->revisionsWidget->clearModel();
     ui->requestsWidget->clearModel();
-    ui->requestDescription->clear();
+    ui->requestsWidget->clearDescription();
 
     ui->packagesWidget->createModel();
     packagesSelectionModel = ui->packagesWidget->selectionModel();
@@ -680,7 +679,7 @@ void Browser::getProjectRequests(const QString &project)
     qDebug() << __PRETTY_FUNCTION__ << project;
     emit updateStatusBar(tr("Getting project requests..."), false);
     ui->requestsWidget->clearModel();
-    ui->requestDescription->clear();
+    ui->requestsWidget->clearDescription();
     m_obs->getProjectRequests(project);
 }
 
@@ -689,7 +688,7 @@ void Browser::getPackageRequests(const QString &project, const QString &package)
     qDebug() << __PRETTY_FUNCTION__ << project << package;
     emit updateStatusBar(tr("Getting package requests..."), false);
     ui->requestsWidget->clearModel();
-    ui->requestDescription->clear();
+    ui->requestsWidget->clearDescription();
     m_obs->getPackageRequests(project, package);
 }
 
@@ -752,7 +751,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
                 m_loaded = false;
             } else {
                 ui->requestsWidget->clearModel();
-                ui->requestDescription->clear();
+                ui->requestsWidget->clearDescription();
             }
             return;
         }
@@ -763,7 +762,7 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         ui->filesWidget->clearModel();
         ui->revisionsWidget->clearModel();
         ui->requestsWidget->clearModel();
-        ui->requestDescription->clear();
+        ui->requestsWidget->clearDescription();
 
         ui->filesWidget->setAcceptDrops(false);
     }

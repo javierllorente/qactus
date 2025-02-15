@@ -30,7 +30,7 @@ class RequestTreeWidget : public QTreeView
 
 public:
     explicit RequestTreeWidget(QWidget *parent = nullptr);
-    QSharedPointer<OBSRequest> currentRequest();
+    QSharedPointer<OBSRequest> getCurrentRequest();
 
 signals:
     void updateStatusBar(const QString &message, bool progressBarHidden);

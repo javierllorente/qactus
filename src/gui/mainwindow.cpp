@@ -54,11 +54,6 @@ MainWindow::MainWindow(QWidget *parent) :
         action_ReloadProjects->setEnabled(true);
     });
 
-    connect(ui->actionChange_request_state, &QAction::triggered, requestBox, &RequestBox::changeRequestState);
-    connect(requestBox, &RequestBox::descriptionFetched, this, [=](){
-        ui->actionChange_request_state->setEnabled(true);
-    });
-
     createStatusBar();
     createTimer();
 
@@ -813,7 +808,6 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     ui->action_Mark_all_as_read->setVisible(monitorTabVisible);
 
     bool requestsTabVisible = (index==2);
-    ui->actionChange_request_state->setVisible(requestsTabVisible);
 
     ui->action_Refresh->setVisible(monitorTabVisible || requestsTabVisible);
 }

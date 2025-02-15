@@ -113,7 +113,7 @@
      <x>0</x>
      <y>0</y>
      <width>1018</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -156,7 +156,6 @@
    </attribute>
    <addaction name="action_Add"/>
    <addaction name="action_Remove"/>
-   <addaction name="actionChange_request_state"/>
    <addaction name="action_Refresh"/>
    <addaction name="action_Home"/>
    <addaction name="action_Mark_all_as_read"/>
@@ -253,20 +252,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
-   </property>
-  </action>
-  <action name="actionChange_request_state">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset theme="mail-reply-sender"/>
-   </property>
-   <property name="text">
-    <string>Change request &amp;state</string>
-   </property>
-   <property name="visible">
-    <bool>false</bool>
    </property>
   </action>
   <action name="actionAPI_information">
