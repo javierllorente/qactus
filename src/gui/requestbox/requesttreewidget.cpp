@@ -30,12 +30,11 @@ RequestTreeWidget::RequestTreeWidget(QWidget *parent) :
     setColumnWidth(6, 60); // State
     setColumnHidden(7, true); // Description
 
-    QAction *actionChangeRequestState = new QAction(tr("Change &State"), this);
-    actionChangeRequestState->setIcon(QIcon::fromTheme("mail-reply-sender"));
-    actionChangeRequestState->setText("Change State");
-    m_menu->addAction(actionChangeRequestState);
+    QAction *viewRequestAction = new QAction(tr("View &details"), this);
+    viewRequestAction->setIcon(QIcon::fromTheme("mail-reply-sender"));
+    m_menu->addAction(viewRequestAction);
 
-    connect(actionChangeRequestState, &QAction::triggered, this, &RequestTreeWidget::changeRequestState);
+    connect(viewRequestAction, &QAction::triggered, this, &RequestTreeWidget::changeRequestState);
     connect(this, &RequestTreeWidget::doubleClicked, this, &RequestTreeWidget::changeRequestState);
 
     connect(this, &RequestTreeWidget::clicked, this, [=](const QModelIndex &index){
