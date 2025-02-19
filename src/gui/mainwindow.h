@@ -102,6 +102,7 @@ private:
     QAction *actionFilter;
     QAction *actionFilterSpacer;
     void createActions();
+    QAction *apiInformationAction;
     QAction *action_About;
     QAction *action_Quit;
     QAction *action_Restore;
@@ -165,11 +166,11 @@ private slots:
     void slotEnableRemoveRow();
     void on_action_Refresh_triggered();
     void slotLogin(const QString &username, const QString &password);
-    void on_action_About_triggered();
+    void showAbout();
     void on_action_Quit_triggered();
     void trayIconClicked(QSystemTrayIcon::ActivationReason);
     void toggleVisibility();
-    void on_action_Configure_Qactus_triggered();
+    void showConfigureDialog();
     void on_action_Login_triggered();
     void on_actionAPI_information_triggered();
     void slotAbout(QSharedPointer<OBSAbout> about);

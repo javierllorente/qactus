@@ -16,6 +16,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QProgressDialog>
+#include <QScopedPointer>
 #include "obsxmlwriter.h"
 
 const QString defaultApiUrl = "https://api.opensuse.org";
@@ -188,7 +189,7 @@ void MainWindow::slotApiChanged()
 
 void MainWindow::isAuthenticated(bool authenticated)
 {
-    qDebug() << "MainWindow::isAuthenticated()" << authenticated;
+    qDebug() << Q_FUNC_INFO << authenticated;
     ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         browser->getProjects();
@@ -202,7 +203,7 @@ void MainWindow::isAuthenticated(bool authenticated)
         showLoginDialog();
     }
 
-    ui->actionAPI_information->setEnabled(authenticated);
+    apiInformationAction->setEnabled(authenticated);
 }
 
 void MainWindow::setupActions()
@@ -344,7 +345,7 @@ void MainWindow::on_action_Quit_triggered()
     qApp->quit();
 }
 
-void MainWindow::on_action_About_triggered()
+void MainWindow::showAbout()
 {
     QString title = tr("About ").arg(QCoreApplication::applicationName());
     QString aboutHtml;
@@ -543,6 +544,47 @@ void MainWindow::createActions()
         browser->setPackageFilterFocus();
     });
     addAction(actionFilterPackages);
+
+    QWidget *spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    ui->toolBar->addWidget(spacer);
+
+    QToolButton *toolButton = new QToolButton(this);
+    toolButton->setFixedWidth(32);
+    toolButton->setPopupMode(QToolButton::InstantPopup);
+    toolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    toolButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
+    toolButton->setIcon(QIcon::fromTheme("application-menu"));
+
+    QAction *signInAction = new QAction(tr("Sign in"), this);
+    signInAction->setIcon(QIcon::fromTheme("unlock"));
+    connect(signInAction, &QAction::triggered, this, &MainWindow::showLoginDialog);
+
+    QAction *configureAction = new QAction(tr("Configure"), this);
+    configureAction->setIcon(QIcon::fromTheme("configure"));
+    connect(configureAction, &QAction::triggered, this, &MainWindow::showConfigureDialog);
+
+    apiInformationAction = new QAction(tr("API information"), this);
+    apiInformationAction->setIcon(QIcon::fromTheme("help-about"));
+    connect(apiInformationAction, &QAction::triggered, this, [&]() {
+        obs->about();
+    });
+
+    QAction *aboutAction = new QAction(tr("About"), this);
+    aboutAction->setIcon(QIcon::fromTheme("help-about"));
+    connect(aboutAction, &QAction::triggered, this, &MainWindow::showAbout);
+
+    QAction *quitAction = new QAction(tr("Quit"), this);
+    quitAction->setIcon(QIcon::fromTheme("application-exit"));
+    connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
+
+    toolButton->addAction(signInAction);
+    toolButton->addAction(configureAction);
+    toolButton->addAction(apiInformationAction);
+    toolButton->addAction(aboutAction);
+    toolButton->addAction(quitAction);
+
+    ui->toolBar->addWidget(toolButton);
 }
 
 void MainWindow::monitorProject()
@@ -738,27 +780,24 @@ void MainWindow::readTimerSettings()
 
 void MainWindow::showLoginDialog()
 {
-    qDebug() << "MainWindow::showLoginDialog()";
     if (!loginDialog) {
         loginDialog = new Login(this);
-        connect(loginDialog, SIGNAL(login(QString,QString)), this, SLOT(slotLogin(QString,QString)));
+        connect(loginDialog, &Login::login, this, &MainWindow::slotLogin);
     }
     loginDialog->show();
 }
 
-void MainWindow::on_action_Configure_Qactus_triggered()
+void MainWindow::showConfigureDialog()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    Configure *configure = new Configure(this, obs);
-    connect(configure, &Configure::apiChanged, this, &MainWindow::slotApiChanged);
-    connect(configure, &Configure::proxyChanged, this, &MainWindow::readProxySettings);
-    connect(configure, &Configure::includeHomeProjectsChanged, this, [=](){
+    QScopedPointer<Configure> configure(new Configure(this, obs));
+    connect(configure.data(), &Configure::apiChanged, this, &MainWindow::slotApiChanged);
+    connect(configure.data(), &Configure::proxyChanged, this, &MainWindow::readProxySettings);
+    connect(configure.data(), &Configure::includeHomeProjectsChanged, this, [=](){
         browser->readSettings();
         browser->getProjects();
     });
-    connect(configure, &Configure::timerChanged, this, &MainWindow::readTimerSettings);
+    connect(configure.data(), &Configure::timerChanged, this, &MainWindow::readTimerSettings);
     configure->exec();
-    delete configure;
 }
 
 void MainWindow::on_action_Login_triggered()
