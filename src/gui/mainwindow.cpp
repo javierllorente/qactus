@@ -609,8 +609,8 @@ void MainWindow::createStatusBar()
     progressBar->setTextVisible(false);
     progressBar->setMaximum(0);
     progressBar->setMaximum(0);
-    progressBar->setMaximumSize(50, ui->statusbar->height());
-    ui->statusbar->addPermanentWidget(progressBar, 10);
+    progressBar->setMaximumSize(100, 16);
+    ui->statusbar->addPermanentWidget(progressBar, 0);
 }
 
 void MainWindow::createTimer()
