@@ -399,13 +399,53 @@ void MainWindow::createActions()
     });
     actionBookmarks = ui->toolBar->addWidget(bookmarkButton);
 
-    // Browser filter actions
-    actionFilter = ui->toolBar->addWidget(locationBar);
-    QWidget *filterSpacer = new QWidget(this);
-    filterSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    filterSpacer->setFixedWidth(25);
-    filterSpacer->setVisible(true);
-    actionFilterSpacer = ui->toolBar->addWidget(filterSpacer);
+    // Location bar
+    locationBarAction = ui->toolBar->addWidget(locationBar);
+
+    // Menu button
+    QWidget *toolButtonSpacer = new QWidget();
+    toolButtonSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QSizePolicy toolButtonSpacerPolicy = toolButtonSpacer->sizePolicy();
+    toolButtonSpacerPolicy.setHorizontalStretch(45);
+    toolButtonSpacer->setSizePolicy(toolButtonSpacerPolicy);
+    ui->toolBar->addWidget(toolButtonSpacer);
+
+    QToolButton *toolButton = new QToolButton();
+    toolButton->setFixedWidth(32);
+    toolButton->setPopupMode(QToolButton::InstantPopup);
+    toolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    toolButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
+    toolButton->setIcon(QIcon::fromTheme("application-menu"));
+
+    QAction *signInAction = new QAction(tr("Sign in"), this);
+    signInAction->setIcon(QIcon::fromTheme("unlock"));
+    connect(signInAction, &QAction::triggered, this, &MainWindow::showLoginDialog);
+
+    QAction *configureAction = new QAction(tr("Configure"), this);
+    configureAction->setIcon(QIcon::fromTheme("configure"));
+    connect(configureAction, &QAction::triggered, this, &MainWindow::showConfigureDialog);
+
+    apiInformationAction = new QAction(tr("API information"), this);
+    apiInformationAction->setIcon(QIcon::fromTheme("help-about"));
+    connect(apiInformationAction, &QAction::triggered, this, [&]() {
+        obs->about();
+    });
+
+    QAction *aboutAction = new QAction(tr("About"), this);
+    aboutAction->setIcon(QIcon::fromTheme("help-about"));
+    connect(aboutAction, &QAction::triggered, this, &MainWindow::showAbout);
+
+    QAction *quitAction = new QAction(tr("Quit"), this);
+    quitAction->setIcon(QIcon::fromTheme("application-exit"));
+    connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
+
+    toolButton->addAction(signInAction);
+    toolButton->addAction(configureAction);
+    toolButton->addAction(apiInformationAction);
+    toolButton->addAction(aboutAction);
+    toolButton->addAction(quitAction);
+
+    ui->toolBar->addWidget(toolButton);
 
     // Project actions
     QMenu *projectsMenu = new QMenu(this);
@@ -544,47 +584,6 @@ void MainWindow::createActions()
         browser->setPackageFilterFocus();
     });
     addAction(actionFilterPackages);
-
-    QWidget *spacer = new QWidget();
-    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    ui->toolBar->addWidget(spacer);
-
-    QToolButton *toolButton = new QToolButton(this);
-    toolButton->setFixedWidth(32);
-    toolButton->setPopupMode(QToolButton::InstantPopup);
-    toolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    toolButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
-    toolButton->setIcon(QIcon::fromTheme("application-menu"));
-
-    QAction *signInAction = new QAction(tr("Sign in"), this);
-    signInAction->setIcon(QIcon::fromTheme("unlock"));
-    connect(signInAction, &QAction::triggered, this, &MainWindow::showLoginDialog);
-
-    QAction *configureAction = new QAction(tr("Configure"), this);
-    configureAction->setIcon(QIcon::fromTheme("configure"));
-    connect(configureAction, &QAction::triggered, this, &MainWindow::showConfigureDialog);
-
-    apiInformationAction = new QAction(tr("API information"), this);
-    apiInformationAction->setIcon(QIcon::fromTheme("help-about"));
-    connect(apiInformationAction, &QAction::triggered, this, [&]() {
-        obs->about();
-    });
-
-    QAction *aboutAction = new QAction(tr("About"), this);
-    aboutAction->setIcon(QIcon::fromTheme("help-about"));
-    connect(aboutAction, &QAction::triggered, this, &MainWindow::showAbout);
-
-    QAction *quitAction = new QAction(tr("Quit"), this);
-    quitAction->setIcon(QIcon::fromTheme("application-exit"));
-    connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
-
-    toolButton->addAction(signInAction);
-    toolButton->addAction(configureAction);
-    toolButton->addAction(apiInformationAction);
-    toolButton->addAction(aboutAction);
-    toolButton->addAction(quitAction);
-
-    ui->toolBar->addWidget(toolButton);
 }
 
 void MainWindow::monitorProject()
@@ -837,8 +836,7 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     action_UploadFile->setVisible(browserTabVisible);
     action_DownloadFile->setVisible(browserTabVisible);
 
-    actionFilterSpacer->setVisible(browserTabVisible);
-    actionFilter->setVisible(browserTabVisible);
+    locationBarAction->setVisible(browserTabVisible);
 
     bool monitorTabVisible = (index==1);
     ui->action_Add->setVisible(monitorTabVisible);

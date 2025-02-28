@@ -99,8 +99,7 @@ private:
     QAction *actionProperties_package;
 
     LocationBar *locationBar;
-    QAction *actionFilter;
-    QAction *actionFilterSpacer;
+    QAction *locationBarAction;
     void createActions();
     QAction *apiInformationAction;
     QAction *action_About;
