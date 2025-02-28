@@ -340,7 +340,7 @@ void MainWindow::slotLogin(const QString &username, const QString &password)
     emit updateStatusBar(tr("Logging in..."), false);
 }
 
-void MainWindow::on_action_Quit_triggered()
+void MainWindow::on_quitActionTriggered()
 {
     qApp->quit();
 }
@@ -799,12 +799,12 @@ void MainWindow::showConfigureDialog()
     configure->exec();
 }
 
-void MainWindow::on_action_Login_triggered()
+void MainWindow::on_signInActionTriggered()
 {
     showLoginDialog();
 }
 
-void MainWindow::on_actionAPI_information_triggered()
+void MainWindow::on_apiinformationActiontTriggered()
 {
     obs->about();
 }

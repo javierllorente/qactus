@@ -166,12 +166,12 @@ private slots:
     void on_action_Refresh_triggered();
     void slotLogin(const QString &username, const QString &password);
     void showAbout();
-    void on_action_Quit_triggered();
+    void on_quitActionTriggered();
     void trayIconClicked(QSystemTrayIcon::ActivationReason);
     void toggleVisibility();
     void showConfigureDialog();
-    void on_action_Login_triggered();
-    void on_actionAPI_information_triggered();
+    void on_signInActionTriggered();
+    void on_apiinformationActiontTriggered();
     void slotAbout(QSharedPointer<OBSAbout> about);
     void slotUpdatePerson(QSharedPointer<OBSPerson> obsPerson);
     void on_iconBar_currentRowChanged(int index);
