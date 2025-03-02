@@ -137,6 +137,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
 
     connect(m_obs, &OBS::finishedParsingRequest, ui->requestsWidget, &RequestsWidget::addRequest);
     connect(m_obs, &OBS::finishedParsingRequestList, ui->requestsWidget, &RequestsWidget::requestsAdded);
+    connect(ui->requestsWidget, &RequestsWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     readSettings();
 
