@@ -46,6 +46,8 @@ void RequestsWidget::setModel(QAbstractItemModel *model)
 {
     QItemSelectionModel *m = ui->requestTreeWidget->selectionModel();
     ui->requestTreeWidget->setModel(model);
+    // Keep description column hidden
+    ui->requestTreeWidget->setColumnHidden(7, true);
     delete m;
 }
 
