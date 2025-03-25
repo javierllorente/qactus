@@ -53,7 +53,7 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
             ui->projectLineEdit->deselect();
         });
 
-        QSharedPointer<OBSPrjMetaConfig> prjMetaConfig;
+        QSharedPointer<OBSPrjMetaConfig> prjMetaConfig(new OBSPrjMetaConfig());
         addDefaultMaintainer(prjMetaConfig);
         addDefaultRepositories(prjMetaConfig);
         slotFetchedProjectMetaConfig(prjMetaConfig);
@@ -79,7 +79,7 @@ MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &pro
         ui->projectLineEdit->setDisabled(true);
         createUrlField();
 
-        QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig;
+        QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig(new OBSPkgMetaConfig());
         addDefaultMaintainer(pkgMetaConfig);
         slotFetchedPackageMetaConfig(pkgMetaConfig);
 
