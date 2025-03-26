@@ -28,7 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     trayIcon(new TrayIcon(this)),
     m_notify(false),
     locationBar(new LocationBar(this)),
-    browser(new Browser(this, locationBar, obs)),
+    searchBar(new SearchBar(this)),
+    browser(new Browser(this, locationBar, searchBar, obs)),
     monitor(new Monitor(this, obs)),
     requestBox(new RequestBox(this, obs)),
     errorBox(nullptr),
@@ -402,14 +403,10 @@ void MainWindow::createActions()
     // Location bar
     locationBarAction = ui->toolBar->addWidget(locationBar);
 
-    // Menu button
-    QWidget *toolButtonSpacer = new QWidget();
-    toolButtonSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QSizePolicy toolButtonSpacerPolicy = toolButtonSpacer->sizePolicy();
-    toolButtonSpacerPolicy.setHorizontalStretch(45);
-    toolButtonSpacer->setSizePolicy(toolButtonSpacerPolicy);
-    ui->toolBar->addWidget(toolButtonSpacer);
+    // Search bar
+    searchBarAction = ui->toolBar->addWidget(searchBar);
 
+    // Menu button
     QToolButton *toolButton = new QToolButton();
     toolButton->setFixedWidth(32);
     toolButton->setPopupMode(QToolButton::InstantPopup);
@@ -571,12 +568,19 @@ void MainWindow::createActions()
     browser->createFilesContextMenu(treeFilesMenu);
     browser->setResultsMenu(treeResultsMenu);
 
-    QAction *actionQuickSearch = new QAction(tr("Quick Project"), this);
-    actionQuickSearch->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
-    connect(actionQuickSearch, &QAction::triggered, this, [&](){
+    QAction *locationAction = new QAction(tr("Quick Project"), this);
+    locationAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
+    connect(locationAction, &QAction::triggered, this, [&](){
         locationBar->setFocus();
     });
-    addAction(actionQuickSearch);
+    addAction(locationAction);
+
+    QAction *quickSearchAction = new QAction(tr("Quick search"), this);
+    quickSearchAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
+    connect(quickSearchAction, &QAction::triggered, this, [&](){
+        searchBar->setFocus();
+    });
+    addAction(quickSearchAction);
 
     QAction *actionFilterPackages = new QAction(tr("Filter packages"), this);
     actionFilterPackages->setShortcut(QKeySequence(Qt::ALT | Qt::Key_Q));
@@ -837,6 +841,7 @@ void MainWindow::on_iconBar_currentRowChanged(int index)
     action_DownloadFile->setVisible(browserTabVisible);
 
     locationBarAction->setVisible(browserTabVisible);
+    searchBarAction->setVisible(browserTabVisible);
 
     bool monitorTabVisible = (index==1);
     ui->action_Add->setVisible(monitorTabVisible);

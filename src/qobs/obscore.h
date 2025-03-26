@@ -64,6 +64,7 @@ public:
     void getLink(const QString &project, const QString &package);
     void getAllBuildStatus(const QString &resource);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
+    void packageSearch(const QString &package);
     void request(const QString &resource, int row);
     void getSRDiff(const QString &resource);
     void branchPackage(const QString &project, const QString &package);
@@ -146,6 +147,7 @@ private:
         ProjectRequests,
         PackageRequests,
         ChangeRequestState,
+        PackageSearch,
         SRDiff,
         BranchPackage,
         LinkPackage,

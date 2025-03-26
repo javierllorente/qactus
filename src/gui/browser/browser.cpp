@@ -21,10 +21,11 @@
 #include "packageactiondialog.h"
 #include "buildlogviewer.h"
 
-Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
+Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar, OBS *obs) :
     QWidget(parent),
     ui(new Ui::Browser),
     m_locationBar(locationBar),
+    m_searchBar(searchBar),
     m_obs(obs),
     m_packagesMenu(nullptr),
     m_filesMenu(nullptr),
@@ -55,6 +56,12 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingProjectList, this, &Browser::addProjectList);
     connect(m_locationBar, &LocationBar::projectChanged, this, &Browser::load);
     connect(m_locationBar, &LocationBar::returnPressed, this, &Browser::load);
+
+    connect(m_searchBar, &SearchBar::search, this, [this](const QString &term) {
+        m_obs->packageSearch(term);
+    });
+    connect(m_obs, &OBS::finishedParsingPackageSearch, m_searchBar, &SearchBar::loadSearchResults);
+     connect(m_searchBar, &SearchBar::returnPressed, this, &Browser::goTo);
 
     connect(m_obs, &OBS::finishedParsingFile, this, &Browser::addFile);
     connect(m_obs, &OBS::finishedParsingFileList, ui->filesWidget, &FileTreeWidget::filesAdded);

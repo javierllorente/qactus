@@ -337,6 +337,14 @@ void OBSCore::changeSubmitRequest(const QString &resource, const QByteArray &dat
     reply->setProperty("reqtype", OBSCore::ChangeRequestState);
 }
 
+void OBSCore::packageSearch(const QString &package)
+{
+    QString resource = QString("/search/package?match=starts_with(@name,'%1')&limit=20")
+                           .arg(package);
+    QNetworkReply *reply = request(resource);
+    reply->setProperty("reqtype", OBSCore::PackageSearch);
+}
+
 void OBSCore::provideAuthentication(QNetworkReply *reply, QAuthenticator *authenticator)
 {
     qDebug() << Q_FUNC_INFO << "URL =" << reply->request().url().toString();
@@ -508,6 +516,10 @@ void OBSCore::replyFinished(QNetworkReply *reply)
 
             case OBSCore::ChangeRequestState:
                 xmlReader->parseRequestStatus(dataStr);
+                break;
+
+            case OBSCore::PackageSearch:
+                xmlReader->parsePackageSearch(dataStr);
                 break;
 
             case OBSCore::SRDiff:

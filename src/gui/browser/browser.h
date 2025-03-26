@@ -22,6 +22,7 @@
 #include <QToolBar>
 #include <QSharedPointer>
 #include "locationbar.h"
+#include "searchbar.h"
 #include "metaconfigeditor.h"
 #include "obs.h"
 
@@ -34,7 +35,8 @@ class Browser : public QWidget
     Q_OBJECT
 
 public:
-    explicit Browser(QWidget *parent = nullptr, LocationBar *locationBar = nullptr, OBS *obs = nullptr);
+    explicit Browser(QWidget *parent = nullptr, LocationBar *locationBar = nullptr,
+                     SearchBar *searchBar = nullptr, OBS *obs = nullptr);
     ~Browser();
     void readSettings();
     void addProjectList(const QStringList &projectList);
@@ -83,6 +85,7 @@ public slots:
 private:
     Ui::Browser *ui;
     LocationBar *m_locationBar;
+    SearchBar *m_searchBar;
     OBS *m_obs;
     QItemSelectionModel *packagesSelectionModel;
     QItemSelectionModel *filesSelectionModel;

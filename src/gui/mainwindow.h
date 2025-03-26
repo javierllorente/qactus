@@ -37,6 +37,7 @@
 #include "utils.h"
 #include "credentials.h"
 #include "locationbar.h"
+#include "searchbar.h"
 #include "buildlogviewer.h"
 #include "bookmarks.h"
 #include "browser.h"
@@ -100,6 +101,8 @@ private:
 
     LocationBar *locationBar;
     QAction *locationBarAction;
+    SearchBar *searchBar;
+    QAction *searchBarAction;
     void createActions();
     QAction *apiInformationAction;
     QAction *action_About;

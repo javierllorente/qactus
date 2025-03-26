@@ -61,6 +61,7 @@ public:
     void getRevisions(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
+    void packageSearch(const QString &package);
     OBSXmlReader *getXmlReader();
     void branchPackage(const QString &project, const QString &package);
     void linkPackage(const QString &srcProject, const QString &srcPackage,
@@ -135,6 +136,7 @@ signals:
     void finishedParsingRevisionList(const QString &project, const QString &package);
     void finishedParsingLink(QSharedPointer<OBSLink> link);
     void finishedParsingRequestStatus(QSharedPointer<OBSStatus> status);
+    void finishedParsingPackageSearch(const QStringList &results);
     void srDiffFetched(const QString &);
     void finishedParsingAbout(QSharedPointer<OBSAbout> about);
     void finishedParsingPerson(QSharedPointer<OBSPerson> person);

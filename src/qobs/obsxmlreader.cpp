@@ -315,6 +315,33 @@ void OBSXmlReader::parseRequestStatus(const QString &data)
     emit finishedParsingRequestStatus(status);
 }
 
+void OBSXmlReader::parsePackageSearch(const QString &data)
+{
+    QXmlStreamReader xml(data);
+    QStringList results;
+
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+
+        parseCollection(xml);
+
+        if (xml.name().toString() == "package" && xml.isStartElement()) {
+            QXmlStreamAttributes attrib = xml.attributes();
+            QString name = attrib.value("name").toString();
+            QString project = attrib.value("project").toString();
+            results.append(project + "/" + name);
+        }
+
+        if (xml.name().toString() == "collection" && xml.isEndElement()) {
+            emit finishedParsingPackageSearch(results);
+        }
+    }
+
+    if (xml.hasError()) {
+        qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
+        return;
+    }
+}
 
 void OBSXmlReader::parseRequests(const QString &project, const QString &package, const QString &data)
 {

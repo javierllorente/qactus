@@ -59,6 +59,7 @@ public:
     void parseOutgoingRequests(const QString &data);
     void parseDeclinedRequests(const QString &data);
     void parseRequestStatus(const QString &data);
+    void parsePackageSearch(const QString &data);
     void parseRequests(const QString &project, const QString &package, const QString &data);
     void parseBranchPackage(const QString &data);
     void parseLinkPackage(const QString &project, const QString &package, const QString &data);
@@ -127,6 +128,7 @@ signals:
     void finishedParsingRevisionList(const QString &project, const QString &package);
     void finishedParsingLink(QSharedPointer<OBSLink> link);
     void finishedParsingRequestStatus(QSharedPointer<OBSStatus> status);
+    void finishedParsingPackageSearch(const QStringList &results);
     void finishedParsingRequest( QSharedPointer<OBSRequest> request);
     void finishedParsingRequestList(const QString &project, const QString &package);
     void finishedParsingAbout(QSharedPointer<OBSAbout> about);

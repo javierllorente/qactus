@@ -107,6 +107,7 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, &OBS::finishedParsingRevisionList);
     connect(xmlReader, &OBSXmlReader::finishedParsingLink, this, &OBS::finishedParsingLink);
     connect(xmlReader, &OBSXmlReader::finishedParsingRequestStatus, this, &OBS::finishedParsingRequestStatus);
+    connect(xmlReader, &OBSXmlReader::finishedParsingPackageSearch, this, &OBS::finishedParsingPackageSearch);
     connect(obsCore, SIGNAL(srDiffFetched(QString)),
             this, SIGNAL(srDiffFetched(QString)));
     connect(xmlReader, &OBSXmlReader::finishedParsingAbout, this, &OBS::finishedParsingAbout);
@@ -291,6 +292,11 @@ void OBS::getLink(const QString &project, const QString &package)
 void OBS::changeSubmitRequest(const QString &resource, const QByteArray &data)
 {
     obsCore->changeSubmitRequest(resource, data);
+}
+
+void OBS::packageSearch(const QString &package)
+{
+    obsCore->packageSearch(package);
 }
 
 OBSXmlReader* OBS::getXmlReader()
