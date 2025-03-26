@@ -864,7 +864,6 @@ bool MainWindow::event(QEvent *event)
 {
     switch(event->type()) {
     case QEvent::WindowActivate:
-        qDebug() << "Window activated";
         setNotify(false);
         break;
     default:
