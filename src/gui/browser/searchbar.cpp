@@ -44,7 +44,9 @@ SearchBar::SearchBar(QWidget *parent)
     });
 
     connect(ui->lineEdit, &QLineEdit::returnPressed, this, [=]() {
-        emit returnPressed(ui->lineEdit->text());
+        if (!ui->lineEdit->text().isEmpty()) {
+            emit returnPressed(ui->lineEdit->text());
+        }
     });
 }
 

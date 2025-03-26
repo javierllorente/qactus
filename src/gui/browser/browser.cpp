@@ -406,6 +406,10 @@ QString Browser::getCurrentProject() const
 
 void Browser::load(const QString &location)
 {
+    if (location.isEmpty()) {
+        return;
+    }
+
     qDebug() << __PRETTY_FUNCTION__ << "location =" << location;
 
     if (!m_obs->isAuthenticated()) {
