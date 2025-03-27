@@ -406,6 +406,13 @@ void MainWindow::createActions()
     // Search bar
     searchBarAction = ui->toolBar->addWidget(searchBar);
 
+    // Menu button spacer
+    QWidget *toolButtonSpacer = new QWidget();
+    toolButtonSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QSizePolicy toolButtonSpacerPolicy = toolButtonSpacer->sizePolicy();
+    toolButtonSpacer->setSizePolicy(toolButtonSpacerPolicy);
+    ui->toolBar->addWidget(toolButtonSpacer);
+
     // Menu button
     QToolButton *toolButton = new QToolButton();
     toolButton->setFixedWidth(32);
