@@ -393,10 +393,10 @@ void MainWindow::createActions()
     connect(bookmarks, &Bookmarks::bookmarkAdded, this, &MainWindow::slotUpdatePerson);
     connect(bookmarks, &Bookmarks::bookmarkDeleted, this, &MainWindow::slotUpdatePerson);
     connect(bookmarks, &Bookmarks::addBookmarkClicked, bookmarks, [=](){
-        bookmarks->addBookmark(browser->getCurrentProject());
+        bookmarks->addBookmark(locationBar->text());
     });
     connect(bookmarks, &Bookmarks::deleteBookmarkClicked, bookmarks, [=](){
-        bookmarks->deleteBookmark(browser->getCurrentProject());
+        bookmarks->deleteBookmark(locationBar->text());
     });
     actionBookmarks = ui->toolBar->addWidget(bookmarkButton);
 
