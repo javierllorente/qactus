@@ -21,7 +21,7 @@ const QString userAgent = APP_NAME + QString(" ") + QACTUS_VERSION;
 
 OBSCore::OBSCore()
 {
-    authenticated = false;
+    m_authenticated = false;
     xmlReader = OBSXmlReader::getInstance();
     manager = nullptr;
     includeHomeProjects = false;
@@ -60,7 +60,7 @@ void OBSCore::setCredentials(const QString& username, const QString& password)
     this->password = password;
 }
 
-void OBSCore::slotLinkPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data)
+void OBSCore::onReadyToLinkPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data)
 {
     qDebug() << Q_FUNC_INFO;
     QString resource = QString("/source/%1/%2/_link").arg(dstProject, dstPackage);
@@ -353,9 +353,9 @@ void OBSCore::provideAuthentication(QNetworkReply *reply, QAuthenticator *authen
     authenticator->setPassword(password);
 }
 
-bool OBSCore::isAuthenticated()
+bool OBSCore::isAuthenticated() const
 {
-    return authenticated;
+    return m_authenticated;
 }
 
 void OBSCore::replyFinished(QNetworkReply *reply)
@@ -370,12 +370,12 @@ void OBSCore::replyFinished(QNetworkReply *reply)
     qDebug() << Q_FUNC_INFO << reply->url().toString() << httpStatusCode;
 //    qDebug() << "Network Reply: " << data;
 
-    if (httpStatusCode==200 && !authenticated) {
-        authenticated = true;
-        emit isAuthenticated(authenticated);
-    } else if (httpStatusCode==401) {
-        authenticated = false;
-        emit isAuthenticated(authenticated);
+    if (httpStatusCode == 200 && !m_authenticated) {
+        m_authenticated = true;
+        emit authenticated(m_authenticated);
+    } else if (httpStatusCode == 401) {
+        m_authenticated = false;
+        emit authenticated(m_authenticated);
     }
 
     /* Set package row always (error/no error) if property is valid.
@@ -523,7 +523,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 break;
 
             case OBSCore::SRDiff:
-                emit srDiffFetched(dataStr);
+                emit requestDiffFetched(dataStr);
                 break;
 
             case OBSCore::BranchPackage: {
@@ -928,7 +928,7 @@ void OBSCore::replyFinished(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-void OBSCore::getSRDiff(const QString &resource)
+void OBSCore::getRequestDiff(const QString &resource)
 {
     QNetworkReply *reply = postRequest(resource, "", "application/x-www-form-urlencoded");
     reply->setProperty("reqtype", OBSCore::SRDiff);
@@ -946,9 +946,9 @@ void OBSCore::linkPackage(const QString &srcProject, const QString &srcPackage, 
     linkHelper = new OBSLinkHelper(this);
 
     connect(xmlReader, &OBSXmlReader::finishedParsingPackageMetaConfig,
-            linkHelper, &OBSLinkHelper::slotFetchedPackageMetaConfig);
+            linkHelper, &OBSLinkHelper::onFetchedPackageMetaConfig);
     connect(xmlReader, &OBSXmlReader::finishedParsingCreatePkgStatus,
-            linkHelper, &OBSLinkHelper::slotFetchedCreatePkgStatus);
+            linkHelper, &OBSLinkHelper::onFetchedCreatePkgStatus);
 
     connect(linkHelper, &OBSLinkHelper::getPackageMetaConfig, this, [&](const QString &resource) {
         getPackageMetaConfig(resource);
@@ -957,7 +957,7 @@ void OBSCore::linkPackage(const QString &srcProject, const QString &srcPackage, 
             const QString &dstPackage, const QByteArray &data) {
         createPackage(dstProject, dstPackage, data);
     });
-    connect(linkHelper, &OBSLinkHelper::readyToLinkPackage, this, &OBSCore::slotLinkPackage);
+    connect(linkHelper, &OBSLinkHelper::readyToLinkPackage, this, &OBSCore::onReadyToLinkPackage);
     connect(this, &OBSCore::cannotCreatePackage, linkHelper, [&](QSharedPointer<OBSStatus> status) {
         QString details = QString("You don't have the appropriate permissions to create a link in %1/%2")
                 .arg(dstProject, srcPackage);
@@ -1097,7 +1097,7 @@ void OBSCore::onSslErrors(QNetworkReply *reply, const QList<QSslError> &list)
             errorString = sslError.errorString();
             if (sslError.error() == QSslError::SelfSignedCertificateInChain) {
                 qDebug() << Q_FUNC_INFO << "Self signed certificate!";
-                emit selfSignedCertificate(reply);
+                emit selfSignedCertificateError(reply);
             }
         }
     }

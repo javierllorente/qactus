@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2013-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ Login::Login(QWidget *parent) :
 
 Login::~Login()
 {
-    qDebug() << "Deleting Login";
+    qDebug() << Q_FUNC_INFO << "Deleting Login";
     delete ui;
 }
 
 void Login::closeEvent(QCloseEvent *event)
 {
-    qDebug() << "Closing Login";
+    qDebug() << Q_FUNC_INFO << "Closing Login";
     event->accept();
 }
 
@@ -60,7 +60,7 @@ QString Login::getPassword()
 
 void Login::readSettings()
 {
-    qDebug() << "Login::readSettings()";
+    qDebug() << Q_FUNC_INFO;
     QSettings settings;
     settings.beginGroup("Auth");
 
@@ -73,17 +73,17 @@ void Login::readSettings()
     QString username = settings.value("Username").toString();
     setUsername(username);
     Credentials *credentials = new Credentials();
-    connect(credentials, SIGNAL(credentialsRestored(QString, QString)),
-            this, SLOT(slotCredentialsRestored(QString, QString)));
+    connect(credentials, &Credentials::credentialsRestored,
+            this, &Login::onCredentialsRestored);
     credentials->readPassword(username);
     delete credentials;
-    qDebug() << "Login::readSettings() AutoLogin:" << settings.value("AutoLogin").toBool();
+    qDebug() << Q_FUNC_INFO << "AutoLogin:" << settings.value("AutoLogin").toBool();
     settings.endGroup();
 }
 
 void Login::writeSettings()
 {
-    qDebug() << "Login::writeSettings()";
+    qDebug() << Q_FUNC_INFO;
     QSettings settings;
     settings.beginGroup("Auth");
     settings.setValue("Username", getUsername());
@@ -116,8 +116,8 @@ void Login::on_buttonBox_accepted()
     }
 }
 
-void Login::slotCredentialsRestored(const QString &/*username*/, const QString &password)
+void Login::onCredentialsRestored(const QString &/*username*/, const QString &password)
 {
-    qDebug() << "Login::slotCredentialsRestored()";
+    qDebug() << Q_FUNC_INFO;
     ui->lineEdit_Password->setText(password);
 }

@@ -46,7 +46,7 @@ void Bookmarks::addMenuActions()
 }
 
 
-void Bookmarks::slotLoadBookmarks(QSharedPointer<OBSPerson> person)
+void Bookmarks::loadBookmarks(QSharedPointer<OBSPerson> person)
 {
     m_person = person;
     clear();

@@ -33,7 +33,7 @@ void OBSLinkHelper::linkPackage(const QString &srcProject, const QString &srcPac
     emit getPackageMetaConfig(resource);
 }
 
-void OBSLinkHelper::slotFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig)
+void OBSLinkHelper::onFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig)
 {
     qDebug() << __PRETTY_FUNCTION__;
     QSharedPointer<OBSPkgMetaConfig> newPkgMetaConfig(new OBSPkgMetaConfig());
@@ -50,7 +50,7 @@ void OBSLinkHelper::slotFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig
     emit createPackage(m_dstProject, m_dstPackage, metaConfigData);
 }
 
-void OBSLinkHelper::slotFetchedCreatePkgStatus(QSharedPointer<OBSStatus> status)
+void OBSLinkHelper::onFetchedCreatePkgStatus(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__ << status->getCode();
     if (status->getCode() == "ok") {

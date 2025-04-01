@@ -151,34 +151,34 @@ signals:
 
 private slots:
     void readProxySettings();
-    void slotApiNotFound(QUrl url);
+    void onApiNotFound(const QUrl &url);
     void startTimer(bool authenticated);
     void readTimerSettings();
     void showNetworkError(const QString &networkError);
     void handleSelfSignedCertificates(QNetworkReply*);
-    void slotApiChanged();
-    void slotErrorReadingPassword(const QString &error);
-    void slotCredentialsRestored(const QString &username, const QString &password);
-    void isAuthenticated(bool authenticated);
+    void onApiChanged();
+    void onReadingPasswordError(const QString &error);
+    void onCredentialsRestored(const QString &username, const QString &password);
+    void onAuthenticated(bool authenticated);
     void setupActions();
     void setupProjectShortcuts();
     void getPackages(QModelIndex index);
     void setNotify(bool notify);
-    void slotToggleAddRow(int index);
-    void slotEnableRemoveRow();
+    void toggleAddRow(int index);
+    void enableRemoveRow();
     void on_action_Refresh_triggered();
-    void slotLogin(const QString &username, const QString &password);
+    void login(const QString &username, const QString &password);
     void showAbout();
     void on_quitActionTriggered();
-    void trayIconClicked(QSystemTrayIcon::ActivationReason);
+    void onTrayIconClicked(QSystemTrayIcon::ActivationReason);
     void toggleVisibility();
     void showConfigureDialog();
     void on_signInActionTriggered();
     void on_apiinformationActiontTriggered();
-    void slotAbout(QSharedPointer<OBSAbout> about);
-    void slotUpdatePerson(QSharedPointer<OBSPerson> obsPerson);
+    void onAbout(QSharedPointer<OBSAbout> about);
+    void updatePerson(QSharedPointer<OBSPerson> obsPerson);
     void on_iconBar_currentRowChanged(int index);
-    void slotUpdateStatusBar(const QString &message, bool progressBarHidden);
+    void onUpdateStatusBar(const QString &message, bool progressBarHidden);
 };
 
 #endif // MAINWINDOW_H

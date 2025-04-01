@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2010-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,12 @@ TrayIcon::TrayIcon(QWidget *parent) :
     setIcon(QIcon(NORMAL_ICON));
     setToolTip(QCoreApplication::applicationName());
     setContextMenu(trayIconMenu);
-    connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), parent,
-            SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
-    connect(parent, SIGNAL(notifyChanged(bool)), this, SLOT(toggleIcon(bool)));
     show();
 }
 
 void TrayIcon::toggleIcon(bool toggle)
 {
-    qDebug() << "TrayIcon::toggleIcon()" << toggle;
+    qDebug() << Q_FUNC_INFO << toggle;
     notifyIcon = toggle;
     QString icon = toggle ? NOTIFY_ICON : NORMAL_ICON;
     setIcon(QIcon(icon));

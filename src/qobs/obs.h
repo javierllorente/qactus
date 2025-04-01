@@ -84,10 +84,10 @@ private:
     void deleteRequest(const QString &resource);
 
 signals:
-    void apiNotFound(QUrl url);
-    void isAuthenticated(bool);
-    void selfSignedCertificate(QNetworkReply*);
-    void networkError(const QString&);
+    void apiNotFound(const QUrl &url);
+    void authenticated(bool authenticated);
+    void selfSignedCertificateError(QNetworkReply *reply);
+    void networkError(const QString &error);
     void finishedParsingPackage(QSharedPointer<OBSStatus> status, int row);
     void finishedParsingBranchPackage(QSharedPointer<OBSStatus> status);
     void finishedParsingLinkPkgRevision(QSharedPointer<OBSRevision> revision);
@@ -125,19 +125,19 @@ signals:
     void finishedParsingOutgoingRequestList();
     void finishedParsingDeclinedRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingDeclinedRequestList();
-    void finishedParsingProjectList(QStringList);
+    void finishedParsingProjectList(const QStringList &projectList);
     void projectFetched(const QString &project);
     void finishedParsingProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
     void finishedParsingPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig);
-    void finishedParsingPackageList(QStringList);
-    void finishedParsingList(QStringList);
+    void finishedParsingPackageList(const QStringList &packageList);
+    void finishedParsingList(const QStringList &list);
     void finishedParsingFile(QSharedPointer<OBSFile> file);
     void finishedParsingFileList(const QString &project, const QString &package);
     void finishedParsingRevisionList(const QString &project, const QString &package);
     void finishedParsingLink(QSharedPointer<OBSLink> link);
     void finishedParsingRequestStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingPackageSearch(const QStringList &results);
-    void srDiffFetched(const QString &);
+    void requestDiffFetched(const QString &diff);
     void finishedParsingAbout(QSharedPointer<OBSAbout> about);
     void finishedParsingPerson(QSharedPointer<OBSPerson> person);
     void finishedParsingUpdatePerson(QSharedPointer<OBSStatus> status);
@@ -145,7 +145,7 @@ signals:
 
 public slots:
     void getAllBuildStatus(const QString &project, const QString &package);
-    void slotChangeSubmitRequest(const QString &id, const QString &comments, bool accepted);
+    void onChangeRequest(const QString &id, const QString &comments, bool accepted);
     void createRequest(const QByteArray &data);
     void createProject(const QString &project, const QByteArray &data);
     void createPackage(const QString &project, const QString &package, const QByteArray &data);

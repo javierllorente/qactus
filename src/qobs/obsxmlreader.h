@@ -117,8 +117,8 @@ signals:
     void finishedParsingOutgoingRequestList();
     void finishedParsingDeclinedRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingDeclinedRequestList();
-    void finishedParsingList(QStringList);
-    void finishedParsingProjectList(QStringList);
+    void finishedParsingList(const QStringList &list);
+    void finishedParsingProjectList(const QStringList &projectList);
     void projectFetched(const QString &project);
     void finishedParsingProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig);
     void finishedParsingPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig);
@@ -129,7 +129,7 @@ signals:
     void finishedParsingLink(QSharedPointer<OBSLink> link);
     void finishedParsingRequestStatus(QSharedPointer<OBSStatus> status);
     void finishedParsingPackageSearch(const QStringList &results);
-    void finishedParsingRequest( QSharedPointer<OBSRequest> request);
+    void finishedParsingRequest(QSharedPointer<OBSRequest> request);
     void finishedParsingRequestList(const QString &project, const QString &package);
     void finishedParsingAbout(QSharedPointer<OBSAbout> about);
     void finishedParsingPerson(QSharedPointer<OBSPerson> person);

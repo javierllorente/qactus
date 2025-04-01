@@ -28,7 +28,7 @@ public:
     ~Bookmarks();
 
 public slots:
-    void slotLoadBookmarks(QSharedPointer<OBSPerson> person);
+    void loadBookmarks(QSharedPointer<OBSPerson> person);
     void addBookmark(const QString &project);
     void deleteBookmark(const QString &project);
     void toggleActions(const QString &project);

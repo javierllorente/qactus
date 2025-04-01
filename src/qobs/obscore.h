@@ -33,7 +33,7 @@ class OBSCore : public QObject
 
 public:
     static OBSCore* getInstance();
-    bool isAuthenticated();
+    bool isAuthenticated() const;
     QString getUsername();
     void setApiUrl(const QString &apiUrl);
     QString getApiUrl() const;
@@ -66,7 +66,7 @@ public:
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     void packageSearch(const QString &package);
     void request(const QString &resource, int row);
-    void getSRDiff(const QString &resource);
+    void getRequestDiff(const QString &resource);
     void branchPackage(const QString &project, const QString &package);
     void linkPackage(const QString &srcProject, const QString &srcPackage, const QString &dstProject);
     void copyPackage(const QString &originProject, const QString &originPackage,
@@ -86,11 +86,11 @@ public:
     void getDistributions();
 
 signals:
-    void apiNotFound(QUrl url);
-    void isAuthenticated(bool authenticated);
-    void selfSignedCertificate(QNetworkReply *reply);
+    void apiNotFound(const QUrl &url);
+    void authenticated(bool authenticated);
+    void selfSignedCertificateError(QNetworkReply *reply);
     void networkError(const QString &error);
-    void srDiffFetched(const QString &diff);
+    void requestDiffFetched(const QString &diff);
     void fileFetched(const QString &fileName, const QByteArray &data);
     void buildLogFetched(const QString &buildLog);
     void buildLogNotFound();
@@ -107,7 +107,7 @@ signals:
 
 public slots:
     void setCredentials(const QString&, const QString&);
-    void slotLinkPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data);
+    void onReadyToLinkPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data);
 
 private slots:
     void provideAuthentication(QNetworkReply *reply, QAuthenticator *authenticator);
@@ -166,7 +166,7 @@ private:
         UpdatePerson,
         Distributions
     };
-    bool authenticated;
+    bool m_authenticated;
     OBSXmlReader *xmlReader;
     bool includeHomeProjects;
     OBSLinkHelper *linkHelper;

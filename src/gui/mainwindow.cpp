@@ -39,10 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createActions();
     setupTreeMonitor();
-    connect(this, &MainWindow::updateStatusBar, this, &MainWindow::slotUpdateStatusBar);
+    connect(this, &MainWindow::updateStatusBar, this, &MainWindow::onUpdateStatusBar);
     connect(browser, &Browser::showTrayMessage, trayIcon, [=](const QString &title, const QString &message){
         trayIcon->showMessage(title, message);
     });
+    connect(trayIcon, &TrayIcon::activated, this, &MainWindow::onTrayIconClicked);
+    connect(this, &MainWindow::notifyChanged, trayIcon, &TrayIcon::toggleIcon);
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupActions);
     connect(browser, &Browser::projectSelectionChanged, this, &MainWindow::setupProjectShortcuts);
     connect(browser, &Browser::packageSelectionChanged, this, &MainWindow::setupActions);
@@ -59,12 +61,12 @@ MainWindow::MainWindow(QWidget *parent) :
     createStatusBar();
     createTimer();
 
-    connect(obs, SIGNAL(apiNotFound(QUrl)), this, SLOT(slotApiNotFound(QUrl)));
-    connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(isAuthenticated(bool)));
-    connect(obs, SIGNAL(selfSignedCertificate(QNetworkReply*)),
-            this, SLOT(handleSelfSignedCertificates(QNetworkReply*)));
-    connect(obs, SIGNAL(networkError(QString)), this, SLOT(showNetworkError(QString)));
-    connect(obs, &OBS::finishedParsingAbout, this, &MainWindow::slotAbout);
+    connect(obs, &OBS::apiNotFound, this, &MainWindow::onApiNotFound);
+    connect(obs, &OBS::authenticated, this, &MainWindow::onAuthenticated);
+    connect(obs, &OBS::selfSignedCertificateError,
+            this, &MainWindow::handleSelfSignedCertificates);
+    connect(obs, &OBS::networkError, this, &MainWindow::showNetworkError);
+    connect(obs, &OBS::finishedParsingAbout, this, &MainWindow::onAbout);
 
     ui->stackedWidget->addWidget(browser);
     ui->stackedWidget->addWidget(monitor);
@@ -92,16 +94,16 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::slotErrorReadingPassword(const QString &error)
+void MainWindow::onReadingPasswordError(const QString &error)
 {
-    qDebug() << "MainWindow::slotErrorReadingPassword()" << error;
+    qDebug() << Q_FUNC_INFO << error;
     showLoginDialog();
 }
 
-void MainWindow::slotCredentialsRestored(const QString &username, const QString &password)
+void MainWindow::onCredentialsRestored(const QString &username, const QString &password)
 {
-    qDebug() << "MainWindow::slotCredentialsRestored()";
-    slotLogin(username, password);
+    qDebug() << Q_FUNC_INFO;
+    login(username, password);
     QProgressDialog progress(tr("Logging in..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
@@ -110,12 +112,12 @@ void MainWindow::slotCredentialsRestored(const QString &username, const QString 
 
 void MainWindow::showNetworkError(const QString &networkError)
 {
-    qDebug() << "MainWindow::showNetworkError()";
+    qDebug() << Q_FUNC_INFO;
     progressBar->setHidden(true);
 
     // The QMessageBox is only displayed once if there are
     // repeated errors (queued requests, probably same error)
-    if(!errorBox) {
+    if (!errorBox) {
         errorBox = new QMessageBox(this);
     }
 
@@ -182,19 +184,19 @@ void MainWindow::handleSelfSignedCertificates(QNetworkReply *reply)
     }
 }
 
-void MainWindow::slotApiChanged()
+void MainWindow::onApiChanged()
 {
-    qDebug() << "MainWindow::slotApiChanged()";
+    qDebug() << Q_FUNC_INFO;
     showLoginDialog();
 }
 
-void MainWindow::isAuthenticated(bool authenticated)
+void MainWindow::onAuthenticated(bool authenticated)
 {
     qDebug() << Q_FUNC_INFO << authenticated;
     ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         browser->getProjects();
-        slotToggleAddRow(ui->stackedWidget->currentIndex());
+        toggleAddRow(ui->stackedWidget->currentIndex());
         obs->getPerson();
         on_action_Refresh_triggered();
         delete loginDialog;
@@ -278,15 +280,15 @@ void MainWindow::getPackages(QModelIndex index)
     }
 }
 
-void MainWindow::slotToggleAddRow(int index)
+void MainWindow::toggleAddRow(int index)
 {
     // Enable if current tab is "My packages"
     ui->action_Add->setEnabled(index == 0 && obs->isAuthenticated());
 }
 
-void MainWindow::slotEnableRemoveRow()
+void MainWindow::enableRemoveRow()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     ui->action_Remove->setEnabled(monitor->hasPackageSelection());
 }
 
@@ -304,12 +306,12 @@ void MainWindow::on_action_Refresh_triggered()
 void MainWindow::setupTreeMonitor()
 {
     connect(ui->action_Add, &QAction::triggered, monitor, &Monitor::addRow);
-    connect(monitor, &Monitor::currentTabChanged, this, &MainWindow::slotToggleAddRow);
-    connect(monitor, &Monitor::itemSelectionChanged, this, &MainWindow::slotEnableRemoveRow);
+    connect(monitor, &Monitor::currentTabChanged, this, &MainWindow::toggleAddRow);
+    connect(monitor, &Monitor::itemSelectionChanged, this, &MainWindow::enableRemoveRow);
     connect(ui->action_Remove, &QAction::triggered, monitor, &Monitor::removeRow);
     connect(ui->action_Mark_all_as_read, &QAction::triggered, monitor, &Monitor::markAllRead);
     connect(monitor, &Monitor::notifyChanged, this, &MainWindow::setNotify);
-    connect(monitor, &Monitor::updateStatusBar, this, &MainWindow::slotUpdateStatusBar);
+    connect(monitor, &Monitor::updateStatusBar, this, &MainWindow::onUpdateStatusBar);
 }
 
 void MainWindow::setNotify(bool notify)
@@ -326,16 +328,16 @@ void MainWindow::setNotify(bool notify)
     }
 }
 
-void MainWindow::slotUpdateStatusBar(const QString &message, bool progressBarHidden)
+void MainWindow::onUpdateStatusBar(const QString &message, bool progressBarHidden)
 {
-    qDebug() << "MainWindow::slotUpdateStatusBar()";
+    qDebug() << Q_FUNC_INFO;
     ui->statusbar->showMessage(message);
     progressBar->setHidden(progressBarHidden);
 }
 
-void MainWindow::slotLogin(const QString &username, const QString &password)
+void MainWindow::login(const QString &username, const QString &password)
 {
-    qDebug() << "MainWindow::slotLogin()";
+    qDebug() << Q_FUNC_INFO;
     obs->setCredentials(username, password);
     obs->login();
     emit updateStatusBar(tr("Logging in..."), false);
@@ -387,11 +389,11 @@ void MainWindow::createActions()
     bookmarks = new Bookmarks(bookmarkButton);
     bookmarkButton->setMenu(bookmarks);
     bookmarkButton->setEnabled(false);
-    connect(obs, &OBS::finishedParsingPerson, bookmarks, &Bookmarks::slotLoadBookmarks);
+    connect(obs, &OBS::finishedParsingPerson, bookmarks, &Bookmarks::loadBookmarks);
     connect(bookmarks, &Bookmarks::clicked, browser, &Browser::goTo);
     connect(browser, &Browser::toggleBookmarkActions, bookmarks, &Bookmarks::toggleActions);
-    connect(bookmarks, &Bookmarks::bookmarkAdded, this, &MainWindow::slotUpdatePerson);
-    connect(bookmarks, &Bookmarks::bookmarkDeleted, this, &MainWindow::slotUpdatePerson);
+    connect(bookmarks, &Bookmarks::bookmarkAdded, this, &MainWindow::updatePerson);
+    connect(bookmarks, &Bookmarks::bookmarkDeleted, this, &MainWindow::updatePerson);
     connect(bookmarks, &Bookmarks::addBookmarkClicked, bookmarks, [=](){
         bookmarks->addBookmark(locationBar->text());
     });
@@ -536,12 +538,12 @@ void MainWindow::createActions()
 
     // Tray icon actions
     action_Restore = new QAction(tr("&Minimise"), trayIcon);
-    connect(action_Restore, SIGNAL(triggered()), this, SLOT(toggleVisibility()));
+    connect(action_Restore, &QAction::triggered, this, &MainWindow::toggleVisibility);
     trayIcon->trayIconMenu->addAction(action_Restore);
 
     action_Quit = new QAction(tr("&Quit"), trayIcon);
     action_Quit->setIcon(QIcon::fromTheme("application-exit"));
-    connect(action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(action_Quit, &QAction::triggered, qApp, &QApplication::quit);
     trayIcon->trayIconMenu->addAction(action_Quit);
 
     projectsMenu->addAction(actionNew_project);
@@ -611,7 +613,7 @@ void MainWindow::monitorProject()
 
 void MainWindow::createStatusBar()
 {
-    connect(browser, &Browser::updateStatusBar, this, &MainWindow::slotUpdateStatusBar);
+    connect(browser, &Browser::updateStatusBar, this, &MainWindow::onUpdateStatusBar);
 
     ui->statusbar->showMessage(tr("Offline"));
     progressBar = new QProgressBar(ui->statusbar);
@@ -627,17 +629,17 @@ void MainWindow::createTimer()
 {
     timer = new QTimer(this);
     interval = 0;
-    connect(obs, SIGNAL(isAuthenticated(bool)), this, SLOT(startTimer(bool)));
-    connect(timer, SIGNAL(timeout()), this, SLOT(on_action_Refresh_triggered()));
+    connect(obs, &OBS::authenticated, this, &MainWindow::startTimer);
+    connect(timer, &QTimer::timeout, this, &MainWindow::on_action_Refresh_triggered);
 }
 
 void MainWindow::setTimerInterval(int interval)
 {
-    qDebug() << "MainWindow::setTimerInterval()" << interval;
+    qDebug() << Q_FUNC_INFO << interval;
     if (interval >= 5) {
         this->interval = interval;
     } else {
-        qDebug() << "Error starting timer: Wrong timer interval (smaller than 5)";
+        qDebug() << Q_FUNC_INFO << "Error starting timer: Wrong timer interval (smaller than 5)";
     }
 }
 
@@ -667,14 +669,14 @@ void MainWindow::toggleVisibility()
     }
 }
 
-void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
+void MainWindow::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
 {
-    if (reason==QSystemTrayIcon::Trigger) {
+    if (reason == QSystemTrayIcon::Trigger) {
         toggleVisibility();
         setNotify(false);
     }
 
-    qDebug() << "MainWindow::trayIconClicked()";
+    qDebug() << Q_FUNC_INFO;
 }
 
 void MainWindow::writeSettings()
@@ -710,7 +712,7 @@ void MainWindow::readWindowSettings()
 
 void MainWindow::readAuthSettings()
 {
-    qDebug() << "MainWindow::readAuthSettings()";
+    qDebug() << Q_FUNC_INFO;
     QSettings settings;
     settings.beginGroup("Auth");
     QString apiUrl = settings.value("ApiUrl").toString();
@@ -721,10 +723,10 @@ void MainWindow::readAuthSettings()
     obs->setApiUrl(apiUrl);
     if (settings.value("AutoLogin", true).toBool()) {
         Credentials *credentials = new Credentials(this);
-        connect(credentials, SIGNAL(errorReadingPassword(QString)),
-                this, SLOT(slotErrorReadingPassword(QString)));
-        connect(credentials, SIGNAL(credentialsRestored(QString, QString)),
-                this, SLOT(slotCredentialsRestored(QString, QString)));
+        connect(credentials, &Credentials::errorReadingPassword,
+                this, &MainWindow::onReadingPasswordError);
+        connect(credentials, &Credentials::credentialsRestored,
+                this, &MainWindow::onCredentialsRestored);
         credentials->readPassword(settings.value("Username").toString());
         delete credentials;
     }
@@ -733,7 +735,7 @@ void MainWindow::readAuthSettings()
 
 void MainWindow::readProxySettings()
 {
-    qDebug() << "MainWindow::readProxySettings()";
+    qDebug() << Q_FUNC_INFO;
 
     QSettings settings;
     settings.beginGroup("Proxy");
@@ -758,11 +760,11 @@ void MainWindow::readProxySettings()
     settings.endGroup();
 }
 
-void MainWindow::slotApiNotFound(QUrl url)
+void MainWindow::onApiNotFound(const QUrl &url)
 {
-    qDebug() << " MainWindow::slotApiNotFound()";
-    const QString title = tr("Error");
-    const QString text = QString(tr("OBS API not found at<br>%1<br>"
+    qDebug() << Q_FUNC_INFO;
+    QString title = tr("Error");
+    QString text = QString(tr("OBS API not found at<br>%1<br>"
                                     "Please check the URL and retry")).arg(url.toString());
     QMessageBox::critical(this, title, text);
 
@@ -792,7 +794,7 @@ void MainWindow::showLoginDialog()
 {
     if (!loginDialog) {
         loginDialog = new Login(this);
-        connect(loginDialog, &Login::login, this, &MainWindow::slotLogin);
+        connect(loginDialog, &Login::login, this, &MainWindow::login);
     }
     loginDialog->show();
 }
@@ -800,7 +802,7 @@ void MainWindow::showLoginDialog()
 void MainWindow::showConfigureDialog()
 {
     QScopedPointer<Configure> configure(new Configure(this, obs));
-    connect(configure.data(), &Configure::apiChanged, this, &MainWindow::slotApiChanged);
+    connect(configure.data(), &Configure::apiChanged, this, &MainWindow::onApiChanged);
     connect(configure.data(), &Configure::proxyChanged, this, &MainWindow::readProxySettings);
     connect(configure.data(), &Configure::includeHomeProjectsChanged, this, [=](){
         browser->readSettings();
@@ -820,7 +822,7 @@ void MainWindow::on_apiinformationActiontTriggered()
     obs->about();
 }
 
-void MainWindow::slotAbout(QSharedPointer<OBSAbout> about)
+void MainWindow::onAbout(QSharedPointer<OBSAbout> about)
 {
     const QString title = about->getTitle();
     const QString text = QString("%1<br>Revision: %2<br>Last deployment: %3").arg(about->getDescription(),
@@ -828,7 +830,7 @@ void MainWindow::slotAbout(QSharedPointer<OBSAbout> about)
     QMessageBox::information(this, title, text);
 }
 
-void MainWindow::slotUpdatePerson(QSharedPointer<OBSPerson> obsPerson)
+void MainWindow::updatePerson(QSharedPointer<OBSPerson> obsPerson)
 {
     OBSXmlWriter *xmlWriter = new OBSXmlWriter(this);
     QByteArray data = xmlWriter->createPerson(obsPerson);

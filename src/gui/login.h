@@ -45,7 +45,7 @@ public slots:
 
 private slots:
     void on_buttonBox_accepted();
-    void slotCredentialsRestored(const QString &username, const QString &password);
+    void onCredentialsRestored(const QString &username, const QString &password);
 
 signals:
     void login(const QString &username, const QString &password);

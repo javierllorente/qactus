@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2018-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,15 @@ SearchWidget::SearchWidget(QWidget *parent, QPlainTextEdit *plainTextEdit) :
     QShortcut *findNextAction = new QShortcut(QKeySequence("F3"), this);
     QShortcut *findPreviousAction = new QShortcut(QKeySequence("Shift+F3"), this);
 
-    connect(findNextAction, SIGNAL(activated()), this, SLOT(findNext()));
-    connect(findPreviousAction, SIGNAL(activated()), this, SLOT(findPrevious()));
-    connect(ui->pushButtonNext, SIGNAL(clicked(bool)), this, SLOT(findNext()));
-    connect(ui->pushButtonPrevious, SIGNAL(clicked(bool)), this, SLOT(findPrevious()));
-    connect(ui->lineEdit, SIGNAL(textEdited(QString)), this, SLOT(clearAll(QString)));
-    connect(ui->lineEdit, SIGNAL(returnPressed()), this, SLOT(findNext()));
-    connect(ui->pushButtonHighlight, SIGNAL(toggled(bool)), this, SLOT(highlightText(bool)));
-    connect(ui->pushButtonClose, SIGNAL(clicked(bool)), this, SLOT(clearAll()));
-    connect(ui->pushButtonClose, SIGNAL(clicked(bool)), this, SLOT(close()));
+    connect(findNextAction, &QShortcut::activated, this, &SearchWidget::findNext);
+    connect(findPreviousAction, &QShortcut::activated, this, &SearchWidget::findPrevious);
+    connect(ui->pushButtonNext, &QPushButton::clicked, this, &SearchWidget::findNext);
+    connect(ui->pushButtonPrevious, &QPushButton::clicked, this, &SearchWidget::findPrevious);
+    connect(ui->lineEdit, &QLineEdit::textEdited, this, QOverload<const QString &>::of(&SearchWidget::clearAll));
+    connect(ui->lineEdit, &QLineEdit::returnPressed, this, &SearchWidget::findNext);
+    connect(ui->pushButtonHighlight, &QPushButton::toggled, this, &SearchWidget::highlightText);
+    connect(ui->pushButtonClose, &QPushButton::clicked, this, QOverload<>::of(&SearchWidget::clearAll));
+    connect(ui->pushButtonClose, &QPushButton::clicked, this, &SearchWidget::close);
 
     QTextCursor cursor = m_plainTextEdit->textCursor();
     cursor.movePosition(QTextCursor::End);

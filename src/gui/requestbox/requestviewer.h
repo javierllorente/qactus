@@ -43,13 +43,13 @@ public:
     void showTabBuildResults(bool show);
 
 signals:
-    void changeSubmitRequest(const QString &id, const QString &comments, bool accepted);
+    void changeRequest(const QString &id, const QString &comments, bool accepted);
 
 private slots:
     void on_acceptPushButton_clicked();
     void on_declinePushButton_clicked();
     void slotRequestStatusFetched(QSharedPointer<OBSStatus> status);
-    void slotSrDiffFetched(const QString &diff);
+    void onRequestDiffFetched(const QString &diff);
     void slotAddBuildResults(QSharedPointer<OBSResult> result);
 
 private:

@@ -37,9 +37,9 @@ RequestViewer::RequestViewer(QWidget *parent, OBS *obs, QSharedPointer<OBSReques
     ui->targetLabelText->setText(m_request->getTarget());
     ui->dateLabelText->setText(m_request->getDate());
 
-    connect(this, &RequestViewer::changeSubmitRequest, m_obs, &OBS::slotChangeSubmitRequest);
+    connect(this, &RequestViewer::changeRequest, m_obs, &OBS::onChangeRequest);
     connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestViewer::slotRequestStatusFetched);
-    connect(m_obs, &OBS::srDiffFetched, this, &RequestViewer::slotSrDiffFetched);
+    connect(m_obs, &OBS::requestDiffFetched, this, &RequestViewer::onRequestDiffFetched);
     connect(m_obs, &OBS::finishedParsingResult, this, &RequestViewer::slotAddBuildResults);
 
     if (m_request->getActionType()=="submit") {
@@ -93,7 +93,7 @@ void RequestViewer::on_acceptPushButton_clicked()
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
 
-    emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), true);
+    emit changeRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), true);
 }
 
 void RequestViewer::on_declinePushButton_clicked()
@@ -103,7 +103,7 @@ void RequestViewer::on_declinePushButton_clicked()
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
 
-    emit changeSubmitRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), false);
+    emit changeRequest(m_request->getId(), ui->commentsTextBrowser->toPlainText(), false);
 }
 
 void RequestViewer::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
@@ -117,7 +117,7 @@ void RequestViewer::slotRequestStatusFetched(QSharedPointer<OBSStatus> status)
    }
 }
 
-void RequestViewer::slotSrDiffFetched(const QString &diff)
+void RequestViewer::onRequestDiffFetched(const QString &diff)
 {
     qDebug() << Q_FUNC_INFO;
     setDiff(diff);

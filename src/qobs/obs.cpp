@@ -22,13 +22,13 @@ OBS::OBS(QObject *parent) : QObject(parent)
     includeHomeProjects = false;
 
     // Forward signals
-    connect(obsCore, SIGNAL(apiNotFound(QUrl)), this, SIGNAL(apiNotFound(QUrl)));
-    connect(obsCore, SIGNAL(isAuthenticated(bool)),
-            this, SIGNAL(isAuthenticated(bool)));
-    connect(obsCore, SIGNAL(selfSignedCertificate(QNetworkReply*)),
-            this, SIGNAL(selfSignedCertificate(QNetworkReply*)));
-    connect(obsCore, SIGNAL(networkError(QString)),
-            this, SIGNAL(networkError(QString)));
+    connect(obsCore, &OBSCore::apiNotFound, this, &OBS::apiNotFound);
+    connect(obsCore, &OBSCore::authenticated,
+            this, &OBS::authenticated);
+    connect(obsCore, &OBSCore::selfSignedCertificateError,
+            this, &OBS::selfSignedCertificateError);
+    connect(obsCore, &OBSCore::networkError,
+            this, &OBS::networkError);
     connect(xmlReader, &OBSXmlReader::finishedParsingPackage,
             this, &OBS::finishedParsingPackage);
 
@@ -92,14 +92,14 @@ OBS::OBS(QObject *parent) : QObject(parent)
 
     connect(xmlReader, &OBSXmlReader::projectFetched, this, &OBS::projectFetched);
 
-    connect(xmlReader, SIGNAL(finishedParsingProjectList(QStringList)),
-            this, SIGNAL(finishedParsingProjectList(QStringList)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingProjectList,
+            this, &OBS::finishedParsingProjectList);
     connect(xmlReader, &OBSXmlReader::finishedParsingProjectMetaConfig, this, &OBS::finishedParsingProjectMetaConfig);
     connect(xmlReader, &OBSXmlReader::finishedParsingPackageMetaConfig, this, &OBS::finishedParsingPackageMetaConfig);
-    connect(xmlReader, SIGNAL(finishedParsingPackageList(QStringList)),
-            this, SIGNAL(finishedParsingPackageList(QStringList)));
-    connect(xmlReader, SIGNAL(finishedParsingList(QStringList)),
-            this, SIGNAL(finishedParsingList(QStringList)));
+    connect(xmlReader, &OBSXmlReader::finishedParsingPackageList,
+            this, &OBS::finishedParsingPackageList);
+    connect(xmlReader, &OBSXmlReader::finishedParsingList,
+            this, &OBS::finishedParsingList);
     connect(xmlReader, &OBSXmlReader::finishedParsingFile, this, &OBS::finishedParsingFile);
     connect(xmlReader, &OBSXmlReader::finishedParsingFileList,
             this, &OBS::finishedParsingFileList);
@@ -108,8 +108,8 @@ OBS::OBS(QObject *parent) : QObject(parent)
     connect(xmlReader, &OBSXmlReader::finishedParsingLink, this, &OBS::finishedParsingLink);
     connect(xmlReader, &OBSXmlReader::finishedParsingRequestStatus, this, &OBS::finishedParsingRequestStatus);
     connect(xmlReader, &OBSXmlReader::finishedParsingPackageSearch, this, &OBS::finishedParsingPackageSearch);
-    connect(obsCore, SIGNAL(srDiffFetched(QString)),
-            this, SIGNAL(srDiffFetched(QString)));
+    connect(obsCore, &OBSCore::requestDiffFetched,
+            this, &OBS::requestDiffFetched);
     connect(xmlReader, &OBSXmlReader::finishedParsingAbout, this, &OBS::finishedParsingAbout);
     connect(xmlReader, &OBSXmlReader::finishedParsingPerson, this, &OBS::finishedParsingPerson);
     connect(xmlReader, &OBSXmlReader::finishedParsingUpdatePerson, this, &OBS::finishedParsingUpdatePerson);
@@ -221,7 +221,7 @@ void OBS::getPackageRequests(const QString &project, const QString &package)
     obsCore->getPackageRequests(project, package);
 }
 
-void OBS::slotChangeSubmitRequest(const QString &id, const QString &comments, bool accepted)
+void OBS::onChangeRequest(const QString &id, const QString &comments, bool accepted)
 {
     qDebug() << Q_FUNC_INFO << "id:" << id << " comments:" << comments << " accept:" << accepted;
     QString newState = accepted ? "accepted" : "declined";
@@ -240,7 +240,7 @@ void OBS::getRequestDiff(const QString &source)
 {
     qDebug() << Q_FUNC_INFO;
     QString resource = QString("/request/%1?cmd=diff").arg(source);
-    obsCore->getSRDiff(resource);
+    obsCore->getRequestDiff(resource);
 }
 
 bool OBS::isIncludeHomeProjects() const

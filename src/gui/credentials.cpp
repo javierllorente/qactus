@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2017-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,61 +22,61 @@ Credentials::Credentials(QObject *parent) : QObject(parent)
 
 void Credentials::readPassword(const QString &username)
 {
-    qDebug() << "Credentials::readPassword()";
+    qDebug() << Q_FUNC_INFO;
     QKeychain::ReadPasswordJob job(QLatin1String("Qactus"));
     job.setAutoDelete(false);
     job.setKey(username);
     QEventLoop loop;
-    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
+    job.connect(&job, &QKeychain::ReadPasswordJob::finished, &loop, &QEventLoop::quit);
     job.start();
     loop.exec();
     const QString pw = job.textData();
 
     if (job.error()) {
-        qDebug() << "Restoring password failed:" << qPrintable(job.errorString());
+        qDebug() << Q_FUNC_INFO << "Restoring password failed:" << qPrintable(job.errorString());
         emit errorReadingPassword(job.errorString());
     } else {
-        qDebug() << "Password restored successfully";
+        qDebug() << Q_FUNC_INFO << "Password restored successfully";
         emit credentialsRestored(job.key(), pw);
     }
 }
 
 void Credentials::writeCredentials(const QString &username, const QString &password)
 {
-    qDebug() << "Credentials::writeCredentials()";
+    qDebug() << Q_FUNC_INFO;
     QKeychain::WritePasswordJob job(QLatin1String("Qactus"));
     job.setAutoDelete(false);
     job.setKey(username);
     job.setTextData(password);
     QEventLoop loop;
-    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
+    job.connect(&job, &QKeychain::WritePasswordJob::finished, &loop, &QEventLoop::quit);
     job.start();
     loop.exec();
 
     if (job.error()) {
-        qDebug() << "Storing credentials failed:" << qPrintable(job.errorString());
+        qDebug() << Q_FUNC_INFO << "Storing credentials failed:" << qPrintable(job.errorString());
         emit errorStoringCredentials(job.errorString());
     } else {
-        qDebug() << "Credentials stored successfully";
+        qDebug() << Q_FUNC_INFO << "Credentials stored successfully";
     }
 }
 
 void Credentials::deletePassword(const QString &username)
 {
-    qDebug() << "Credentials:deletePassword()";
+    qDebug() << Q_FUNC_INFO;
     QKeychain::DeletePasswordJob job(QLatin1String("Qactus"));
     job.setAutoDelete(false);
     job.setKey(username);
     QEventLoop loop;
-    job.connect(&job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()));
+    job.connect(&job, &QKeychain::DeletePasswordJob::finished, &loop, &QEventLoop::quit);
     job.start();
     loop.exec();
 
     if (job.error()) {
-        qDebug() << "Deleting password failed:" << qPrintable(job.errorString());
+        qDebug() << Q_FUNC_INFO << "Deleting password failed:" << qPrintable(job.errorString());
         emit errorDeletingPassword(job.errorString());
     } else {
-        qDebug() << "Password deleted successfully";
+        qDebug() << Q_FUNC_INFO << "Password deleted successfully";
     }
 }
 

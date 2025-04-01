@@ -27,7 +27,7 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     ui->spinBoxTimer->setMinimum(5);
     ui->spinBoxTimer->setMaximum(1440);
     ui->spinBoxTimer->setDisabled(true);
-    connect(ui->checkBoxTimer, SIGNAL(toggled(bool)), ui->spinBoxTimer, SLOT(setEnabled(bool)));
+    connect(ui->checkBoxTimer, &QCheckBox::toggled, ui->spinBoxTimer, &QSpinBox::setEnabled);
 
     ui->checkBoxHomeProjects->setChecked(includeHomeProjects);
     proxySettingsSetup();
@@ -39,7 +39,7 @@ Configure::Configure(QWidget *parent, OBS *obs) :
     ui->listWidget->setMaximumWidth(ui->listWidget->sizeHintForColumn(0)+4);
     ui->listWidget->setDragEnabled(false);
 
-    connect(ui->listWidget, SIGNAL(currentRowChanged(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
+    connect(ui->listWidget, &QListWidget::currentRowChanged, ui->stackedWidget, &QStackedWidget::setCurrentIndex);
     ui->listWidget->setCurrentRow(0);
 
     readAuthSettings();
@@ -69,11 +69,11 @@ void Configure::setApiUrl(QString apiUrlStr)
 
 void Configure::proxySettingsSetup()
 {
-    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->comboBoxProxyType, SLOT(setEnabled(bool)));
-    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->lineEditProxyServer, SLOT(setEnabled(bool)));
-    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->spinBoxProxyPort, SLOT(setEnabled(bool)));
-    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->lineEditProxyUsername, SLOT(setEnabled(bool)));
-    connect(ui->radioButtonManualProxy, SIGNAL(toggled(bool)), ui->lineEditProxyPassword, SLOT(setEnabled(bool)));
+    connect(ui->radioButtonManualProxy, &QRadioButton::toggled, ui->comboBoxProxyType, &QComboBox::setEnabled);
+    connect(ui->radioButtonManualProxy, &QRadioButton::toggled, ui->lineEditProxyServer, &QLineEdit::setEnabled);
+    connect(ui->radioButtonManualProxy, &QRadioButton::toggled, ui->spinBoxProxyPort, &QSpinBox::setEnabled);
+    connect(ui->radioButtonManualProxy, &QRadioButton::toggled, ui->lineEditProxyUsername, &QLineEdit::setEnabled);
+    connect(ui->radioButtonManualProxy, &QRadioButton::toggled, ui->lineEditProxyPassword, &QLineEdit::setEnabled);
 
     ui->buttonGroupProxyType->setId(ui->radioButtonNoProxy, 0);
     ui->buttonGroupProxyType->setId(ui->radioButtonSystemProxy, 1);

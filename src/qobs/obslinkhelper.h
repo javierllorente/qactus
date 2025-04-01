@@ -41,8 +41,8 @@ signals:
     void createPackage(const QString &dstProject, const QString &dstPackage, const QByteArray &data);
 
 public slots:
-    void slotFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig);
-    void slotFetchedCreatePkgStatus(QSharedPointer<OBSStatus> status);
+    void onFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> pkgMetaConfig);
+    void onFetchedCreatePkgStatus(QSharedPointer<OBSStatus> status);
 
 private slots:
 };

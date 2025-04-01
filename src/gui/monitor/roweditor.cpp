@@ -106,24 +106,24 @@ void RowEditor::setArch(const QString &arch)
 
 void RowEditor::initProjectAutocompleter()
 {
-    qDebug() << "RowEditor::initProjectAutocompleter()";
-    connect(m_obs, SIGNAL(finishedParsingProjectList(QStringList)), this, SLOT(insertProjectList(QStringList)));
+    qDebug() << Q_FUNC_INFO;
+    connect(m_obs, &OBS::finishedParsingProjectList, this, &RowEditor::insertProjectList);
     m_obs->getProjects();
 }
 
 void RowEditor::insertProjectList(const QStringList &list)
 {
-    qDebug() << "RowEditor::insertProjectList()";
+    qDebug() << Q_FUNC_INFO;
     projectList = list;
     projectModel = new QStringListModel(projectList);
     projectCompleter = new QCompleter(projectModel, this);
 
     ui->lineEditProject->setCompleter(projectCompleter);
 
-    connect(ui->lineEditProject, SIGNAL(textEdited(const QString&)),
-            this, SLOT(refreshProjectAutocompleter(const QString&)));
-    connect(projectCompleter, SIGNAL(activated(const QString&)),
-            this, SLOT(autocompletedProjectName_clicked(const QString&)));
+    connect(ui->lineEditProject, &QLineEdit::textEdited,
+            this, &RowEditor::refreshProjectAutocompleter);
+    connect(projectCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+            this, &RowEditor::autocompletedProjectName_clicked);
 }
 
 void RowEditor::refreshProjectAutocompleter(const QString&)
@@ -135,23 +135,23 @@ void RowEditor::autocompletedProjectName_clicked(const QString &projectName)
 {
     ui->lineEditPackage->setFocus();
 
-    connect(m_obs, SIGNAL(finishedParsingPackageList(QStringList)), this, SLOT(insertPackageList(QStringList)));
+    connect(m_obs, &OBS::finishedParsingPackageList, this, &RowEditor::insertPackageList);
     m_obs->getPackages(projectName);
 }
 
 void RowEditor::insertPackageList(const QStringList &list)
 {
-    qDebug() << "RowEditor::insertPackageList()";
+    qDebug() << Q_FUNC_INFO;
     packageList = list;
     packageModel = new QStringListModel(packageList);
     packageCompleter = new QCompleter(packageModel, this);
 
     ui->lineEditPackage->setCompleter(packageCompleter);
 
-    connect(ui->lineEditPackage, SIGNAL(textEdited(const QString&)),
-            this, SLOT(refreshPackageAutocompleter(const QString&)));
-    connect(packageCompleter, SIGNAL(activated(const QString&)),
-            this, SLOT(autocompletedPackageName_clicked(const QString&)));
+    connect(ui->lineEditPackage, &QLineEdit::textEdited,
+            this, &RowEditor::refreshPackageAutocompleter);
+    connect(packageCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+            this, &RowEditor::autocompletedPackageName_clicked);
 }
 
 void RowEditor::refreshPackageAutocompleter(const QString&)
@@ -170,7 +170,7 @@ void RowEditor::autocompletedPackageName_clicked(const QString&)
 
 void RowEditor::insertProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMetaConfig)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     repositories = prjMetaConfig->getRepositories();
 
     for (auto repository : repositories) {
@@ -182,10 +182,10 @@ void RowEditor::insertProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMeta
 
     ui->lineEditRepository->setCompleter(repositoryCompleter);
 
-    connect(ui->lineEditRepository, SIGNAL(textEdited(const QString&)),
-            this, SLOT(refreshRepositoryAutocompleter(const QString&)));
-    connect(repositoryCompleter, SIGNAL(activated(const QString&)),
-            this, SLOT(autocompletedRepositoryName_clicked(const QString&)));
+    connect(ui->lineEditRepository, &QLineEdit::textEdited,
+            this, &RowEditor::refreshRepositoryAutocompleter);
+    connect(repositoryCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+            this, &RowEditor::autocompletedRepositoryName_clicked);
 }
 
 void RowEditor::refreshRepositoryAutocompleter(const QString&)
