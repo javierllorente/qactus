@@ -25,7 +25,6 @@
 #include <QSharedPointer>
 #include "datacontroller.h"
 #include "obsfile.h"
-#include "utils.h"
 
 class FileTreeWidget : public QTreeView, public DataController
 {

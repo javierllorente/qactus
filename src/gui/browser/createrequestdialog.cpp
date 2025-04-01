@@ -50,13 +50,8 @@ void CreateRequestDialog::addProjectList(const QStringList &projectList)
     m_projectCompleter = new QCompleter(m_projectModel, this);
     ui->targetProjectLineEdit->setCompleter(m_projectCompleter);
 
-#if QT_VERSION >= 0x050700
     connect(m_projectCompleter, QOverload<const QString &>::of(&QCompleter::activated),
             this, &CreateRequestDialog::autocompletedProject_activated);
-#else
-    connect(m_projectCompleter, static_cast<void (QCompleter::*)(const QString &)>(&QCompleter::activated),
-            this, &CreateRequestDialog::autocompletedProject_activated);
-#endif
 }
 
 void CreateRequestDialog::autocompletedProject_activated(const QString &project)
@@ -72,13 +67,8 @@ void CreateRequestDialog::addPackageList(const QStringList &packageList)
     m_packageCompleter = new QCompleter(m_packageModel, this);
     ui->targetPackageLineEdit->setCompleter(m_packageCompleter);
 
-#if QT_VERSION >= 0x050700
     connect(m_packageCompleter, QOverload<const QString &>::of(&QCompleter::activated),
             this, &CreateRequestDialog::autocompletedPackage_activated);
-#else
-    connect(m_packageCompleter, static_cast<void (QCompleter::*)(const QString &)>(&QCompleter::activated),
-            this, &CreateRequestDialog::autocompletedPackage_activated);
-#endif
 }
 
 void CreateRequestDialog::linkFetched(QSharedPointer<OBSLink> link)

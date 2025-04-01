@@ -84,13 +84,8 @@ void MonitorRepositoryTab::slotAddResultList(QList<QSharedPointer<OBSResult>> re
 void MonitorRepositoryTab::checkForResultListChanges(QList<QSharedPointer<OBSResult>> resultList)
 {
     // FIXME: intersect always returns 0
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QSet<QSharedPointer<OBSResult>> old_resultSet(m_resultList.begin(), m_resultList.end());
     QSet<QSharedPointer<OBSResult>> new_resultSet(resultList.begin(), resultList.end());
-#else
-    QSet<QSharedPointer<OBSResult>> old_resultSet = m_resultList.toSet();
-    QSet<QSharedPointer<OBSResult>> new_resultSet= resultList.toSet();
-#endif
 
     QList<QSharedPointer<OBSResult>> commonResults = old_resultSet.intersect(new_resultSet).values();
 

@@ -108,26 +108,15 @@ void FileTreeWidget::addFile(QSharedPointer<OBSFile> file)
 
         // Size
         QStandardItem *itemSize = new QStandardItem();
-        QString fileSizeHuman;
-#if QT_VERSION >= 0x051000
-        QLocale locale = this->locale();
-        fileSizeHuman = locale.formattedDataSize(file->getSize().toInt());
-#else
-        fileSizeHuman = Utils::fileSizeHuman(file->getSize().toInt());
-#endif
+        QString fileSizeHuman = locale().formattedDataSize(file->getSize().toInt());
         itemSize->setData(QVariant(fileSizeHuman), Qt::DisplayRole);
         itemSize->setData(file->getSize().toInt(), Qt::UserRole);
 
         // Modified time
         QStandardItem *itemLastModified = new QStandardItem();
-        QString lastModifiedStr;
         QString lastModifiedUnixTimeStr = file->getLastModified();
-#if QT_VERSION >= 0x050800
         QDateTime lastModifiedDateTime = QDateTime::fromSecsSinceEpoch(qint64(lastModifiedUnixTimeStr.toInt()), QTimeZone::UTC);
-        lastModifiedStr = lastModifiedDateTime.toString("dd/MM/yyyy H:mm");
-#else
-        lastModifiedStr = Utils::unixTimeToDate(lastModifiedUnixTimeStr);
-#endif
+        QString lastModifiedStr = lastModifiedDateTime.toString("dd/MM/yyyy H:mm");
         itemLastModified->setData(lastModifiedUnixTimeStr.toInt(), Qt::UserRole);
         itemLastModified->setData(lastModifiedStr, Qt::DisplayRole);
 
