@@ -2,10 +2,8 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-find_package(Qt6 COMPONENTS Core Gui Widgets Network REQUIRED)
 
-# Qt5Keychain requires Qt5DBus, but doesn't quite set this up right
-find_package(Qt6DBus REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui Widgets Network REQUIRED)
 find_package(Qt6Keychain REQUIRED)
 
 include_directories(
@@ -136,7 +134,7 @@ add_dependencies(qactus libqobs)
 
 target_include_directories(qactus PRIVATE ../qobs)
 
-target_link_libraries(qactus libqobs Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network ${QTKEYCHAIN_LIBRARIES})
+target_link_libraries(qactus libqobs Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network qt6keychain)
 
 install(TARGETS qactus RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 install(FILES ${CMAKE_SOURCE_DIR}/qactus.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
