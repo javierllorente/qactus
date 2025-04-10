@@ -127,7 +127,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
     connect(m_obs, &OBS::finishedParsingLatestRevision, ui->overviewWidget, &OverviewWidget::setLatestRevision);
 
     // Model selection's signals-slots
-    connect(this, &Browser::projectSelectionChanged, this, &Browser::slotProjectSelectionChanged);
+    connect(this, &Browser::projectSelectionChanged, this, &Browser::onProjectSelectionChanged);
 
     connect(m_obs, &OBS::finishedParsingProjectMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
     connect(m_obs, &OBS::finishedParsingPackageMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
@@ -708,7 +708,7 @@ void Browser::getPackageRequests(const QString &project, const QString &package)
     m_obs->getPackageRequests(project, package);
 }
 
-void Browser::slotProjectSelectionChanged()
+void Browser::onProjectSelectionChanged()
 {
     qDebug() << Q_FUNC_INFO << "currentProject =" << currentProject << "currentPackage =" << currentPackage;
 

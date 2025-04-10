@@ -111,7 +111,7 @@ private:
 
 private slots:
     void slotContextMenuPackages(const QPoint &point);
-    void slotProjectSelectionChanged();
+    void onProjectSelectionChanged();
     void slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void slotTabIndexChanged(int index);
     void slotSelectPackage();
