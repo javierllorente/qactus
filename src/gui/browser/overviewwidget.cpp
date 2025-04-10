@@ -110,6 +110,7 @@ void OverviewWidget::clear()
     // overviewPackage.clear();
     ui->packages->setVisible(false);
     ui->packagesCount->setVisible(false);
+    ui->resultsWidget->setVisible(false);
     m_dataLoaded = false;
 }
 
