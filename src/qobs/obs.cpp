@@ -166,6 +166,11 @@ void OBS::login()
     obsCore->login();
 }
 
+void OBS::logout()
+{
+    obsCore->logout();
+}
+
 void OBS::getBuildStatus(const QStringList &stringList, int row)
 {
     //    URL format: https://api.opensuse.org/build/<project>/<repository>/<arch>/<package>/_status

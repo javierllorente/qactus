@@ -38,6 +38,7 @@ public:
     void setApiUrl(const QString &apiUrl);
     QString getApiUrl() const;
     void login();
+    void logout();
     QNetworkReply *request(const QString &resource);
     void request(QNetworkReply *reply);
     QNetworkReply *requestBuild(const QString &resource);

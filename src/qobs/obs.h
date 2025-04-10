@@ -41,6 +41,7 @@ public:
     void request(QNetworkReply *reply);
     bool isAuthenticated();
     void login();
+    void logout();
     void getBuildStatus(const QStringList &stringList, int row);
     void getProjectResults(const QString &project);
     void getLatestRevision(const QString &project, const QString &package);

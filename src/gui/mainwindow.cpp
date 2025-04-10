@@ -807,7 +807,12 @@ void MainWindow::showLoginDialog()
 {
     if (!loginDialog) {
         loginDialog = new Login(this);
-        connect(loginDialog, &Login::login, this, &MainWindow::login);
+        connect(loginDialog, &Login::login, this, [this] (const QString &username, const QString &password) {
+            if (obs->isAuthenticated()) {
+                obs->logout();
+            }
+            login(username, password);
+        });
     }
     loginDialog->show();
 }

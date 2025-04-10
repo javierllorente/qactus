@@ -97,6 +97,11 @@ void OBSCore::login()
     reply->setProperty("reqtype", OBSCore::Login);
 }
 
+void OBSCore::logout()
+{
+    m_authenticated = false;
+}
+
 QNetworkReply *OBSCore::request(const QString &resource)
 {
     QNetworkRequest request;
