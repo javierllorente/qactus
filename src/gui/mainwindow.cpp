@@ -107,7 +107,6 @@ void MainWindow::onCredentialsRestored(const QString &username, const QString &p
     QProgressDialog progress(tr("Logging in..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    emit updateStatusBar(tr("Logging in..."), false);
 }
 
 void MainWindow::showNetworkError(const QString &networkError)
@@ -198,9 +197,11 @@ void MainWindow::onAuthenticated(bool authenticated)
         browser->getProjects();
         toggleAddRow(ui->stackedWidget->currentIndex());
         obs->getPerson();
+        emit updateStatusBar(tr("Getting bookmarks..."), true);
         on_action_Refresh_triggered();
         delete loginDialog;
         loginDialog = nullptr;
+        emit updateStatusBar(tr("Done"), false);
     } else {
         emit updateStatusBar(tr("Authentication is required"), true);
         showLoginDialog();
@@ -294,12 +295,12 @@ void MainWindow::enableRemoveRow()
 
 void MainWindow::on_action_Refresh_triggered()
 {
-    qDebug() << "MainWindow::refreshView()";
-    emit updateStatusBar(tr("Getting build statuses..."), false);
+    qDebug() << Q_FUNC_INFO;
     monitor->refresh();
 
-    emit updateStatusBar(tr("Getting requests..."), false);
+    emit updateStatusBar(tr("Getting incoming requests..."), false);
     obs->getIncomingRequests();
+    emit updateStatusBar(tr("Getting outgoing requests..."), false);
     obs->getOutgoingRequests();
 }
 
@@ -331,8 +332,22 @@ void MainWindow::setNotify(bool notify)
 void MainWindow::onUpdateStatusBar(const QString &message, bool progressBarHidden)
 {
     qDebug() << Q_FUNC_INFO;
-    ui->statusbar->showMessage(message);
-    progressBar->setHidden(progressBarHidden);
+
+    qDebug() << Q_FUNC_INFO << "progressBarHidden " << progressBarHidden << "message" << message;
+    int currentRunningTasks = runningTasks.loadAcquire(); // Thread-safe read
+    qDebug() << Q_FUNC_INFO << "Current running tasks:" << currentRunningTasks;
+
+    if (progressBarHidden) {
+        if (runningTasks.fetchAndSubRelaxed(1) == 1) {
+            ui->statusbar->showMessage(message);
+            progressBar->setHidden(progressBarHidden);
+        }
+    } else {
+        runningTasks.fetchAndAddRelaxed(1);
+        ui->statusbar->showMessage(message);
+        progressBar->setHidden(progressBarHidden);
+    }
+
 }
 
 void MainWindow::login(const QString &username, const QString &password)
@@ -400,6 +415,7 @@ void MainWindow::createActions()
     connect(bookmarks, &Bookmarks::deleteBookmarkClicked, bookmarks, [=](){
         bookmarks->deleteBookmark(locationBar->text());
     });
+    connect(bookmarks, &Bookmarks::updateStatusBar, this, &MainWindow::onUpdateStatusBar);
     actionBookmarks = ui->toolBar->addWidget(bookmarkButton);
 
     // Location bar
@@ -614,6 +630,7 @@ void MainWindow::monitorProject()
 void MainWindow::createStatusBar()
 {
     connect(browser, &Browser::updateStatusBar, this, &MainWindow::onUpdateStatusBar);
+    connect(requestBox, &RequestBox::updateStatusBar, this, &MainWindow::onUpdateStatusBar);
 
     ui->statusbar->showMessage(tr("Offline"));
     progressBar = new QProgressBar(ui->statusbar);

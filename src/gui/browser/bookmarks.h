@@ -39,6 +39,7 @@ signals:
     void clicked(const QString &bookmark);
     void bookmarkAdded(QSharedPointer<OBSPerson> person);
     void bookmarkDeleted(QSharedPointer<OBSPerson> person);
+    void updateStatusBar(QString message, bool progressBarHidden);
 
 private:
     QAction *m_actionAddBookmark;

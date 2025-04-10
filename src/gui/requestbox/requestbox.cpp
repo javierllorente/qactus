@@ -151,23 +151,26 @@ void RequestBox::requestTypeChanged(int index)
 
 void RequestBox::getIncomingRequests()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     ui->requestsWidget->clearDescription();
     m_obs->getIncomingRequests();
+    emit updateStatusBar(tr("Getting incoming requests..."), false);
 }
 
 void RequestBox::getOutgoingRequests()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     ui->requestsWidget->clearDescription();
     m_obs->getOutgoingRequests();
+    emit updateStatusBar(tr("Getting outgoing requests..."), false);
 }
 
 void RequestBox::getDeclinedRequests()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     ui->requestsWidget->clearDescription();
     m_obs->getDeclinedRequests();
+    emit updateStatusBar(tr("Getting declined requests..."), false);
 }
 
 void RequestBox::onStatusFetched(QSharedPointer<OBSStatus> status)

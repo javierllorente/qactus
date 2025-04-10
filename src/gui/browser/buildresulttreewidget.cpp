@@ -115,4 +115,5 @@ void BuildResultTreeWidget::finishedAddingResults()
     }
     m_logicalIndex = header()->sortIndicatorSection();
     m_order = header()->sortIndicatorOrder();
+    emit updateStatusBar(tr("Done"), true);
 }

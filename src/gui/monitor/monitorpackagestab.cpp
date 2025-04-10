@@ -94,6 +94,7 @@ void MonitorPackagesTab::refresh()
             tableStringList.append(QString(ui->treeWidget->topLevelItem(r)->text(1)));
 //            Get build status
             m_obs->getBuildStatus(tableStringList, r);
+            emit updateStatusBar(tr("Getting build results..."), false);
         }
     }
 }
@@ -134,13 +135,14 @@ void MonitorPackagesTab::dropEvent(QDropEvent *event)
             droppedProject = list[2];
             droppedPackage = list[3];
             emit obsUrlDropped(droppedProject, droppedPackage);
+            emit updateStatusBar(tr("Get build results..."), false);
         }
     }
 }
 
 void MonitorPackagesTab::addDroppedPackage(QSharedPointer<OBSResult> result)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
 
     if (droppedProject==result->getProject() && droppedPackage==result->getStatus()->getPackage()) {
         QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
@@ -159,9 +161,10 @@ void MonitorPackagesTab::addDroppedPackage(QSharedPointer<OBSResult> result)
 
         ui->treeWidget->addTopLevelItem(item);
         int index = ui->treeWidget->indexOfTopLevelItem(item);
-        qDebug() << "Package" << item->text(1)
+        qDebug() << Q_FUNC_INFO << "Package" << item->text(1)
                  << "(" << item->text(0) << "," << item->text(2) << "," << item->text(3) << ")"
                  << "added at" << index;
+        emit updateStatusBar(tr("Done"), true);
     }
 }
 

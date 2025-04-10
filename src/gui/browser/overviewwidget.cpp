@@ -39,6 +39,7 @@ OverviewWidget::OverviewWidget(QWidget *parent)
     ui->verticalLayout_2->addWidget(m_resultsToolbar);
 
     connect(ui->resultsWidget, &BuildResultTreeWidget::customContextMenuRequested, this, &OverviewWidget::slotContextMenuResults);
+    connect(ui->resultsWidget, &BuildResultTreeWidget::updateStatusBar, this, &OverviewWidget::updateStatusBar);
     connect(this, &OverviewWidget::finishedParsingResultList, ui->resultsWidget, &BuildResultTreeWidget::finishedAddingResults);
 
     QItemSelectionModel *buildResultsSelectionModel = ui->resultsWidget->selectionModel();
@@ -66,11 +67,12 @@ void OverviewWidget::setResultsMenu(QMenu *resultsMenu)
 
 void OverviewWidget::setLatestRevision(QSharedPointer<OBSRevision> revision)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     uint unixTime = revision->getTime();
     QDateTime dateTime = QDateTime::fromSecsSinceEpoch(qint64(unixTime), QTimeZone::UTC);
     QString dateStr = dateTime.toString("dd/MM/yyyy H:mm");
     ui->latestRevision->setText(dateStr);
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void OverviewWidget::setPackageCount(const QString &packageCount)
@@ -154,6 +156,7 @@ void OverviewWidget::setMetaConfig(QSharedPointer<OBSMetaConfig> metaConfig)
         m_resultsToolbar->setVisible(true);
         m_projectsToolbar->setDisabled(false);
         m_resultsToolbar->setDisabled(false);
+        emit updateStatusBar(tr("Done"), true);
     } else {
         // overviewProject = metaConfig->getName();
         ui->packages->setVisible(true);
@@ -163,6 +166,7 @@ void OverviewWidget::setMetaConfig(QSharedPointer<OBSMetaConfig> metaConfig)
         m_resultsToolbar->setVisible(false);
         m_projectsToolbar->setDisabled(false);
         m_resultsToolbar->setDisabled(false);
+        emit updateStatusBar(tr("Done"), true);
     }
     ui->link->setVisible(pkgMetaConfig);
     QString description = metaConfig->getDescription();
@@ -195,6 +199,7 @@ void OverviewWidget::onProjectNotFound(QSharedPointer<OBSStatus> status)
     qDebug() << Q_FUNC_INFO;
     clear();
     m_projectsToolbar->setDisabled(true);
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void OverviewWidget::onPackageNotFound(QSharedPointer<OBSStatus> status)
@@ -202,6 +207,7 @@ void OverviewWidget::onPackageNotFound(QSharedPointer<OBSStatus> status)
     qDebug() << Q_FUNC_INFO;
     m_projectsToolbar->setDisabled(true);
     m_resultsToolbar->setDisabled(true);
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void OverviewWidget::slotContextMenuResults(const QPoint &point)

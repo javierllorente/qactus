@@ -55,6 +55,7 @@ void Bookmarks::loadBookmarks(QSharedPointer<OBSPerson> person)
     for (QString entry : person->getWatchList()) {
         addItem(entry);
     }
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void Bookmarks::addBookmark(const QString &project)

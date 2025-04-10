@@ -60,6 +60,7 @@ private:
 signals:
     void buildResultSelectionChanged();
     void finishedParsingResultList(QList<QSharedPointer<OBSResult>> resultList);
+    void updateStatusBar(const QString &message, bool progressBarHidden);
 
 public slots:
     void setMetaConfig(QSharedPointer<OBSMetaConfig> metaConfig);

@@ -43,6 +43,9 @@ private:
     int m_logicalIndex;
     Qt::SortOrder m_order;
 
+signals:
+    void updateStatusBar(const QString &message, bool progressBarHidden);
+
 public slots:
     void finishedAddingResults();
 

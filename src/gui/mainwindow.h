@@ -29,6 +29,7 @@
 #include <QToolButton>
 #include <QFileDialog>
 #include <QSharedPointer>
+ #include <QAtomicInt>
 #include "obs.h"
 #include "trayicon.h"
 #include "configure.h"
@@ -63,12 +64,10 @@ private:
     Ui::MainWindow *ui;
 
     OBS *obs;
-
     QProgressBar *progressBar;
-
     TrayIcon *trayIcon;
     bool m_notify;
-
+    QAtomicInt runningTasks;
 
     QAction *action_createRequest;
     QAction *action_Branch_package;

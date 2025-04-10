@@ -30,8 +30,9 @@ MonitorRepositoryTab::~MonitorRepositoryTab()
 
 void MonitorRepositoryTab::refresh()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
     m_obs->getProjectResults(m_title);
+    emit updateStatusBar(tr("Getting build statuses..."), false);
 }
 
 bool MonitorRepositoryTab::hasSelection()
@@ -79,6 +80,7 @@ void MonitorRepositoryTab::slotAddResultList(QList<QSharedPointer<OBSResult>> re
             }
         }
     }
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void MonitorRepositoryTab::checkForResultListChanges(QList<QSharedPointer<OBSResult>> resultList)

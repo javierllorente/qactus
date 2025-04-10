@@ -109,6 +109,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
     connect(ui->packagesWidget, &PackageTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuPackages);
     connect(ui->filesWidget, &FileTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuFiles);
     connect(ui->overviewWidget, &OverviewWidget::buildResultSelectionChanged, this, &Browser::buildResultSelectionChanged);
+    connect(ui->overviewWidget, &OverviewWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
     connect(ui->filesWidget, &FileTreeWidget::droppedFile, this, &Browser::uploadFile);
 
@@ -451,6 +452,7 @@ void Browser::handleProjectTasks()
         case 0:
             ui->overviewWidget->clear();
             m_obs->getProjectMetaConfig(getLocationProject());
+            emit updateStatusBar(tr("Getting project data..."), false);
         break;
         case 3:
             getProjectRequests(getLocationProject());
@@ -469,7 +471,9 @@ void Browser::handlePackageTasks()
         case 0:
             ui->overviewWidget->clear();
             m_obs->getPackageMetaConfig(prj, pkg);
+            emit updateStatusBar(tr("Getting package data..."), false);
             m_obs->getLatestRevision(prj, pkg);
+            emit updateStatusBar(tr("Getting latest revision..."), false);
             getBuildResults(prj, pkg);
             break;
         case 1:
@@ -681,7 +685,7 @@ void Browser::getPackages(const QString &project)
 void Browser::getRevisions(const QString &project, const QString &package)
 {
     qDebug() << __PRETTY_FUNCTION__ << project << package;
-    emit updateStatusBar(tr("Getting revisions.."), false);
+    emit updateStatusBar(tr("Getting revisions..."), false);
     ui->revisionsWidget->clearModel();
     m_obs->getRevisions(project, package);
 }
@@ -735,7 +739,9 @@ void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const 
         switch (ui->tabWidget->currentIndex()) {
             case 0:
                 m_obs->getPackageMetaConfig(currentProject, currentPackage);
+                emit updateStatusBar(tr("Getting package data..."), false);
                 m_obs->getLatestRevision(currentProject, currentPackage);
+                emit updateStatusBar(tr("Getting latest revision..."), false);
                 getBuildResults(currentProject, currentPackage);
                 break;
             case 1:
@@ -788,9 +794,12 @@ void Browser::slotTabIndexChanged(int index)
             case 0:
                 if (currentPackage.isEmpty() && !ui->overviewWidget->isDataLoaded()) {
                     m_obs->getProjectMetaConfig(currentProject);
+                    emit updateStatusBar(tr("Getting project data..."), false);
                 } else if (!currentPackage.isEmpty() &&  !ui->overviewWidget->isDataLoaded()) {
                     m_obs->getPackageMetaConfig(currentProject, currentPackage);
+                    emit updateStatusBar(tr("Getting package data..."), false);
                     m_obs->getLatestRevision(currentProject, currentPackage);
+                    emit updateStatusBar(tr("Getting latest revision..."), false);
                     getBuildResults(currentProject, currentPackage);
                 }
                 break;
@@ -831,7 +840,6 @@ void Browser::getPackageFiles(const QString &package)
     ui->filesWidget->clearModel();
 
     m_obs->getFiles(currentProject, package);
-    emit updateStatusBar(tr("Getting package data..."), false);
 }
 
 void Browser::getBuildResults(const QString &project, const QString &package)
@@ -1073,6 +1081,5 @@ void Browser::slotDeleteFile(QSharedPointer<OBSStatus> status)
 
 void Browser::finishedAddingResults()
 {
-   qDebug() << __PRETTY_FUNCTION__;
-   emit updateStatusBar(tr("Done"), true);
+   qDebug() << Q_FUNC_INFO;
 }
