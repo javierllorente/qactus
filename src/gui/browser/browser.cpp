@@ -848,7 +848,7 @@ void Browser::getBuildResults(const QString &project, const QString &package)
     emit updateStatusBar(tr("Getting build results..."), false);
 
     ui->overviewWidget->clearResultsModel();
-    m_obs->getAllBuildStatus(project, package);
+    m_obs->getPackageResults(project, package);
 }
 
 void Browser::slotContextMenuFiles(const QPoint &point)

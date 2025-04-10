@@ -144,7 +144,7 @@ signals:
     void finishedParsingDistribution(QSharedPointer<OBSDistribution> distribution);
 
 public slots:
-    void getAllBuildStatus(const QString &project, const QString &package);
+    void getPackageResults(const QString &project, const QString &package);
     void onChangeRequest(const QString &id, const QString &comments, bool accepted);
     void createRequest(const QByteArray &data);
     void createProject(const QString &project, const QByteArray &data);

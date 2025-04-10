@@ -21,7 +21,7 @@ MonitorPackagesTab::MonitorPackagesTab(QWidget *parent, const QString &title, OB
 {
     setAcceptDrops(true);
 
-    connect(this, &MonitorPackagesTab::obsUrlDropped, m_obs, &OBS::getAllBuildStatus);
+    connect(this, &MonitorPackagesTab::obsUrlDropped, m_obs, &OBS::getPackageResults);
     connect(m_obs, &OBS::finishedParsingResult, this, &MonitorPackagesTab::addDroppedPackage);
 
     connect(m_obs, &OBS::finishedParsingPackage, this, &MonitorPackagesTab::slotInsertStatus);

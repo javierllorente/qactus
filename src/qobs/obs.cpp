@@ -172,18 +172,18 @@ void OBS::getBuildStatus(const QStringList &stringList, int row)
     obsCore->getBuildStatus(stringList, row);
 }
 
-void OBS::getAllBuildStatus(const QString &project, const QString &package)
+void OBS::getPackageResults(const QString &project, const QString &package)
 {
     //    URL format: https://api.opensuse.org/build/<project>/_result?package=<package>
     QString resource = QString("%1/%2%3").arg(project, "_result?package=", package);
-    obsCore->getAllBuildStatus(resource);
+    obsCore->getResults(resource);
 }
 
 void OBS::getProjectResults(const QString &project)
 {
     //    URL format: https://api.opensuse.org/build/<project>/_result
     QString resource = QString("%1/%2").arg(project, "_result");
-    obsCore->getAllBuildStatus(resource);
+    obsCore->getResults(resource);
 }
 
 void OBS::getLatestRevision(const QString &project, const QString &package)

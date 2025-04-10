@@ -55,7 +55,7 @@ RequestViewer::RequestViewer(QWidget *parent, OBS *obs, QSharedPointer<OBSReques
 
         // Get package build results
         showTabBuildResults(true);
-        m_obs->getAllBuildStatus(m_request->getSourceProject(), m_request->getSourcePackage());
+        m_obs->getPackageResults(m_request->getSourceProject(), m_request->getSourcePackage());
     } else {
         setDiff(m_request->getActionType() + " " + m_request->getTarget());
     }

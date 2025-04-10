@@ -62,7 +62,7 @@ public:
     void getRevisions(const QString &project, const QString &package);
     void getLatestRevision(const QString &project, const QString &package);
     void getLink(const QString &project, const QString &package);
-    void getAllBuildStatus(const QString &resource);
+    void getResults(const QString &resource);
     void changeSubmitRequest(const QString &resource, const QByteArray &data);
     void packageSearch(const QString &package);
     void request(const QString &resource, int row);

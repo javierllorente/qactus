@@ -284,7 +284,7 @@ void OBSCore::getLink(const QString &project, const QString &package)
     reply->setProperty("reqtype", OBSCore::Link);
 }
 
-void OBSCore::getAllBuildStatus(const QString &resource)
+void OBSCore::getResults(const QString &resource)
 {
     QNetworkReply *reply = requestBuild(resource);
     reply->setProperty("reqtype", OBSCore::BuildStatusList);
