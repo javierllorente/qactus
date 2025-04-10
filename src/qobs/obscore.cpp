@@ -252,7 +252,7 @@ void OBSCore::getPackages(const QString &resource)
 
 void OBSCore::getFiles(const QString &project, const QString &package)
 {
-    QString resource = QString("/%1/%2").arg(project, package);
+    QString resource = QString("%1/%2").arg(project, package);
     QNetworkReply *reply = requestSource(resource);
     reply->setProperty("reqtype", OBSCore::FileList);
     reply->setProperty("prjfile", project);
