@@ -652,7 +652,7 @@ void Browser::setupModels()
 
     ui->packagesWidget->createModel();
     packagesSelectionModel = ui->packagesWidget->selectionModel();
-    connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::slotPackageSelectionChanged);
+    connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::onPackageSelectionChanged);
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, ui->overviewWidget, &OverviewWidget::onPackageSelectionChanged);
     connect(packagesSelectionModel, &QItemSelectionModel::selectionChanged, this, &Browser::packageSelectionChanged);
 }
@@ -718,7 +718,7 @@ void Browser::onProjectSelectionChanged()
     }
 }
 
-void Browser::slotPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void Browser::onPackageSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     qDebug() << Q_FUNC_INFO;
     Q_UNUSED(deselected)
