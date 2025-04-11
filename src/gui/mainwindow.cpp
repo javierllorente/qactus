@@ -614,14 +614,13 @@ void MainWindow::createActions()
 
 void MainWindow::monitorProject()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << Q_FUNC_INFO;
 
     if (!monitor->tabWidgetContains(browser->getCurrentProject())) {
         monitor->addTab(browser->getCurrentProject());
     }
 
     obs->getProjectResults(browser->getCurrentProject());
-    emit updateStatusBar(tr("Adding project to monitor..."), false);
 }
 
 void MainWindow::createStatusBar()
