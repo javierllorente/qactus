@@ -652,20 +652,19 @@ void OBSXmlReader::parseRevisionList(const QString &project, const QString &pack
 void OBSXmlReader::parseLatestRevision(const QString &project, const QString &package, const QString &data)
 {
     QXmlStreamReader xml(data);
-    QSharedPointer<OBSRevision> revision;
+    QSharedPointer<OBSRevision> revision = QSharedPointer<OBSRevision>(new OBSRevision());
 
     while (!xml.atEnd() && !xml.hasError()) {
         xml.readNext();
         if (xml.isStartElement()) {
             if (xml.name().toString() == "revision") {
-                revision = QSharedPointer<OBSRevision>(new OBSRevision());
                 revision->setProject(project);
                 revision->setPackage(package);
             }
             parseRevision(xml, revision);
         }
 
-        if (xml.name().toString() == "revision" && xml.isEndElement()) {
+        if (xml.name().toString() == "revisionlist" && xml.isEndElement()) {
             emit finishedParsingLatestRevision(revision);
         }
     }
