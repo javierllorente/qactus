@@ -78,7 +78,6 @@ int Monitor::addTab(const QString &title)
     MonitorTab *tab = new MonitorRepositoryTab(ui->tabWidget, title, m_obs);
     setupTabConnections(tab);
     return ui->tabWidget->addTab(tab, title);
-    emit updateStatusBar(tr("Tab for ") + title + tr(" added"), true);
 }
 
 void Monitor::readSettings()
