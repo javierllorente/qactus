@@ -92,7 +92,6 @@ QList<OBSResult> BuildResultTreeWidget::getBuilds() const
 {
     QStandardItemModel* itemModel = qobject_cast<QStandardItemModel *>(model());
     QList<OBSResult> builds;
-    int rowCount = itemModel->rowCount();
     for (int i = 0; i < itemModel->rowCount() - 1; i++) {
         OBSResult build;
         build.setProject(m_project);
