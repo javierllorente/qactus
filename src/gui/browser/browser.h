@@ -68,6 +68,7 @@ public slots:
     void getProjects();
     void goHome();
     QString getCurrentProject() const;
+    QList<OBSResult> getBuilds() const;
     void load(const QString &location);
     void goTo(const QString &location);
     void handleProjectTasks();

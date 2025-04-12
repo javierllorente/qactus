@@ -109,6 +109,31 @@ bool MonitorPackagesTab::hasSelection()
     }
 }
 
+bool MonitorPackagesTab::contains(const QString &project, const QString &package)
+{
+    int rows = ui->treeWidget->topLevelItemCount();
+    for (int i = 0; i < rows; i++) {
+        if (ui->treeWidget->topLevelItem(i)->text(0) == project
+            && ui->treeWidget->topLevelItem(i)->text(1) == package) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void MonitorPackagesTab::addPackage(const QString &package, const QList<OBSResult> &builds)
+{
+    foreach (auto build, builds) {
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
+        item->setText(0, build.getProject());
+        item->setText(1, package);
+        item->setText(2, build.getRepository());
+        item->setText(3, build.getArch());
+        ui->treeWidget->addTopLevelItem(item);
+    }
+}
+
 void MonitorPackagesTab::dragEnterEvent(QDragEnterEvent *event)
 {
     event->acceptProposedAction();

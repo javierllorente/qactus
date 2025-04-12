@@ -46,6 +46,7 @@ void BuildResultTreeWidget::deleteModel()
     if (sourceModelBuildResults) {
         delete sourceModelBuildResults;
         sourceModelBuildResults = nullptr;
+        m_project.clear();
     }
 }
 
@@ -54,6 +55,9 @@ void BuildResultTreeWidget::addResult(QSharedPointer<OBSResult> result)
     QStandardItemModel *resultModel = static_cast<QStandardItemModel*>(model());
 
     if (resultModel) {
+        if (m_project.isEmpty()) {
+            m_project = result->getProject();
+        }
         QStandardItem *itemRepository = new QStandardItem(result->getRepository());
         QStandardItem *itemArch = new QStandardItem(result->getArch());
 
@@ -84,10 +88,34 @@ bool BuildResultTreeWidget::hasSelection()
     }
 }
 
+QList<OBSResult> BuildResultTreeWidget::getBuilds() const
+{
+    QStandardItemModel* itemModel = qobject_cast<QStandardItemModel *>(model());
+    QList<OBSResult> builds;
+    int rowCount = itemModel->rowCount();
+    for (int i = 0; i < itemModel->rowCount() - 1; i++) {
+        OBSResult build;
+        build.setProject(m_project);
+        QStandardItem *repositoryItem = itemModel->item(i, 0);
+        if (repositoryItem) {
+            QVariant repository = repositoryItem->data(Qt::DisplayRole);
+            build.setRepository(repository.toString());
+        }
+        QStandardItem *archItem = itemModel->item(i, 1);
+        if (archItem) {
+            QVariant arch = archItem->data(Qt::DisplayRole);
+            build.setArch(arch.toString());
+        }
+        builds.append(build);
+    }
+    return builds;
+}
+
 void BuildResultTreeWidget::clearModel()
 {
     model()->removeRows(0, model()->rowCount());
     selectionModel()->clearSelection();
+    m_project.clear();
 }
 
 QString BuildResultTreeWidget::getCurrentRepository() const

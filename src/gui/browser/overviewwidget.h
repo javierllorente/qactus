@@ -44,6 +44,7 @@ public:
     void addResult(QSharedPointer<OBSResult> result);
     QString getCurrentRepository() const;
     QString getCurrentArch() const;
+    QList<OBSResult> getBuilds() const;
     bool hasResultSelection();
     void clear();
     void clearResultsModel();

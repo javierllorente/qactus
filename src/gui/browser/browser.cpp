@@ -393,6 +393,11 @@ QString Browser::getCurrentProject() const
     return currentProject;
 }
 
+QList<OBSResult> Browser::getBuilds() const
+{
+    return ui->overviewWidget->getBuilds();
+}
+
 void Browser::load(const QString &location)
 {
     if (location.isEmpty()) {

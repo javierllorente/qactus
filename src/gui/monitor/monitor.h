@@ -33,8 +33,10 @@ public:
     ~Monitor();
     bool hasPackageSelection();
     void refresh();
+    bool packagesTabContains(const QString &project, const QString &package);
     bool tabWidgetContains(const QString &tabText);
     int addTab(const QString &title);
+    void addPackage(const QString &package, const QList<OBSResult> &builds);
 
 private:
     Ui::Monitor *ui;

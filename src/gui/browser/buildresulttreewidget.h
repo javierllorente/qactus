@@ -33,6 +33,7 @@ public:
     void deleteModel();
     void addResult(QSharedPointer<OBSResult> result);
     bool hasSelection();
+    QList<OBSResult> getBuilds() const;
     void clearModel();
     QString getCurrentRepository() const;
     QString getCurrentArch() const;
@@ -42,6 +43,7 @@ private:
     bool firstTimeBuildResultsDisplayed;
     int m_logicalIndex;
     Qt::SortOrder m_order;
+    QString m_project;
 
 signals:
     void updateStatusBar(const QString &message, bool progressBarHidden);

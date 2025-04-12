@@ -95,6 +95,11 @@ QString OverviewWidget::getCurrentArch() const
     return ui->resultsWidget->getCurrentArch();
 }
 
+QList<OBSResult> OverviewWidget::getBuilds() const
+{
+    return ui->resultsWidget->getBuilds();
+}
+
 bool OverviewWidget::hasResultSelection()
 {
     return ui->resultsWidget->hasSelection();

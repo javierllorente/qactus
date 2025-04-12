@@ -228,6 +228,7 @@ void MainWindow::setupActions()
     action_linkPackage->setEnabled(packageSelected);
     action_copyPackage->setEnabled(packageSelected);
     action_UploadFile->setEnabled(packageSelected);
+    action_MonitorPackage->setEnabled(packageSelected);
     actionDelete_package->setEnabled(packageSelected);
     actionProperties_package->setEnabled(packageSelected);
     action_ReloadFiles->setEnabled(packageSelected);
@@ -497,10 +498,15 @@ void MainWindow::createActions()
     action_DownloadFile->setIcon(QIcon::fromTheme("download"));
     connect(action_DownloadFile, &QAction::triggered, browser, &Browser::downloadFile);
 
-    // Monitor project action
+    // Monitor actions
     action_MonitorProject = new QAction(tr("&Monitor project"), this);
     action_MonitorProject->setIcon(QIcon::fromTheme("mail-thread-watch"));
     connect(action_MonitorProject, &QAction::triggered, this, &MainWindow::monitorProject);
+
+    action_MonitorPackage = new QAction(tr("&Monitor package"), this);
+    action_MonitorPackage->setIcon(QIcon::fromTheme("mail-thread-watch"));
+    connect(action_MonitorPackage, &QAction::triggered, this, &MainWindow::monitorPackage);
+
 
     // Get build log action
     action_getBuildLog = new QAction(tr("&Get build log"), this);
@@ -572,6 +578,7 @@ void MainWindow::createActions()
     treePackagesMenu->addAction(action_linkPackage);
     treePackagesMenu->addAction(action_copyPackage);
     treePackagesMenu->addAction(action_ReloadPackages);
+    treePackagesMenu->addAction(action_MonitorPackage);
     treePackagesMenu->addAction(actionDelete_package);
     treePackagesMenu->addAction(actionProperties_package);
 
@@ -621,6 +628,16 @@ void MainWindow::monitorProject()
     }
 
     obs->getProjectResults(browser->getCurrentProject());
+}
+
+void MainWindow::monitorPackage()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    if (!monitor->packagesTabContains(browser->getCurrentProject(),
+                                      browser->getLocationPackage())) {
+        monitor->addPackage(browser->getLocationPackage(), browser->getBuilds());
+    }
 }
 
 void MainWindow::createStatusBar()

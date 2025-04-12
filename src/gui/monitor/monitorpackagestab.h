@@ -34,6 +34,8 @@ public:
     virtual ~MonitorPackagesTab();
     void refresh();
     bool hasSelection();
+    bool contains(const QString &project, const QString &package);
+    void addPackage(const QString &package, const QList<OBSResult> &builds);
 
 signals:
     void obsUrlDropped(const QString &project, const QString &package);

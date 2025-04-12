@@ -89,6 +89,7 @@ private:
     QAction *action_DownloadFile;
 
     QAction *action_MonitorProject;
+    QAction *action_MonitorPackage;
     QAction *action_getBuildLog;
 
     QAction *actionDelete_project;
@@ -120,6 +121,7 @@ private:
     RequestBox *requestBox;
 
     void monitorProject();
+    void monitorPackage();
 
     void createStatusBar();
 

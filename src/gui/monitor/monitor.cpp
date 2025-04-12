@@ -55,6 +55,13 @@ void Monitor::refresh()
     }
 }
 
+bool Monitor::packagesTabContains(const QString &project, const QString &package)
+{
+    MonitorPackagesTab *monitorPackagesTab = dynamic_cast<MonitorPackagesTab *>(
+        ui->tabWidget->widget(0));
+    return monitorPackagesTab->contains(project, package);
+}
+
 bool Monitor::tabWidgetContains(const QString &tabText)
 {
     for (int i=0; i<ui->tabWidget->count(); i++) {
@@ -78,6 +85,15 @@ int Monitor::addTab(const QString &title)
     MonitorTab *tab = new MonitorRepositoryTab(ui->tabWidget, title, m_obs);
     setupTabConnections(tab);
     return ui->tabWidget->addTab(tab, title);
+}
+
+void Monitor::addPackage(const QString &package, const QList<OBSResult> &builds)
+{
+    emit updateStatusBar(tr("Adding package ") + package + " ...", false);
+    MonitorPackagesTab *monitorPackagesTab = dynamic_cast<MonitorPackagesTab *>(
+        ui->tabWidget->widget(0));
+    monitorPackagesTab->addPackage(package, builds);
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void Monitor::readSettings()
