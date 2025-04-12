@@ -49,13 +49,13 @@ void BuildLogViewer::scrollToBottom()
 
 void BuildLogViewer::findText()
 {
-    const int widgetIndex = 0;
+    const int widgetIndex = 1;
     SearchWidget *searchWidget = nullptr;
 
-    if (ui->verticalLayout->count() == 2) {
+    if (ui->verticalLayout->count() == 1) {
         searchWidget = new SearchWidget(this, ui->plainTextEdit);
         ui->verticalLayout->insertWidget(widgetIndex, searchWidget);
-    } else if (ui->verticalLayout->count() == 3) {
+    } else if (ui->verticalLayout->count() == 2) {
         searchWidget = static_cast<SearchWidget *>(ui->verticalLayout->itemAt(widgetIndex)->widget());
     }
     searchWidget->setup();
