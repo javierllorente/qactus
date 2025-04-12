@@ -24,9 +24,7 @@ SearchWidget::SearchWidget(QWidget *parent, QPlainTextEdit *plainTextEdit) :
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-#if QT_VERSION >= 0x050200
     ui->lineEdit->setClearButtonEnabled(true);
-#endif
 
     QShortcut *findNextAction = new QShortcut(QKeySequence("F3"), this);
     QShortcut *findPreviousAction = new QShortcut(QKeySequence("Shift+F3"), this);
