@@ -638,6 +638,7 @@ void MainWindow::monitorPackage()
                                       browser->getLocationPackage())) {
         monitor->addPackage(browser->getLocationPackage(), browser->getBuilds());
     }
+    monitor->refresh();
 }
 
 void MainWindow::createStatusBar()
