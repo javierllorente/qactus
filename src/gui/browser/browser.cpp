@@ -703,6 +703,9 @@ void Browser::onProjectSelectionChanged()
     if (!currentProject.isEmpty() && currentPackage.isEmpty()) {
         ui->tabWidget->setTabVisible(1, false);
         ui->tabWidget->setTabVisible(2, false);
+        if (!m_packagesToolbar->isEnabled()) {
+            m_packagesToolbar->setEnabled(true);
+        }
     }
 }
 
