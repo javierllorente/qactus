@@ -44,6 +44,7 @@ public:
 
 signals:
     void changeRequest(const QString &id, const QString &comments, bool accepted);
+    void updateStatusBar(const QString &message, bool progressBarHidden);
 
 private slots:
     void on_acceptPushButton_clicked();

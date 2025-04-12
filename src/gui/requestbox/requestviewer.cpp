@@ -15,6 +15,7 @@
  */
 #include "requestviewer.h"
 #include "ui_requestviewer.h"
+#include <QTimer>
 
 RequestViewer::RequestViewer(QWidget *parent, OBS *obs, QSharedPointer<OBSRequest> request) :
     QDialog(parent),
@@ -55,6 +56,9 @@ RequestViewer::RequestViewer(QWidget *parent, OBS *obs, QSharedPointer<OBSReques
 
         // Get package build results
         showTabBuildResults(true);
+        QTimer::singleShot(0, this, [this]() {
+            emit updateStatusBar(tr("Getting build results..."), false);
+        });
         m_obs->getPackageResults(m_request->getSourceProject(), m_request->getSourcePackage());
     } else {
         setDiff(m_request->getActionType() + " " + m_request->getTarget());

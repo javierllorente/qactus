@@ -119,5 +119,6 @@ void RequestsWidget::changeRequestState()
     qDebug() << Q_FUNC_INFO;
     QSharedPointer<OBSRequest> request = ui->requestTreeWidget->getCurrentRequest();
     QScopedPointer<RequestViewer> requestViewer(new RequestViewer(this, obs, request));
+    connect(requestViewer.get(), &RequestViewer::updateStatusBar, this, &RequestsWidget::updateStatusBar);
     requestViewer->exec();
 }
