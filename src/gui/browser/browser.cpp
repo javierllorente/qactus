@@ -305,21 +305,9 @@ void Browser::launchMetaConfigEditor(const QString &project, const QString &pack
 
 void Browser::reloadPackages()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    getPackages(currentProject);
-
-    // Clear location (package), current package, overview, files and revisions
-    m_locationBar->setText(currentProject);
-    currentPackage.clear();
-    ui->overviewWidget->clear();
-    ui->overviewWidget->clearResultsModel();
-    ui->filesWidget->clearModel();
-    ui->revisionsWidget->clearModel();
-    ui->requestsWidget->clearModel();
-    ui->requestsWidget->clearDescription();
-
+    qDebug() << Q_FUNC_INFO;
+    goTo(currentProject);
     emit packageSelectionChanged();
-    ui->filesWidget->setAcceptDrops(false);
 }
 
 void Browser::reloadFiles()
