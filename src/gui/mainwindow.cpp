@@ -333,9 +333,10 @@ void MainWindow::setNotify(bool notify)
 void MainWindow::onUpdateStatusBar(const QString &message, bool progressBarHidden)
 {
     qDebug() << Q_FUNC_INFO << "Running tasks:" << runningTasks.loadAcquire();
-    // Note: 1 means there are no tasks runnings. A very cute API :-)
+    qDebug() << Q_FUNC_INFO << message << progressBarHidden;
 
     if (progressBarHidden) {
+        // Note: 1 means there are no tasks runnings. A very cute API :-)
         if (runningTasks.fetchAndSubRelaxed(1) == 1) {
             ui->statusbar->showMessage(message);
             progressBar->setHidden(progressBarHidden);
