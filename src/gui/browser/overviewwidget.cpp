@@ -143,9 +143,14 @@ void OverviewWidget::setMetaConfig(QSharedPointer<OBSMetaConfig> metaConfig)
         title = metaConfig->getName();
     }
     ui->title->setText(title);
+    QMargins margins = ui->horizontalLayout->contentsMargins();
 
     OBSPkgMetaConfig *pkgMetaConfig = dynamic_cast<OBSPkgMetaConfig *>(metaConfig.data());
     if (pkgMetaConfig) {
+        if (margins.top() != 0) {
+            margins.setTop(0);
+            ui->horizontalLayout->setContentsMargins(margins);
+        }
         QString url = pkgMetaConfig->getUrl().toString();
         ui->link->setText(!url.isEmpty() ? "<a href=\"" + url + "\">" + url + "</a>" : "");
         ui->link->setVisible(!url.isEmpty());
@@ -160,6 +165,10 @@ void OverviewWidget::setMetaConfig(QSharedPointer<OBSMetaConfig> metaConfig)
         emit updateStatusBar(tr("Done"), true);
     } else {
         // overviewProject = metaConfig->getName();
+        if (margins.top() != 20) {
+            margins.setTop(20);
+            ui->horizontalLayout->setContentsMargins(margins);
+        }
         ui->packages->setVisible(true);
         ui->packagesCount->setVisible(true);
 
