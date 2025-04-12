@@ -637,8 +637,8 @@ void MainWindow::monitorPackage()
     if (!monitor->packagesTabContains(browser->getCurrentProject(),
                                       browser->getLocationPackage())) {
         monitor->addPackage(browser->getLocationPackage(), browser->getBuilds());
+        monitor->refresh();
     }
-    monitor->refresh();
 }
 
 void MainWindow::createStatusBar()
