@@ -1,7 +1,7 @@
 #
 # spec file for package qactus
 #
-# Copyright (c) 2015 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright (c) 2015-2025 Javier Llorente <javier@opensuse.org>
 # Copyright (c) 2018 Neal Gompa <ngompa13@gmail.com>.
 #
 # All modifications and additions to the file contributed by third parties
