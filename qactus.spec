@@ -29,14 +29,12 @@ License:        Apache-2.0
 Group:          Development/Tools/Building
 URL:            https://github.com/javierllorente/qactus
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
-BuildRequires:  cmake >= 3.5
-BuildRequires:  cmake(Qt5Core)
-BuildRequires:  cmake(Qt5Gui)
-BuildRequires:  cmake(Qt5Widgets)
-BuildRequires:  cmake(Qt5Network)
-# Needed to ensure Qt5Keychain can be used properly
-BuildRequires:  cmake(Qt5DBus)
-BuildRequires:  cmake(Qt5Keychain)
+BuildRequires:  cmake >= 3.16
+BuildRequires:  cmake(Qt6Core)
+BuildRequires:  cmake(Qt6Gui)
+BuildRequires:  cmake(Qt6Widgets)
+BuildRequires:  cmake(Qt6Network)
+BuildRequires:  cmake(Qt6Keychain)
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  pkgconfig
 BuildRequires:  update-desktop-files
