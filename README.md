@@ -3,7 +3,7 @@ qactus
 
 Qactus is a Qt-based OBS client
 
-Copyright (C) 2010-2023 Javier Llorente <javier@opensuse.org>
+Copyright (C) 2010-2025 Javier Llorente <javier@opensuse.org>
 
 Qactus enables desktop users to explore and maintain an OBS server's projects and packages, be notified on builds' status changes and manage requests.
 The name Qactus sprung into existence when Javier and Sivan were discussing the name and scope of the project (will it just provide status?) which through Sivan's IRC winter typing turned out as "staqtus" which sounded like Qactus to Javier.
@@ -24,9 +24,8 @@ QtKeychain
 Building Qactus
 ------------
 ```
-cd qactus
-cmake .
-make
+cmake -B build
+cmake --build build
 ```
 
 Contributors
@@ -37,7 +36,7 @@ License
 -------
 This application is licensed under the Apache License 2.0. See LICENSE for more details.
 
-The icons come from the Oxygen Project (http://www.oxygen-icons.org/), with the exception of the tray icon which comes from the Open Build Service (http://openbuildservice.org/).
+The icons come from the Oxygen Project (http://www.oxygen-icons.org/), with the exception of application icon which has been designed by Javier Llorente
 
 
 
