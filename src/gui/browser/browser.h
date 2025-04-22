@@ -109,6 +109,7 @@ private:
     QToolBar *m_filesToolbar;
     bool m_loaded;
     QString m_homepage;
+    QString m_downloadPath;
 
 private slots:
     void slotContextMenuPackages(const QPoint &point);

@@ -493,6 +493,7 @@ void Browser::downloadFile()
 {
     QString currentPackage = ui->packagesWidget->getCurrentPackage();
     QString currentFile = ui->filesWidget->getCurrentFile();
+    m_downloadPath = QFileDialog::getSaveFileName(this, tr("Save as"), currentFile);
     QString message = QString(tr("Downloading %1/%2/%3...")).arg(currentProject,
                                                              currentPackage, currentFile);
     emit updateStatusBar(message, false);
@@ -964,9 +965,7 @@ void Browser::onPackageBranched(QSharedPointer<OBSStatus> status)
 
 void Browser::onFileFetched(const QString &fileName, const QByteArray &data)
 {
-    QString path = QFileDialog::getSaveFileName(this, tr("Save as"), fileName);
-    QFile file(path);
-
+    QFile file(m_downloadPath);
     file.open(QIODevice::WriteOnly);
     qint64 bytesWritten = file.write(data);
     file.close();
