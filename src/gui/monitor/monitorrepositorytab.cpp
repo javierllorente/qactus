@@ -19,7 +19,7 @@
 MonitorRepositoryTab::MonitorRepositoryTab(QWidget *parent, const QString &title, OBS *obs) :
     MonitorTab(parent, title, obs)
 {
-    connect(m_obs, &OBS::finishedParsingResultList, this, &MonitorRepositoryTab::slotAddResultList);
+    connect(m_obs, &OBS::finishedParsingResultList, this, &MonitorRepositoryTab::addResultList);
 }
 
 MonitorRepositoryTab::~MonitorRepositoryTab()
@@ -45,7 +45,7 @@ bool MonitorRepositoryTab::hasSelection()
     }
 }
 
-void MonitorRepositoryTab::slotAddResultList(QList<QSharedPointer<OBSResult>> resultList)
+void MonitorRepositoryTab::addResultList(QList<QSharedPointer<OBSResult>> resultList)
 {
     qDebug() << __PRETTY_FUNCTION__;
 

@@ -40,7 +40,7 @@ signals:
     void notifyChanged(bool change);
 
 public slots:
-    void slotAddResultList(QList<QSharedPointer<OBSResult>> resultList);
+    void addResultList(QList<QSharedPointer<OBSResult>> resultList);
 
 private:
     void checkForResultListChanges(QList<QSharedPointer<OBSResult>> resultList);
