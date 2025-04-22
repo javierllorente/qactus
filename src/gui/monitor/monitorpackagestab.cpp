@@ -24,8 +24,8 @@ MonitorPackagesTab::MonitorPackagesTab(QWidget *parent, const QString &title, OB
     connect(this, &MonitorPackagesTab::obsUrlDropped, m_obs, &OBS::getPackageResults);
     connect(m_obs, &OBS::finishedParsingResult, this, &MonitorPackagesTab::addDroppedPackage);
 
-    connect(m_obs, &OBS::finishedParsingPackage, this, &MonitorPackagesTab::slotInsertStatus);
-    connect(ui->treeWidget, &QTreeWidget::itemDoubleClicked, this, &MonitorPackagesTab::slotEditRow);
+    connect(m_obs, &OBS::finishedParsingPackage, this, &MonitorPackagesTab::insertStatus);
+    connect(ui->treeWidget, &QTreeWidget::itemDoubleClicked, this, &MonitorPackagesTab::editRow);
     connect(m_obs, &OBS::finishedParsingResultList, this, &MonitorPackagesTab::onPackagesAdded);
     connect(ui->treeWidget, &QTreeWidget::itemSelectionChanged, this, &MonitorPackagesTab::itemSelectionChanged);
 
@@ -202,7 +202,7 @@ void MonitorPackagesTab::onPackagesAdded()
     }
 }
 
-void MonitorPackagesTab::slotInsertStatus(QSharedPointer<OBSStatus> status, int row)
+void MonitorPackagesTab::insertStatus(QSharedPointer<OBSStatus> status, int row)
 {
     qDebug() << __PRETTY_FUNCTION__;
     QString details = status->getDetails();
@@ -240,7 +240,7 @@ void MonitorPackagesTab::slotInsertStatus(QSharedPointer<OBSStatus> status, int 
     }
 }
 
-void MonitorPackagesTab::slotAddRow()
+void MonitorPackagesTab::addRow()
 {
     qDebug() << __PRETTY_FUNCTION__;
     RowEditor *rowEditor = new RowEditor(this, m_obs);
@@ -259,7 +259,7 @@ void MonitorPackagesTab::slotAddRow()
     rowEditor = nullptr;
 }
 
-void MonitorPackagesTab::slotRemoveRow()
+void MonitorPackagesTab::removeRow()
 {
     qDebug () << __PRETTY_FUNCTION__;
     QList<QTreeWidgetItem *> items = ui->treeWidget->selectedItems();
@@ -277,7 +277,7 @@ void MonitorPackagesTab::slotRemoveRow()
     }
 }
 
-void MonitorPackagesTab::slotEditRow(QTreeWidgetItem *item, int column)
+void MonitorPackagesTab::editRow(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column)
 

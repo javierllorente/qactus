@@ -46,9 +46,9 @@ signals:
 public slots:
     void addDroppedPackage(QSharedPointer<OBSResult> result);
     void onPackagesAdded();
-    void slotInsertStatus(QSharedPointer<OBSStatus> status, int row);
-    void slotAddRow();
-    void slotRemoveRow();
+    void insertStatus(QSharedPointer<OBSStatus> status, int row);
+    void addRow();
+    void removeRow();
 
 private:
     void dragEnterEvent(QDragEnterEvent *event);
@@ -60,7 +60,7 @@ private:
     void writeSettings();
 
 private slots:
-    void slotEditRow(QTreeWidgetItem *item, int column);
+    void editRow(QTreeWidgetItem *item, int column);
     void slotMarkRead(QTreeWidgetItem *item, int column);
 
 };

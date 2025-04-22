@@ -133,8 +133,8 @@ void Monitor::setupPackagesTab()
     MonitorTab *tab = new MonitorPackagesTab(ui->tabWidget, packagesTab, m_obs);
 
     connect(dynamic_cast<MonitorPackagesTab *>(tab), &MonitorPackagesTab::itemSelectionChanged, this, &Monitor::itemSelectionChanged);
-    connect(this, &Monitor::removeRow, dynamic_cast<MonitorPackagesTab *>(tab), &MonitorPackagesTab::slotRemoveRow);
-    connect(this, &Monitor::addRow, dynamic_cast<MonitorPackagesTab *>(tab), &MonitorPackagesTab::slotAddRow);
+    connect(this, &Monitor::removeRow, dynamic_cast<MonitorPackagesTab *>(tab), &MonitorPackagesTab::removeRow);
+    connect(this, &Monitor::addRow, dynamic_cast<MonitorPackagesTab *>(tab), &MonitorPackagesTab::addRow);
     setupTabConnections(tab);
     ui->tabWidget->addTab(tab, packagesTab);
     ui->tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
