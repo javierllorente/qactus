@@ -137,7 +137,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
 
     connect(ui->lineEditFilter, &QLineEdit::textChanged, ui->packagesWidget, &PackageTreeWidget::filterPackages);
 
-    connect(ui->tabWidget, &QTabWidget::currentChanged, this, &Browser::slotTabIndexChanged);
+    connect(ui->tabWidget, &QTabWidget::currentChanged, this, &Browser::onTabIndexChanged);
 
     connect(m_obs, &OBS::finishedParsingRevision, ui->revisionsWidget, &RevisionTreeWidget::addRevision);
     connect(m_obs, &OBS::finishedParsingRevisionList, ui->revisionsWidget, &RevisionTreeWidget::revisionsAdded);
@@ -782,7 +782,7 @@ void Browser::onPackageSelectionChanged(const QItemSelection &selected, const QI
     }
 }
 
-void Browser::slotTabIndexChanged(int index)
+void Browser::onTabIndexChanged(int index)
 {
     qDebug() << __PRETTY_FUNCTION__ << "tabIndex =" <<  index;
     if (!currentProject.isEmpty()) {
