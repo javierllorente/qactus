@@ -54,7 +54,7 @@ public slots:
     void addIncomingRequest(QSharedPointer<OBSRequest> request);
     void incomingRequestsFetched();
     void addOutgoingRequest(QSharedPointer<OBSRequest> request);
-    void orListFetched();
+    void outgoingRequestsFetched();
     void addDeclinedRequest(QSharedPointer<OBSRequest> request);
     void declinedRequestsFetched();
     bool removeIncomingRequest(const QString &id);

@@ -44,9 +44,9 @@ RequestBox::RequestBox(QWidget *parent, OBS *obs) :
     connect(m_obs, &OBS::finishedParsingIncomingRequest, this, &RequestBox::addIncomingRequest);
     connect(m_obs, &OBS::finishedParsingIncomingRequestList, this, &RequestBox::incomingRequestsFetched);
     connect(m_obs, &OBS::finishedParsingOutgoingRequest, this, &RequestBox::addOutgoingRequest);
-    connect(m_obs, &OBS::finishedParsingOutgoingRequestList, this, &RequestBox::orListFetched);
+    connect(m_obs, &OBS::finishedParsingOutgoingRequestList, this, &RequestBox::outgoingRequestsFetched);
     connect(m_obs, &OBS::finishedParsingDeclinedRequest, this, &RequestBox::addDeclinedRequest);
-    connect(m_obs, &OBS::finishedParsingDeclinedRequestList, this, &RequestBox::orListFetched);
+    connect(m_obs, &OBS::finishedParsingDeclinedRequestList, this, &RequestBox::outgoingRequestsFetched);
     connect(m_obs, &OBS::finishedParsingRequestStatus, this, &RequestBox::onStatusFetched);
 
     readSettings();
@@ -97,7 +97,7 @@ void RequestBox::addOutgoingRequest(QSharedPointer<OBSRequest> request)
     outgoingRequestsModel->appendRequest(request);
 }
 
-void RequestBox::orListFetched()
+void RequestBox::outgoingRequestsFetched()
 {
     outgoingRequestsModel->syncRequests();
     emit updateStatusBar(tr("Done"), true);
