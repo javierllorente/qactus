@@ -493,6 +493,9 @@ void Browser::downloadFile()
 {
     QString currentPackage = ui->packagesWidget->getCurrentPackage();
     QString currentFile = ui->filesWidget->getCurrentFile();
+    QString message = QString(tr("Downloading %1/%2/%3...")).arg(currentProject,
+                                                             currentPackage, currentFile);
+    emit updateStatusBar(message, false);
     m_obs->downloadFile(currentProject, currentPackage, currentFile);
 }
 
@@ -968,9 +971,10 @@ void Browser::slotFileFetched(const QString &fileName, const QByteArray &data)
     qint64 bytesWritten = file.write(data);
     file.close();
 
-    if (bytesWritten!=-1) {
+    if (bytesWritten != -1) {
         emit showTrayMessage(APP_NAME, tr("File %1 downloaded successfuly").arg(fileName));
     }
+    emit updateStatusBar(tr("Done"), true);
 }
 
 void Browser::slotBuildLogFetched(const QString &buildLog)
