@@ -129,7 +129,7 @@ QString BuildResultTreeWidget::getCurrentArch() const
     return indexList.at(1).data().toString();
 }
 
-void BuildResultTreeWidget::finishedAddingResults()
+void BuildResultTreeWidget::onResultsAdded()
 {
     qDebug() << __PRETTY_FUNCTION__;
     if (firstTimeBuildResultsDisplayed) {

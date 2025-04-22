@@ -49,7 +49,7 @@ signals:
     void updateStatusBar(const QString &message, bool progressBarHidden);
 
 public slots:
-    void finishedAddingResults();
+    void onResultsAdded();
 
 };
 

@@ -40,7 +40,7 @@ OverviewWidget::OverviewWidget(QWidget *parent)
 
     connect(ui->resultsWidget, &BuildResultTreeWidget::customContextMenuRequested, this, &OverviewWidget::slotContextMenuResults);
     connect(ui->resultsWidget, &BuildResultTreeWidget::updateStatusBar, this, &OverviewWidget::updateStatusBar);
-    connect(this, &OverviewWidget::finishedParsingResultList, ui->resultsWidget, &BuildResultTreeWidget::finishedAddingResults);
+    connect(this, &OverviewWidget::finishedParsingResultList, ui->resultsWidget, &BuildResultTreeWidget::onResultsAdded);
 
     QItemSelectionModel *buildResultsSelectionModel = ui->resultsWidget->selectionModel();
     connect(buildResultsSelectionModel, &QItemSelectionModel::selectionChanged, this, &OverviewWidget::buildResultSelectionChanged);
