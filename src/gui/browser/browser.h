@@ -84,6 +84,14 @@ public slots:
     void deleteFile();
 
 private:
+    void writeSettings();
+    void setupModels();
+    void showNotAuthenticatedMessage();
+    void getPackages(const QString &project);
+    void getRevisions(const QString &project, const QString &package);
+    void getProjectRequests(const QString &project);
+    void getPackageRequests(const QString &project, const QString &package);
+    void launchMetaConfigEditor(const QString &project, const QString &package, MCEMode mode);
     Ui::Browser *ui;
     LocationBar *m_locationBar;
     SearchBar *m_searchBar;
@@ -101,14 +109,6 @@ private:
     QToolBar *m_filesToolbar;
     bool m_loaded;
     QString m_homepage;
-    void writeSettings();
-    void setupModels();
-    void showNotAuthenticatedMessage();
-    void getPackages(const QString &project);
-    void getRevisions(const QString &project, const QString &package);
-    void getProjectRequests(const QString &project);
-    void getPackageRequests(const QString &project, const QString &package);
-    void launchMetaConfigEditor(const QString &project, const QString &package, MCEMode mode);
 
 private slots:
     void slotContextMenuPackages(const QPoint &point);
