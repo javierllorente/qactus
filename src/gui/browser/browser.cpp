@@ -65,20 +65,20 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
 
     connect(m_obs, &OBS::finishedParsingFile, this, &Browser::addFile);
     connect(m_obs, &OBS::finishedParsingFileList, ui->filesWidget, &FileTreeWidget::onFilesAdded);
-    connect(m_obs, &OBS::finishedParsingUploadFileRevision, this, &Browser::slotUploadFile);
-    connect(m_obs, &OBS::cannotUploadFile, this, &Browser::slotUploadFileError);
-    connect(m_obs, &OBS::fileFetched, this, &Browser::slotFileFetched);
+    connect(m_obs, &OBS::finishedParsingUploadFileRevision, this, &Browser::onUploadFile);
+    connect(m_obs, &OBS::cannotUploadFile, this, &Browser::onUploadFileError);
+    connect(m_obs, &OBS::fileFetched, this, &Browser::onFileFetched);
     connect(ui->filesWidget, &FileTreeWidget::updateStatusBar, this, &Browser::updateStatusBar);
 
-    connect(m_obs, &OBS::finishedParsingCreateRequest, this, &Browser::slotCreateRequest);
+    connect(m_obs, &OBS::finishedParsingCreateRequest, this, &Browser::onRequestCreated);
     connect(m_obs, &OBS::finishedParsingCreateRequestStatus, this, &Browser::slotCreateRequestStatus);
-    connect(m_obs, &OBS::finishedParsingBranchPackage, this, &Browser::slotBranchPackage);
+    connect(m_obs, &OBS::finishedParsingBranchPackage, this, &Browser::onPackageBranched);
 
-    connect(m_obs, &OBS::buildLogFetched, this, &Browser::slotBuildLogFetched);
-    connect(m_obs, &OBS::buildLogNotFound, this, &Browser::slotBuildLogNotFound);
-    connect(m_obs, &OBS::projectNotFound, this, &Browser::slotProjectNotFound);
+    connect(m_obs, &OBS::buildLogFetched, this, &Browser::onBuildLogFetched);
+    connect(m_obs, &OBS::buildLogNotFound, this, &Browser::onBuildLogNotFound);
+    connect(m_obs, &OBS::projectNotFound, this, &Browser::onProjectNotFound);
     connect(m_obs, &OBS::projectNotFound, ui->overviewWidget, &OverviewWidget::onProjectNotFound);
-    connect(m_obs, &OBS::packageNotFound, this, &Browser::slotPackageNotFound);
+    connect(m_obs, &OBS::packageNotFound, this, &Browser::onPackageNotFound);
     connect(m_obs, &OBS::packageNotFound, ui->overviewWidget, &OverviewWidget::onPackageNotFound);
     connect(ui->packagesWidget, &PackageTreeWidget::packageNotFound, this, &Browser::slotSelectedPackageNotFound);
 
@@ -98,13 +98,13 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
         }
     });
 
-    connect(m_obs, &OBS::finishedParsingDeletePrjStatus, this, &Browser::slotDeleteProject);
-    connect(m_obs, &OBS::finishedParsingDeletePkgStatus, this, &Browser::slotDeletePackage);
-    connect(m_obs, &OBS::finishedParsingDeleteFileStatus, this, &Browser::slotDeleteFile);
+    connect(m_obs, &OBS::finishedParsingDeletePrjStatus, this, &Browser::onProjectDeleted);
+    connect(m_obs, &OBS::finishedParsingDeletePkgStatus, this, &Browser::onPackageDeleted);
+    connect(m_obs, &OBS::finishedParsingDeleteFileStatus, this, &Browser::onFileDeleted);
 
-    connect(m_obs, &OBS::cannotDeleteProject, this, &Browser::slotDeleteProject);
-    connect(m_obs, &OBS::cannotDeletePackage, this, &Browser::slotDeletePackage);
-    connect(m_obs, &OBS::cannotDeleteFile, this, &Browser::slotDeleteFile);
+    connect(m_obs, &OBS::cannotDeleteProject, this, &Browser::onProjectDeleted);
+    connect(m_obs, &OBS::cannotDeletePackage, this, &Browser::onPackageDeleted);
+    connect(m_obs, &OBS::cannotDeleteFile, this, &Browser::onFileDeleted);
 
     connect(ui->packagesWidget, &PackageTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuPackages);
     connect(ui->filesWidget, &FileTreeWidget::customContextMenuRequested, this, &Browser::slotContextMenuFiles);
@@ -898,7 +898,7 @@ void Browser::uploadFile(const QString &path)
     }
 }
 
-void Browser::slotUploadFile(QSharedPointer<OBSRevision> revision)
+void Browser::onUploadFile(QSharedPointer<OBSRevision> revision)
 {
     qDebug() << __PRETTY_FUNCTION__;
     QString currentPackage = ui->packagesWidget->getCurrentPackage();
@@ -912,7 +912,7 @@ void Browser::slotUploadFile(QSharedPointer<OBSRevision> revision)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotUploadFileError(QSharedPointer<OBSStatus> status)
+void Browser::onUploadFileError(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__ << status->getCode();
     QString title = tr("Warning");
@@ -923,7 +923,7 @@ void Browser::slotUploadFileError(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(statusText, true);
 }
 
-void Browser::slotCreateRequest(QSharedPointer<OBSRequest> request)
+void Browser::onRequestCreated(QSharedPointer<OBSRequest> request)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
@@ -944,11 +944,11 @@ void Browser::slotCreateRequestStatus(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotBranchPackage(QSharedPointer<OBSStatus> status)
+void Browser::onPackageBranched(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    if (status->getCode()=="ok") {
+    if (status->getCode() == "ok") {
         QString newBranch = status->getProject();
         m_locationBar->addProject(newBranch);
         goTo(newBranch);
@@ -962,7 +962,7 @@ void Browser::slotBranchPackage(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotFileFetched(const QString &fileName, const QByteArray &data)
+void Browser::onFileFetched(const QString &fileName, const QByteArray &data)
 {
     QString path = QFileDialog::getSaveFileName(this, tr("Save as"), fileName);
     QFile file(path);
@@ -977,7 +977,7 @@ void Browser::slotFileFetched(const QString &fileName, const QByteArray &data)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotBuildLogFetched(const QString &buildLog)
+void Browser::onBuildLogFetched(const QString &buildLog)
 {
     qDebug() << __PRETTY_FUNCTION__;
     BuildLogViewer *buildLogViewer = new BuildLogViewer(this);
@@ -987,7 +987,7 @@ void Browser::slotBuildLogFetched(const QString &buildLog)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotBuildLogNotFound()
+void Browser::onBuildLogNotFound()
 {
     qDebug() << __PRETTY_FUNCTION__;
     QString title = tr("Information");
@@ -996,7 +996,7 @@ void Browser::slotBuildLogNotFound()
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotProjectNotFound(QSharedPointer<OBSStatus> status)
+void Browser::onProjectNotFound(QSharedPointer<OBSStatus> status)
 {
     qDebug() << Q_FUNC_INFO;
     m_packagesToolbar->setDisabled(true);
@@ -1007,7 +1007,7 @@ void Browser::slotProjectNotFound(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotPackageNotFound(QSharedPointer<OBSStatus> status)
+void Browser::onPackageNotFound(QSharedPointer<OBSStatus> status)
 {
     qDebug() << Q_FUNC_INFO;
     const QString title = tr("Package not found");
@@ -1016,7 +1016,7 @@ void Browser::slotPackageNotFound(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotDeleteProject(QSharedPointer<OBSStatus> status)
+void Browser::onProjectDeleted(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
@@ -1033,7 +1033,7 @@ void Browser::slotDeleteProject(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotDeletePackage(QSharedPointer<OBSStatus> status)
+void Browser::onPackageDeleted(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 
@@ -1051,7 +1051,7 @@ void Browser::slotDeletePackage(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::slotDeleteFile(QSharedPointer<OBSStatus> status)
+void Browser::onFileDeleted(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__;
 

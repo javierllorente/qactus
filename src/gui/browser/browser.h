@@ -121,20 +121,20 @@ private slots:
     void slotContextMenuFiles(const QPoint &point);
     void addFile(QSharedPointer<OBSFile> file);
     void uploadFile(const QString &path);
-    void slotUploadFile(QSharedPointer<OBSRevision> revision);
-    void slotUploadFileError(QSharedPointer<OBSStatus> status);
+    void onUploadFile(QSharedPointer<OBSRevision> revision);
+    void onUploadFileError(QSharedPointer<OBSStatus> status);
     void onResultsAdded();
-    void slotCreateRequest(QSharedPointer<OBSRequest> request);
+    void onRequestCreated(QSharedPointer<OBSRequest> request);
     void slotCreateRequestStatus(QSharedPointer<OBSStatus> status);
-    void slotBranchPackage(QSharedPointer<OBSStatus> status);
-    void slotFileFetched(const QString &fileName, const QByteArray &data);
-    void slotBuildLogFetched(const QString &buildLog);
-    void slotBuildLogNotFound();
-    void slotProjectNotFound(QSharedPointer<OBSStatus> status);
-    void slotPackageNotFound(QSharedPointer<OBSStatus> status);
-    void slotDeleteProject(QSharedPointer<OBSStatus> status);
-    void slotDeletePackage(QSharedPointer<OBSStatus> status);
-    void slotDeleteFile(QSharedPointer<OBSStatus> status);
+    void onPackageBranched(QSharedPointer<OBSStatus> status);
+    void onFileFetched(const QString &fileName, const QByteArray &data);
+    void onBuildLogFetched(const QString &buildLog);
+    void onBuildLogNotFound();
+    void onProjectNotFound(QSharedPointer<OBSStatus> status);
+    void onPackageNotFound(QSharedPointer<OBSStatus> status);
+    void onProjectDeleted(QSharedPointer<OBSStatus> status);
+    void onPackageDeleted(QSharedPointer<OBSStatus> status);
+    void onFileDeleted(QSharedPointer<OBSStatus> status);
 
 signals:
     void projectSelectionChanged();
