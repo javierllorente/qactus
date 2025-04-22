@@ -195,13 +195,14 @@ void MainWindow::onAuthenticated(bool authenticated)
     ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         browser->getProjects();
+        emit updateStatusBar(tr("Getting projects..."), false);
         toggleAddRow(ui->stackedWidget->currentIndex());
         obs->getPerson();
-        emit updateStatusBar(tr("Getting bookmarks..."), true);
+        emit updateStatusBar(tr("Getting bookmarks..."), false);
         on_action_Refresh_triggered();
         delete loginDialog;
         loginDialog = nullptr;
-        emit updateStatusBar(tr("Done"), false);
+        emit updateStatusBar(tr("Done"), true);
     } else {
         emit updateStatusBar(tr("Authentication is required"), true);
         showLoginDialog();
