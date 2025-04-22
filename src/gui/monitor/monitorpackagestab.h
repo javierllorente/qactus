@@ -45,7 +45,7 @@ signals:
 
 public slots:
     void addDroppedPackage(QSharedPointer<OBSResult> result);
-    void finishedAddingPackages();
+    void onPackagesAdded();
     void slotInsertStatus(QSharedPointer<OBSStatus> status, int row);
     void slotAddRow();
     void slotRemoveRow();

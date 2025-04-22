@@ -26,7 +26,7 @@ MonitorPackagesTab::MonitorPackagesTab(QWidget *parent, const QString &title, OB
 
     connect(m_obs, &OBS::finishedParsingPackage, this, &MonitorPackagesTab::slotInsertStatus);
     connect(ui->treeWidget, &QTreeWidget::itemDoubleClicked, this, &MonitorPackagesTab::slotEditRow);
-    connect(m_obs, &OBS::finishedParsingResultList, this, &MonitorPackagesTab::finishedAddingPackages);
+    connect(m_obs, &OBS::finishedParsingResultList, this, &MonitorPackagesTab::onPackagesAdded);
     connect(ui->treeWidget, &QTreeWidget::itemSelectionChanged, this, &MonitorPackagesTab::itemSelectionChanged);
 
     readSettings();
@@ -193,7 +193,7 @@ void MonitorPackagesTab::addDroppedPackage(QSharedPointer<OBSResult> result)
     }
 }
 
-void MonitorPackagesTab::finishedAddingPackages()
+void MonitorPackagesTab::onPackagesAdded()
 {
     qDebug() << __PRETTY_FUNCTION__;
     if (!droppedProject.isEmpty() && !droppedPackage.isEmpty()) {
