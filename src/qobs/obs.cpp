@@ -56,9 +56,9 @@ OBS::OBS(QObject *parent) : QObject(parent)
             this, &OBS::finishedParsingUploadFileRevision);
     connect(obsCore, &OBSCore::cannotUploadFile,
             this, &OBS::cannotUploadFile);
-    connect(obsCore, SIGNAL(fileFetched(QString,QByteArray)), this, SIGNAL(fileFetched(QString,QByteArray)));
-    connect(obsCore, SIGNAL(buildLogFetched(QString)), this, SIGNAL(buildLogFetched(QString)));
-    connect(obsCore, SIGNAL(buildLogNotFound()), this, SIGNAL(buildLogNotFound()));
+    connect(obsCore, &OBSCore::fileFetched, this, &OBS::fileFetched);
+    connect(obsCore, &OBSCore::buildLogFetched, this, &OBS::buildLogFetched);
+    connect(obsCore, &OBSCore::buildLogNotFound, this, &OBS::buildLogNotFound);
     connect(obsCore, &OBSCore::projectNotFound, this, &OBS::projectNotFound);
     connect(obsCore, &OBSCore::packageNotFound, this, &OBS::packageNotFound);
     connect(xmlReader, &OBSXmlReader::finishedParsingDeletePrjStatus,
