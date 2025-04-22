@@ -122,7 +122,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
 
     connect(m_obs, &OBS::finishedParsingResult, this, &Browser::addResult);
     connect(m_obs, &OBS::finishedParsingResultList, ui->overviewWidget, &OverviewWidget::finishedParsingResultList);
-    connect(m_obs, &OBS::finishedParsingResultList, this, &Browser::finishedAddingResults);
+    connect(m_obs, &OBS::finishedParsingResultList, this, &Browser::onResultsAdded);
 
     connect(m_obs, &OBS::finishedParsingLatestRevision, ui->overviewWidget, &OverviewWidget::setLatestRevision);
 
@@ -1075,7 +1075,7 @@ void Browser::slotDeleteFile(QSharedPointer<OBSStatus> status)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Browser::finishedAddingResults()
+void Browser::onResultsAdded()
 {
    qDebug() << Q_FUNC_INFO;
 }

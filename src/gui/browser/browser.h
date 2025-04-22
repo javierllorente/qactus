@@ -123,7 +123,7 @@ private slots:
     void uploadFile(const QString &path);
     void slotUploadFile(QSharedPointer<OBSRevision> revision);
     void slotUploadFileError(QSharedPointer<OBSStatus> status);
-    void finishedAddingResults();
+    void onResultsAdded();
     void slotCreateRequest(QSharedPointer<OBSRequest> request);
     void slotCreateRequestStatus(QSharedPointer<OBSStatus> status);
     void slotBranchPackage(QSharedPointer<OBSStatus> status);
