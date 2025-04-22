@@ -56,7 +56,7 @@ private:
     QString package;
 
 public slots:
-    void filesAdded(const QString &project, const QString &package);
+    void onFilesAdded(const QString &project, const QString &package);
 
 signals:
     void droppedFile(QString);

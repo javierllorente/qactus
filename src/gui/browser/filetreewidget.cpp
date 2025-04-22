@@ -74,7 +74,7 @@ void FileTreeWidget::dropEvent(QDropEvent *event)
     }
 }
 
-void FileTreeWidget::filesAdded(const QString &project, const QString &package)
+void FileTreeWidget::onFilesAdded(const QString &project, const QString &package)
 {
     qDebug() << __PRETTY_FUNCTION__;
     if (firstTimeFileListDisplayed) {

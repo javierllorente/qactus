@@ -64,7 +64,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
      connect(m_searchBar, &SearchBar::returnPressed, this, &Browser::goTo);
 
     connect(m_obs, &OBS::finishedParsingFile, this, &Browser::addFile);
-    connect(m_obs, &OBS::finishedParsingFileList, ui->filesWidget, &FileTreeWidget::filesAdded);
+    connect(m_obs, &OBS::finishedParsingFileList, ui->filesWidget, &FileTreeWidget::onFilesAdded);
     connect(m_obs, &OBS::finishedParsingUploadFileRevision, this, &Browser::slotUploadFile);
     connect(m_obs, &OBS::cannotUploadFile, this, &Browser::slotUploadFileError);
     connect(m_obs, &OBS::fileFetched, this, &Browser::slotFileFetched);
