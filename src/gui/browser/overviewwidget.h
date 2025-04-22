@@ -56,7 +56,6 @@ private:
     QToolBar *m_projectsToolbar;
     QToolBar *m_resultsToolbar;
     QMenu *m_resultsMenu;
-    bool m_dataLoaded;
 
 signals:
     void buildResultSelectionChanged();
