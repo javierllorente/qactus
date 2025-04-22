@@ -266,7 +266,7 @@ void OBSCore::getFiles(const QString &project, const QString &package)
 
 void OBSCore::getRevisions(const QString &project, const QString &package)
 {
-    QString resource = QString("/%1/%2/_history").arg(project, package);
+    QString resource = QString("%1/%2/_history").arg(project, package);
     QNetworkReply *reply = requestSource(resource);
     reply->setProperty("reqtype", OBSCore::RevisionList);
     reply->setProperty("prjrev", project);
@@ -275,7 +275,7 @@ void OBSCore::getRevisions(const QString &project, const QString &package)
 
 void OBSCore::getLatestRevision(const QString &project, const QString &package)
 {
-    QString resource = QString("/%1/%2/_history?limit=1").arg(project, package);
+    QString resource = QString("%1/%2/_history?limit=1").arg(project, package);
     QNetworkReply *reply = requestSource(resource);
     reply->setProperty("reqtype", OBSCore::LatestRevision);
     reply->setProperty("prjrev", project);
