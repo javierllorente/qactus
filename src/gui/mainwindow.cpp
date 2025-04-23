@@ -407,6 +407,9 @@ void MainWindow::createActions()
     connect(obs, &OBS::finishedParsingPerson, bookmarks, &Bookmarks::loadBookmarks);
     connect(bookmarks, &Bookmarks::clicked, browser, &Browser::goTo);
     connect(browser, &Browser::toggleBookmarkActions, bookmarks, &Bookmarks::toggleActions);
+    connect(bookmarks, &Bookmarks::aboutToShow, [=]() {
+        bookmarks->toggleActions(locationBar->text());
+    });
     connect(bookmarks, &Bookmarks::bookmarkAdded, this, &MainWindow::updatePerson);
     connect(bookmarks, &Bookmarks::bookmarkDeleted, this, &MainWindow::updatePerson);
     connect(bookmarks, &Bookmarks::addBookmarkClicked, bookmarks, [=](){

@@ -427,7 +427,6 @@ void Browser::load(const QString &location)
     selectPackage = currentPackage;
     m_locationBar->setText(location);
     m_loaded = true;
-    emit toggleBookmarkActions(location);
     emit projectSelectionChanged();
 }
 
