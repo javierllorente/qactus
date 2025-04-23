@@ -38,7 +38,7 @@ class MonitorTab : public QWidget
 
 public:
     explicit MonitorTab(QWidget *parent = nullptr, const QString &title = "untitled", OBS *obs = nullptr);
-    ~MonitorTab();
+    virtual ~MonitorTab();
     virtual void refresh();
     virtual bool hasSelection();
 
