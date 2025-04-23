@@ -30,17 +30,17 @@ Bookmarks::~Bookmarks()
 
 void Bookmarks::addMenuActions()
 {
-    m_actionAddBookmark = QSharedPointer<QAction>(new QAction(tr("Add bookmark")));
+    m_actionAddBookmark = new QAction(tr("Add bookmark"), this);
     m_actionAddBookmark->setIcon(QIcon::fromTheme("list-add"));
     m_actionAddBookmark->setVisible(false);
-    addAction(m_actionAddBookmark.data());
-    connect(m_actionAddBookmark.data(), &QAction::triggered, this, &Bookmarks::addBookmarkClicked);
+    addAction(m_actionAddBookmark);
+    connect(m_actionAddBookmark, &QAction::triggered, this, &Bookmarks::addBookmarkClicked);
 
-    m_actionDeleteBookmark = QSharedPointer<QAction>(new QAction(tr("Delete Bookmark")));
+    m_actionDeleteBookmark = new QAction(tr("Delete Bookmark"), this);
     m_actionDeleteBookmark->setIcon(QIcon::fromTheme("trash-empty"));
     m_actionDeleteBookmark->setVisible(false);
-    addAction(m_actionDeleteBookmark.data());
-    connect(m_actionDeleteBookmark.data(), &QAction::triggered, this, &Bookmarks::deleteBookmarkClicked);
+    addAction(m_actionDeleteBookmark);
+    connect(m_actionDeleteBookmark, &QAction::triggered, this, &Bookmarks::deleteBookmarkClicked);
 
     addSeparator();
 }

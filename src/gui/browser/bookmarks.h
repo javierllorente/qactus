@@ -43,8 +43,8 @@ signals:
     void updateStatusBar(QString message, bool progressBarHidden);
 
 private:
-    QSharedPointer<QAction> m_actionAddBookmark;
-    QSharedPointer<QAction> m_actionDeleteBookmark;
+    QAction *m_actionAddBookmark;
+    QAction *m_actionDeleteBookmark;
     int m_initialCount;
     QSharedPointer<OBSPerson> m_person;
     void addMenuActions();
