@@ -72,6 +72,7 @@ void Bookmarks::deleteBookmark(const QString &project)
     if (index != -1) {
         QAction *action = actions().at(index + m_initialCount);
         removeAction(action);
+        delete action;
         toggleActions(project);
         emit bookmarkDeleted(m_person);
     }
@@ -91,7 +92,7 @@ void Bookmarks::toggleActions(const QString &project)
 
 void Bookmarks::addItem(const QString &entry)
 {
-    QAction *action = new QAction(entry);
+    QAction *action = new QAction(entry, this);
     action->setIcon(QIcon::fromTheme("project-development"));
     addAction(action);
     connect(action, &QAction::triggered, this, [=]() {
