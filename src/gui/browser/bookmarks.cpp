@@ -58,33 +58,33 @@ void Bookmarks::loadBookmarks(QSharedPointer<OBSPerson> person)
     emit updateStatusBar(tr("Done"), true);
 }
 
-void Bookmarks::addBookmark(const QString &project)
+void Bookmarks::addBookmark(const QString &location)
 {
-    addItem(project);
-    m_person->appendWatchItem(project);
-    toggleActions(project);
+    addItem(location);
+    m_person->appendWatchItem(location);
+    toggleActions(location);
     emit bookmarkAdded(m_person);
 }
 
-void Bookmarks::deleteBookmark(const QString &project)
+void Bookmarks::deleteBookmark(const QString &location)
 {
-    int index = m_person->removeWatchItem(project);
+    int index = m_person->removeWatchItem(location);
     if (index != -1) {
         QAction *action = actions().at(index + m_initialCount);
         removeAction(action);
         delete action;
-        toggleActions(project);
+        toggleActions(location);
         emit bookmarkDeleted(m_person);
     }
 }
 
-void Bookmarks::toggleActions(const QString &project)
+void Bookmarks::toggleActions(const QString &location)
 {
-    if (project.isEmpty()) {
+    if (location.isEmpty()) {
         m_actionAddBookmark->setVisible(false);
         m_actionDeleteBookmark->setVisible(false);
     } else {
-        bool found = m_person->getWatchList().contains(project);
+        bool found = m_person->getWatchList().contains(location);
         m_actionAddBookmark->setVisible(!found);
         m_actionDeleteBookmark->setVisible(found);
     }
