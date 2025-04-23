@@ -17,6 +17,7 @@
 #define BOOKMARKS_H
 
 #include <QMenu>
+#include <QSharedPointer>
 #include "obsperson.h"
 
 class Bookmarks : public QMenu
@@ -42,8 +43,8 @@ signals:
     void updateStatusBar(QString message, bool progressBarHidden);
 
 private:
-    QAction *m_actionAddBookmark;
-    QAction *m_actionDeleteBookmark;
+    QSharedPointer<QAction> m_actionAddBookmark;
+    QSharedPointer<QAction> m_actionDeleteBookmark;
     int m_initialCount;
     QSharedPointer<OBSPerson> m_person;
     void addMenuActions();
