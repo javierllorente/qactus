@@ -196,7 +196,6 @@ void MainWindow::onAuthenticated(bool authenticated)
     ui->action_Refresh->setEnabled(authenticated);
     if (authenticated) {
         browser->getProjects();
-        emit updateStatusBar(tr("Getting projects..."), false);
         toggleAddRow(ui->stackedWidget->currentIndex());
         obs->getPerson();
         emit updateStatusBar(tr("Getting bookmarks..."), false);
