@@ -80,6 +80,7 @@ MainWindow::~MainWindow()
 {
     writeSettings();
     delete ui;
+    delete obs;
 }
 
 void MainWindow::changeEvent(QEvent *e)
