@@ -491,12 +491,12 @@ void MainWindow::createActions()
     connect(action_ReloadResults, &QAction::triggered, browser, &Browser::reloadResults);
 
     // Upload action
-    action_UploadFile = new QAction(tr("&Upload file"));
+    action_UploadFile = new QAction(tr("&Upload file"), this);
     action_UploadFile->setIcon(QIcon::fromTheme("cloud-upload"));
     connect(action_UploadFile, &QAction::triggered, browser, &Browser::uploadSelectedFile);
 
     // Download action
-    action_DownloadFile = new QAction(tr("&Download file"));
+    action_DownloadFile = new QAction(tr("&Download file"), this);
     action_DownloadFile->setIcon(QIcon::fromTheme("download"));
     connect(action_DownloadFile, &QAction::triggered, browser, &Browser::downloadFile);
 
