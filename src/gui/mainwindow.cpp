@@ -462,6 +462,7 @@ void MainWindow::createActions()
     connect(aboutAction, &QAction::triggered, this, &MainWindow::showAbout);
 
     QAction *quitAction = new QAction(tr("Quit"), this);
+    quitAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
     quitAction->setIcon(QIcon::fromTheme("application-exit"));
     connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
 
