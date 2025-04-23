@@ -16,9 +16,9 @@
 #include "trayicon.h"
 
 TrayIcon::TrayIcon(QWidget *parent) :
-    QSystemTrayIcon(parent)
+    QSystemTrayIcon(parent),
+    trayIconMenu(new QMenu(parent))
 {
-    trayIconMenu = new QMenu();
     setIcon(QIcon(NORMAL_ICON));
     setToolTip(QCoreApplication::applicationName());
     setContextMenu(trayIconMenu);
