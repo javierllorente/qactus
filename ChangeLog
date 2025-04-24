@@ -1,7 +1,6 @@
 Qactus ChangeLog
 ================
 v3.0.0 (2025-??-??)
-
   * UI redesign, package-centred with a modern style
   * Port to Qt 6
   * New feature: location bar
@@ -12,6 +11,7 @@ v3.0.0 (2025-??-??)
   * New logo
   * Switch to Apache License 2.0
   * Improve build log viewer
+  * Improve error handling
   * Improve progress indicator management
   * Improve memory management with shared pointers
   * Improve signals/slots by using modern connect syntax
