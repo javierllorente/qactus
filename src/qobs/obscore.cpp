@@ -750,7 +750,10 @@ void OBSCore::replyFinished(QNetworkReply *reply)
             }
 
             default:
-                qDebug() << Q_FUNC_INFO << "Error 404 NOT handled for request type" << reply->property("reqtype").toInt();
+                qDebug() << Q_FUNC_INFO << "Error 404: " << reply->errorString()
+                                        << "data =" << data;
+                QSharedPointer<OBSStatus> status = xmlReader->parseError(data);
+                emit networkError(reply->errorString() + status->getSummary());
             }
         }
         break;
@@ -771,7 +774,6 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                          << "data =" << data;
                 QSharedPointer<OBSStatus> status = xmlReader->parseError(data);
                 emit networkError(reply->errorString() + status->getSummary());
-                break;
             }
 
         }
