@@ -77,6 +77,7 @@ public:
     void parsePerson(const QString &data);
     void parseUpdatePerson(const QString &data);
     void parseDistributions(const QString &data);
+    QSharedPointer<OBSStatus> parseError(const QString &data);
 
 private:
     static OBSXmlReader *instance;

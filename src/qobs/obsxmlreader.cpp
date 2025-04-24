@@ -1183,6 +1183,22 @@ void OBSXmlReader::parseDistributions(const QString &data)
     }
 }
 
+QSharedPointer<OBSStatus> OBSXmlReader::parseError(const QString &data)
+{
+    QSharedPointer<OBSStatus> status(new OBSStatus());
+    QXmlStreamReader xml(data);
+    while (!xml.atEnd() && !xml.hasError()) {
+        xml.readNext();
+        parseStatus(xml, status);
+    } // end while
+
+    if (xml.hasError()) {
+        qDebug() << Q_FUNC_INFO << "Error parsing XML!" << xml.errorString();
+        return status;
+    }
+    return status;
+}
+
 int OBSXmlReader::getRequestNumber()
 {
     return requestNumber.toInt();

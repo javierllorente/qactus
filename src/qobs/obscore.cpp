@@ -767,9 +767,10 @@ void OBSCore::replyFinished(QNetworkReply *reply)
                 break;
             }
             default:
-                qDebug() << Q_FUNC_INFO << "Request failed! Error:" << reply->errorString();
-                qDebug() << data;
-                emit networkError(reply->errorString());
+                qDebug() << Q_FUNC_INFO << "Request failed! Error:" << reply->errorString()
+                         << "data =" << data;
+                QSharedPointer<OBSStatus> status = xmlReader->parseError(data);
+                emit networkError(reply->errorString() + status->getSummary());
                 break;
             }
 
