@@ -1,5 +1,26 @@
 Qactus ChangeLog
 ================
+v3.0.0 (2025-??-??)
+
+  * UI redesign, package-centred with a modern style
+  * Port to Qt 6
+  * New feature: location bar
+  * New feature: quick search
+  * New feature: project/package overview
+  * New feature: getting revisions
+  * New feature: getting requests per project/package
+  * New logo
+  * Switch to Apache License 2.0
+  * Improve build log viewer
+  * Improve progress indicator management
+  * Improve memory management with shared pointers
+  * Improve signals/slots by using modern connect syntax
+  * Refactor request box to make its components reusable
+  * Bump cmake_minimum_required to 3.16
+  * Remove Qt5-related code
+  * Remove unneeded QtDBus dependency
+  * Multiple fixes
+
 v2.1.0 (2021-09-17)
 - New feature: monitor an entire project
 
