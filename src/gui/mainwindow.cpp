@@ -124,7 +124,6 @@ void MainWindow::showNetworkError(const QString &networkError)
         errorBox->setWindowTitle(tr("Network Error"));
         errorBox->setText(networkError);
         errorBox->setIcon(QMessageBox::Critical);
-        emit updateStatusBar(tr("Network error"), true);
         int ret = errorBox->exec();
         if (ret) {
             delete errorBox;
