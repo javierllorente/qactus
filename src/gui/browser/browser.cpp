@@ -86,7 +86,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
         if (status->getCode() == "ok") {
             m_locationBar->addProject(status->getProject());
             goTo(status->getProject());
-            emit showTrayMessage(APP_NAME, tr("Project %1 has been created").arg(status->getProject()));
+            emit showTrayMessage(APP_NAME, tr("Project %1 has been created/updated").arg(status->getProject()));
         }
     });
 
@@ -95,7 +95,7 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
             ui->packagesWidget->addPackage(status->getPackage());
             ui->packagesWidget->setCurrentPackage(status->getPackage());
             goTo(status->getProject() + "/" + status->getPackage());
-            emit showTrayMessage(APP_NAME, tr("Package %1 has been created").arg(status->getPackage()));
+            emit showTrayMessage(APP_NAME, tr("Package %1 has been created/updated").arg(status->getPackage()));
         }
     });
 
