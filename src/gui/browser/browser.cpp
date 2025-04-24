@@ -91,9 +91,10 @@ Browser::Browser(QWidget *parent, LocationBar *locationBar, SearchBar *searchBar
     });
 
     connect(m_obs, &OBS::finishedParsingCreatePkgStatus, this, [=](QSharedPointer<OBSStatus> status) {
-        if (status->getCode()=="ok") {
+        if (status->getCode() == "ok") {
             ui->packagesWidget->addPackage(status->getPackage());
             ui->packagesWidget->setCurrentPackage(status->getPackage());
+            goTo(status->getProject() + "/" + status->getPackage());
             emit showTrayMessage(APP_NAME, tr("Package %1 has been created").arg(status->getPackage()));
         }
     });
