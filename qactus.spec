@@ -37,7 +37,6 @@ BuildRequires:  cmake(Qt6Network)
 BuildRequires:  cmake(Qt6Keychain)
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  pkgconfig
-BuildRequires:  update-desktop-files
 Requires:       %{libname}%{?_isa} = %{version}-%{release}
 
 %description
@@ -60,22 +59,14 @@ This package contains the development files for %{libprefix}, a Qt-based
 Open Build Service (OBS) library
 
 %prep
-%setup -q
+%autosetup -p1
 
 %build
 %cmake
 %make_build
 
 %install
-%make_install -C build
-
-%suse_update_desktop_file %{name}
-
-%post
-%desktop_database_post
-
-%postun
-%desktop_database_postun
+%cmake_install
 
 %post -n %{libname} -p /sbin/ldconfig
 %postun -n %{libname} -p /sbin/ldconfig
