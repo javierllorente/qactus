@@ -21,8 +21,8 @@
 RequestsWidget::RequestsWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::RequestsWidget),
-    firstTimeRevisionListDisplayed(true),
-    obs(nullptr)
+    obs(nullptr),
+    firstTimeRevisionListDisplayed(true)
 {
     ui->setupUi(this);
 
