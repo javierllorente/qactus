@@ -133,7 +133,7 @@ add_executable(qactus ${QACTUS_SRC} ${QACTUS_UI_SRC} ${QACTUS_RC_SRC})
 add_dependencies(qactus libqobs)
 
 target_include_directories(qactus PRIVATE ../qobs)
-
+target_compile_features(qactus PRIVATE cxx_std_17)
 target_link_libraries(qactus libqobs Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network qt6keychain)
 
 install(TARGETS qactus RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})

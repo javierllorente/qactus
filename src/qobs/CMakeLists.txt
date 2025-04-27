@@ -52,7 +52,7 @@ set(LIBQOBS_HDR
 add_library(libqobs SHARED ${LIBQOBS_SRC})
 
 target_compile_definitions(libqobs PRIVATE -DQOBS_LIBRARY)
-
+target_compile_features(libqobs PRIVATE cxx_std_17)
 target_link_libraries(libqobs Qt6::Core Qt6::Gui Qt6::Network)
 
 set_target_properties(libqobs PROPERTIES OUTPUT_NAME "qobs"
