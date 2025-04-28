@@ -13,7 +13,7 @@ v3.0.0 (2025-??-??)
   * Improve build log viewer
   * Improve error handling
   * Improve progress indicator management
-  * Improve memory management with shared pointers
+  * Improve memory management with smart pointers
   * Improve signals/slots by using modern connect syntax
   * Refactor request box to make its components reusable
   * Bump cmake_minimum_required to 3.16
