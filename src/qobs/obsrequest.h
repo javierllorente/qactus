@@ -17,6 +17,7 @@
 #define OBSREQUEST_H
 
 #include <QString>
+#include <QScopedPointer>
 #include "obsobject.h"
 
 class OBSRequest
@@ -63,8 +64,8 @@ private:
     QString id;
     QString creator;
     QString actionType;
-    OBSObject *source;
-    OBSObject *target;
+    QScopedPointer<OBSObject> source;
+    QScopedPointer<OBSObject> target;
     QString sourceUpdate;
     QString state;
     QString requester;
