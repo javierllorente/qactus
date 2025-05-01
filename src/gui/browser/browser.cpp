@@ -297,8 +297,8 @@ void Browser::launchMetaConfigEditor(const QString &project, const QString &pack
     disconnect(m_obs, &OBS::finishedParsingProjectMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
     disconnect(m_obs, &OBS::finishedParsingPackageMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
 
-    QScopedPointer<MetaConfigEditor> metaConfigEditor(new MetaConfigEditor(this, m_obs, project, package, mode));
-    metaConfigEditor->exec();
+    MetaConfigEditor metaConfigEditor(this, m_obs, project, package, mode);
+    metaConfigEditor.exec();
 
     connect(m_obs, &OBS::finishedParsingProjectMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
     connect(m_obs, &OBS::finishedParsingPackageMetaConfig, ui->overviewWidget, &OverviewWidget::setMetaConfig);
@@ -515,27 +515,25 @@ void Browser::createRequest()
 //    FIXME: If there is a _link, set target to project/package from _link
     QString currentPackage = ui->packagesWidget->getCurrentPackage();
 
-    OBSRequest *request = new OBSRequest();
-    request->setActionType("submit");
-    request->setSourceProject(currentProject);
-    request->setSourcePackage(currentPackage);
+    OBSRequest request;
+    request.setActionType("submit");
+    request.setSourceProject(currentProject);
+    request.setSourcePackage(currentPackage);
 
     if (ui->filesWidget->hasLink()) {
         m_obs->getLink(currentProject, currentPackage);
     }
 
-    CreateRequestDialog *createRequestDialog = new CreateRequestDialog(request, m_obs, this);
-    createRequestDialog->addProjectList(m_locationBar->getProjectList());
+    CreateRequestDialog createRequestDialog(&request, m_obs, this);
+    createRequestDialog.addProjectList(m_locationBar->getProjectList());
     disconnect(m_obs, &OBS::finishedParsingPackageList,
                ui->packagesWidget, &PackageTreeWidget::addPackageList);
 
-    int result = createRequestDialog->exec();
+    int result = createRequestDialog.exec();
     if (result) {
         QString statusText = tr("Creating request...");
         emit updateStatusBar(statusText, false);
     }
-    delete createRequestDialog;
-    delete request;
 
     connect(m_obs, &OBS::finishedParsingPackageList,
             ui->packagesWidget, &PackageTreeWidget::addPackageList);
@@ -543,30 +541,26 @@ void Browser::createRequest()
 
 void Browser::linkPackage()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    PackageActionDialog *packageActionDialog = new PackageActionDialog(this, m_obs,
-                                                                       currentProject,
-                                                                       ui->packagesWidget->getCurrentPackage(),
-                                                                       PackageAction::LinkPackage);
-    packageActionDialog->addProjectList(m_locationBar->getProjectList());
-    connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
-    connect(packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
-    packageActionDialog->exec();
-    delete packageActionDialog;
+    qDebug() << Q_FUNC_INFO;
+    PackageActionDialog packageActionDialog(this, m_obs, currentProject,
+                                            ui->packagesWidget->getCurrentPackage(),
+                                            PackageAction::LinkPackage);
+    packageActionDialog.addProjectList(m_locationBar->getProjectList());
+    connect(&packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
+    connect(&packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
+    packageActionDialog.exec();
 }
 
 void Browser::copyPackage()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    PackageActionDialog *packageActionDialog = new PackageActionDialog(this, m_obs,
-                                                                       currentProject,
-                                                                       ui->packagesWidget->getCurrentPackage(),
-                                                                       PackageAction::CopyPackage);
-    packageActionDialog->addProjectList(m_locationBar->getProjectList());
-    connect(packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
-    connect(packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
-    packageActionDialog->exec();
-    delete packageActionDialog;
+    qDebug() << Q_FUNC_INFO;
+    PackageActionDialog packageActionDialog(this, m_obs, currentProject,
+                                            ui->packagesWidget->getCurrentPackage(),
+                                            PackageAction::CopyPackage);
+    packageActionDialog.addProjectList(m_locationBar->getProjectList());
+    connect(&packageActionDialog, &PackageActionDialog::showTrayMessage, this, &Browser::showTrayMessage);
+    connect(&packageActionDialog, &PackageActionDialog::updateStatusBar, this, &Browser::updateStatusBar);
+    packageActionDialog.exec();
 }
 
 void Browser::deleteProject()

@@ -17,8 +17,8 @@
 
 OBSRequest::OBSRequest()
 {
-    source = new OBSObject();
-    target = new OBSObject();
+    source.reset(new OBSObject());
+    target.reset(new OBSObject());
 }
 
 OBSRequest::OBSRequest(const OBSRequest &other)
@@ -28,8 +28,6 @@ OBSRequest::OBSRequest(const OBSRequest &other)
 
 OBSRequest::~OBSRequest()
 {
-    delete source;
-    delete target;
 }
 
 OBSRequest &OBSRequest::operator=(const OBSRequest &other)

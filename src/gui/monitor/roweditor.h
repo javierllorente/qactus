@@ -22,6 +22,7 @@
 #include <QDate>
 #include <QSettings>
 #include <QProgressDialog>
+#include <QScopedPointer>
 #include "obs.h"
 #include "obsprjmetaconfig.h"
 
@@ -51,19 +52,19 @@ private:
     QString getLastUpdateDate();
     void setLastUpdateDate(const QString &date);
     QStringList projectList;
-    QStringListModel *projectModel;
-    QCompleter *projectCompleter;
+    QScopedPointer<QStringListModel> projectModel;
+    QScopedPointer<QCompleter> projectCompleter;
     void initProjectAutocompleter();
     QStringList packageList;
-    QStringListModel *packageModel;
-    QCompleter *packageCompleter;
+    QScopedPointer<QStringListModel> packageModel;
+    QScopedPointer<QCompleter> packageCompleter;
     QList<QSharedPointer<OBSRepository>> repositories;
     QStringList repositoryList;
-    QStringListModel *repositoryModel;
-    QCompleter *repositoryCompleter;
+    QScopedPointer<QStringListModel> repositoryModel;
+    QScopedPointer<QCompleter> repositoryCompleter;
     QStringList archList;
-    QStringListModel *archModel;
-    QCompleter *archCompleter;
+    QScopedPointer<QStringListModel> archModel;
+    QScopedPointer<QCompleter> archCompleter;
 
 private slots:
     void insertProjectList(const QStringList &list);

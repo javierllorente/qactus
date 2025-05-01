@@ -44,8 +44,8 @@ void OBSLinkHelper::onFetchedPackageMetaConfig(QSharedPointer<OBSPkgMetaConfig> 
     newPkgMetaConfig->setDescription(pkgMetaConfig->getDescription());
     newPkgMetaConfig->setBuildFlag(pkgMetaConfig->getBuildFlag());
 
-    QScopedPointer<OBSXmlWriter> xmlWriter(new OBSXmlWriter());
-    QByteArray metaConfigData = xmlWriter->createPackageMeta(newPkgMetaConfig);
+    OBSXmlWriter xmlWriter;
+    QByteArray metaConfigData = xmlWriter.createPackageMeta(newPkgMetaConfig);
 
     emit createPackage(m_dstProject, m_dstPackage, metaConfigData);
 }
@@ -54,9 +54,8 @@ void OBSLinkHelper::onFetchedCreatePkgStatus(QSharedPointer<OBSStatus> status)
 {
     qDebug() << __PRETTY_FUNCTION__ << status->getCode();
     if (status->getCode() == "ok") {
-        OBSXmlWriter *xmlWriter = new OBSXmlWriter(this);
-        QByteArray data = xmlWriter->createLink(m_srcProject, m_dstPackage);
-        delete xmlWriter;
+        OBSXmlWriter xmlWriter;
+        QByteArray data = xmlWriter.createLink(m_srcProject, m_dstPackage);
         emit readyToLinkPackage(m_dstProject, m_dstPackage, data);
     }
 }

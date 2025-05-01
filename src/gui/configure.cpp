@@ -108,9 +108,8 @@ void Configure::writeAuthSettings()
     settings.beginGroup("Auth");
     settings.setValue("ApiUrl", mOBS->getApiUrl());
     settings.setValue("Username", ui->lineEditUsername->text());
-    Credentials *credentials = new Credentials();
-    credentials->writeCredentials(ui->lineEditUsername->text(), ui->lineEditPassword->text());
-    delete credentials;
+    Credentials credentials;
+    credentials.writeCredentials(ui->lineEditUsername->text(), ui->lineEditPassword->text());
     settings.setValue("AutoLogin", ui->checkBoxAutoLogin->isChecked());
     settings.endGroup();
 }
@@ -171,13 +170,12 @@ void Configure::readAuthSettings()
 
     QString username = settings.value("Username").toString();
     ui->lineEditUsername->setText(username);
-    Credentials *credentials = new Credentials();
-    connect(credentials, &Credentials::credentialsRestored,
+    Credentials credentials;
+    connect(&credentials, &Credentials::credentialsRestored,
             [&](const QString &/*username*/, const QString &password) {
         ui->lineEditPassword->setText(password);
     });
-    credentials->readPassword(username);
-    delete credentials;
+    credentials.readPassword(username);
     ui->checkBoxAutoLogin->setChecked((settings.value("AutoLogin", true).toBool()));
 
     settings.endGroup();

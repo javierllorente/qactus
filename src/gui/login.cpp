@@ -72,11 +72,10 @@ void Login::readSettings()
 
     QString username = settings.value("Username").toString();
     setUsername(username);
-    Credentials *credentials = new Credentials();
-    connect(credentials, &Credentials::credentialsRestored,
+    Credentials credentials;
+    connect(&credentials, &Credentials::credentialsRestored,
             this, &Login::onCredentialsRestored);
-    credentials->readPassword(username);
-    delete credentials;
+    credentials.readPassword(username);
     qDebug() << Q_FUNC_INFO << "AutoLogin:" << settings.value("AutoLogin").toBool();
     settings.endGroup();
 }
@@ -87,9 +86,8 @@ void Login::writeSettings()
     QSettings settings;
     settings.beginGroup("Auth");
     settings.setValue("Username", getUsername());
-    Credentials *credentials = new Credentials();
-    credentials->writeCredentials(getUsername(), getPassword());
-    delete credentials;
+    Credentials credentials;
+    credentials.writeCredentials(getUsername(), getPassword());
     settings.endGroup();
 }
 

@@ -19,15 +19,7 @@
 RowEditor::RowEditor(QWidget *parent, OBS *obs) :
     QDialog(parent),
     ui(new Ui::RowEditor),
-    m_obs(obs),
-    projectModel(nullptr),
-    projectCompleter(nullptr),
-    packageModel(nullptr),
-    packageCompleter(nullptr),
-    repositoryModel(nullptr),
-    repositoryCompleter(nullptr),
-    archModel(nullptr),
-    archCompleter(nullptr)
+    m_obs(obs)
 {
     ui->setupUi(this);
 
@@ -36,14 +28,6 @@ RowEditor::RowEditor(QWidget *parent, OBS *obs) :
 
 RowEditor::~RowEditor()
 {
-    delete projectModel;
-    delete projectCompleter;
-    delete packageModel;
-    delete packageCompleter;
-    delete repositoryModel;
-    delete repositoryCompleter;
-    delete archModel;
-    delete archCompleter;
     delete ui;
 }
 
@@ -115,14 +99,14 @@ void RowEditor::insertProjectList(const QStringList &list)
 {
     qDebug() << Q_FUNC_INFO;
     projectList = list;
-    projectModel = new QStringListModel(projectList);
-    projectCompleter = new QCompleter(projectModel, this);
+    projectModel.reset(new QStringListModel(projectList));
+    projectCompleter.reset(new QCompleter(projectModel.get(), this));
 
-    ui->lineEditProject->setCompleter(projectCompleter);
+    ui->lineEditProject->setCompleter(projectCompleter.get());
 
     connect(ui->lineEditProject, &QLineEdit::textEdited,
             this, &RowEditor::refreshProjectAutocompleter);
-    connect(projectCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+    connect(projectCompleter.get(), QOverload<const QString &>::of(&QCompleter::activated),
             this, &RowEditor::autocompletedProjectName_clicked);
 }
 
@@ -143,14 +127,14 @@ void RowEditor::insertPackageList(const QStringList &list)
 {
     qDebug() << Q_FUNC_INFO;
     packageList = list;
-    packageModel = new QStringListModel(packageList);
-    packageCompleter = new QCompleter(packageModel, this);
+    packageModel.reset(new QStringListModel(packageList));
+    packageCompleter.reset(new QCompleter(packageModel.get(), this));
 
-    ui->lineEditPackage->setCompleter(packageCompleter);
+    ui->lineEditPackage->setCompleter(packageCompleter.get());
 
     connect(ui->lineEditPackage, &QLineEdit::textEdited,
             this, &RowEditor::refreshPackageAutocompleter);
-    connect(packageCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+    connect(packageCompleter.get(), QOverload<const QString &>::of(&QCompleter::activated),
             this, &RowEditor::autocompletedPackageName_clicked);
 }
 
@@ -177,14 +161,14 @@ void RowEditor::insertProjectMetaConfig(QSharedPointer<OBSPrjMetaConfig> prjMeta
         repositoryList.append(repository->getName());
     }
 
-    repositoryModel = new QStringListModel(repositoryList);
-    repositoryCompleter = new QCompleter(repositoryModel, this);
+    repositoryModel.reset(new QStringListModel(repositoryList));
+    repositoryCompleter.reset(new QCompleter(repositoryModel.get(), this));
 
-    ui->lineEditRepository->setCompleter(repositoryCompleter);
+    ui->lineEditRepository->setCompleter(repositoryCompleter.get());
 
     connect(ui->lineEditRepository, &QLineEdit::textEdited,
             this, &RowEditor::refreshRepositoryAutocompleter);
-    connect(repositoryCompleter, QOverload<const QString &>::of(&QCompleter::activated),
+    connect(repositoryCompleter.get(), QOverload<const QString &>::of(&QCompleter::activated),
             this, &RowEditor::autocompletedRepositoryName_clicked);
 }
 
@@ -203,10 +187,10 @@ void RowEditor::autocompletedRepositoryName_clicked(const QString &repository)
         }
     }
 
-    archModel = new QStringListModel(archList);
-    archCompleter = new QCompleter(archModel, this);
+    archModel.reset(new QStringListModel(archList));
+    archCompleter.reset(new QCompleter(archModel.get(), this));
 
-    ui->lineEditArch->setCompleter(archCompleter);
+    ui->lineEditArch->setCompleter(archCompleter.get());
 
 //    connect(ui->lineEditArch, SIGNAL(textEdited(const QString&)),
 //            this, SLOT(refreshArchAutocompleter(const QString&)));

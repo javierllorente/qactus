@@ -242,31 +242,28 @@ void MonitorPackagesTab::insertStatus(QSharedPointer<OBSStatus> status, int row)
 
 void MonitorPackagesTab::addRow()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    RowEditor *rowEditor = new RowEditor(this, m_obs);
+    qDebug() << Q_FUNC_INFO;
+    RowEditor rowEditor(this, m_obs);
 
-    if (rowEditor->exec()) {
+    if (rowEditor.exec()) {
         QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
-        item->setText(0, rowEditor->getProject());
-        item->setText(1, rowEditor->getPackage());
-        item->setText(2, rowEditor->getRepository());
-        item->setText(3, rowEditor->getArch());
+        item->setText(0, rowEditor.getProject());
+        item->setText(1, rowEditor.getPackage());
+        item->setText(2, rowEditor.getRepository());
+        item->setText(3, rowEditor.getArch());
         ui->treeWidget->addTopLevelItem(item);
         int index = ui->treeWidget->indexOfTopLevelItem(item);
-        qDebug() << "Build" << item->text(1) << "added at" << index;
+        qDebug() << Q_FUNC_INFO << "Build" << item->text(1) << "added at" << index;
     }
-    delete rowEditor;
-    rowEditor = nullptr;
 }
 
 void MonitorPackagesTab::removeRow()
 {
-    qDebug () << __PRETTY_FUNCTION__;
+    qDebug () << Q_FUNC_INFO;
     QList<QTreeWidgetItem *> items = ui->treeWidget->selectedItems();
     QList<QModelIndex> list = ui->treeWidget->selectionModel()->selectedIndexes();
     foreach (QTreeWidgetItem *item, items) {
         delete item;
-        item = nullptr;
     }
 
     if (!list.isEmpty()) {
@@ -281,27 +278,25 @@ void MonitorPackagesTab::editRow(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column)
 
-    qDebug() << __PRETTY_FUNCTION__;
-    RowEditor *rowEditor = new RowEditor(this, m_obs);
-    rowEditor->setProject(item->text(0));
-    rowEditor->setPackage(item->text(1));
-    rowEditor->setRepository(item->text(2));
-    rowEditor->setArch(item->text(3));
-    rowEditor->show();
+    qDebug() << Q_FUNC_INFO;
+    RowEditor rowEditor(this, m_obs);
+    rowEditor.setProject(item->text(0));
+    rowEditor.setPackage(item->text(1));
+    rowEditor.setRepository(item->text(2));
+    rowEditor.setArch(item->text(3));
+    rowEditor.show();
 
-    if (rowEditor->exec()) {
+    if (rowEditor.exec()) {
         int index = ui->treeWidget->indexOfTopLevelItem(item);
-        item->setText(0, rowEditor->getProject());
-        item->setText(1, rowEditor->getPackage());
-        item->setText(2, rowEditor->getRepository());
-        item->setText(3, rowEditor->getArch());
+        item->setText(0, rowEditor.getProject());
+        item->setText(1, rowEditor.getPackage());
+        item->setText(2, rowEditor.getRepository());
+        item->setText(3, rowEditor.getArch());
         item->setText(4, "");
         ui->treeWidget->insertTopLevelItem(index, item);
-        qDebug() << "Build edited:" << index;
-        qDebug() << "Status at" << index << item->text(4) << "(it should be empty)";
+        qDebug() << Q_FUNC_INFO << "Build edited:" << index;
+        qDebug() << Q_FUNC_INFO << "Status at" << index << item->text(4) << "(it should be empty)";
     }
-    delete rowEditor;
-    rowEditor = nullptr;
 }
 
 void MonitorPackagesTab::slotMarkRead(QTreeWidgetItem *item, int column)

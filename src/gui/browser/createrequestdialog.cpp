@@ -107,9 +107,8 @@ void CreateRequestDialog::on_buttonBox_accepted()
         m_request->setSourceUpdate("cleanup");
     }
 
-    OBSXmlWriter *xmlWriter = new OBSXmlWriter(this);
-    QByteArray data = xmlWriter->createRequest(m_request);
-    delete xmlWriter;
+    OBSXmlWriter xmlWriter;
+    QByteArray data = xmlWriter.createRequest(m_request);
 
     emit createRequest(data);
 }

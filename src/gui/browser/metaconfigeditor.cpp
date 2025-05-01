@@ -19,7 +19,6 @@
 #include <QHeaderView>
 #include <QTimer>
 #include <QStandardItemModel>
-#include <QScopedPointer>
 #include "focusfilter.h"
 
 MetaConfigEditor::MetaConfigEditor(QWidget *parent, OBS *obs, const QString &project, const QString &package, MCEMode mode) :
@@ -122,7 +121,7 @@ void MetaConfigEditor::on_buttonBox_accepted()
     QProgressDialog progress(tr("Creating..."), nullptr, 0, 0, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.show();
-    QScopedPointer<OBSXmlWriter> xmlWriter(new OBSXmlWriter());
+    OBSXmlWriter xmlWriter;
     QByteArray data;
 
     switch (m_mode) {
@@ -143,7 +142,7 @@ void MetaConfigEditor::on_buttonBox_accepted()
 
         fillMetaConfigRepositories(tableRepositories, prjMetaConfig);
 
-        data = xmlWriter->createProjectMeta(prjMetaConfig);
+        data = xmlWriter.createProjectMeta(prjMetaConfig);
         emit createProject(ui->projectLineEdit->text(), data);
         break;
     }
@@ -164,7 +163,7 @@ void MetaConfigEditor::on_buttonBox_accepted()
         fillMetaConfigRepositoryFlags(publishFlagTree, pkgMetaConfig, RepositoryFlag::Publish);
         fillMetaConfigRepositoryFlags(useForFlagTree, pkgMetaConfig, RepositoryFlag::UseForBuild);
 
-        data = xmlWriter->createPackageMeta(pkgMetaConfig);
+        data = xmlWriter.createPackageMeta(pkgMetaConfig);
         emit createPackage(ui->projectLineEdit->text(), packageLineEdit->text(), data);
         break;
     }

@@ -757,13 +757,12 @@ void MainWindow::readAuthSettings()
     }
     obs->setApiUrl(apiUrl);
     if (settings.value("AutoLogin", true).toBool()) {
-        Credentials *credentials = new Credentials(this);
-        connect(credentials, &Credentials::errorReadingPassword,
+        Credentials credentials;
+        connect(&credentials, &Credentials::errorReadingPassword,
                 this, &MainWindow::onReadingPasswordError);
-        connect(credentials, &Credentials::credentialsRestored,
+        connect(&credentials, &Credentials::credentialsRestored,
                 this, &MainWindow::onCredentialsRestored);
-        credentials->readPassword(settings.value("Username").toString());
-        delete credentials;
+        credentials.readPassword(settings.value("Username").toString());
     }
     settings.endGroup();
 }
@@ -872,9 +871,8 @@ void MainWindow::onAbout(QSharedPointer<OBSAbout> about)
 
 void MainWindow::updatePerson(QSharedPointer<OBSPerson> obsPerson)
 {
-    OBSXmlWriter *xmlWriter = new OBSXmlWriter(this);
-    QByteArray data = xmlWriter->createPerson(obsPerson);
-    delete xmlWriter;
+    OBSXmlWriter xmlWriter;
+    QByteArray data = xmlWriter.createPerson(obsPerson);
     obs->updatePerson(data);
 }
 
