@@ -39,7 +39,7 @@ MonitorTab::MonitorTab(QWidget *parent, const QString &title, OBS *obs) :
 
 MonitorTab::~MonitorTab()
 {
-
+    delete ui;
 }
 
 void MonitorTab::refresh()
