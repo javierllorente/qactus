@@ -1,6 +1,6 @@
 Qactus ChangeLog
 ================
-v3.0.0 (2025-??-??)
+v3.0.0 (2025-05-02)
   * UI redesign, package-centred with a modern style
   * Port to Qt 6
   * New feature: location bar
