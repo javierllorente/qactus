@@ -16,13 +16,13 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-%global libmajor 2
+%global libmajor 3
 %global libprefix libqobs
 %global libname %{libprefix}%{libmajor}
 %global devname %{libprefix}-devel
 
 Name:           qactus
-Version:        2.9.9
+Version:        3.0.0
 Release:        0
 Summary:        A GUI client for OBS
 License:        Apache-2.0

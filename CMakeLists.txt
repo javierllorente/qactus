@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(Qactus
-   VERSION 2.9.9
+   VERSION 3.0.0
    LANGUAGES CXX)
 
 add_definitions(-DQACTUS_VERSION="${PROJECT_VERSION}")
